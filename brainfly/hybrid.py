@@ -81,14 +81,15 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
              cls, a_vv, a_vx, a_vs, a_bias, a_xx, a_ss, theta, reset, rfc, graded, depress, recover,
              g_list, g_gain, g_at, g_max,
              u, x, s, until, pend, spend, R, rel, rng, left, last,
-             drive_idx, drive_p, w_poi, driven, silenced, counts):
+             drive_idx, drive_p, w_poi, driven, silenced, counts, timeline, bin_start, bin_steps):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
     to neurons that aren't refractory, then reset the neurons that fired and send their spikes.
     Per-neuron parameters come from a small table indexed by cls. A depressing neuron's spike carries
     the fraction left[b, i] of its full strength, recovered toward 1 (time constant recover, in
-    steps) since its last spike, and leaves depress times that. counts[b, i] gains each spike."""
+    steps) since its last spike, and leaves depress times that. counts[b, i] gains each spike, and
+    timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0."""
     trials, n = u.shape
     slow = len(sw) > 0
     ng = len(g_list)
@@ -154,6 +155,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                     if slow:
                         for e in range(sptr[i], sptr[i + 1]):
                             srow[sidx[e]] += sw[e] * strength
+            if bin_steps > 0:
+                timeline[b, (bin_start + k) // bin_steps] += m
 
 
 def consensus_transmitters(data: Path | str | None = None) -> np.ndarray:
@@ -309,6 +312,10 @@ class HybridBrain:
         A neuron given drive has no refractory period from then until reset(), as in Shiu's code,
         where that is a fixed property of the drive's targets. silence: neuron indices whose spikes
         and release go nowhere during these steps."""
+        return self._step(steps, drive, silence)
+
+    def _step(self, steps, drive=(), silence=(), timeline=None, bin_start=0, bin_steps=0) -> np.ndarray:
+        """advance(), also adding each step's spikes to timeline[:, (bin_start + k) // bin_steps]."""
         idx = [np.asarray(i, np.int64) for i, _ in drive]
         drive_idx = np.concatenate(idx) if idx else np.empty(0, np.int64)
         drive_p = np.concatenate([np.full(len(i), r * self.dt) for i, (_, r) in zip(idx, drive)]) if idx else np.empty(0)
@@ -325,8 +332,8 @@ class HybridBrain:
                  np.array([p["gain"] for p in g], np.float32), np.array([p["release_at"] for p in g], np.float32),
                  np.array([p["max_release"] for p in g], np.float32), self.u, self.x, self.s, self.until,
                  self.pending, self.pending_slow, self.graded_input, self.release, self.rng, self.left, self.last,
-                 drive_idx, drive_p,
-                 np.float32(self.w_poi), self.driven, silenced, counts)
+                 drive_idx, drive_p, np.float32(self.w_poi), self.driven, silenced, counts,
+                 np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps))
         self.t += int(steps)
         return counts
 
@@ -343,20 +350,12 @@ class HybridBrain:
         try:
             drive_steps, tail_steps = int(round(seconds / self.dt)), int(round(tail / self.dt))
             bin_steps = max(1, int(round(bin / self.dt)))
-            during = np.zeros((self.trials, self.n))
-            after = np.zeros((self.trials, self.n))
-            timeline = []
-            done = 0
-            while done < drive_steps + tail_steps:
-                driving = done < drive_steps
-                chunk = min(bin_steps, (drive_steps - done) if driving else (drive_steps + tail_steps - done))
-                c = self.advance(chunk, drive if driving else (), silence)
-                (during if driving else after)[:] += c
-                timeline.append(c.sum(1) / (chunk * self.dt))
-                done += chunk
+            timeline = np.zeros((self.trials, -(-(drive_steps + tail_steps) // bin_steps)), np.int64)
+            during = self._step(drive_steps, drive, silence, timeline, 0, bin_steps)
+            after = self._step(tail_steps, (), silence, timeline, drive_steps, bin_steps)
         finally:
             self.weights = saved
         rates = during / seconds
         return Result(rates=rates.mean(0), trial_rates=rates,
                       after_rates=after / tail if tail > 0 else np.zeros_like(rates),
-                      timeline=np.array(timeline).T if timeline else np.zeros((self.trials, 0)), bin=bin_steps * self.dt)
+                      timeline=timeline / (bin_steps * self.dt), bin=bin_steps * self.dt)

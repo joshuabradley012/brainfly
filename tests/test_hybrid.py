@@ -100,6 +100,7 @@ def test_defaults_reproduce_shiubrain_on_the_connectome():
     assert expected.trial_rates.sum() > 0
     np.testing.assert_array_equal(actual.trial_rates, expected.trial_rates)
     np.testing.assert_array_equal(actual.after_rates, expected.after_rates)
+    np.testing.assert_array_equal(actual.timeline, expected.timeline)
     scale = np.random.default_rng(0).uniform(0.5, 2.0, shiu.n)     # and with a synapse scale per neuron
     expected = ShiuBrain(trials=2, scale=scale).run(0.05, drive=[(sugar, 1 / DT)], tail=0.02)
     actual = HybridBrain(trials=2, scale=scale).run(0.05, drive=[(sugar, 1 / DT)], tail=0.02)
