@@ -36,6 +36,16 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (September 2026)
 
+* **The brain now steers a body, and the body turns with a rotating drum: the project's first
+  pre-registered passes.** Seen through `FlyvisNative`, a drum turning counterclockwise sweeps
+  front-to-back across the left eye. The left HS cells fire 29 Hz, against 10 Hz when it turns the
+  other way, the right ones the reverse, and the steering neuron DNa02 follows on the same side (3.3
+  against 0.8 Hz), confirmed on a fresh seed. Rewiring the connectome at random, with every neuron
+  keeping as much input as before, abolishes both signals in three rewirings out of three, while the
+  neurons stay active. Then the loop is closed: NeuroMechFly (FlyGym) walks inside the drum while
+  DNa02 sets the drive to each side of its body (`brainfly/body.py`), and all 8 flies turn with the
+  drum, at about 0.4 times its speed. The link from DNa02 to the legs is an assumption: the nerve cord
+  isn't simulated, and a walking controller stands in for it.
 * **The model brainfly inherited fails in three places, each traced to a modelling choice**
   ([below](#where-it-started)). Light dies at the first synapse after the eye, commands from the
   brain never reach the motor neurons, and scrambled wiring signals as well as the real wiring.
@@ -53,16 +63,6 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   flyvis's parameters onto MaleCNS's own wiring ran at the wrong operating point and is kept for
   comparison (`FlyvisOpticLobe`); an earlier giant fiber result came from a one-dimensional eye whose
   "azimuth" tracked elevation.
-* **The brain now steers a body, and the body turns with a rotating drum: the project's first
-  pre-registered passes.** Seen through `FlyvisNative`, a drum turning counterclockwise sweeps
-  front-to-back across the left eye. The left HS cells fire 29 Hz, against 10 Hz when it turns the
-  other way, the right ones the reverse, and the steering neuron DNa02 follows on the same side (3.3
-  against 0.8 Hz), confirmed on a fresh seed. Rewiring the connectome at random, with every neuron
-  keeping as much input as before, abolishes both signals in three rewirings out of three, while the
-  neurons stay active. Then the loop is closed: NeuroMechFly (FlyGym) walks inside the drum while
-  DNa02 sets the drive to each side of its body (`brainfly/body.py`), and all 8 flies turn with the
-  drum, at about 0.4 times its speed. The link from DNa02 to the legs is an assumption: the nerve cord
-  isn't simulated, and a walking controller stands in for it.
 * **Rung 1 has failed twice.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
   brain, runs away on MaleCNS. Scaling each synapse by the size of its target shrinks the runaway
   22–37×, but doesn't end it, and then scrambled wiring drives the proboscis motor neuron too. No
