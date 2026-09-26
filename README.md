@@ -53,19 +53,29 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   flyvis's parameters onto MaleCNS's own wiring ran at the wrong operating point and is kept for
   comparison (`FlyvisOpticLobe`); an earlier giant fiber result came from a one-dimensional eye whose
   "azimuth" tracked elevation.
-* **A drum rotating around the fly reaches its steering neurons with the right sign: the project's first
-  pre-registered pass.** Seen through `FlyvisNative`, a counterclockwise drum sweeps front-to-back across
-  the left eye; the left HS cells rise from 10 to 29 Hz, the right ones fall likewise, and the steering
-  neuron DNa02 rises on the left (0.8 to 3.3 Hz) and not the right, in 8 of 8 flies on a fresh seed.
-  That is the signal a fly uses to turn with the drum (the optomotor response). Among 455 descending
-  neuron types, 65 carry the direction, including DNp15, which receives HS input in real flies. No
-  scrambled-wiring control yet. The brain now also has a body: NeuroMechFly walking in a virtual-reality
-  arena (`brainfly/body.py`), steered by DNa02.
+* **The brain now steers a body, and the body turns with a rotating drum: the project's first
+  pre-registered passes.** Seen through `FlyvisNative`, a drum turning counterclockwise sweeps
+  front-to-back across the left eye. The left HS cells fire 29 Hz, against 10 Hz when it turns the
+  other way, the right ones the reverse, and the steering neuron DNa02 follows on the same side (3.3
+  against 0.8 Hz), confirmed on a fresh seed. Rewiring the connectome at random, with every neuron
+  keeping as much input as before, abolishes both signals in three rewirings out of three, while the
+  neurons stay active. Then the loop is closed: NeuroMechFly (FlyGym) walks inside the drum while
+  DNa02 sets the drive to each side of its body (`brainfly/body.py`), and all 8 flies turn with the
+  drum, at about 0.4 times its speed. The link from DNa02 to the legs is an assumption: the nerve cord
+  isn't simulated, and a walking controller stands in for it.
 * **Rung 1 has failed twice.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
   brain, runs away on MaleCNS. Scaling each synapse by the size of its target shrinks the runaway
   22–37×, but doesn't end it, and then scrambled wiring drives the proboscis motor neuron too. No
   recipe tried so far gives Shiu's response without a runaway or a loss of specificity
   ([details](#rung-1-in-detail)).
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/optomotor-dark.svg">
+  <img src="assets/optomotor-light.svg" width="100%" alt="Left, bar charts: under a drum turning counterclockwise the left HS cells fire about 29 spikes a second and the right about 10, and the reverse for a clockwise drum; the steering neuron DNa02 follows, about 3.3 against 0.8 spikes a second, on the side the drum sweeps front-to-back. Right, the heading of 8 walking flies over 3 s with the brain steering the body: under a counterclockwise drum every fly turns left, under a clockwise drum every fly turns right, each slower than the drum itself, and with the drum still the headings stay near zero.">
+</picture>
+
+The optomotor pathway, open loop (left; `experiments/optomotor.py`) and closed loop (right;
+`experiments/closed_loop.py`). `python assets/optomotor.py` redraws it from the saved results.
 
 ## The ladder
 
@@ -81,7 +91,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 | 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | not started |
 | 5. Nerve cord | Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons, strong descending drive | DNg100 and DNb08 produce 7–15 Hz leg rhythms | not started |
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | not started |
-| 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | not started |
+| 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | started: NeuroMechFly walks under a walking controller that the brain steers through DNa02; no motor neurons or muscles yet |
 | 8. Flight, neck and song | wing power and steering, head pose, courtship song | saccades within about 10 wingbeats; song pulses about 35 ms apart | not started |
 | 9. State and learning | arousal, hunger, the mushroom body's dopamine learning rule | 80–90% depression after 1 s of odour paired with dopamine | not started |
 
@@ -183,6 +193,8 @@ a sign that the approach is broken."
 | `experiments/flyvis_native.py` | Is `FlyvisNative` flyvis, and is it oriented right on the male eye? | Yes. Tiled onto flyvis's own lattice it rebuilds flyvis's 45,669 cells and 1,513,231 synapses (weights within 1e-7) and reproduces a flash within 3e-6. The orientation, from T4/T5 dendrite anatomy alone, picks one lattice symmetry on both sides, and under it all 16 T4/T5 types, in both eyes, prefer their biological direction (DSI 0.73–0.94). |
 | `experiments/eyepath_native.py` | With flyvis on its own terms, does looming reach LC4, LPLC2 and the giant fiber? | LPLC2 and the giant fiber, yes; LC4, no, so the test fails. At gain 3 the fast loom raises LPLC2 8.3–9.2 Hz on average (peaks 28 Hz) and the loomed side's giant fiber fires in every fly, the other side's never, first about 80 ms before contact; at gain 10, 21–23 Hz and 8–10 Hz. LC4 rises at most 0.4 Hz. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. |
+| `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.7). |
+| `experiments/closed_loop.py` | With the brain steering NeuroMechFly through DNa02, does the fly turn with a rotating drum? | Yes: all 8 flies turn with it, +19.6 deg/s on average under a counterclockwise drum and -14.1 under a clockwise one (difference 33.7 deg/s, t = 8.7), against +4.7 with the drum still; about 0.4 times the drum's 40 deg/s. With the link cut, both directions give identical paths. |
 | `experiments/vnc/` | Do commands from the brain reach the motor neurons? | No: under 0.6 Hz in every motor group. Three calibrations failed, and no stimulus of 20 drives a walking command. |
 
 Every eye experiment before `eyepath_2d.py` used the one-dimensional eye in `brainfly/eyes.py`, whose
