@@ -89,7 +89,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 | Rung | What it adds | Passes when | Status |
 |---|---|---|---|
-| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** three times, on a kernel since corrected to match Shiu's Brian2 code and rerun; scaling synapses by target size comes closest, but activity outlasts the drive |
+| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** four times (the first three rerun on a kernel corrected to match Shiu's Brian2 code); the fourth has MN9 follow the sugar rate with only 8 hot neurons, but activity outlasts the drive |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | not started |
 | 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: flyvis on its own terms gets all 16 T4/T5 directions right, drives LPLC2 and the giant fiber, and carries a rotating drum to the steering neuron DNa02 with the right sign; LC4 still barely responds |
 | 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | not started |
@@ -170,6 +170,25 @@ first run, on the old kernel, reported every taste test passing at 0.385 mV. The
 fast at 10 Hz sugar (99 Hz) as at 100 Hz (77 Hz), so that pass was no sugar response either. Taste
 tests alone can't tell a response from a runaway, which is why the criteria include STABLE and
 NULL.
+
+The fourth attempt, [`experiments/shiu_signs.py`](experiments/shiu_signs.py), pre-registered,
+builds on the density recipe. A diagnostic that wasn't pre-registered had traced that recipe's lasting
+activity to pars intercerebralis neurosecretory cells and prow and SMP interneurons. Most of them
+have no transmitter MaleCNS could call, which the sign rule counts as fast excitation by default. So
+this attempt keeps in the fast network only synapses from neurons with a known fast transmitter. It
+removes synapses from the 541 neurons whose consensus transmitter is a monoamine and from the 2,352
+with no consensus transmitter (sensory neurons exempted), as well as Kenyon-to-Kenyon synapses. It
+runs on `HybridBrain` with Shiu's neuron model, and it adds a criterion: MN9 must follow the sugar
+rate. It fails.
+
+What it gets right: MN9 follows the sugar rate (0 Hz at 10 Hz sugar, 62 Hz at 100 Hz), only 8
+undriven neurons pass 100 Hz, and bitter and Ir94e cut sugar's drive by 99.8% and 84%. What fails:
+activity still outlasts the drive, at 14% of its level. It sits in the Ir94e taste neurons, which
+input onto their axon terminals keeps firing, and in nerve-cord circuits. And 18 of 20 weight
+shuffles drive MN9, while no degree-preserving rewiring does. A check afterwards showed why that
+weight shuffle can't be passed. Shuffling the counts runs these networks away, with 50,000–83,000
+neurons above 100 Hz. Even shuffling the final synaptic strengths leaves 9,000–27,000 there. A
+network that runs away drives MN9 whatever its routing.
 
 Two limits apply throughout. The taste-neuron labels are provisional: LB3a as water and LB3b–c as
 sugar come from an unreviewed MaleCNS port, and LB1a–d as bitter and LB1e as Ir94e-like from summaries
