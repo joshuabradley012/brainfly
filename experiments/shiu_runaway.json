@@ -1,0 +1,251 @@
+{
+ "criteria": "Post hoc, not pre-registered: where does the Shiu-recipe runaway on MaleCNS live, and what stops it?\n\nshiu_baseline.py failed STABLE: at w_syn = 0.275 mV a 1 s sugar drive ignites ~7,400 undriven neurons\nabove 100 Hz, and the activity outlasts the drive. This asks, after the fact:\n  where    which superclasses and cell types are hot during the drive and still firing after it\n  onset    the network's spike rate in 10 ms bins (how fast it ignites)\n  variants the shiu_baseline.py tests (10 trials) with one change each:\n           no synapses onto sensory neurons (the research report's rung-1 recipe);\n           brain only (nerve cord removed); both;\n           monoamine synapses removed (dopamine, octopamine, serotonin as fast excitation: rung 2);\n           Kenyon-cell-to-Kenyon-cell synapses removed\n  window   for each w_syn, does 100 Hz sugar reach MN9 L, and does the network stay stable? (5 trials)\n\n    python experiments/shiu_runaway.py            (writes experiments/shiu_runaway.json)\n",
+ "where": {
+  "hot_by_superclass": {
+   "cb_intrinsic": 6841,
+   "vnc_intrinsic": 125,
+   "cb_sensory": 93,
+   "vnc_motor": 62,
+   "ascending_neuron": 59,
+   "visual_centrifugal": 58,
+   "descending_neuron": 55,
+   "ol_intrinsic": 28,
+   "vnc_efferent": 28,
+   "visual_projection": 21
+  },
+  "hot_top_types": {
+   "KCg-m": 1342,
+   "KCab-s": 656,
+   "KCab-m": 529,
+   "KCab-c": 467,
+   "KCa'b'-ap2": 291,
+   "KCg-d": 206,
+   "KCa'b'-m": 205,
+   "KCa'b'-ap1": 199,
+   "KCab-p": 129,
+   "": 74,
+   "PAM08": 50,
+   "PAM01": 44
+  },
+  "firing_after_drive": 18381,
+  "after_by_superclass": {
+   "cb_intrinsic": 12893,
+   "vnc_intrinsic": 1928,
+   "ol_intrinsic": 1123,
+   "cb_sensory": 989,
+   "ascending_neuron": 336,
+   "descending_neuron": 300,
+   "vnc_motor": 243,
+   "visual_projection": 239,
+   "visual_centrifugal": 150,
+   "vnc_efferent": 67
+  },
+  "network_hz_10ms_bins": [
+   1960,
+   4540,
+   8620,
+   19360,
+   47460,
+   71920,
+   124760,
+   364500,
+   758840,
+   1220880,
+   1427320,
+   1604880,
+   1700940,
+   1738060,
+   1722660,
+   1760100,
+   1753880,
+   1758500,
+   1760420,
+   1749140,
+   1762480,
+   1746540,
+   1728440,
+   1724560,
+   1745940,
+   1742100,
+   1733320,
+   1753800,
+   1726820,
+   1737880
+  ]
+ },
+ "counts": {
+  "monoaminergic_neurons": 5074,
+  "kenyon_cells": 4064
+ },
+ "variants": {
+  "no input to sensory neurons": {
+   "SUGAR": true,
+   "WATER": false,
+   "BITTER": true,
+   "IR94E": false,
+   "STABLE": false,
+   "mn9_L_hz": {
+    "sugar": 82.6,
+    "water": 0.0,
+    "sugar+bitter": 9.5,
+    "sugar+ir94e": 46.3
+   },
+   "bitter_drop": 0.885,
+   "t_bitter": 4.34,
+   "ir94e_drop": 0.439,
+   "t_ir94e": 2.11,
+   "t_water": 0.0,
+   "tail_fraction": 1.23866,
+   "undriven_over_100hz": 6839,
+   "network_hz_during_sugar": 1558390.8,
+   "activated_by_sugar": {
+    "10 Hz": 21545,
+    "200 Hz": 20862
+   }
+  },
+  "brain only (no nerve cord)": {
+   "SUGAR": true,
+   "WATER": false,
+   "BITTER": true,
+   "IR94E": true,
+   "STABLE": false,
+   "mn9_L_hz": {
+    "sugar": 158.9,
+    "water": 0.0,
+    "sugar+bitter": 2.7,
+    "sugar+ir94e": 1.3
+   },
+   "bitter_drop": 0.983,
+   "t_bitter": 8.96,
+   "ir94e_drop": 0.992,
+   "t_ir94e": 9.04,
+   "t_water": 0.0,
+   "tail_fraction": 1.11419,
+   "undriven_over_100hz": 7423,
+   "network_hz_during_sugar": 1798656.9,
+   "activated_by_sugar": {
+    "10 Hz": 19621,
+    "200 Hz": 18799
+   }
+  },
+  "both": {
+   "SUGAR": true,
+   "WATER": false,
+   "BITTER": true,
+   "IR94E": true,
+   "STABLE": false,
+   "mn9_L_hz": {
+    "sugar": 73.5,
+    "water": 0.0,
+    "sugar+bitter": 0.2,
+    "sugar+ir94e": 3.9
+   },
+   "bitter_drop": 0.997,
+   "t_bitter": 9.51,
+   "ir94e_drop": 0.947,
+   "t_ir94e": 8.88,
+   "t_water": 0.0,
+   "tail_fraction": 1.10666,
+   "undriven_over_100hz": 6979,
+   "network_hz_during_sugar": 1662850.1,
+   "activated_by_sugar": {
+    "10 Hz": 18360,
+    "200 Hz": 17682
+   }
+  },
+  "monoamine synapses removed": {
+   "SUGAR": true,
+   "WATER": false,
+   "BITTER": true,
+   "IR94E": true,
+   "STABLE": false,
+   "mn9_L_hz": {
+    "sugar": 26.1,
+    "water": 0.0,
+    "sugar+bitter": 0.0,
+    "sugar+ir94e": 0.0
+   },
+   "bitter_drop": 1.0,
+   "t_bitter": 6.28,
+   "ir94e_drop": 1.0,
+   "t_ir94e": 6.28,
+   "t_water": 0.0,
+   "tail_fraction": 1.12723,
+   "undriven_over_100hz": 2765,
+   "network_hz_during_sugar": 921818.2,
+   "activated_by_sugar": {
+    "10 Hz": 7908,
+    "200 Hz": 16701
+   }
+  },
+  "KC-to-KC synapses removed": {
+   "SUGAR": true,
+   "WATER": false,
+   "BITTER": true,
+   "IR94E": true,
+   "STABLE": false,
+   "mn9_L_hz": {
+    "sugar": 61.4,
+    "water": 0.0,
+    "sugar+bitter": 20.6,
+    "sugar+ir94e": 11.8
+   },
+   "bitter_drop": 0.664,
+   "t_bitter": 5.33,
+   "ir94e_drop": 0.808,
+   "t_ir94e": 6.52,
+   "t_water": 0.0,
+   "tail_fraction": 1.17771,
+   "undriven_over_100hz": 4461,
+   "network_hz_during_sugar": 1284253.4,
+   "activated_by_sugar": {
+    "10 Hz": 22274,
+    "200 Hz": 21358
+   }
+  }
+ },
+ "window": [
+  {
+   "w_syn": 0.275,
+   "mn9_L_hz": 57.8,
+   "undriven_over_100hz": 7378,
+   "active_neurons": 23640,
+   "tail_fraction": 1.1837
+  },
+  {
+   "w_syn": 0.25,
+   "mn9_L_hz": 63.4,
+   "undriven_over_100hz": 6461,
+   "active_neurons": 21782,
+   "tail_fraction": 1.3364
+  },
+  {
+   "w_syn": 0.22,
+   "mn9_L_hz": 19.0,
+   "undriven_over_100hz": 2194,
+   "active_neurons": 19656,
+   "tail_fraction": 1.2871
+  },
+  {
+   "w_syn": 0.2,
+   "mn9_L_hz": 36.6,
+   "undriven_over_100hz": 1986,
+   "active_neurons": 17439,
+   "tail_fraction": 1.5503
+  },
+  {
+   "w_syn": 0.18,
+   "mn9_L_hz": 2.2,
+   "undriven_over_100hz": 1,
+   "active_neurons": 647,
+   "tail_fraction": 0.0
+  },
+  {
+   "w_syn": 0.15,
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "active_neurons": 89,
+   "tail_fraction": 0.0
+  }
+ ]
+}

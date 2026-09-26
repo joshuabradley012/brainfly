@@ -19,12 +19,12 @@ project's model stands today, so the report's roadmap can start from it. None ar
 
 ## Results so far
 
-1. **Eye path, original model (sweep.py, eyepath.py reference run).** A dark object looming on one side
+1. **Eye path, original model (experiments/sweep.py, experiments/eyepath.py reference run).** A dark object looming on one side
    changes photoreceptor firing (-7 Hz) but nothing past the lamina (L1 +0.1 Hz, L2 0; LC4, LPLC2, DNp01
    all 0.0 Hz). Photoreceptors inhibit L1-L3 via histamine; a spiking neuron silent at rest can't be
    inhibited further.
 
-2. **Eye path with a graded retina and lamina (eyepath.py, 2026-09-25).**
+2. **Eye path with a graded retina and lamina (experiments/eyepath.py, 2026-09-25).**
    - Pre-registered test FAILED: no setting raised the population mean of LC4/LPLC2 by the required
      3 Hz.
    - What did happen: with photoreceptors and lamina graded (graded_gain 0.15, resting release 0.3),
@@ -48,16 +48,16 @@ project's model stands today, so the report's roadmap can start from it. None ar
    feeds the model. Candidate fix: synthesise the missing R1-6 -> lamina inputs from the regular
    neural-superposition wiring.
 
-4. **Skipping the eye (inject.py).** Driving LC4+LPLC2 directly on one side raises the same-side giant
+4. **Skipping the eye (experiments/inject.py).** Driving LC4+LPLC2 directly on one side raises the same-side giant
    fiber DNp01 by +17 to +25 Hz. Driving LC10a raises the same-side steering neuron DNa02 by +1.4 to
    +3.7 Hz. The other side and other readouts are unchanged.
 
-5. **Nerve cord relay (wiz/probe.py, wiz/vnc.py, vnc2.py, vnc3.py).** Driving command neurons (DNg100,
+5. **Nerve cord relay (experiments/vnc/: probe.py, vnc.py, vnc2.py, vnc3.py).** Driving command neurons (DNg100,
    DNa02, DNp01, MDN) at ~25 Hz moves no motor neuron group (< 0.6 Hz). Raising VNC tonic drive and gain,
    or amplifying only the DN -> premotor and premotor -> MN synapses, failed all pre-registered criteria
    (REST, COMMAND, DISTINCT, LATERAL) in every setting.
 
-6. **Two brains signalling (flytalk.py).** A song carried 0.3-0.83 bits about the singer's situation. At
+6. **Two brains signalling (experiments/flytalk.py).** A song carried 0.3-0.83 bits about the singer's situation. At
    2 ms steps a degree-preserving scrambled wiring carried as many bits (0.87), so the "real wiring
    matters" test failed at 2 ms.
 
