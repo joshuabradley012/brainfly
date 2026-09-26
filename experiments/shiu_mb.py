@@ -28,6 +28,17 @@ this modified matrix each activating MN9 in at most 2.
 Reported, not part of the pass: WATER, BITTER, IR94E, and the Kenyon cells' and APL's rates during
 sugar.
 
+Re-run 2026-09-26 on brainfly.shiu's corrected kernel, which now matches Brian2 spike for spike
+(tests/test_shiu_brian2.py). The first run used a kernel that kept input arriving during
+refractoriness, where Brian2 drops it, and ran its steps in a different order; that run is in git
+history.
+
+Correction, 2026-09-26: the monoamine rule, consensus or predicted transmitter, also caught 4,058
+Kenyon cells, which MaleCNS's machine prediction calls dopaminergic though their consensus
+transmitter is acetylcholine. So (a) removed nearly all Kenyon-cell output, not only the synapses
+of the 541 neurons whose consensus is a monoamine. The run stands as a test of what it did;
+shiu_signs.py reads consensus transmitters only.
+
     python experiments/shiu_mb.py            (writes experiments/shiu_mb.json)
 """
 from __future__ import annotations

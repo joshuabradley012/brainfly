@@ -21,6 +21,11 @@ reported but are not part of the pass. Water never reached MN9 in any earlier va
 at the provisional LB3a = water label, and bitter and Ir94e were only ever measured inside a runaway
 network.
 
+Re-run 2026-09-26 on brainfly.shiu's corrected kernel, which now matches Brian2 spike for spike
+(tests/test_shiu_brian2.py). The first run used a kernel that kept input arriving during
+refractoriness, where Brian2 drops it, and ran its steps in a different order; that run is in git
+history.
+
     python experiments/shiu_scaled.py            (writes experiments/shiu_scaled.json)
 """
 from __future__ import annotations

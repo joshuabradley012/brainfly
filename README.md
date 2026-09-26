@@ -64,11 +64,14 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   comparison (`FlyvisOpticLobe`); an earlier giant fiber result came from a one-dimensional eye whose
   "azimuth" tracked elevation.
 * **Rung 1 has failed three times.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
-  brain, runs away on MaleCNS. Scaling each synapse by the size of its target shrinks the runaway
-  22–37×, but doesn't end it. Taking the mushroom body's slow transmission (Kenyon cells onto each
-  other, and the monoamines) out of fast excitation makes every taste test pass for the first time,
-  but the network still runs away, now through mechanisms the model lacks: a graded APL, presynaptic
-  inhibition in the antennal lobe ([details](#rung-1-in-detail)).
+  brain, runs away on MaleCNS. A test against Brian2, an idea borrowed from doomfly, found brainfly's
+  implementation of it running three steps out of line with Shiu's, which ran networks hot. All
+  three attempts were rerun on the corrected kernel, which matches Brian2 spike for spike, and every
+  verdict stood. Scaling each synapse by the size of its target comes closest: sugar drives MN9 in
+  proportion to its rate, and only 20 other neurons pass 100 Hz. But activity outlasts the drive,
+  and shuffled weights drive MN9 too. The third attempt turned out to have silenced nearly all
+  Kenyon-cell output by mistake, and its taste tests passed only because the runaway drove MN9
+  whatever the sugar rate ([details](#rung-1-in-detail)).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/optomotor-dark.svg">
@@ -86,7 +89,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 | Rung | What it adds | Passes when | Status |
 |---|---|---|---|
-| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** three times; the third passes every taste test but still runs away |
+| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** three times, on a kernel since corrected to match Shiu's Brian2 code and rerun; scaling synapses by target size comes closest, but activity outlasts the drive |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | not started |
 | 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: flyvis on its own terms gets all 16 T4/T5 directions right, drives LPLC2 and the giant fiber, and carries a rotating drum to the steering neuron DNa02 with the right sign; LC4 still barely responds |
 | 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | not started |
@@ -107,18 +110,30 @@ before its first run:
 
 | Test | Result |
 |---|---|
-| Sugar taste neurons drive MN9, the motor neuron that extends the proboscis | 60 Hz. This is the calibration target, not an independent test. |
-| Water taste neurons drive MN9 | **No**: 3.6 Hz. |
-| Bitter and Ir94e taste neurons cut sugar's drive by at least 25% | By 54% and 71%, but inside a network that was running away, so unreliable. |
-| The network stays stable | **No**: 7,443 undriven neurons pass 100 Hz, and the activity outlasts the drive. |
+| Sugar taste neurons drive MN9, the motor neuron that extends the proboscis | 65 Hz. This is the calibration target, not an independent test. |
+| Water taste neurons drive MN9 | **No**: 1.5 Hz. |
+| Bitter and Ir94e taste neurons cut sugar's drive by at least 25% | By 90% and 87%, but inside a network that was running away, so unreliable. |
+| The network stays stable | **No**: 4,226 undriven neurons pass 100 Hz, and the activity outlasts the drive. |
 | Scrambled wiring abolishes sugar → MN9 | 0 of 20 weight shuffles and 0 of 20 degree-preserving rewirings activate MN9. |
 
-The verdict is a **fail**. A follow-up that was not pre-registered,
+The verdict is a **fail**. These numbers come from a rerun.
+[`tests/test_shiu_brian2.py`](tests/test_shiu_brian2.py) runs brainfly's kernel side by side with
+Brian2, the simulator Shiu's results come from (an idea taken from
+[doomfly](https://github.com/nftechie/doomfly)). The first version of the kernel failed it three ways.
+It kept input that reached a neuron during its refractory period, which Brian2 drops. It delivered
+input before applying the threshold instead of after, which shortened the synaptic delay by a step.
+And it held neurons refractory one step too long. On a small random network it ran 27% hot. The
+corrected kernel matches Brian2 spike for spike, and all four rung-1 experiments were rerun on it (the
+first runs are in git history). The runaway shrank, from 7,443 hot neurons to 4,226, but every verdict
+stood. A follow-up that was not pre-registered,
 [`experiments/shiu_runaway.py`](experiments/shiu_runaway.py), found the runaway in the central brain,
 mostly among the mushroom body's Kenyon cells, igniting within about 100 ms. Removing the nerve cord,
-the synapses onto sensory neurons, the monoamine synapses or the Kenyon-cell-to-Kenyon-cell synapses
-shrinks it, and none of them stops it. At 0.20 mV per synapse and above, the network runs away. At
-0.18 mV and below, it stays quiet, but sugar moves MN9 by 2.2 Hz at most. So no single global weight
+the synapses onto sensory neurons, the monoamine synapses (by a rule that, as the third attempt
+revealed, also silenced most Kenyon-cell output) or the Kenyon-cell-to-Kenyon-cell synapses shrinks
+it, to between 1,134 and 3,811 neurons above 100 Hz, and none of them stops it. At 0.20 mV per
+synapse and above, the activity outlasts the drive. At 0.20 mV itself no neuron passes 100 Hz, but
+13,511 are active, and the network fires 2.5 times harder after the drive than during it. At 0.18 mV
+and below, it stays quiet, but sugar moves MN9 by 1.8 Hz at most. So no single global weight
 carries Shiu's recipe over to MaleCNS, which counts more synapses per connection than FlyWire. (The
 calibration grid also only searched down from Shiu's 0.275 mV, and hitting Shiu's own calibration
 target would have needed a higher weight.)
@@ -127,11 +142,13 @@ The second attempt, [`experiments/shiu_scaled.py`](experiments/shiu_scaled.py), 
 divides every synapse onto a neuron by that neuron's size, the scaling that the few recordings
 comparing synapse counts with synaptic strength favour, or by the square root of its size. Total
 synapse count stands in for size, since MaleCNS's tables carry no volumes, and both recipes calibrate
-to 1.1 mV per synapse. Both fail. Dividing by size shrinks the runaway 22–37×, to 201 undriven
-neurons above 100 Hz, but the activity still outlasts the drive, and now 15 of 20 weight shuffles
-drive MN9 as well: the route is no longer specific to the wiring. The square root runs away harder,
-with 14,662 neurons above 100 Hz. No recipe tried so far, one weight for every synapse or one scaled
-by either measure of size, gives Shiu's MN9 response without a runaway or a loss of specificity.
+to 1.1 mV per synapse, the top of the grid. Both fail. Dividing by size comes closest of any attempt.
+Only 20 undriven neurons pass 100 Hz, the most STABLE allows. MN9 follows the sugar rate: silent at 10
+and 25 Hz, 68 Hz at 100 Hz. And bitter and Ir94e silence it. But activity outlasts the drive, at 23%
+of its level, and 11 of 20 weight shuffles drive MN9 as well, although no degree-preserving rewiring
+does. So the route depends on which neurons connect, but not enough on how strongly. The square root
+runs away, with 10,278 neurons above 100 Hz. No recipe tried so far gives Shiu's MN9 response without
+lasting activity or a loss of specificity.
 
 The third attempt, [`experiments/shiu_mb.py`](experiments/shiu_mb.py), pre-registered, follows the
 wiring. An average Kenyon cell gets about 284 synapses from other Kenyon cells and 55 from dopamine
@@ -139,13 +156,20 @@ neurons, both counted as fast excitation, against 125 from olfactory projection 
 inhibitory ones from APL. Neither is fast excitation in the fly: acetylcholine acts on Kenyon cells
 partly through inhibitory muscarinic receptors, and dopamine, octopamine and serotonin are slow
 modulators. Taking both out of the fast network (4.2 million monoamine and 1.2 million
-Kenyon-to-Kenyon synapses) lets every taste test pass for the first time: sugar drives MN9 at
-70 Hz, water at 14 Hz, and bitter and Ir94e cut sugar's drive by 100% and 88%. It still fails,
-because the network still runs away (5,252 undriven neurons above 100 Hz) and 4 of 20 weight
-shuffles also drive MN9. A diagnostic that wasn't pre-registered finds three sources left, each a
-mechanism the model lacks. Kenyon cells still run hot because APL saturates at 370 Hz, where the real
-APL is graded and has no spike-rate ceiling. Olfactory receptor neurons ignite each other with no
-presynaptic inhibition or synaptic depression. And the compass neurons (EPG, PEN) run hot.
+Kenyon-to-Kenyon synapses) fails too, and it removed more than intended. Its rule for monoamine
+neurons, a consensus *or predicted* transmitter of dopamine, octopamine or serotonin, also caught
+4,058 of the 4,064 Kenyon cells. MaleCNS's machine prediction calls them dopaminergic, while their
+consensus transmitter, like the literature, is acetylcholine. So most of the synapses removed as
+monoamine synapses were Kenyon-cell outputs, and the mushroom body's output was all but silenced.
+Calibration lands on 0.55 mV, where every taste test passes on paper: sugar drives MN9 at 167 Hz,
+water at 80 Hz, and bitter and Ir94e cut sugar's drive by 99% and 89%. But there MN9 fires 128 Hz
+when sugar arrives at only 10 Hz. The runaway drives MN9, not
+the sugar, and all 20 weight shuffles and all 20 rewirings drive it as well. The network runs away
+(4,764 undriven neurons above 100 Hz), and APL fires at 290 Hz with Kenyon cells averaging 68 Hz. The
+first run, on the old kernel, reported every taste test passing at 0.385 mV. There too MN9 fired as
+fast at 10 Hz sugar (99 Hz) as at 100 Hz (77 Hz), so that pass was no sugar response either. Taste
+tests alone can't tell a response from a runaway, which is why the criteria include STABLE and
+NULL.
 
 Two limits apply throughout. The taste-neuron labels are provisional: LB3a as water and LB3b–c as
 sugar come from an unreviewed MaleCNS port, and LB1a–d as bitter and LB1e as Ir94e-like from summaries
@@ -237,7 +261,7 @@ stay in the record.
 
 ## Use it
 
-Two models share the package:
+Three models share the package:
 
 * **`brainfly.FlyBrain`** is the inherited whole-CNS model: 20 ms steps (2 ms optional), faster than real
   time on a recent CPU or an NVIDIA GPU, with opt-in graded neurons, per-type parameters, an
@@ -245,6 +269,13 @@ Two models share the package:
   walking body (`brainfly.body`). It is not validated, and its failures are listed above.
 * **`brainfly.shiu.ShiuBrain`** is rung 1: Shiu et al.'s recipe on MaleCNS, in 0.1 ms steps, with many
   trials run in parallel, any neurons silenced, or any synapse matrix (a shuffled one, say) swapped in.
+  It matches Brian2 spike for spike.
+* **`brainfly.hybrid.HybridBrain`** is brainfly's own model, under construction: Shiu's kernel with
+  each cell type free to differ, as the report's biophysics calls for. A type can be graded instead of
+  spiking, with no rate ceiling, and can have its own membrane time constant, threshold, reset,
+  refractory period, resting drive and synaptic scale. Chosen edges can act through a slow current.
+  Its state carries over between calls, so it can be stepped in a loop with a body. With nothing
+  changed, it is Shiu's model exactly.
 
 ```sh
 pip install "brainfly[build] @ git+https://github.com/joshuabradley012/brainfly"
@@ -279,7 +310,7 @@ for _ in range(50):                             # 1 s of looming on the left
 print(spikes)                                   # {'left': 25, 'right': 0}
 ```
 
-Rung 1, a taste of sugar, which runs in about 13 s on an Apple M4 Pro:
+Rung 1, a taste of sugar, which runs in about 4 s on an Apple M4 Pro once numba has compiled it:
 
 ```python
 from brainfly.shiu import ShiuBrain
@@ -292,7 +323,7 @@ result = brain.run(1.0, drive=[(sugar, 100.0)])  # 1 s of sugar at 100 Hz, 0.1 m
 hot = result.rates > 100
 hot[sugar] = False
 print(f"MN9 {result.rates[mn9].mean():.0f} Hz, {hot.sum():,} other neurons above 100 Hz")
-# MN9 53 Hz, 7,504 other neurons above 100 Hz
+# MN9 75 Hz, 4,312 other neurons above 100 Hz
 ```
 
 <details>
@@ -334,15 +365,17 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | [`research_notes/`](research_notes/) | the sourced notes behind the report: senses, neuron biophysics, the nerve cord, muscles and body models, datasets, and this project's experiments |
 | `brainfly/brain.py` | `FlyBrain`, the inherited model, on CPU (numba) or NVIDIA GPU (CuPy), one fly or a batch |
 | `brainfly/shiu.py` | `ShiuBrain`, rung 1, and the raw signed synapse counts it runs on |
+| `brainfly/hybrid.py` | `HybridBrain`, brainfly's own per-type model, built on Shiu's kernel |
 | `brainfly/retina.py` | the photoreceptor input MaleCNS lost at the edge of its volume, imputed from the intact columns |
 | `brainfly/build.py`, `data.py` | building the brain files from MaleCNS v1.0, or fetching a prebuilt copy |
 | `brainfly/eye2d.py` | a 2-D compound eye: each photoreceptor looks in its measured direction, from a micro-CT eye map; looming disks and moving edges |
 | `brainfly/optic.py` | `FlyvisNative`: flyvis's own network tiled onto the male eye, feeding `FlyBrain`; `FlyvisOpticLobe`, the earlier port onto MaleCNS wiring |
 | `brainfly/body.py` | NeuroMechFly (FlyGym 2.1) walking in a virtual-reality arena, and `Loop`, which steps eyes, optic lobe, brain and body together (`pip install "brainfly[body]"`) |
 | `brainfly/eyes.py` | the original 1-D eye, kept so the early eye experiments still run |
-| `experiments/shiu_*.py` | rung 1: the two pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
+| `experiments/shiu_*.py` | rung 1: the pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
 | `experiments/` (the rest) | the experiments on the inherited model, listed [above](#where-it-started) |
 | `assets/` | the logo and the looming figure, and the scripts that draw them from the data |
+| `tests/` | `python -m pytest`: both 0.1 ms kernels against Brian2, `FlyBrain`'s spikes against hashes recorded from the code behind every result, and the build against the release (`pip install "brainfly[test]"`) |
 
 <details>
 <summary><b>The data, and building it yourself</b></summary>
@@ -352,7 +385,8 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 Nothing here is trained: the network is the fly's wiring diagram. `brainfly download` fetches the two
 network files this project builds and publishes (each checked against its sha256). `brainfly build`
 makes them yourself from the public MaleCNS v1.0 release, fetching the four source files below into
-`$FLY_DATA/raw/` first, unless they're already there:
+`$FLY_DATA/raw/` first, unless they're already there. Each source file is checked against its sha256
+too, and the build reproduces the published files byte for byte:
 
 | File | Size | Contents | From |
 |---|---|---|---|
