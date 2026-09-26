@@ -3,7 +3,7 @@
 vnc.py (uniform VNC tonic and gain, 0/20) and vnc2.py (gain on DN -> VNC and premotor -> MN,
 0/12) could not make descending commands reach motor neurons without also driving them at rest. At
 dt = 20 ms a spike needs a big share of a neuron's normalised input inside one step, so deep chains
-fade. In flytalk.py, dt = 2 ms with a 4 ms refractory period let signal cross chains that were silent
+fade. In a two-fly song experiment (since removed), dt = 2 ms with a 4 ms refractory period let signal cross chains that were silent
 at 20 ms. This tests the unmodified connectome at:
 
   dt 20 ms, no refractory   (control: should fail as in vnc.py's first row)

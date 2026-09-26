@@ -1,5 +1,5 @@
 """brainfly: the complete fruit fly nervous system (MaleCNS v1.0 connectome, 166,700 neurons)
-as a spiking network you can stimulate, read out and train readouts on.
+as a spiking network you can stimulate and read out.
 
     from brainfly import FlyBrain
     brain = FlyBrain(device="auto")      # downloads the brain files on first use
@@ -8,11 +8,9 @@ as a spiking network you can stimulate, read out and train readouts on.
 """
 from .brain import FlyBrain, cuda_available
 from .data import DATA, download, ensure_data, has_data
-from .eyes import ENCODER, Blob, Eyes, FeatureDetectors, blob_for
-from .reservoir import Readout, Trace, auc, bases_for, fit_logistic, fit_ridge, folds, project, run
+from .eyes import Blob, Eyes, blob_for
 
 __version__ = "0.1.0"
 
 __all__ = ["FlyBrain", "cuda_available", "DATA", "download", "ensure_data", "has_data",
-           "ENCODER", "Blob", "Eyes", "FeatureDetectors", "blob_for",
-           "Readout", "Trace", "auc", "bases_for", "fit_logistic", "fit_ridge", "folds", "project", "run"]
+           "Blob", "Eyes", "blob_for"]
