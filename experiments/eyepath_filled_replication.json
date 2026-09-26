@@ -1,0 +1,106 @@
+{
+ "3": {
+  "REST": true,
+  "RELAY": false,
+  "SIDE": true,
+  "ESCAPE": false,
+  "relay": {
+   "loomL LC4": {
+    "delta": 2.714,
+    "t": 84.96
+   },
+   "loomL LPLC2": {
+    "delta": 4.588,
+    "t": 180.55
+   },
+   "loomR LC4": {
+    "delta": 2.773,
+    "t": 88.57
+   },
+   "loomR LPLC2": {
+    "delta": 4.154,
+    "t": 92.2
+   }
+  },
+  "escape": {
+   "loomL DNp01": {
+    "delta": 2.417,
+    "t": 19.81
+   },
+   "loomL DNp01 near-far": {
+    "delta": 2.417,
+    "t": 19.81
+   },
+   "loomR DNp01": {
+    "delta": 2.75,
+    "t": 33.0
+   },
+   "loomR DNp01 near-far": {
+    "delta": 2.75,
+    "t": 33.0
+   }
+  },
+  "rest_hz": {
+   "LC4 L": 0.16,
+   "LC4 R": 0.19,
+   "LPLC2 L": 0.54,
+   "LPLC2 R": 0.52,
+   "DNp01 L": 0.0,
+   "DNp01 R": 0.08
+  },
+  "rest_pop_hz": 8.36,
+  "graded_at_bounds": 0.0044
+ },
+ "4": {
+  "REST": true,
+  "RELAY": false,
+  "SIDE": true,
+  "ESCAPE": true,
+  "relay": {
+   "loomL LC4": {
+    "delta": 2.7,
+    "t": 61.6
+   },
+   "loomL LPLC2": {
+    "delta": 4.781,
+    "t": 92.15
+   },
+   "loomR LC4": {
+    "delta": 2.768,
+    "t": 88.39
+   },
+   "loomR LPLC2": {
+    "delta": 4.122,
+    "t": 83.87
+   }
+  },
+  "escape": {
+   "loomL DNp01": {
+    "delta": 3.0,
+    "t": 16.84
+   },
+   "loomL DNp01 near-far": {
+    "delta": 2.917,
+    "t": 16.63
+   },
+   "loomR DNp01": {
+    "delta": 3.0,
+    "t": 16.84
+   },
+   "loomR DNp01 near-far": {
+    "delta": 2.917,
+    "t": 16.63
+   }
+  },
+  "rest_hz": {
+   "LC4 L": 0.12,
+   "LC4 R": 0.19,
+   "LPLC2 L": 0.53,
+   "LPLC2 R": 0.49,
+   "DNp01 L": 0.0,
+   "DNp01 R": 0.17
+  },
+  "rest_pop_hz": 8.29,
+  "graded_at_bounds": 0.0042
+ }
+}

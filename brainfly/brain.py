@@ -95,7 +95,8 @@ class FlyBrain:
 
     def __init__(self, data: Path | str | None = None, seed: int = 64, device: str | None = None, batch: int = 1,
                  dt: float | None = None, sensory_input: bool = True, refractory: float = 0.0,
-                 cell_params: dict[str, dict[str, float]] | None = None, graded: list[str] | tuple = ()):
+                 cell_params: dict[str, dict[str, float]] | None = None, graded: list[str] | tuple = (),
+                 fill_retina: bool = False):
         """data: folder with brain.npz and weights.npz (default $FLY_DATA, else ~/fly-data).
         If they aren't there, the prebuilt brain is downloaded into it first (~260 MB, once).
 
@@ -118,7 +119,12 @@ class FlyBrain:
         graded: cell types or superclasses simulated as graded (non-spiking) neurons, e.g.
         ["R1-6", "R7", "R8", "L1", "L2", "L3", "L4", "L5"] for the retina and lamina. Graded
         photoreceptors want a signed contrast drive (Eyes.contrast) rather than Eyes.drive,
-        since they rest at the background they are adapted to."""
+        since they rest at the background they are adapted to.
+
+        fill_retina: add a virtual photoreceptor bundle to each lamina column whose R1-6 input
+        MaleCNS lost at the edge of its volume (about half of them), wired like the intact
+        columns (brainfly.retina; needs the raw MaleCNS tables). The bundles are neurons
+        n, n+1, ... of type R1-6; self.filled says what was added. Imputed, not observed."""
         device = device or os.environ.get("FLY_DEVICE", "cpu")
         if device == "auto":
             device = "cuda" if cuda_available() else "cpu"
@@ -133,10 +139,30 @@ class FlyBrain:
         data = ensure_data(data)
         meta = np.load(data / "brain.npz")
         W = sparse.load_npz(data / "weights.npz")
+        self.visual = meta["visual"]
+        self.azimuth = meta["azimuth"]  # -1 far left ... +1 far right
+        self.cell_type = meta["cell_type"]
+        self.side = meta["side"]
+        self.positions = meta["positions"] if "positions" in meta.files else None
+        self.superclass = meta["superclass"] if "superclass" in meta.files else None
+        self.groups = {k.removeprefix("group_"): meta[k] for k in meta.files if k.startswith("group_")}
+        self.filled = None
+        if fill_retina:
+            from .retina import fill
+            n0 = W.shape[0]
+            W, self.filled, added = fill(W, data)
+            V = W.shape[0] - n0
+            self.visual = np.concatenate([self.visual, n0 + np.arange(V)])
+            self.azimuth = np.concatenate([self.azimuth, self.filled.azimuth])
+            self.cell_type = np.concatenate([self.cell_type.astype(str), added["cell_type"]])
+            self.side = np.concatenate([self.side.astype(str), added["side"]])
+            self.superclass = np.concatenate([self.superclass.astype(str), added["superclass"]])
+            if self.positions is not None:
+                self.positions = np.concatenate([self.positions, np.full((V, 3), np.nan, self.positions.dtype)])
         if not sensory_input:
-            if "superclass" not in meta.files:
+            if self.superclass is None:
                 raise RuntimeError("brain.npz has no superclass; run `brainfly build`")
-            sensory = np.char.find(meta["superclass"].astype(str), "sensory") >= 0
+            sensory = np.char.find(self.superclass.astype(str), "sensory") >= 0
             W = sparse.diags((~sensory).astype(np.float32)) @ W.tocsr()   # rows = postsynaptic
         if device == "cuda":
             import cupy
@@ -148,13 +174,6 @@ class FlyBrain:
         W = W.tocsc()
         self.n = W.shape[0]
         self.indptr, self.indices, self.weights = W.indptr, W.indices, W.data
-        self.visual = meta["visual"]
-        self.azimuth = meta["azimuth"]  # -1 far left ... +1 far right
-        self.cell_type = meta["cell_type"]
-        self.side = meta["side"]
-        self.positions = meta["positions"] if "positions" in meta.files else None
-        self.superclass = meta["superclass"] if "superclass" in meta.files else None
-        self.groups = {k.removeprefix("group_"): meta[k] for k in meta.files if k.startswith("group_")}
         self._visual = self.xp.asarray(self.visual)
         cell_params = cell_params or {}
         for key, values in cell_params.items():
