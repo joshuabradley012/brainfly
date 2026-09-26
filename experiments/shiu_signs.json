@@ -1,0 +1,285 @@
+{
+ "criteria": "Does fast transmission from only the neurons with a known fast transmitter end the MaleCNS runaway?\n(rung 1, fourth attempt)\n\nOn the corrected kernel, the second attempt's density recipe came closest (shiu_scaled.py: every\nsynapse onto a neuron divided by its size). Only 20 undriven neurons passed 100 Hz, and MN9 followed\nthe sugar rate: 0 Hz at 10 and 25 Hz sugar, 68 Hz at 100 Hz. It failed because activity outlasted the\ndrive, at 23% of its level where the limit is 1%, and because 11 of 20 weight shuffles drove MN9\ntoo. A diagnostic that wasn't pre-registered traced the lasting activity to a cluster of pars\nintercerebralis and prow neurons: insulin-producing cells, DH44, DMS, PI3 and DNES1 cells, and PRW\nand SMP interneurons. Most of them have no transmitter MaleCNS could call (consensus \"unclear\"), and\nbrainfly's sign rule counts that as fast excitation by default, as doomfly's does. Such cells are\nlargely neurosecretory and peptidergic. They signal through G-protein receptors over hundreds of\nmilliseconds or longer, and the research report puts that kind of signalling, like the monoamines',\nin slow modulatory state rather than fast excitation (rung 2).\n\nSo this keeps in the fast network only synapses from neurons with a known fast transmitter. It\nremoves every synapse from:\n  (a) the 541 neurons whose consensus transmitter is dopamine, octopamine or serotonin;\n  (b) the neurons with no consensus transmitter (unclear or missing), except sensory neurons.\n      Insect sensory neurons are overwhelmingly cholinergic, so an unclear call there reflects the\n      classifier, not the cell; photoreceptors, which are histaminergic, are called so. 6 of the 38\n      bitter taste neurons are among the exempted.\n  (c) Kenyon cells onto other Kenyon cells, which act through inhibitory muscarinic receptors rather\n      than fast excitation (Bielopolski et al. 2019).\nTransmitters come from MaleCNS's consensus only. Its machine prediction calls 4,058 of the 4,064\nKenyon cells dopaminergic, which made shiu_mb.py remove nearly all Kenyon-cell output.\n\nModel: brainfly.hybrid.HybridBrain with nothing else changed (Shiu's neuron model and parameters,\n0.1 ms steps, Brian2-exact), on the MaleCNS signed counts minus (a)-(c). Every synapse onto neuron i\nis divided by s_i, as in shiu_scaled.py's density recipe (s_i = neuron i's total synapses in the whole\nconnectome / the median).\nCalibration: Shiu's rule, as before (the w_syn whose MN9 L rate at 100 Hz sugar is closest to 80% of\nits maximum over 10-200 Hz), over w_syn = 0.55 x 2^(k/4) mV, k = 0..8 (0.55-2.2 mV; the density\nrecipe calibrated at the top of the earlier grid, 1.1 mV), 10 trials per point.\nTests at the calibrated w_syn: exactly shiu_baseline.py's (30 trials, 100 Hz, same neuron sets and\nseeds). Nulls: 20 weight shuffles and 20 degree-preserving rewirings of this modified count matrix,\nwith the size scaling applied after shuffling, as in shiu_scaled.py, 10 trials each.\nPass, fixed before the first run: STABLE and SUGAR and NULL, as shiu_scaled.py defines them, and\nRESPONSE: at the calibrated w_syn, MN9 L's rate at 10 Hz sugar is at most 25% of its rate at 100 Hz\nin the calibration grid. RESPONSE is new. shiu_mb.py showed the taste tests passing while MN9 fired\nas fast at 10 Hz sugar as at 100 Hz.\nConfirmation: a pass counts only if STABLE, SUGAR and RESPONSE hold again on fresh seeds (the tests\nrerun with every seed + 1000, and MN9 L at 10 and 100 Hz sugar, 30 trials each).\nReported, not part of the pass: WATER, BITTER, IR94E, what still fires after the drive (by type),\nand each null network's MN9 rate and count of neurons above 100 Hz.\n\n    python experiments/shiu_signs.py            (writes experiments/shiu_signs.json)\n",
+ "removed": {
+  "monoaminergic_neurons": 541,
+  "no_fast_transmitter_neurons": 2352,
+  "exempted_sensory_neurons": 825,
+  "synapses_from_monoaminergic": 1183790,
+  "synapses_from_no_fast_transmitter": 1801813,
+  "synapses_kenyon_to_kenyon": 1153845,
+  "synapses_kept": 120038160,
+  "synapses_before": 124177616
+ },
+ "calibration": {
+  "grid": [
+   {
+    "w_syn": 0.55,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 0.6541,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 0.7778,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 0.925,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 1.1,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     2.7,
+     10.9
+    ],
+    "ratio_100": 0.0
+   },
+   {
+    "w_syn": 1.3081,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     10.9,
+     34.5,
+     35.6
+    ],
+    "ratio_100": 0.306
+   },
+   {
+    "w_syn": 1.5556,
+    "mn9_L_hz": [
+     0.0,
+     0.3,
+     9.4,
+     62.1,
+     55.3,
+     56.3
+    ],
+    "ratio_100": 1.0
+   },
+   {
+    "w_syn": 1.85,
+    "mn9_L_hz": [
+     4.8,
+     13.2,
+     25.1,
+     32.3,
+     13.8,
+     8.7
+    ],
+    "ratio_100": 1.0
+   },
+   {
+    "w_syn": 2.2,
+    "mn9_L_hz": [
+     11.4,
+     11.2,
+     11.7,
+     15.5,
+     14.7,
+     11.9
+    ],
+    "ratio_100": 1.0
+   }
+  ],
+  "w_syn": 1.5556
+ },
+ "RESPONSE": true,
+ "tests": {
+  "SUGAR": true,
+  "WATER": false,
+  "BITTER": true,
+  "IR94E": true,
+  "STABLE": false,
+  "mn9_L_hz": {
+   "sugar": 48.47,
+   "water": 0.0,
+   "sugar+bitter": 0.1,
+   "sugar+ir94e": 7.9
+  },
+  "mn9_R_hz": {
+   "sugar": 48.33,
+   "water": 0.0,
+   "sugar+bitter": 24.03,
+   "sugar+ir94e": 5.4
+  },
+  "t_water": 0.0,
+  "bitter_drop": 0.998,
+  "t_bitter": 14.96,
+  "ir94e_drop": 0.837,
+  "t_ir94e": 12.05,
+  "tail_fraction": 0.14113,
+  "undriven_over_100hz": 8,
+  "network_hz_during_sugar": 18140.7,
+  "activated_by_sugar": {
+   "10 Hz": 229,
+   "200 Hz": 5658
+  }
+ },
+ "lasting_activity": {
+  "neurons_over_1hz": 682,
+  "spikes_per_s": 3436.6,
+  "by_superclass": {
+   "vnc_intrinsic": 337,
+   "cb_intrinsic": 195,
+   "vnc_motor": 78,
+   "cb_motor": 24,
+   "cb_sensory": 21,
+   "descending_neuron": 16,
+   "ascending_neuron": 4,
+   "cb_endocrine": 2
+  },
+  "top_types_spikes_per_s": {
+   "LB1e": 690.1,
+   "GNG592": 100.3,
+   "SLP186": 75.1,
+   "GNG016": 68.7,
+   "GNG566": 68.1,
+   "GNG147": 38.9,
+   "mAL4B": 35.3,
+   "IN04B032": 31.7,
+   "Ti flexor MN": 31.6,
+   "GNG489": 29.3,
+   "(untyped)": 28.5,
+   "IN04B060": 19.9
+  }
+ },
+ "nulls": {
+  "weight_shuffle": {
+   "mn9_L_hz": [
+    45.1,
+    72.9,
+    74.0,
+    50.7,
+    0.0,
+    43.2,
+    50.2,
+    0.0,
+    83.7,
+    0.1,
+    81.1,
+    50.3,
+    16.4,
+    68.4,
+    74.0,
+    60.6,
+    37.0,
+    3.8,
+    38.9,
+    67.0
+   ],
+   "undriven_over_100hz": [
+    83950,
+    82644,
+    84643,
+    81946,
+    84420,
+    84384,
+    84782,
+    82615,
+    83819,
+    77135,
+    83303,
+    84057,
+    83574,
+    81792,
+    82749,
+    84231,
+    82692,
+    83157,
+    82770,
+    82953
+   ],
+   "activated": 18
+  },
+  "degree_preserving": {
+   "mn9_L_hz": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "undriven_over_100hz": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "activated": 0
+  },
+  "NULL": false
+ },
+ "pass": false,
+ "seconds": 866
+}

@@ -64,16 +64,19 @@ def _rewire(W, seed: int):
     return (sparse.diags(scale.astype(np.float32)) @ R).astype(W.dtype).tocsr()
 
 
+SHARES = 14    # _scatter's split of the sources; fixed so float sums don't depend on the thread count
+
+
 @numba.njit(nogil=True, parallel=True)
 def _scatter(indptr, targets, weights, sources, amounts, n):
     """Input to each of n neurons from `sources`, the columns of a CSC matrix, each column scaled
-    by its amount (1 for a spike, the release change for a graded neuron). Each thread takes one
-    contiguous share of the sources and accumulates into its own row; the rows are then added in
-    thread order, so the sum doesn't depend on scheduling."""
-    workers = numba.get_num_threads()
-    rows = np.zeros((workers, n), np.float32)
-    share = (len(sources) + workers - 1) // workers
-    for w in numba.prange(workers):
+    by its amount (1 for a spike, the release change for a graded neuron). The sources are split
+    into SHARES contiguous shares, each accumulated into its own row, and the rows are added in
+    order, so the sum depends on neither scheduling nor the number of threads. (14 is the thread
+    count of the machine the recorded results came from, which keeps them bit for bit.)"""
+    rows = np.zeros((SHARES, n), np.float32)
+    share = (len(sources) + SHARES - 1) // SHARES
+    for w in numba.prange(SHARES):
         row = rows[w]
         for k in range(w * share, min(len(sources), (w + 1) * share)):
             col = sources[k]
@@ -83,7 +86,7 @@ def _scatter(indptr, targets, weights, sources, amounts, n):
     out = np.zeros(n, np.float32)
     for i in numba.prange(n):
         total = np.float32(0.0)
-        for w in range(workers):
+        for w in range(SHARES):
             total += rows[w, i]
         out[i] = total
     return out

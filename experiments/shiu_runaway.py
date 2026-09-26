@@ -11,6 +11,16 @@ above 100 Hz, and the activity outlasts the drive. This asks, after the fact:
            Kenyon-cell-to-Kenyon-cell synapses removed
   window   for each w_syn, does 100 Hz sugar reach MN9 L, and does the network stay stable? (5 trials)
 
+Re-run 2026-09-26 on brainfly.shiu's corrected kernel, which now matches Brian2 spike for spike
+(tests/test_shiu_brian2.py). The first run used a kernel that kept input arriving during
+refractoriness, where Brian2 drops it, and ran its steps in a different order; that run is in git
+history.
+
+Correction, 2026-09-26: the "monoamine synapses removed" variant's rule, consensus or predicted
+transmitter, also caught 4,058 Kenyon cells, which MaleCNS's machine prediction calls
+dopaminergic though their consensus transmitter is acetylcholine, so that variant removed nearly
+all Kenyon-cell output as well.
+
     python experiments/shiu_runaway.py            (writes experiments/shiu_runaway.json)
 """
 from __future__ import annotations

@@ -16,6 +16,7 @@ and <data>/brain.json (counts).
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import urllib.request
 from pathlib import Path
@@ -37,6 +38,14 @@ SOURCES = {
     COLUMNS: "https://raw.githubusercontent.com/flyconnectome/2025malecns/67767d2233657983993ff6c2be48e836a935863c/"
              "supplemental_data/optic-column-type-assignments-v1.0.xlsx",
 }
+# sha256 of each source file as released; the three FlyEM tables match the hashes doomfly
+# (github.com/nftechie/doomfly) locked independently
+SHA256 = {
+    ANNOTATIONS: "2177e246113e4cfbf1e7772ec37c6da1955ff22e8063d0b1f833101f99a9a3b2",
+    TRANSMITTERS: "95c9289220663abeb3409f3ad9e5a7f8a53f8093f5139d15502cd08da8879621",
+    CONNECTIONS: "e35da783d1c686b2b58b3b87cd6a403ae43bfcfba8bff28e08ef752c1a56afc1",
+    COLUMNS: "d4af1cacb751036f7e84bfecc9bec79ca010066ac066559c29b566003ec080d3",
+}
 INHIBITORY = "gaba|glutamate|histamine"    # consensus transmitters that make a connection negative
 PHOTORECEPTORS = ["R1-6", "R7", "R8"]
 # Descending neurons kept as named read-outs: forward walking (DNg100), steering (DNa02), the giant
@@ -46,23 +55,40 @@ _CHUNK = 4_000_000                          # connection rows handled at a time
 
 
 def download_all(raw: Path) -> None:
-    """Fetch whichever MaleCNS source files (about 1.1 GB in all) aren't in `raw` yet."""
+    """Fetch whichever MaleCNS source files (about 1.1 GB in all) aren't in `raw` yet, keeping each
+    only if its sha256 matches the released file's."""
     raw.mkdir(parents=True, exist_ok=True)
     for name, url in SOURCES.items():
         dest = raw / name
         if dest.exists():
             continue
         tmp = dest.parent / f"{dest.name}.part"
+        digest = hashlib.sha256()
         print(f"fetching {name}", flush=True)
         with urllib.request.urlopen(url) as response, open(tmp, "wb") as out:
             size, got = int(response.headers.get("Content-Length") or 0), 0
             while block := response.read(1 << 22):
                 out.write(block)
+                digest.update(block)
                 got += len(block)
                 if size:
                     print(f"\r  {got / 1e6:,.0f} of {size / 1e6:,.0f} MB", end="", flush=True)
         print()
+        if digest.hexdigest() != SHA256[name]:
+            tmp.unlink(missing_ok=True)
+            raise RuntimeError(f"{name} from {url} doesn't match the released file's sha256; discarded it")
         tmp.replace(dest)
+
+
+def verify(raw: Path) -> None:
+    """Check every source file in `raw` against its released sha256."""
+    for name, sha256 in SHA256.items():
+        digest = hashlib.sha256()
+        with open(raw / name, "rb") as f:
+            while block := f.read(1 << 22):
+                digest.update(block)
+        if digest.hexdigest() != sha256:
+            raise RuntimeError(f"{raw / name} doesn't match the released file's sha256; delete it and build again")
 
 
 def column_assignments(path: Path) -> dict[int, tuple[str, int, int]]:
@@ -132,6 +158,7 @@ def build(data: Path | str = DATA) -> None:
     data = Path(data)
     raw = data / "raw"
     download_all(raw)
+    verify(raw)
 
     nodes = feather.read_table(raw / ANNOTATIONS).to_pandas()
     nodes = nodes[nodes["superclass"].fillna("") != ""]
@@ -195,9 +222,11 @@ def build(data: Path | str = DATA) -> None:
     print(f"{len(visual):,} photoreceptors, {int(unplaced.sum())} without a column", flush=True)
 
     sparse.save_npz(data / "weights.npz", W, compressed=False)
-    arrays = dict(ids=ids, visual=visual, azimuth=azimuth, positions=positions)
-    for name, column in (("cell_type", cell_type), ("side", side), ("superclass", nodes["superclass"])):
-        arrays[name] = column.to_numpy().astype(str)
+    text = {name: column.to_numpy().astype(str) for name, column in
+            (("cell_type", cell_type), ("side", side), ("superclass", nodes["superclass"]))}
+    # in the released file's order, so the build reproduces it byte for byte
+    arrays = dict(ids=ids, visual=visual, azimuth=azimuth, cell_type=text["cell_type"], side=text["side"],
+                  positions=positions, superclass=text["superclass"])
     arrays.update({f"group_{name}": rows for name, rows in groups.items()})
     np.savez(data / "brain.npz", **arrays)
     summary = {"neurons": n, "connections": int(W.nnz), "photoreceptors": int(len(visual)),

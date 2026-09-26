@@ -33,6 +33,11 @@ annotation.
 Reported but not criteria: the same tests at Shiu's raw w_syn = 0.275; MN9 R; how many neurons sugar
 activates (Shiu, FlyWire: 45 at 10 Hz, 455 at 200 Hz).
 
+Re-run 2026-09-26 on brainfly.shiu's corrected kernel, which now matches Brian2 spike for spike
+(tests/test_shiu_brian2.py). The first run used a kernel that kept input arriving during
+refractoriness, where Brian2 drops it, and ran its steps in a different order; that run is in git
+history.
+
     python experiments/shiu_baseline.py            (writes experiments/shiu_baseline.json)
 """
 from __future__ import annotations
