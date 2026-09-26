@@ -81,7 +81,10 @@ def mcns_types(data: Path | str | None = None) -> np.ndarray:
     neurons by their FlyWire type first, which lumps some MaleCNS subtypes (LB3a-d are all "LB3")."""
     import pyarrow.feather as feather
 
+    from .build import download_all
+
     data = ensure_data(data)
+    download_all(data / "raw")
     ann = feather.read_table(data / "raw" / "body-annotations-male-cns-v1.0-minconf-0.5.feather",
                              columns=["bodyId", "type"]).to_pandas()
     ids = np.load(data / "brain.npz")["ids"]
@@ -159,10 +162,12 @@ class Result:
 class ShiuBrain:
     """dt: step in seconds (Shiu used Brian2's default 0.1 ms). trials: independent runs, each with
     its own Poisson input, simulated in parallel. matrix: signed synapse counts to use instead of
-    the connectome (e.g. a shuffled copy), rows = postsynaptic, same neurons as brain.npz."""
+    the connectome (e.g. a shuffled copy), rows = postsynaptic, same neurons as brain.npz.
+    scale: one multiplier per neuron on every synapse onto it (e.g. 1 / size, so a synapse onto a
+    big, leaky neuron moves it less); None = Shiu's uniform weight."""
 
     def __init__(self, data: Path | str | None = None, w_syn: float = W_SYN, trials: int = 30,
-                 dt: float = 1e-4, matrix: sparse.spmatrix | None = None):
+                 dt: float = 1e-4, matrix: sparse.spmatrix | None = None, scale: np.ndarray | None = None):
         data = ensure_data(data)
         meta = np.load(data / "brain.npz")
         self.cell_type = meta["cell_type"]
@@ -176,6 +181,7 @@ class ShiuBrain:
         self.w_syn = float(w_syn)
         self.trials = int(trials)
         self.dt = float(dt)
+        self.scale = None if scale is None else np.asarray(scale, np.float32)
 
     def cells(self, types: list[str], side: str | None = None) -> np.ndarray:
         """Neurons whose cell type (FlyWire's or MaleCNS's own) or superclass is in `types`,
@@ -198,6 +204,8 @@ class ShiuBrain:
         silenced = np.zeros(self.n, np.bool_)
         silenced[np.asarray(silence, np.int64)] = True
         weights = self.synapses * np.float32(self.w_syn)
+        if self.scale is not None:
+            weights *= self.scale[self.indices]
         weights[silenced[self.indices]] = 0.0          # nothing reaches a silenced neuron
         e_m, e_s = np.exp(-dt / T_MBR), np.exp(-dt / TAU)
         a_vx = TAU / (TAU - T_MBR) * (e_s - e_m)

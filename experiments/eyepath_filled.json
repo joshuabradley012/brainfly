@@ -1,0 +1,2454 @@
+{
+ "criteria": "Does filling in the missing photoreceptor input let looming through to the looming detectors?\n\neyepath.py: with a graded retina and lamina, a dark object looming on one side moved LC4 and LPLC2 on\nthat side, with the right signs all along the pathway, but by only about 1.5 Hz on average, short of\nits 3 Hz bar. Part of the reason is in the data: in MaleCNS v1.0, 962 of 1,769 lamina columns have no\nphotoreceptor input (brainfly.retina). This repeats eyepath.py with FlyBrain(fill_retina=True): the\nsame graded sets, knobs, scenes, seeds, criteria, sweep and confirmation, with one fix to a criterion\nknown to be broken before this run.\n\nPass criteria, fixed before the first run (all must hold):\n  REST    blank field: LC4 and LPLC2 <= 10 Hz and DNp01 <= 5 Hz on both sides; <= 5% of graded\n          neurons at the floor or ceiling of their release; and the neurons outside the optic lobe\n          and retina (the same population in every condition) fire at no more than 1.2 x their rate\n          in the original all-spiking model, measured here. That replaces eyepath.py's \"mean rate of\n          all spiking neurons <= 5 Hz\", which changed its denominator from one graded set to another.\n  RELAY   loomL raises left LC4 and left LPLC2 by >= 3 Hz each (t >= 4 over flies); loomR likewise on the right\n  SIDE    loomL raises left LC4 and left LPLC2 more than their right copies, by >= 2 Hz (t >= 4); loomR mirrored\nSecondary: ESCAPE as in eyepath.py. Sweep on one seed with 6 flies; for each graded set the passing\nconfig with the lowest graded_gain (then lowest graded_release) is re-run on a fresh seed with 8\nflies, and only that confirmation counts.\n\nDescriptive, not a criterion: LC4 and LPLC2 grouped by the columns they draw on. Column intactness\n(1 = the column's L1 gets photoreceptor input, 0 = blind) is spread through the connectome from the\ncolumnar neurons, three synapses deep, as a synapse-weighted average. Detectors >= 0.75 count as\nintact-column, <= 0.25 as blind-column. Their per-neuron loom responses are reported with the fill\noff and on, at eyepath.py's strongest setting that kept the network at rest (lamina set,\ngraded_gain 0.15, graded_release 0.3). If the fill is faithful, blind-column detectors should be\nsilent without it and respond like intact-column ones with it.\n\n    python experiments/eyepath_filled.py            (writes experiments/eyepath_filled.json)\n",
+ "sweep": [
+  {
+   "graded": "lamina",
+   "graded_gain": 0.05,
+   "graded_release": 0.1,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.15,
+    "LC4 R": 0.22,
+    "LPLC2 L": 0.76,
+    "LPLC2 R": 0.78,
+    "DNp01 L": 0.22,
+    "DNp01 R": 0.11
+   },
+   "rest_pop_hz": 8.34,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.0006,
+   "relay": {
+    "loomL LC4": {
+     "delta": 0.013,
+     "t": 2.39
+    },
+    "loomL LPLC2": {
+     "delta": 0.203,
+     "t": 4.62
+    },
+    "loomR LC4": {
+     "delta": 0.107,
+     "t": 8.2
+    },
+    "loomR LPLC2": {
+     "delta": 0.183,
+     "t": 12.3
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 0.033,
+     "t": 2.37
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 0.201,
+     "t": 3.95
+    },
+    "loomR LC4 near-far": {
+     "delta": 0.115,
+     "t": 7.85
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 0.158,
+     "t": 15.51
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": -0.222,
+     "t": -1.0
+    },
+    "loomL DNp01 near-far": {
+     "delta": -0.333,
+     "t": -1.46
+    },
+    "loomR DNp01": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "loomR DNp01 near-far": {
+     "delta": 0.111,
+     "t": 0.54
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -0.27,
+     "loomL": -3.57,
+     "loomR": -0.3
+    },
+    "R1-6 R": {
+     "blank": -0.22,
+     "loomL": -0.41,
+     "loomR": -3.22
+    },
+    "L1 L": {
+     "blank": 0.01,
+     "loomL": 1.55,
+     "loomR": 0.06
+    },
+    "L1 R": {
+     "blank": 0.02,
+     "loomL": 0.06,
+     "loomR": 1.47
+    },
+    "L2 L": {
+     "blank": -0.35,
+     "loomL": 0.79,
+     "loomR": -0.32
+    },
+    "L2 R": {
+     "blank": -0.34,
+     "loomL": -0.33,
+     "loomR": 0.7
+    },
+    "Mi1 L": {
+     "blank": 0.18,
+     "loomL": 0.09,
+     "loomR": 0.18
+    },
+    "Mi1 R": {
+     "blank": 0.19,
+     "loomL": 0.2,
+     "loomR": 0.1
+    },
+    "Tm1 L": {
+     "blank": 0.06,
+     "loomL": 0.24,
+     "loomR": 0.06
+    },
+    "Tm1 R": {
+     "blank": 0.06,
+     "loomL": 0.06,
+     "loomR": 0.26
+    },
+    "Tm2 L": {
+     "blank": 0.07,
+     "loomL": 0.32,
+     "loomR": 0.08
+    },
+    "Tm2 R": {
+     "blank": 0.09,
+     "loomL": 0.09,
+     "loomR": 0.33
+    },
+    "T4 L": {
+     "blank": 0.51,
+     "loomL": 0.29,
+     "loomR": 0.52
+    },
+    "T4 R": {
+     "blank": 0.57,
+     "loomL": 0.57,
+     "loomR": 0.28
+    },
+    "T5 L": {
+     "blank": 0.42,
+     "loomL": 0.82,
+     "loomR": 0.44
+    },
+    "T5 R": {
+     "blank": 0.53,
+     "loomL": 0.52,
+     "loomR": 0.9
+    },
+    "LC4 L": {
+     "blank": 0.15,
+     "loomL": 0.16,
+     "loomR": 0.14
+    },
+    "LC4 R": {
+     "blank": 0.22,
+     "loomL": 0.2,
+     "loomR": 0.33
+    },
+    "LPLC2 L": {
+     "blank": 0.76,
+     "loomL": 0.97,
+     "loomR": 0.79
+    },
+    "LPLC2 R": {
+     "blank": 0.78,
+     "loomL": 0.78,
+     "loomR": 0.96
+    },
+    "DNp01 L": {
+     "blank": 0.22,
+     "loomL": 0.0,
+     "loomR": 0.11
+    },
+    "DNp01 R": {
+     "blank": 0.11,
+     "loomL": 0.22,
+     "loomR": 0.11
+    },
+    "DNa02 L": {
+     "blank": 1.22,
+     "loomL": 1.0,
+     "loomR": 1.11
+    },
+    "DNa02 R": {
+     "blank": 0.0,
+     "loomL": 0.11,
+     "loomR": 0.11
+    }
+   }
+  },
+  {
+   "graded": "lamina",
+   "graded_gain": 0.05,
+   "graded_release": 0.3,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.14,
+    "LC4 R": 0.24,
+    "LPLC2 L": 0.78,
+    "LPLC2 R": 0.74,
+    "DNp01 L": 0.22,
+    "DNp01 R": 0.11
+   },
+   "rest_pop_hz": 8.33,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.0,
+   "relay": {
+    "loomL LC4": {
+     "delta": 0.036,
+     "t": 2.94
+    },
+    "loomL LPLC2": {
+     "delta": 0.351,
+     "t": 6.32
+    },
+    "loomR LC4": {
+     "delta": 0.079,
+     "t": 3.4
+    },
+    "loomR LPLC2": {
+     "delta": 0.409,
+     "t": 11.67
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 0.046,
+     "t": 1.65
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 0.322,
+     "t": 8.8
+    },
+    "loomR LC4 near-far": {
+     "delta": 0.071,
+     "t": 3.83
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 0.405,
+     "t": 9.76
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": -0.111,
+     "t": -1.0
+    },
+    "loomL DNp01 near-far": {
+     "delta": -0.111,
+     "t": -0.54
+    },
+    "loomR DNp01": {
+     "delta": 0.111,
+     "t": 1.0
+    },
+    "loomR DNp01 near-far": {
+     "delta": 0.222,
+     "t": 1.58
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -0.26,
+     "loomL": -4.98,
+     "loomR": -0.31
+    },
+    "R1-6 R": {
+     "blank": -0.22,
+     "loomL": -0.43,
+     "loomR": -4.55
+    },
+    "L1 L": {
+     "blank": 0.01,
+     "loomL": 2.26,
+     "loomR": 0.06
+    },
+    "L1 R": {
+     "blank": 0.02,
+     "loomL": 0.06,
+     "loomR": 2.15
+    },
+    "L2 L": {
+     "blank": -0.35,
+     "loomL": 1.17,
+     "loomR": -0.33
+    },
+    "L2 R": {
+     "blank": -0.34,
+     "loomL": -0.31,
+     "loomR": 1.04
+    },
+    "Mi1 L": {
+     "blank": 0.18,
+     "loomL": 0.1,
+     "loomR": 0.18
+    },
+    "Mi1 R": {
+     "blank": 0.2,
+     "loomL": 0.2,
+     "loomR": 0.1
+    },
+    "Tm1 L": {
+     "blank": 0.06,
+     "loomL": 0.28,
+     "loomR": 0.06
+    },
+    "Tm1 R": {
+     "blank": 0.07,
+     "loomL": 0.06,
+     "loomR": 0.29
+    },
+    "Tm2 L": {
+     "blank": 0.07,
+     "loomL": 0.39,
+     "loomR": 0.08
+    },
+    "Tm2 R": {
+     "blank": 0.09,
+     "loomL": 0.09,
+     "loomR": 0.41
+    },
+    "T4 L": {
+     "blank": 0.51,
+     "loomL": 0.26,
+     "loomR": 0.5
+    },
+    "T4 R": {
+     "blank": 0.56,
+     "loomL": 0.58,
+     "loomR": 0.24
+    },
+    "T5 L": {
+     "blank": 0.44,
+     "loomL": 0.95,
+     "loomR": 0.45
+    },
+    "T5 R": {
+     "blank": 0.51,
+     "loomL": 0.53,
+     "loomR": 1.02
+    },
+    "LC4 L": {
+     "blank": 0.14,
+     "loomL": 0.17,
+     "loomR": 0.15
+    },
+    "LC4 R": {
+     "blank": 0.24,
+     "loomL": 0.23,
+     "loomR": 0.32
+    },
+    "LPLC2 L": {
+     "blank": 0.78,
+     "loomL": 1.13,
+     "loomR": 0.78
+    },
+    "LPLC2 R": {
+     "blank": 0.74,
+     "loomL": 0.77,
+     "loomR": 1.15
+    },
+    "DNp01 L": {
+     "blank": 0.22,
+     "loomL": 0.11,
+     "loomR": 0.11
+    },
+    "DNp01 R": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.22
+    },
+    "DNa02 L": {
+     "blank": 1.11,
+     "loomL": 0.89,
+     "loomR": 1.22
+    },
+    "DNa02 R": {
+     "blank": 0.0,
+     "loomL": 0.0,
+     "loomR": 0.11
+    }
+   }
+  },
+  {
+   "graded": "lamina",
+   "graded_gain": 0.15,
+   "graded_release": 0.1,
+   "REST": false,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.11,
+    "LC4 R": 0.22,
+    "LPLC2 L": 0.85,
+    "LPLC2 R": 0.89,
+    "DNp01 L": 0.11,
+    "DNp01 R": 0.11
+   },
+   "rest_pop_hz": 8.35,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.0526,
+   "relay": {
+    "loomL LC4": {
+     "delta": 0.139,
+     "t": 11.87
+    },
+    "loomL LPLC2": {
+     "delta": 0.85,
+     "t": 14.54
+    },
+    "loomR LC4": {
+     "delta": 0.216,
+     "t": 10.73
+    },
+    "loomR LPLC2": {
+     "delta": 0.692,
+     "t": 13.61
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 0.147,
+     "t": 6.36
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 0.858,
+     "t": 13.68
+    },
+    "loomR LC4 near-far": {
+     "delta": 0.19,
+     "t": 11.32
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 0.658,
+     "t": 8.92
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 0.111,
+     "t": 1.0
+    },
+    "loomL DNp01 near-far": {
+     "delta": -0.111,
+     "t": -0.54
+    },
+    "loomR DNp01": {
+     "delta": 0.111,
+     "t": 1.0
+    },
+    "loomR DNp01 near-far": {
+     "delta": 0.222,
+     "t": 1.58
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -1.36,
+     "loomL": -3.97,
+     "loomR": -1.39
+    },
+    "R1-6 R": {
+     "blank": -1.35,
+     "loomL": -1.54,
+     "loomR": -3.78
+    },
+    "L1 L": {
+     "blank": 0.75,
+     "loomL": 4.56,
+     "loomR": 0.91
+    },
+    "L1 R": {
+     "blank": 0.97,
+     "loomL": 1.09,
+     "loomR": 4.5
+    },
+    "L2 L": {
+     "blank": -0.23,
+     "loomL": 1.98,
+     "loomR": -0.13
+    },
+    "L2 R": {
+     "blank": -0.09,
+     "loomL": -0.04,
+     "loomR": 1.86
+    },
+    "Mi1 L": {
+     "blank": 0.11,
+     "loomL": 0.04,
+     "loomR": 0.11
+    },
+    "Mi1 R": {
+     "blank": 0.1,
+     "loomL": 0.1,
+     "loomR": 0.03
+    },
+    "Tm1 L": {
+     "blank": 0.15,
+     "loomL": 0.62,
+     "loomR": 0.17
+    },
+    "Tm1 R": {
+     "blank": 0.23,
+     "loomL": 0.24,
+     "loomR": 0.7
+    },
+    "Tm2 L": {
+     "blank": 0.2,
+     "loomL": 0.85,
+     "loomR": 0.22
+    },
+    "Tm2 R": {
+     "blank": 0.29,
+     "loomL": 0.32,
+     "loomR": 0.97
+    },
+    "T4 L": {
+     "blank": 0.34,
+     "loomL": 0.14,
+     "loomR": 0.33
+    },
+    "T4 R": {
+     "blank": 0.33,
+     "loomL": 0.32,
+     "loomR": 0.12
+    },
+    "T5 L": {
+     "blank": 0.66,
+     "loomL": 1.35,
+     "loomR": 0.66
+    },
+    "T5 R": {
+     "blank": 0.81,
+     "loomL": 0.81,
+     "loomR": 1.53
+    },
+    "LC4 L": {
+     "blank": 0.11,
+     "loomL": 0.25,
+     "loomR": 0.14
+    },
+    "LC4 R": {
+     "blank": 0.22,
+     "loomL": 0.22,
+     "loomR": 0.44
+    },
+    "LPLC2 L": {
+     "blank": 0.85,
+     "loomL": 1.7,
+     "loomR": 0.88
+    },
+    "LPLC2 R": {
+     "blank": 0.89,
+     "loomL": 0.88,
+     "loomR": 1.58
+    },
+    "DNp01 L": {
+     "blank": 0.11,
+     "loomL": 0.22,
+     "loomR": 0.0
+    },
+    "DNp01 R": {
+     "blank": 0.11,
+     "loomL": 0.33,
+     "loomR": 0.22
+    },
+    "DNa02 L": {
+     "blank": 1.11,
+     "loomL": 1.0,
+     "loomR": 1.22
+    },
+    "DNa02 R": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.22
+    }
+   }
+  },
+  {
+   "graded": "lamina",
+   "graded_gain": 0.15,
+   "graded_release": 0.3,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.14,
+    "LC4 R": 0.29,
+    "LPLC2 L": 0.95,
+    "LPLC2 R": 1.06,
+    "DNp01 L": 0.0,
+    "DNp01 R": 0.0
+   },
+   "rest_pop_hz": 8.37,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.0397,
+   "relay": {
+    "loomL LC4": {
+     "delta": 0.606,
+     "t": 20.28
+    },
+    "loomL LPLC2": {
+     "delta": 3.268,
+     "t": 51.43
+    },
+    "loomR LC4": {
+     "delta": 0.889,
+     "t": 37.08
+    },
+    "loomR LPLC2": {
+     "delta": 2.551,
+     "t": 172.06
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 0.6,
+     "t": 14.94
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 3.337,
+     "t": 40.59
+    },
+    "loomR LC4 near-far": {
+     "delta": 0.884,
+     "t": 36.81
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 2.515,
+     "t": 56.49
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 0.889,
+     "t": 4.0
+    },
+    "loomL DNp01 near-far": {
+     "delta": 0.556,
+     "t": 2.71
+    },
+    "loomR DNp01": {
+     "delta": 1.222,
+     "t": 5.97
+    },
+    "loomR DNp01 near-far": {
+     "delta": 1.111,
+     "t": 3.95
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -1.49,
+     "loomL": -8.83,
+     "loomR": -1.63
+    },
+    "R1-6 R": {
+     "blank": -1.83,
+     "loomL": -2.31,
+     "loomR": -9.08
+    },
+    "L1 L": {
+     "blank": 0.98,
+     "loomL": 12.19,
+     "loomR": 1.35
+    },
+    "L1 R": {
+     "blank": 1.4,
+     "loomL": 1.7,
+     "loomR": 11.89
+    },
+    "L2 L": {
+     "blank": -0.2,
+     "loomL": 5.93,
+     "loomR": 0.05
+    },
+    "L2 R": {
+     "blank": 0.03,
+     "loomL": 0.23,
+     "loomR": 5.36
+    },
+    "Mi1 L": {
+     "blank": 0.14,
+     "loomL": 0.04,
+     "loomR": 0.13
+    },
+    "Mi1 R": {
+     "blank": 0.13,
+     "loomL": 0.13,
+     "loomR": 0.03
+    },
+    "Tm1 L": {
+     "blank": 0.19,
+     "loomL": 1.87,
+     "loomR": 0.25
+    },
+    "Tm1 R": {
+     "blank": 0.36,
+     "loomL": 0.42,
+     "loomR": 1.98
+    },
+    "Tm2 L": {
+     "blank": 0.26,
+     "loomL": 2.41,
+     "loomR": 0.36
+    },
+    "Tm2 R": {
+     "blank": 0.46,
+     "loomL": 0.57,
+     "loomR": 2.55
+    },
+    "T4 L": {
+     "blank": 0.35,
+     "loomL": 0.07,
+     "loomR": 0.32
+    },
+    "T4 R": {
+     "blank": 0.3,
+     "loomL": 0.3,
+     "loomR": 0.05
+    },
+    "T5 L": {
+     "blank": 0.77,
+     "loomL": 2.78,
+     "loomR": 0.81
+    },
+    "T5 R": {
+     "blank": 1.01,
+     "loomL": 1.05,
+     "loomR": 3.15
+    },
+    "LC4 L": {
+     "blank": 0.14,
+     "loomL": 0.74,
+     "loomR": 0.14
+    },
+    "LC4 R": {
+     "blank": 0.29,
+     "loomL": 0.29,
+     "loomR": 1.18
+    },
+    "LPLC2 L": {
+     "blank": 0.95,
+     "loomL": 4.22,
+     "loomR": 0.98
+    },
+    "LPLC2 R": {
+     "blank": 1.06,
+     "loomL": 0.99,
+     "loomR": 3.61
+    },
+    "DNp01 L": {
+     "blank": 0.0,
+     "loomL": 0.89,
+     "loomR": 0.11
+    },
+    "DNp01 R": {
+     "blank": 0.0,
+     "loomL": 0.33,
+     "loomR": 1.22
+    },
+    "DNa02 L": {
+     "blank": 1.11,
+     "loomL": 1.11,
+     "loomR": 1.11
+    },
+    "DNa02 R": {
+     "blank": 0.11,
+     "loomL": 0.22,
+     "loomR": 0.22
+    }
+   }
+  },
+  {
+   "graded": "lamina",
+   "graded_gain": 0.5,
+   "graded_release": 0.1,
+   "REST": false,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.18,
+    "LC4 R": 0.37,
+    "LPLC2 L": 1.99,
+    "LPLC2 R": 1.58,
+    "DNp01 L": 0.33,
+    "DNp01 R": 0.22
+   },
+   "rest_pop_hz": 8.36,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.4321,
+   "relay": {
+    "loomL LC4": {
+     "delta": 1.034,
+     "t": 22.08
+    },
+    "loomL LPLC2": {
+     "delta": 2.189,
+     "t": 15.05
+    },
+    "loomR LC4": {
+     "delta": 0.939,
+     "t": 37.3
+    },
+    "loomR LPLC2": {
+     "delta": 1.57,
+     "t": 18.79
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 1.049,
+     "t": 26.18
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 2.214,
+     "t": 17.34
+    },
+    "loomR LC4 near-far": {
+     "delta": 0.921,
+     "t": 47.59
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 1.744,
+     "t": 13.29
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 1.222,
+     "t": 5.97
+    },
+    "loomL DNp01 near-far": {
+     "delta": 1.111,
+     "t": 3.95
+    },
+    "loomR DNp01": {
+     "delta": 1.0,
+     "t": 4.39
+    },
+    "loomR DNp01 near-far": {
+     "delta": 1.111,
+     "t": 5.0
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": 0.19,
+     "loomL": -1.29,
+     "loomR": 0.15
+    },
+    "R1-6 R": {
+     "blank": 0.18,
+     "loomL": -0.12,
+     "loomR": -2.01
+    },
+    "L1 L": {
+     "blank": 2.64,
+     "loomL": 12.63,
+     "loomR": 3.06
+    },
+    "L1 R": {
+     "blank": 2.97,
+     "loomL": 3.34,
+     "loomR": 11.75
+    },
+    "L2 L": {
+     "blank": 0.0,
+     "loomL": 3.75,
+     "loomR": 0.23
+    },
+    "L2 R": {
+     "blank": -0.18,
+     "loomL": 0.02,
+     "loomR": 2.91
+    },
+    "Mi1 L": {
+     "blank": 0.15,
+     "loomL": 0.07,
+     "loomR": 0.16
+    },
+    "Mi1 R": {
+     "blank": 0.21,
+     "loomL": 0.19,
+     "loomR": 0.1
+    },
+    "Tm1 L": {
+     "blank": 0.97,
+     "loomL": 1.79,
+     "loomR": 1.02
+    },
+    "Tm1 R": {
+     "blank": 1.11,
+     "loomL": 1.17,
+     "loomR": 1.88
+    },
+    "Tm2 L": {
+     "blank": 1.21,
+     "loomL": 2.4,
+     "loomR": 1.26
+    },
+    "Tm2 R": {
+     "blank": 1.39,
+     "loomL": 1.46,
+     "loomR": 2.57
+    },
+    "T4 L": {
+     "blank": 0.22,
+     "loomL": 0.08,
+     "loomR": 0.22
+    },
+    "T4 R": {
+     "blank": 0.22,
+     "loomL": 0.21,
+     "loomR": 0.08
+    },
+    "T5 L": {
+     "blank": 1.53,
+     "loomL": 2.57,
+     "loomR": 1.59
+    },
+    "T5 R": {
+     "blank": 1.78,
+     "loomL": 1.8,
+     "loomR": 2.84
+    },
+    "LC4 L": {
+     "blank": 0.18,
+     "loomL": 1.22,
+     "loomR": 0.2
+    },
+    "LC4 R": {
+     "blank": 0.37,
+     "loomL": 0.35,
+     "loomR": 1.31
+    },
+    "LPLC2 L": {
+     "blank": 1.99,
+     "loomL": 4.18,
+     "loomR": 1.81
+    },
+    "LPLC2 R": {
+     "blank": 1.58,
+     "loomL": 1.56,
+     "loomR": 3.16
+    },
+    "DNp01 L": {
+     "blank": 0.33,
+     "loomL": 1.56,
+     "loomR": 0.22
+    },
+    "DNp01 R": {
+     "blank": 0.22,
+     "loomL": 0.33,
+     "loomR": 1.22
+    },
+    "DNa02 L": {
+     "blank": 0.89,
+     "loomL": 1.11,
+     "loomR": 1.11
+    },
+    "DNa02 R": {
+     "blank": 0.22,
+     "loomL": 0.22,
+     "loomR": 0.11
+    }
+   }
+  },
+  {
+   "graded": "lamina",
+   "graded_gain": 0.5,
+   "graded_release": 0.3,
+   "REST": false,
+   "RELAY": false,
+   "SIDE": true,
+   "pass": false,
+   "ESCAPE": true,
+   "rest_hz": {
+    "LC4 L": 0.34,
+    "LC4 R": 0.6,
+    "LPLC2 L": 3.81,
+    "LPLC2 R": 3.1,
+    "DNp01 L": 0.67,
+    "DNp01 R": 0.78
+   },
+   "rest_pop_hz": 8.41,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.4188,
+   "relay": {
+    "loomL LC4": {
+     "delta": 2.163,
+     "t": 28.69
+    },
+    "loomL LPLC2": {
+     "delta": 3.554,
+     "t": 41.63
+    },
+    "loomR LC4": {
+     "delta": 2.549,
+     "t": 60.27
+    },
+    "loomR LPLC2": {
+     "delta": 3.427,
+     "t": 41.57
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 2.173,
+     "t": 23.19
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 3.613,
+     "t": 28.74
+    },
+    "loomR LC4 near-far": {
+     "delta": 2.557,
+     "t": 52.45
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 3.481,
+     "t": 22.39
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 3.333,
+     "t": 11.18
+    },
+    "loomL DNp01 near-far": {
+     "delta": 3.111,
+     "t": 8.37
+    },
+    "loomR DNp01": {
+     "delta": 3.889,
+     "t": 14.53
+    },
+    "loomR DNp01 near-far": {
+     "delta": 3.889,
+     "t": 14.53
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -1.02,
+     "loomL": -4.84,
+     "loomR": -1.16
+    },
+    "R1-6 R": {
+     "blank": -1.08,
+     "loomL": -1.31,
+     "loomR": -6.27
+    },
+    "L1 L": {
+     "blank": 4.26,
+     "loomL": 19.66,
+     "loomR": 5.2
+    },
+    "L1 R": {
+     "blank": 5.25,
+     "loomL": 5.74,
+     "loomR": 19.54
+    },
+    "L2 L": {
+     "blank": 0.02,
+     "loomL": 10.78,
+     "loomR": 0.73
+    },
+    "L2 R": {
+     "blank": -0.37,
+     "loomL": -0.08,
+     "loomR": 8.34
+    },
+    "Mi1 L": {
+     "blank": 0.41,
+     "loomL": 0.16,
+     "loomR": 0.41
+    },
+    "Mi1 R": {
+     "blank": 0.64,
+     "loomL": 0.64,
+     "loomR": 0.22
+    },
+    "Tm1 L": {
+     "blank": 1.96,
+     "loomL": 4.61,
+     "loomR": 2.1
+    },
+    "Tm1 R": {
+     "blank": 2.39,
+     "loomL": 2.47,
+     "loomR": 4.84
+    },
+    "Tm2 L": {
+     "blank": 2.46,
+     "loomL": 5.95,
+     "loomR": 2.66
+    },
+    "Tm2 R": {
+     "blank": 3.02,
+     "loomL": 3.16,
+     "loomR": 6.3
+    },
+    "T4 L": {
+     "blank": 0.3,
+     "loomL": 0.06,
+     "loomR": 0.3
+    },
+    "T4 R": {
+     "blank": 0.41,
+     "loomL": 0.4,
+     "loomR": 0.08
+    },
+    "T5 L": {
+     "blank": 2.42,
+     "loomL": 5.21,
+     "loomR": 2.56
+    },
+    "T5 R": {
+     "blank": 2.94,
+     "loomL": 3.0,
+     "loomR": 5.78
+    },
+    "LC4 L": {
+     "blank": 0.34,
+     "loomL": 2.51,
+     "loomR": 0.33
+    },
+    "LC4 R": {
+     "blank": 0.6,
+     "loomL": 0.59,
+     "loomR": 3.15
+    },
+    "LPLC2 L": {
+     "blank": 3.81,
+     "loomL": 7.36,
+     "loomR": 3.75
+    },
+    "LPLC2 R": {
+     "blank": 3.1,
+     "loomL": 3.04,
+     "loomR": 6.53
+    },
+    "DNp01 L": {
+     "blank": 0.67,
+     "loomL": 4.0,
+     "loomR": 0.67
+    },
+    "DNp01 R": {
+     "blank": 0.78,
+     "loomL": 1.0,
+     "loomR": 4.67
+    },
+    "DNa02 L": {
+     "blank": 1.11,
+     "loomL": 1.33,
+     "loomR": 1.22
+    },
+    "DNa02 R": {
+     "blank": 0.33,
+     "loomL": 0.22,
+     "loomR": 0.44
+    }
+   }
+  },
+  {
+   "graded": "optic",
+   "graded_gain": 0.05,
+   "graded_release": 0.1,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.16,
+    "LC4 R": 0.2,
+    "LPLC2 L": 0.59,
+    "LPLC2 R": 0.58,
+    "DNp01 L": 0.11,
+    "DNp01 R": 0.11
+   },
+   "rest_pop_hz": 8.33,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.0,
+   "relay": {
+    "loomL LC4": {
+     "delta": 0.027,
+     "t": 1.93
+    },
+    "loomL LPLC2": {
+     "delta": 0.047,
+     "t": 3.29
+    },
+    "loomR LC4": {
+     "delta": 0.093,
+     "t": 5.55
+    },
+    "loomR LPLC2": {
+     "delta": 0.048,
+     "t": 2.63
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 0.019,
+     "t": 0.73
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 0.055,
+     "t": 2.35
+    },
+    "loomR LC4 near-far": {
+     "delta": 0.101,
+     "t": 5.79
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 0.041,
+     "t": 1.58
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "loomL DNp01 near-far": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "loomR DNp01": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "loomR DNp01 near-far": {
+     "delta": -0.111,
+     "t": -1.0
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -0.02,
+     "loomL": -3.49,
+     "loomR": -0.06
+    },
+    "R1-6 R": {
+     "blank": -0.02,
+     "loomL": -0.21,
+     "loomR": -3.14
+    },
+    "L1 L": {
+     "blank": 0.0,
+     "loomL": 1.57,
+     "loomR": 0.05
+    },
+    "L1 R": {
+     "blank": 0.0,
+     "loomL": 0.04,
+     "loomR": 1.49
+    },
+    "L2 L": {
+     "blank": -0.05,
+     "loomL": 1.11,
+     "loomR": -0.01
+    },
+    "L2 R": {
+     "blank": -0.05,
+     "loomL": -0.02,
+     "loomR": 1.02
+    },
+    "Mi1 L": {
+     "blank": 0.04,
+     "loomL": -0.14,
+     "loomR": 0.04
+    },
+    "Mi1 R": {
+     "blank": 0.04,
+     "loomL": 0.04,
+     "loomR": -0.14
+    },
+    "Tm1 L": {
+     "blank": -0.03,
+     "loomL": 0.2,
+     "loomR": -0.02
+    },
+    "Tm1 R": {
+     "blank": -0.03,
+     "loomL": -0.02,
+     "loomR": 0.2
+    },
+    "Tm2 L": {
+     "blank": 0.0,
+     "loomL": 0.25,
+     "loomR": 0.0
+    },
+    "Tm2 R": {
+     "blank": 0.0,
+     "loomL": 0.0,
+     "loomR": 0.24
+    },
+    "T4 L": {
+     "blank": 0.03,
+     "loomL": -0.05,
+     "loomR": 0.03
+    },
+    "T4 R": {
+     "blank": 0.03,
+     "loomL": 0.03,
+     "loomR": -0.04
+    },
+    "T5 L": {
+     "blank": 0.0,
+     "loomL": 0.09,
+     "loomR": 0.0
+    },
+    "T5 R": {
+     "blank": 0.01,
+     "loomL": 0.01,
+     "loomR": 0.09
+    },
+    "LC4 L": {
+     "blank": 0.16,
+     "loomL": 0.19,
+     "loomR": 0.16
+    },
+    "LC4 R": {
+     "blank": 0.2,
+     "loomL": 0.21,
+     "loomR": 0.3
+    },
+    "LPLC2 L": {
+     "blank": 0.59,
+     "loomL": 0.64,
+     "loomR": 0.6
+    },
+    "LPLC2 R": {
+     "blank": 0.58,
+     "loomL": 0.58,
+     "loomR": 0.63
+    },
+    "DNp01 L": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.22
+    },
+    "DNp01 R": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.11
+    },
+    "DNa02 L": {
+     "blank": 1.11,
+     "loomL": 1.0,
+     "loomR": 1.0
+    },
+    "DNa02 R": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.22
+    }
+   }
+  },
+  {
+   "graded": "optic",
+   "graded_gain": 0.05,
+   "graded_release": 0.3,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.16,
+    "LC4 R": 0.2,
+    "LPLC2 L": 0.59,
+    "LPLC2 R": 0.58,
+    "DNp01 L": 0.11,
+    "DNp01 R": 0.11
+   },
+   "rest_pop_hz": 8.33,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.0,
+   "relay": {
+    "loomL LC4": {
+     "delta": 0.023,
+     "t": 2.37
+    },
+    "loomL LPLC2": {
+     "delta": 0.074,
+     "t": 4.64
+    },
+    "loomR LC4": {
+     "delta": 0.123,
+     "t": 7.02
+    },
+    "loomR LPLC2": {
+     "delta": 0.093,
+     "t": 4.28
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 0.019,
+     "t": 1.01
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 0.083,
+     "t": 4.06
+    },
+    "loomR LC4 near-far": {
+     "delta": 0.133,
+     "t": 5.43
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 0.119,
+     "t": 3.32
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "loomL DNp01 near-far": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "loomR DNp01": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "loomR DNp01 near-far": {
+     "delta": -0.111,
+     "t": -1.0
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -0.02,
+     "loomL": -4.71,
+     "loomR": -0.06
+    },
+    "R1-6 R": {
+     "blank": -0.02,
+     "loomL": -0.23,
+     "loomR": -4.28
+    },
+    "L1 L": {
+     "blank": 0.0,
+     "loomL": 2.15,
+     "loomR": 0.05
+    },
+    "L1 R": {
+     "blank": 0.0,
+     "loomL": 0.05,
+     "loomR": 2.05
+    },
+    "L2 L": {
+     "blank": -0.05,
+     "loomL": 1.52,
+     "loomR": -0.01
+    },
+    "L2 R": {
+     "blank": -0.05,
+     "loomL": -0.02,
+     "loomR": 1.4
+    },
+    "Mi1 L": {
+     "blank": 0.04,
+     "loomL": -0.19,
+     "loomR": 0.04
+    },
+    "Mi1 R": {
+     "blank": 0.04,
+     "loomL": 0.04,
+     "loomR": -0.2
+    },
+    "Tm1 L": {
+     "blank": -0.03,
+     "loomL": 0.27,
+     "loomR": -0.02
+    },
+    "Tm1 R": {
+     "blank": -0.03,
+     "loomL": -0.02,
+     "loomR": 0.28
+    },
+    "Tm2 L": {
+     "blank": 0.0,
+     "loomL": 0.33,
+     "loomR": 0.0
+    },
+    "Tm2 R": {
+     "blank": 0.0,
+     "loomL": 0.0,
+     "loomR": 0.32
+    },
+    "T4 L": {
+     "blank": 0.03,
+     "loomL": -0.07,
+     "loomR": 0.03
+    },
+    "T4 R": {
+     "blank": 0.03,
+     "loomL": 0.03,
+     "loomR": -0.07
+    },
+    "T5 L": {
+     "blank": 0.0,
+     "loomL": 0.11,
+     "loomR": 0.0
+    },
+    "T5 R": {
+     "blank": 0.01,
+     "loomL": 0.01,
+     "loomR": 0.13
+    },
+    "LC4 L": {
+     "blank": 0.16,
+     "loomL": 0.19,
+     "loomR": 0.15
+    },
+    "LC4 R": {
+     "blank": 0.2,
+     "loomL": 0.21,
+     "loomR": 0.33
+    },
+    "LPLC2 L": {
+     "blank": 0.59,
+     "loomL": 0.67,
+     "loomR": 0.57
+    },
+    "LPLC2 R": {
+     "blank": 0.58,
+     "loomL": 0.58,
+     "loomR": 0.68
+    },
+    "DNp01 L": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.22
+    },
+    "DNp01 R": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.11
+    },
+    "DNa02 L": {
+     "blank": 1.11,
+     "loomL": 1.0,
+     "loomR": 1.11
+    },
+    "DNa02 R": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.11
+    }
+   }
+  },
+  {
+   "graded": "optic",
+   "graded_gain": 0.15,
+   "graded_release": 0.1,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.13,
+    "LC4 R": 0.18,
+    "LPLC2 L": 0.49,
+    "LPLC2 R": 0.51,
+    "DNp01 L": 0.0,
+    "DNp01 R": 0.11
+   },
+   "rest_pop_hz": 8.34,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.0077,
+   "relay": {
+    "loomL LC4": {
+     "delta": 0.518,
+     "t": 13.21
+    },
+    "loomL LPLC2": {
+     "delta": 1.2,
+     "t": 14.06
+    },
+    "loomR LC4": {
+     "delta": 0.729,
+     "t": 23.14
+    },
+    "loomR LPLC2": {
+     "delta": 1.366,
+     "t": 22.07
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 0.534,
+     "t": 12.53
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 1.239,
+     "t": 13.03
+    },
+    "loomR LC4 near-far": {
+     "delta": 0.714,
+     "t": 20.51
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 1.402,
+     "t": 17.39
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 0.444,
+     "t": 2.0
+    },
+    "loomL DNp01 near-far": {
+     "delta": 0.444,
+     "t": 1.58
+    },
+    "loomR DNp01": {
+     "delta": 0.444,
+     "t": 3.16
+    },
+    "loomR DNp01 near-far": {
+     "delta": 0.333,
+     "t": 1.46
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -0.18,
+     "loomL": -3.32,
+     "loomR": -0.22
+    },
+    "R1-6 R": {
+     "blank": -0.14,
+     "loomL": -0.39,
+     "loomR": -3.24
+    },
+    "L1 L": {
+     "blank": 0.07,
+     "loomL": 4.64,
+     "loomR": 0.25
+    },
+    "L1 R": {
+     "blank": 0.12,
+     "loomL": 0.29,
+     "loomR": 4.57
+    },
+    "L2 L": {
+     "blank": -0.13,
+     "loomL": 3.39,
+     "loomR": 0.02
+    },
+    "L2 R": {
+     "blank": -0.11,
+     "loomL": 0.0,
+     "loomR": 3.26
+    },
+    "Mi1 L": {
+     "blank": 0.03,
+     "loomL": -1.72,
+     "loomR": -0.0
+    },
+    "Mi1 R": {
+     "blank": 0.03,
+     "loomL": 0.0,
+     "loomR": -1.8
+    },
+    "Tm1 L": {
+     "blank": -0.16,
+     "loomL": 1.38,
+     "loomR": -0.11
+    },
+    "Tm1 R": {
+     "blank": -0.13,
+     "loomL": -0.11,
+     "loomR": 1.49
+    },
+    "Tm2 L": {
+     "blank": -0.04,
+     "loomL": 1.41,
+     "loomR": 0.01
+    },
+    "Tm2 R": {
+     "blank": -0.02,
+     "loomL": 0.01,
+     "loomR": 1.42
+    },
+    "T4 L": {
+     "blank": -0.01,
+     "loomL": -2.2,
+     "loomR": -0.03
+    },
+    "T4 R": {
+     "blank": -0.0,
+     "loomL": -0.02,
+     "loomR": -2.32
+    },
+    "T5 L": {
+     "blank": -0.05,
+     "loomL": 2.06,
+     "loomR": -0.03
+    },
+    "T5 R": {
+     "blank": -0.01,
+     "loomL": 0.0,
+     "loomR": 2.34
+    },
+    "LC4 L": {
+     "blank": 0.13,
+     "loomL": 0.64,
+     "loomR": 0.14
+    },
+    "LC4 R": {
+     "blank": 0.18,
+     "loomL": 0.16,
+     "loomR": 0.91
+    },
+    "LPLC2 L": {
+     "blank": 0.49,
+     "loomL": 1.69,
+     "loomR": 0.46
+    },
+    "LPLC2 R": {
+     "blank": 0.51,
+     "loomL": 0.47,
+     "loomR": 1.88
+    },
+    "DNp01 L": {
+     "blank": 0.0,
+     "loomL": 0.44,
+     "loomR": 0.11
+    },
+    "DNp01 R": {
+     "blank": 0.11,
+     "loomL": 0.11,
+     "loomR": 0.56
+    },
+    "DNa02 L": {
+     "blank": 0.78,
+     "loomL": 0.89,
+     "loomR": 1.22
+    },
+    "DNa02 R": {
+     "blank": 0.22,
+     "loomL": 0.11,
+     "loomR": 0.11
+    }
+   }
+  },
+  {
+   "graded": "optic",
+   "graded_gain": 0.15,
+   "graded_release": 0.3,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": true,
+   "pass": false,
+   "ESCAPE": true,
+   "rest_hz": {
+    "LC4 L": 0.14,
+    "LC4 R": 0.18,
+    "LPLC2 L": 0.5,
+    "LPLC2 R": 0.49,
+    "DNp01 L": 0.11,
+    "DNp01 R": 0.0
+   },
+   "rest_pop_hz": 8.34,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.0044,
+   "relay": {
+    "loomL LC4": {
+     "delta": 2.704,
+     "t": 111.54
+    },
+    "loomL LPLC2": {
+     "delta": 4.689,
+     "t": 161.49
+    },
+    "loomR LC4": {
+     "delta": 2.683,
+     "t": 66.01
+    },
+    "loomR LPLC2": {
+     "delta": 4.115,
+     "t": 354.44
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 2.71,
+     "t": 124.45
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 4.714,
+     "t": 115.02
+    },
+    "loomR LC4 near-far": {
+     "delta": 2.708,
+     "t": 52.23
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 4.11,
+     "t": 317.77
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 3.222,
+     "t": 29.0
+    },
+    "loomL DNp01 near-far": {
+     "delta": 3.111,
+     "t": 22.14
+    },
+    "loomR DNp01": {
+     "delta": 3.111,
+     "t": 22.14
+    },
+    "loomR DNp01 near-far": {
+     "delta": 2.889,
+     "t": 13.0
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": -0.19,
+     "loomL": -4.78,
+     "loomR": -0.27
+    },
+    "R1-6 R": {
+     "blank": -0.22,
+     "loomL": -0.66,
+     "loomR": -5.41
+    },
+    "L1 L": {
+     "blank": 0.12,
+     "loomL": 10.52,
+     "loomR": 0.52
+    },
+    "L1 R": {
+     "blank": 0.23,
+     "loomL": 0.57,
+     "loomR": 9.82
+    },
+    "L2 L": {
+     "blank": -0.11,
+     "loomL": 7.88,
+     "loomR": 0.21
+    },
+    "L2 R": {
+     "blank": -0.06,
+     "loomL": 0.18,
+     "loomR": 7.1
+    },
+    "Mi1 L": {
+     "blank": 0.04,
+     "loomL": -3.86,
+     "loomR": -0.04
+    },
+    "Mi1 R": {
+     "blank": 0.02,
+     "loomL": -0.04,
+     "loomR": -3.76
+    },
+    "Tm1 L": {
+     "blank": -0.16,
+     "loomL": 3.32,
+     "loomR": -0.08
+    },
+    "Tm1 R": {
+     "blank": -0.12,
+     "loomL": -0.05,
+     "loomR": 3.32
+    },
+    "Tm2 L": {
+     "blank": -0.03,
+     "loomL": 3.24,
+     "loomR": 0.07
+    },
+    "Tm2 R": {
+     "blank": -0.0,
+     "loomL": 0.08,
+     "loomR": 3.07
+    },
+    "T4 L": {
+     "blank": -0.01,
+     "loomL": -5.14,
+     "loomR": -0.06
+    },
+    "T4 R": {
+     "blank": -0.03,
+     "loomL": -0.08,
+     "loomR": -5.33
+    },
+    "T5 L": {
+     "blank": -0.05,
+     "loomL": 4.83,
+     "loomR": 0.01
+    },
+    "T5 R": {
+     "blank": 0.01,
+     "loomL": 0.07,
+     "loomR": 5.28
+    },
+    "LC4 L": {
+     "blank": 0.14,
+     "loomL": 2.85,
+     "loomR": 0.12
+    },
+    "LC4 R": {
+     "blank": 0.18,
+     "loomL": 0.17,
+     "loomR": 2.86
+    },
+    "LPLC2 L": {
+     "blank": 0.5,
+     "loomL": 5.19,
+     "loomR": 0.5
+    },
+    "LPLC2 R": {
+     "blank": 0.49,
+     "loomL": 0.47,
+     "loomR": 4.61
+    },
+    "DNp01 L": {
+     "blank": 0.11,
+     "loomL": 3.33,
+     "loomR": 0.33
+    },
+    "DNp01 R": {
+     "blank": 0.0,
+     "loomL": 0.11,
+     "loomR": 3.11
+    },
+    "DNa02 L": {
+     "blank": 0.89,
+     "loomL": 1.11,
+     "loomR": 1.11
+    },
+    "DNa02 R": {
+     "blank": 0.22,
+     "loomL": 0.0,
+     "loomR": 0.11
+    }
+   }
+  },
+  {
+   "graded": "optic",
+   "graded_gain": 0.5,
+   "graded_release": 0.1,
+   "REST": false,
+   "RELAY": false,
+   "SIDE": false,
+   "pass": false,
+   "ESCAPE": false,
+   "rest_hz": {
+    "LC4 L": 0.08,
+    "LC4 R": 0.13,
+    "LPLC2 L": 1.12,
+    "LPLC2 R": 0.79,
+    "DNp01 L": 0.22,
+    "DNp01 R": 0.22
+   },
+   "rest_pop_hz": 8.43,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.4204,
+   "relay": {
+    "loomL LC4": {
+     "delta": 1.69,
+     "t": 54.77
+    },
+    "loomL LPLC2": {
+     "delta": 4.155,
+     "t": 52.85
+    },
+    "loomR LC4": {
+     "delta": 2.121,
+     "t": 74.4
+    },
+    "loomR LPLC2": {
+     "delta": 3.694,
+     "t": 61.52
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 1.666,
+     "t": 35.56
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 4.086,
+     "t": 66.56
+    },
+    "loomR LC4 near-far": {
+     "delta": 2.065,
+     "t": 54.18
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 3.4,
+     "t": 24.92
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 1.889,
+     "t": 9.22
+    },
+    "loomL DNp01 near-far": {
+     "delta": 2.0,
+     "t": 8.22
+    },
+    "loomR DNp01": {
+     "delta": 2.556,
+     "t": 23.0
+    },
+    "loomR DNp01 near-far": {
+     "delta": 2.778,
+     "t": 10.38
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": 2.28,
+     "loomL": 1.59,
+     "loomR": 2.29
+    },
+    "R1-6 R": {
+     "blank": 2.91,
+     "loomL": 2.68,
+     "loomR": 0.83
+    },
+    "L1 L": {
+     "blank": -0.13,
+     "loomL": 10.42,
+     "loomR": 0.36
+    },
+    "L1 R": {
+     "blank": -0.15,
+     "loomL": 0.19,
+     "loomR": 8.78
+    },
+    "L2 L": {
+     "blank": -0.39,
+     "loomL": 3.84,
+     "loomR": -0.11
+    },
+    "L2 R": {
+     "blank": -0.55,
+     "loomL": -0.36,
+     "loomR": 3.24
+    },
+    "Mi1 L": {
+     "blank": -0.5,
+     "loomL": -2.6,
+     "loomR": -0.46
+    },
+    "Mi1 R": {
+     "blank": -0.65,
+     "loomL": -0.63,
+     "loomR": -2.54
+    },
+    "Tm1 L": {
+     "blank": -0.14,
+     "loomL": 1.39,
+     "loomR": 0.02
+    },
+    "Tm1 R": {
+     "blank": 0.11,
+     "loomL": 0.21,
+     "loomR": 1.61
+    },
+    "Tm2 L": {
+     "blank": 0.1,
+     "loomL": 1.9,
+     "loomR": 0.36
+    },
+    "Tm2 R": {
+     "blank": 0.21,
+     "loomL": 0.4,
+     "loomR": 2.34
+    },
+    "T4 L": {
+     "blank": -0.99,
+     "loomL": -3.67,
+     "loomR": -1.04
+    },
+    "T4 R": {
+     "blank": -0.93,
+     "loomL": -0.96,
+     "loomR": -3.84
+    },
+    "T5 L": {
+     "blank": 1.8,
+     "loomL": 5.97,
+     "loomR": 2.04
+    },
+    "T5 R": {
+     "blank": 1.43,
+     "loomL": 1.56,
+     "loomR": 6.19
+    },
+    "LC4 L": {
+     "blank": 0.08,
+     "loomL": 1.77,
+     "loomR": 0.14
+    },
+    "LC4 R": {
+     "blank": 0.13,
+     "loomL": 0.15,
+     "loomR": 2.25
+    },
+    "LPLC2 L": {
+     "blank": 1.12,
+     "loomL": 5.27,
+     "loomR": 1.41
+    },
+    "LPLC2 R": {
+     "blank": 0.79,
+     "loomL": 0.86,
+     "loomR": 4.48
+    },
+    "DNp01 L": {
+     "blank": 0.22,
+     "loomL": 2.11,
+     "loomR": 0.0
+    },
+    "DNp01 R": {
+     "blank": 0.22,
+     "loomL": 0.11,
+     "loomR": 2.78
+    },
+    "DNa02 L": {
+     "blank": 0.89,
+     "loomL": 1.44,
+     "loomR": 1.22
+    },
+    "DNa02 R": {
+     "blank": 0.22,
+     "loomL": 0.11,
+     "loomR": 0.22
+    }
+   }
+  },
+  {
+   "graded": "optic",
+   "graded_gain": 0.5,
+   "graded_release": 0.3,
+   "REST": false,
+   "RELAY": true,
+   "SIDE": true,
+   "pass": false,
+   "ESCAPE": true,
+   "rest_hz": {
+    "LC4 L": 0.49,
+    "LC4 R": 0.57,
+    "LPLC2 L": 2.84,
+    "LPLC2 R": 2.42,
+    "DNp01 L": 0.56,
+    "DNp01 R": 0.56
+   },
+   "rest_pop_hz": 8.71,
+   "rest_ref_hz": 8.35,
+   "graded_at_bounds": 0.3849,
+   "relay": {
+    "loomL LC4": {
+     "delta": 4.556,
+     "t": 117.34
+    },
+    "loomL LPLC2": {
+     "delta": 5.745,
+     "t": 47.96
+    },
+    "loomR LC4": {
+     "delta": 4.648,
+     "t": 48.07
+    },
+    "loomR LPLC2": {
+     "delta": 5.414,
+     "t": 38.56
+    }
+   },
+   "side": {
+    "loomL LC4 near-far": {
+     "delta": 4.444,
+     "t": 213.9
+    },
+    "loomL LPLC2 near-far": {
+     "delta": 5.697,
+     "t": 46.7
+    },
+    "loomR LC4 near-far": {
+     "delta": 4.404,
+     "t": 42.32
+    },
+    "loomR LPLC2 near-far": {
+     "delta": 5.155,
+     "t": 31.72
+    }
+   },
+   "escape": {
+    "loomL DNp01": {
+     "delta": 5.667,
+     "t": 24.89
+    },
+    "loomL DNp01 near-far": {
+     "delta": 5.444,
+     "t": 17.11
+    },
+    "loomR DNp01": {
+     "delta": 5.889,
+     "t": 53.0
+    },
+    "loomR DNp01 near-far": {
+     "delta": 5.667,
+     "t": 13.73
+    }
+   },
+   "stations": {
+    "R1-6 L": {
+     "blank": 1.87,
+     "loomL": -0.11,
+     "loomR": 1.97
+    },
+    "R1-6 R": {
+     "blank": 2.56,
+     "loomL": 2.42,
+     "loomR": -1.16
+    },
+    "L1 L": {
+     "blank": 0.72,
+     "loomL": 14.19,
+     "loomR": 1.63
+    },
+    "L1 R": {
+     "blank": 0.63,
+     "loomL": 1.21,
+     "loomR": 11.83
+    },
+    "L2 L": {
+     "blank": -0.45,
+     "loomL": 11.47,
+     "loomR": 0.21
+    },
+    "L2 R": {
+     "blank": -0.66,
+     "loomL": -0.33,
+     "loomR": 8.4
+    },
+    "Mi1 L": {
+     "blank": -0.52,
+     "loomL": -6.84,
+     "loomR": -0.67
+    },
+    "Mi1 R": {
+     "blank": -0.63,
+     "loomL": -0.63,
+     "loomR": -6.37
+    },
+    "Tm1 L": {
+     "blank": -0.5,
+     "loomL": 5.93,
+     "loomR": -0.19
+    },
+    "Tm1 R": {
+     "blank": -0.37,
+     "loomL": -0.2,
+     "loomR": 5.09
+    },
+    "Tm2 L": {
+     "blank": 0.04,
+     "loomL": 5.91,
+     "loomR": 0.49
+    },
+    "Tm2 R": {
+     "blank": -0.09,
+     "loomL": 0.18,
+     "loomR": 4.61
+    },
+    "T4 L": {
+     "blank": -0.88,
+     "loomL": -8.77,
+     "loomR": -1.05
+    },
+    "T4 R": {
+     "blank": -0.38,
+     "loomL": -0.31,
+     "loomR": -8.79
+    },
+    "T5 L": {
+     "blank": 1.46,
+     "loomL": 11.04,
+     "loomR": 1.96
+    },
+    "T5 R": {
+     "blank": 1.09,
+     "loomL": 1.18,
+     "loomR": 10.46
+    },
+    "LC4 L": {
+     "blank": 0.49,
+     "loomL": 5.05,
+     "loomR": 0.73
+    },
+    "LC4 R": {
+     "blank": 0.57,
+     "loomL": 0.68,
+     "loomR": 5.21
+    },
+    "LPLC2 L": {
+     "blank": 2.84,
+     "loomL": 8.58,
+     "loomR": 3.1
+    },
+    "LPLC2 R": {
+     "blank": 2.42,
+     "loomL": 2.47,
+     "loomR": 7.83
+    },
+    "DNp01 L": {
+     "blank": 0.56,
+     "loomL": 6.22,
+     "loomR": 0.78
+    },
+    "DNp01 R": {
+     "blank": 0.56,
+     "loomL": 0.78,
+     "loomR": 6.44
+    },
+    "DNa02 L": {
+     "blank": 1.56,
+     "loomL": 2.0,
+     "loomR": 1.56
+    },
+    "DNa02 R": {
+     "blank": 0.11,
+     "loomL": 0.44,
+     "loomR": 0.67
+    }
+   }
+  }
+ ],
+ "confirm": {},
+ "rest_reference_hz": 8.35,
+ "detectors_by_column": {
+  "no fill | loomL LC4 L intact-column": {
+   "n": 15,
+   "mean_hz": 1.58,
+   "top10pct_hz": 2.89
+  },
+  "no fill | loomL LC4 L blind-column": {
+   "n": 33,
+   "mean_hz": -0.0,
+   "top10pct_hz": 0.19
+  },
+  "no fill | loomL LPLC2 L intact-column": {
+   "n": 20,
+   "mean_hz": 3.53,
+   "top10pct_hz": 5.39
+  },
+  "no fill | loomL LPLC2 L blind-column": {
+   "n": 47,
+   "mean_hz": 0.44,
+   "top10pct_hz": 1.89
+  },
+  "no fill | loomR LC4 R intact-column": {
+   "n": 23,
+   "mean_hz": 1.58,
+   "top10pct_hz": 4.0
+  },
+  "no fill | loomR LC4 R blind-column": {
+   "n": 13,
+   "mean_hz": 0.03,
+   "top10pct_hz": 0.44
+  },
+  "no fill | loomR LPLC2 R intact-column": {
+   "n": 38,
+   "mean_hz": 2.3,
+   "top10pct_hz": 4.85
+  },
+  "no fill | loomR LPLC2 R blind-column": {
+   "n": 28,
+   "mean_hz": 0.17,
+   "top10pct_hz": 1.0
+  },
+  "fill | loomL LC4 L intact-column": {
+   "n": 15,
+   "mean_hz": 0.67,
+   "top10pct_hz": 1.56
+  },
+  "fill | loomL LC4 L blind-column": {
+   "n": 33,
+   "mean_hz": 0.6,
+   "top10pct_hz": 2.3
+  },
+  "fill | loomL LPLC2 L intact-column": {
+   "n": 20,
+   "mean_hz": 3.88,
+   "top10pct_hz": 5.33
+  },
+  "fill | loomL LPLC2 L blind-column": {
+   "n": 47,
+   "mean_hz": 2.9,
+   "top10pct_hz": 4.81
+  },
+  "fill | loomR LC4 R intact-column": {
+   "n": 23,
+   "mean_hz": 1.04,
+   "top10pct_hz": 3.39
+  },
+  "fill | loomR LC4 R blind-column": {
+   "n": 13,
+   "mean_hz": 1.04,
+   "top10pct_hz": 1.78
+  },
+  "fill | loomR LPLC2 R intact-column": {
+   "n": 38,
+   "mean_hz": 2.08,
+   "top10pct_hz": 4.59
+  },
+  "fill | loomR LPLC2 R blind-column": {
+   "n": 28,
+   "mean_hz": 3.37,
+   "top10pct_hz": 5.22
+  }
+ },
+ "seconds": 195
+}
