@@ -1,0 +1,253 @@
+{
+ "description": "Validating brainfly.optic.FlyvisNative: flyvis's own network, tiled onto the male fly's eye.\n\nflyvis_port.py found that porting flyvis's parameters onto MaleCNS's wiring moves its operating\npoint. FlyvisNative keeps flyvis as its authors fitted and validated it: one cell of each type per\ncolumn, wired by flyvis's spatial filters, but laid on the male eye's real column lattice so each\ncolumn looks where MaleCNS's does. Three checks, in order:\n  1. ORIENTATION, from anatomy alone. For T4a-d and T5a-d, the vector from the centroid of their\n     Mi1 (T4) or Tm1 (T5) inputs to the centroid of each other column-assigned input type (Mi4,\n     Mi9, C3; Tm9, Tm2, Tm4), in both connectomes. The hex-lattice symmetry (6 rotations x\n     reflection) that best maps flyvis's vectors onto MaleCNS's, per side. brainfly.optic.to_mcns\n     must be the winner on both sides.\n  2. EXACT. Tiled onto flyvis's own 721-column lattice, the tiler must rebuild flyvis's network (same\n     cells, synapses and weights) and its dynamics must reproduce flyvis's simulation of a flash.\n  3. DIRECTION SELECTIVITY, on the male eye (the test of 1, as responses weren't used to orient).\n     ON edges (T4) and OFF edges (T5) sweeping front-to-back, back-to-front, up and down across each\n     eye at 40 deg/s, 2 ms steps; each subtype's peak response, preferred direction and direction\n     selectivity index. Expected (Maisak et al. 2013), in both eyes: a front-to-back,\n     b back-to-front, c up, d down.\nAlso reported: how many MaleCNS neurons of flyvis types FlyvisNative drives.\n\n    python experiments/flyvis_native.py            (writes experiments/flyvis_native.json)\n",
+ "orientation": {
+  "L": {
+   "best": {
+    "rotation_deg": 120,
+    "reflect": true,
+    "error": 3.87
+   },
+   "runner_up_error": 11.57,
+   "flyvis (1,0) ->": [
+    -1,
+    -1
+   ],
+   "flyvis (0,1) ->": [
+    0,
+    -1
+   ],
+   "matches_to_mcns": true
+  },
+  "R": {
+   "best": {
+    "rotation_deg": 120,
+    "reflect": true,
+    "error": 6.95
+   },
+   "runner_up_error": 14.84,
+   "flyvis (1,0) ->": [
+    -1,
+    -1
+   ],
+   "flyvis (0,1) ->": [
+    0,
+    -1
+   ],
+   "matches_to_mcns": true
+  }
+ },
+ "exact": {
+  "cells": [
+   45669,
+   45669
+  ],
+  "synapses": [
+   1513231,
+   1513231
+  ],
+  "max_weight_difference": 9.676062973085209e-08,
+  "max_voltage_difference": 3.3172593436603393e-06,
+  "max_voltage": 3.5476813316345215
+ },
+ "coverage": {
+  "cells": 112169,
+  "synapses": 3731745,
+  "columns": 1771,
+  "malecns_neurons_of_flyvis_types": 70056,
+  "driven": 69917
+ },
+ "direction_selectivity": {
+  "R T4a": {
+   "responses": {
+    "front-to-back": 0.774,
+    "back-to-front": 0.083,
+    "upward": 0.256,
+    "downward": 0.191
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.806,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "R T4b": {
+   "responses": {
+    "front-to-back": 0.042,
+    "back-to-front": 0.661,
+    "upward": 0.203,
+    "downward": 0.257
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.881,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "R T4c": {
+   "responses": {
+    "front-to-back": 0.068,
+    "back-to-front": 0.391,
+    "upward": 0.644,
+    "downward": 0.035
+   },
+   "preferred": "upward",
+   "dsi": 0.897,
+   "expected": "upward",
+   "correct": true
+  },
+  "R T4d": {
+   "responses": {
+    "front-to-back": 0.029,
+    "back-to-front": 0.034,
+    "upward": 0.005,
+    "downward": 0.069
+   },
+   "preferred": "downward",
+   "dsi": 0.876,
+   "expected": "downward",
+   "correct": true
+  },
+  "R T5a": {
+   "responses": {
+    "front-to-back": 0.528,
+    "back-to-front": 0.016,
+    "upward": 0.018,
+    "downward": 0.103
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.941,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "R T5b": {
+   "responses": {
+    "front-to-back": 0.012,
+    "back-to-front": 0.324,
+    "upward": 0.015,
+    "downward": 0.031
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.926,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "R T5c": {
+   "responses": {
+    "front-to-back": 0.19,
+    "back-to-front": 0.074,
+    "upward": 0.473,
+    "downward": 0.072
+   },
+   "preferred": "upward",
+   "dsi": 0.735,
+   "expected": "upward",
+   "correct": true
+  },
+  "R T5d": {
+   "responses": {
+    "front-to-back": 0.287,
+    "back-to-front": 0.169,
+    "upward": 0.163,
+    "downward": 1.051
+   },
+   "preferred": "downward",
+   "dsi": 0.732,
+   "expected": "downward",
+   "correct": true
+  },
+  "L T4a": {
+   "responses": {
+    "front-to-back": 0.777,
+    "back-to-front": 0.083,
+    "upward": 0.256,
+    "downward": 0.19
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.807,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "L T4b": {
+   "responses": {
+    "front-to-back": 0.041,
+    "back-to-front": 0.663,
+    "upward": 0.203,
+    "downward": 0.255
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.883,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "L T4c": {
+   "responses": {
+    "front-to-back": 0.065,
+    "back-to-front": 0.391,
+    "upward": 0.644,
+    "downward": 0.033
+   },
+   "preferred": "upward",
+   "dsi": 0.902,
+   "expected": "upward",
+   "correct": true
+  },
+  "L T4d": {
+   "responses": {
+    "front-to-back": 0.029,
+    "back-to-front": 0.033,
+    "upward": 0.005,
+    "downward": 0.069
+   },
+   "preferred": "downward",
+   "dsi": 0.875,
+   "expected": "downward",
+   "correct": true
+  },
+  "L T5a": {
+   "responses": {
+    "front-to-back": 0.529,
+    "back-to-front": 0.016,
+    "upward": 0.018,
+    "downward": 0.102
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.941,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "L T5b": {
+   "responses": {
+    "front-to-back": 0.013,
+    "back-to-front": 0.326,
+    "upward": 0.015,
+    "downward": 0.03
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.925,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "L T5c": {
+   "responses": {
+    "front-to-back": 0.188,
+    "back-to-front": 0.072,
+    "upward": 0.471,
+    "downward": 0.072
+   },
+   "preferred": "upward",
+   "dsi": 0.736,
+   "expected": "upward",
+   "correct": true
+  },
+  "L T5d": {
+   "responses": {
+    "front-to-back": 0.284,
+    "back-to-front": 0.166,
+    "upward": 0.163,
+    "downward": 1.052
+   },
+   "preferred": "downward",
+   "dsi": 0.732,
+   "expected": "downward",
+   "correct": true
+  }
+ }
+}

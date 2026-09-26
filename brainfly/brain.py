@@ -41,6 +41,18 @@ from .data import DATA, ensure_data
 PARAMS = ("tau", "threshold", "tonic", "gain")   # settable per cell type (cell_params)
 
 
+def _rewire(W, seed: int):
+    """W (rows postsynaptic) with every synapse given a random target, each target's inputs then
+    rescaled to their original total absolute weight (FlyBrain's rewire option)."""
+    W = W.tocoo()
+    before = np.bincount(W.row, weights=np.abs(W.data), minlength=W.shape[0])
+    rows = np.random.default_rng(seed).permutation(W.row)
+    R = sparse.csr_matrix((W.data, (rows, W.col)), shape=W.shape)
+    after = np.asarray(abs(R).sum(1)).ravel()
+    scale = np.where(after > 0, before / np.maximum(after, 1e-30), 0.0)
+    return (sparse.diags(scale.astype(np.float32)) @ R).astype(W.dtype).tocsr()
+
+
 @numba.njit(nogil=True, parallel=True)
 def _propagate(indptr, indices, weights, sources, amounts, n):
     """Sum the outgoing weights (CSC columns) of every source neuron, each scaled by
@@ -97,7 +109,7 @@ class FlyBrain:
     def __init__(self, data: Path | str | None = None, seed: int = 64, device: str | None = None, batch: int = 1,
                  dt: float | None = None, sensory_input: bool = True, refractory: float = 0.0,
                  cell_params: dict[str, dict[str, float]] | None = None, graded: list[str] | tuple = (),
-                 fill_retina: bool = False):
+                 fill_retina: bool = False, rewire: int | None = None):
         """data: folder with brain.npz and weights.npz (default $FLY_DATA, else ~/fly-data).
         If they aren't there, the prebuilt brain is downloaded into it first (~260 MB, once).
 
@@ -127,7 +139,13 @@ class FlyBrain:
         fill_retina: add a virtual photoreceptor bundle to each lamina column whose R1-6 input
         MaleCNS lost at the edge of its volume (about half of them), wired like the intact
         columns (brainfly.retina; needs the raw MaleCNS tables). The bundles are neurons
-        n, n+1, ... of type R1-6; self.filled says what was added. Imputed, not observed."""
+        n, n+1, ... of type R1-6; self.filled says what was added. Imputed, not observed.
+
+        rewire: a seed for a null model of the wiring. Every connection keeps its presynaptic
+        neuron, sign and weight but gets a random postsynaptic target, so each neuron keeps its
+        number of inputs and outputs (up to the 0.3% of connections that land on an already
+        connected pair and merge); then each neuron's inputs are rescaled to their original total
+        absolute weight, so only the routing changes (0.6% of the original pairs stay connected)."""
         device = device or os.environ.get("FLY_DEVICE", "cpu")
         if device == "auto":
             device = "cuda" if cuda_available() else "cpu"
@@ -167,6 +185,8 @@ class FlyBrain:
                 raise RuntimeError("brain.npz has no superclass; run `brainfly build`")
             sensory = np.char.find(self.superclass.astype(str), "sensory") >= 0
             W = sparse.diags((~sensory).astype(np.float32)) @ W.tocsr()   # rows = postsynaptic
+        if rewire is not None:
+            W = _rewire(W, rewire)
         if device == "cuda":
             import cupy
             from cupyx.scipy import sparse as cusparse
