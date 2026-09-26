@@ -41,8 +41,8 @@ from pathlib import Path
 
 import numpy as np
 
-from flybrain import FlyBrain
-from flybrain.eyes import Eyes, blob_for
+from brainfly import FlyBrain
+from brainfly.eyes import Eyes, blob_for
 
 SECONDS, WARM = 2.0, 0.5
 PHOTORECEPTORS = ["R1-6", "R7", "R8"]

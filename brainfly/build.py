@@ -7,7 +7,7 @@ normalization. Also records where each photoreceptor sits in the eye so a
 
 Output: <DATA>/brain.npz  (weights as CSR, neuron groups, eye azimuths)
 
-    flybrain build [--data DIR]      (needs pip install "flybrain[build]")
+    brainfly build [--data DIR]      (needs pip install "brainfly[build]")
 """
 from __future__ import annotations
 

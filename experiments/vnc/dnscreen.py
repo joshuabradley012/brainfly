@@ -24,7 +24,7 @@ from pathlib import Path
 
 import numpy as np
 
-from flybrain import FlyBrain
+from brainfly import FlyBrain
 from probe import STEPS, cells, run
 
 WALK = {"forward": ["DNg100", "oDN1", "DNp09"], "backward": ["MDN"]}

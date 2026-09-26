@@ -46,8 +46,8 @@ from pathlib import Path
 import numpy as np
 from scipy import sparse
 
-from flybrain.reservoir import Readout, Trace, folds
-from flybrain import FlyBrain
+from brainfly.reservoir import Readout, Trace, folds
+from brainfly import FlyBrain
 
 ROOT = Path(__file__).parent
 

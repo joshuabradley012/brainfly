@@ -3,7 +3,7 @@
 FlyBrain needs two files built from the MaleCNS v1.0 connectome: weights.npz (the signed,
 normalized connection matrix) and brain.npz (cell types, sides, positions, readout groups,
 eye layout). They are too big for the package, so the first FlyBrain() downloads a prebuilt
-copy (~260 MB) into $FLY_DATA (default ~/fly-data). `flybrain build` makes the same files
+copy (~260 MB) into $FLY_DATA (default ~/fly-data). `brainfly build` makes the same files
 from the original MaleCNS release instead.
 """
 from __future__ import annotations
@@ -17,7 +17,7 @@ from pathlib import Path
 
 DATA = Path(os.environ.get("FLY_DATA", Path.home() / "fly-data"))
 
-RELEASE_URL = os.environ.get("FLYBRAIN_DATA_URL",
+RELEASE_URL = os.environ.get("BRAINFLY_DATA_URL",
                              "https://github.com/alextitonis/fly.ai/releases/download/brain-v1")
 
 # sha256 of the prebuilt files (166,700 neurons, 25,582,938 connections)
@@ -70,11 +70,11 @@ def ensure_data(data: Path | str | None = None) -> Path:
     data = DATA if data is None else Path(data)
     if has_data(data):
         return data
-    print(f"flybrain: no brain files in {data}; downloading the prebuilt brain (~260 MB, once)", file=sys.stderr)
+    print(f"brainfly: no brain files in {data}; downloading the prebuilt brain (~260 MB, once)", file=sys.stderr)
     try:
         download(data)
     except RuntimeError as e:
         raise FileNotFoundError(
             f"no brain files in {data} and the download failed ({e}). Build them from the MaleCNS "
-            f"release instead: pip install \"flybrain[build]\" && flybrain build --data \"{data}\"") from e
+            f"release instead: pip install \"brainfly[build]\" && brainfly build --data \"{data}\"") from e
     return data
