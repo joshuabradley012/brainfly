@@ -65,9 +65,10 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   "azimuth" tracked elevation.
 * **Rung 1 has failed three times.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
   brain, runs away on MaleCNS. Scaling each synapse by the size of its target shrinks the runaway
-  22–37×, but doesn't end it, and then scrambled wiring drives the proboscis motor neuron too. No
-  recipe tried so far gives Shiu's response without a runaway or a loss of specificity
-  ([details](#rung-1-in-detail)).
+  22–37×, but doesn't end it. Taking the mushroom body's slow transmission (Kenyon cells onto each
+  other, and the monoamines) out of fast excitation makes every taste test pass for the first time,
+  but the network still runs away, now through mechanisms the model lacks: a graded APL, presynaptic
+  inhibition in the antennal lobe ([details](#rung-1-in-detail)).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/optomotor-dark.svg">
