@@ -39,13 +39,21 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 * **The model brainfly inherited fails in three places, each traced to a modelling choice**
   ([below](#where-it-started)). Light dies at the first synapse after the eye, commands from the
   brain never reach the motor neurons, and scrambled wiring signals as well as the real wiring.
-* **Rung 1 fails its pre-registered test.** Shiu et al.'s whole-brain recipe, the best-validated
-  model of the fly brain, carries sugar to the proboscis motor neuron on MaleCNS and loses that route
-  when the wiring is scrambled. But the network runs away, water never gets through, and no single
-  global synapse weight fixes both ([details](#rung-1-in-detail)).
-* **In progress:** weighting each synapse by the size of the neuron it lands on (rung 1, second
-  attempt), and filling in the photoreceptor input that MaleCNS lost at the edge of its imaged
-  volume (rung 3).
+* **Light now reaches the escape neuron through the eyes, weakly.** With the optic lobe graded and
+  the photoreceptor input MaleCNS lost at the edge of its imaged volume filled in, a looming shadow
+  raises the same side's LPLC2 looming detectors by 4.1–4.8 Hz and its giant fiber by 2.4–3.2 Hz,
+  with the other side flat, in three seeds. That is the whole path, from photoreceptors to the
+  neuron that fires the escape jump. It still fails its pre-registered test, because LC4 rises
+  about 2.7 Hz against a 3 Hz bar ([details](#where-it-started)). The eye is also still simple. It
+  is one-dimensional, so each photoreceptor knows only its azimuth, and the "shadow" is a dark,
+  full-height stripe that widens as it sweeps in, not an expanding disk. In the last 0.3 s of the
+  measurement the stripe starts to cover the other eye too, reaching half of it by the end, though
+  the response stays on the correct side.
+* **Rung 1 has failed twice.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
+  brain, runs away on MaleCNS. Scaling each synapse by the size of its target shrinks the runaway
+  22–37×, but doesn't end it, and then scrambled wiring drives the proboscis motor neuron too. No
+  recipe tried so far gives Shiu's response without a runaway or a loss of specificity
+  ([details](#rung-1-in-detail)).
 
 ## The ladder
 
@@ -55,9 +63,9 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 | Rung | What it adds | Passes when | Status |
 |---|---|---|---|
-| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed**, second attempt running |
+| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** twice |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | not started |
-| 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress |
+| 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: light reaches the giant fiber through the eyes, weakly |
 | 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | not started |
 | 5. Nerve cord | Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons, strong descending drive | DNg100 and DNb08 produce 7–15 Hz leg rhythms | not started |
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | not started |
@@ -90,9 +98,17 @@ shrinks it, and none of them stops it. At 0.20 mV per synapse and above, the net
 0.18 mV and below, it stays quiet, but sugar moves MN9 by 2.2 Hz at most. So no single global weight
 carries Shiu's recipe over to MaleCNS, which counts more synapses per connection than FlyWire. (The
 calibration grid also only searched down from Shiu's 0.275 mV, and hitting Shiu's own calibration
-target would have needed a higher weight.) The second attempt divides each synapse's weight by the
-size of the neuron it lands on, the scaling that the few recordings comparing synapse counts with
-synaptic strength favour (with a stand-in for size, since MaleCNS's tables carry no volumes).
+target would have needed a higher weight.)
+
+The second attempt, [`experiments/shiu_scaled.py`](experiments/shiu_scaled.py), also pre-registered,
+divides every synapse onto a neuron by that neuron's size, the scaling that the few recordings
+comparing synapse counts with synaptic strength favour, or by the square root of its size. Total
+synapse count stands in for size, since MaleCNS's tables carry no volumes, and both recipes calibrate
+to 1.1 mV per synapse. Both fail. Dividing by size shrinks the runaway 22–37×, to 201 undriven
+neurons above 100 Hz, but the activity still outlasts the drive, and now 15 of 20 weight shuffles
+drive MN9 as well: the route is no longer specific to the wiring. The square root runs away harder,
+with 14,662 neurons above 100 Hz. No recipe tried so far, one weight for every synapse or one scaled
+by either measure of size, gives Shiu's MN9 response without a runaway or a loss of specificity.
 
 Two limits apply throughout. The taste-neuron labels are provisional: LB3a as water and LB3b–c as
 sugar come from an unreviewed MaleCNS port, and LB1a–d as bitter and LB1e as Ir94e-like from summaries
@@ -126,7 +142,7 @@ that no validated fly model makes:
 | Symptom | Measured | Likely causes | What the evidence points to |
 |---|---|---|---|
 | Light stops at the first synapse after the eye | L1 +0.1 Hz; LC4 and LPLC2 unmoved | Photoreceptors inhibit the lamina, and a spiking neuron that is silent at rest can't be inhibited further. | A graded retina and lamina. Done: right signs, too weak. |
-| Looming is too weak even with a graded eye | LPLC2 +1.2–1.5 Hz, against tens of Hz in real flies | MaleCNS has 3,377 of about 10,650 expected photoreceptors, and 962 of its 1,769 lamina columns get no photoreceptor input. Normalisation dilutes the rest; one gain for every type; a 100 ms membrane. | Fill in the missing input; per-type time constants and resting levels. |
+| Looming is too weak even with a graded eye | LPLC2 +1.2–1.5 Hz, against tens of Hz in real flies | MaleCNS has 3,377 of about 10,650 expected photoreceptors, and 962 of its 1,769 lamina columns get no photoreceptor input. Normalisation dilutes the rest; one gain for every type; a 100 ms membrane. | Fill in the missing input. Done: LPLC2 +4.1–4.8 Hz and the giant fiber +2.4–3.2 Hz, still short of the bar. Next, per-type time constants and resting levels. |
 | Commands never reach the motor neurons | Under 0.6 Hz in every motor group | Sum-to-one normalisation dilutes a command roughly 100–1,000× per synapse; no size-scaled excitability; a slow membrane; weak drive; no electrical synapses. | Raw counts × one scale; excitability scaled by size; graded premotor neurons; test DNg100 and DNb08. |
 | Scrambled wiring signals as well as the real wiring | 0.87 vs 0.83 bits at 2 ms steps | Under normalisation a rewiring leaves every neuron's total input unchanged, and the test only measured loudness. | Tests of routing, against a ladder of null models. |
 | Resting activity runs hot | About 12 Hz in the central brain, against a metabolic ceiling of about 4 Hz | Constant drive; no presynaptic gain control. | A zero or fitted baseline. |
@@ -147,6 +163,7 @@ a sign that the approach is broken."
 | `FlyBrain(sensory_input=False)` | Why do the smell neurons sit at the rate ceiling? | Olfactory receptor neurons get 0.43 of their 0.45 net input from each other. Removing synapses onto sensory neurons ends the runaway. |
 | `experiments/flytalk.py` | Can two brains signal to each other through song and hearing? | Yes, but only through loudness, and at 2 ms steps scrambled wiring carries as much (0.87 vs 0.83 bits). |
 | `experiments/eyepath.py` | Does a graded retina and lamina let looming through? | With the right signs along the whole pathway, but LPLC2 rises only 1.2–1.5 Hz: a fail against its 3 Hz bar. |
+| `experiments/eyepath_filled.py` | With the missing photoreceptor input filled in, does looming reach the escape neuron through the eyes? | Yes, weakly, on a one-dimensional eye: the same side's LPLC2 rises 4.1–4.8 Hz and its giant fiber 2.4–3.2 Hz in three seeds. LC4's 2.7 Hz misses the 3 Hz bar, so the test fails. |
 | `experiments/vnc/` | Do commands from the brain reach the motor neurons? | No: under 0.6 Hz in every motor group. Three calibrations failed, and no stimulus of 20 drives a walking command. |
 
 </details>
@@ -175,17 +192,18 @@ stay in the record.
 Two models share the package:
 
 * **`brainfly.FlyBrain`** is the inherited whole-CNS model: 20 ms steps (2 ms optional), faster than real
-  time on a recent CPU or an NVIDIA GPU, with opt-in graded neurons and per-type parameters. It is not validated, and its failures are listed above.
+  time on a recent CPU or an NVIDIA GPU, with opt-in graded neurons, per-type parameters and an
+  imputed retina. It is not validated, and its failures are listed above.
 * **`brainfly.shiu.ShiuBrain`** is rung 1: Shiu et al.'s recipe on MaleCNS, in 0.1 ms steps, with many
   trials run in parallel, any neurons silenced, or any synapse matrix (a shuffled one, say) swapped in.
 
 ```sh
 pip install "brainfly[build] @ git+https://github.com/joshuabradley012/brainfly"
-brainfly build    # downloads MaleCNS v1.0 (~1.1 GB) and builds the brain files
 ```
 
-`[build]` adds pandas and pyarrow, which read the raw MaleCNS tables. `FlyBrain` alone needs neither:
-the first `FlyBrain()` fetches a prebuilt copy of its brain files (~260 MB). Add `[gpu]` for CuPy on
+`[build]` adds pandas and pyarrow, which read the raw MaleCNS tables that `ShiuBrain` runs on. Its
+first run downloads them (~1.1 GB) and caches the synapse counts. `FlyBrain` alone needs neither: the
+first `FlyBrain()` fetches a prebuilt copy of its brain files (~260 MB). Add `[gpu]` for CuPy on
 an NVIDIA GPU (CUDA 12). Set `FLY_DATA=/some/path` to keep the data somewhere other than `~/fly-data`.
 
 The inherited model, looming on the left:
@@ -248,6 +266,9 @@ neurons and fits cross-validated linear readouts on them, without training the b
 * `graded` (default none): cell types or superclasses simulated as graded neurons that release
   transmitter continuously, like the real retina and lamina.
 * `cell_params`: a time constant, threshold, tonic drive or gain per cell type or superclass.
+* `fill_retina` (default `False`): adds an imputed photoreceptor bundle to each of the 962 lamina
+  columns MaleCNS lost at the edge of its volume, wired like the median intact column
+  (`brainfly/retina.py`). It is imputed, not observed.
 
 `brain.cells([...])` accepts superclass names such as `"descending_neuron"` as well as cell types.
 
@@ -261,9 +282,10 @@ neurons and fits cross-validated linear readouts on them, without training the b
 | [`research_notes/`](research_notes/) | the sourced notes behind the report: senses, neuron biophysics, the nerve cord, muscles and body models, datasets, and this project's experiments |
 | `brainfly/brain.py` | `FlyBrain`, the inherited model, on CPU (numba) or NVIDIA GPU (CuPy), one fly or a batch |
 | `brainfly/shiu.py` | `ShiuBrain`, rung 1, and the raw signed synapse counts it runs on |
+| `brainfly/retina.py` | the photoreceptor input MaleCNS lost at the edge of its volume, imputed from the intact columns |
 | `brainfly/build.py`, `data.py` | building the brain files from MaleCNS v1.0, or fetching a prebuilt copy |
 | `brainfly/eyes.py`, `reservoir.py` | a visual encoder for `FlyBrain`, and readouts trained on its spikes |
-| `experiments/shiu_*.py` | rung 1: the pre-registered test and the runaway follow-up, with results in `.json` next to them |
+| `experiments/shiu_*.py` | rung 1: the two pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
 | `experiments/` (the rest) | the experiments on the inherited model, listed [above](#where-it-started) |
 | `examples/` | a notebook tour, and a readout trained end to end |
 | `assets/` | the logo and the looming figure, and the scripts that draw them from the data |
