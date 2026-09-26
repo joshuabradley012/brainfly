@@ -190,6 +190,7 @@ class FlyBrain:
         self._set_parameters(cell_params or {}, graded)
         self.graded = self.cells(list(graded)) if graded else np.empty(0, np.int64)
         self._graded = self.xp.asarray(self.graded) if len(self.graded) else None
+        self._set_rows = None                      # set_graded's last neurons and their rows in graded_out
         self._spiking = None
         if self._graded is not None:
             spiking = np.ones((self.n, 1), bool)
@@ -300,11 +301,14 @@ class FlyBrain:
         brainfly.optic.FlyvisNative. values: one per neuron, or (neurons, batch), per 20 ms like
         self.graded_out."""
         idx = np.asarray(idx)
-        rows = np.searchsorted(self.graded, idx)
-        if len(idx) and (rows.max() >= len(self.graded) or not np.array_equal(self.graded[rows], idx)):
-            raise ValueError("set_graded: not all of these neurons are graded")
+        cached = self._set_rows                    # a loop sets the same neurons every step
+        if cached is None or len(cached[0]) != len(idx) or not np.array_equal(cached[0], idx):
+            rows = np.searchsorted(self.graded, idx)
+            if len(idx) and (rows.max() >= len(self.graded) or not np.array_equal(self.graded[rows], idx)):
+                raise ValueError("set_graded: not all of these neurons are graded")
+            cached = self._set_rows = (idx.copy(), self.xp.asarray(rows))
         vals = self.xp.asarray(values, dtype=self.xp.float32)
-        self.graded_out[self.xp.asarray(rows)] = vals[:, None] if vals.ndim == 1 else vals
+        self.graded_out[cached[1]] = vals[:, None] if vals.ndim == 1 else vals
 
     def synaptic_input(self, fired):
         """Synaptic input (n, batch) from the last step: its spikes (flat indices into v), plus
