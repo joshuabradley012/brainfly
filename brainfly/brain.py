@@ -17,9 +17,10 @@ Two optional departures from that model, both off by default:
   the same way but never spikes; it releases transmitter continuously, and its
   synapses pass on the change in release from its resting level:
       out = clip(graded_gain * (v - v_rest), -graded_release, 1 - graded_release)
-  in the units of a spike (1 = as much as one spike this step). A drop below
-  rest reaches its targets too, which a silent spiking neuron can't signal:
-  that is how a light increment, which hyperpolarises the lamina, gets through.
+  in the units of a spike per 20 ms step (1 = as much as one spike), scaled to
+  the step length so it means the same at any dt. A drop below rest reaches its
+  targets too, which a silent spiking neuron can't signal: that is how a light
+  increment, which hyperpolarises the lamina, gets through.
 
 batch > 1 runs that many independent flies (same wiring, own voltages and
 noise) in lock-step; on a GPU one sparse multiply serves them all, so 8 flies
@@ -101,7 +102,9 @@ class FlyBrain:
         If they aren't there, the prebuilt brain is downloaded into it first (~260 MB, once).
 
         dt: step length in seconds (default 0.020). tonic is rescaled so a silent
-        neuron settles at the same voltage as in the calibrated 20 ms model.
+        neuron settles at the same voltage as in the calibrated 20 ms model, and graded
+        release is per 20 ms, so it carries over. Eye input, as in the original model, is
+        added once per step.
 
         sensory_input: False removes every synapse onto sensory neurons (any superclass
         containing "sensory"), so they fire only from noise and what you inject. With
@@ -192,6 +195,8 @@ class FlyBrain:
                 setattr(self, name, per_neuron)
         self.tonic = self.tonic * (1 - np.exp(-self.dt / self.tau)) / (1 - np.exp(-0.020 / self.tau))
         self.decay = np.float32(np.exp(-self.dt / self.tau))
+        # graded release is per 20 ms step (in spike units); scale it to this step
+        self._release_scale = None if self.dt == 0.020 else np.float32(self.dt / 0.020)
         if np.ndim(self.gain):
             self.gain = self.gain.astype(np.float32)   # same arithmetic as the scalar, so defaults reproduce exactly
         for name in ("threshold", "tonic", "gain", "decay"):
@@ -249,15 +254,29 @@ class FlyBrain:
         """Add voltage to these neurons right now (before the next step)."""
         self.v[self.xp.asarray(idx)] += self._amount(amount)
 
+    def set_graded(self, idx: np.ndarray, values) -> None:
+        """Replace these graded neurons' release change for the next step, e.g. with the output of
+        brainfly.optic.FlyvisOpticLobe. values: one per neuron, or (neurons, batch), per 20 ms
+        like self.graded_out."""
+        idx = np.asarray(idx)
+        rows = np.searchsorted(self.graded, idx)
+        if len(idx) and (rows.max() >= len(self.graded) or not np.array_equal(self.graded[rows], idx)):
+            raise ValueError("set_graded: not all of these neurons are graded")
+        vals = self.xp.asarray(values, dtype=self.xp.float32)
+        self.graded_out[self.xp.asarray(rows)] = vals[:, None] if vals.ndim == 1 else vals
+
     def synaptic_input(self, fired):
         """Input current (n, batch) from the flat spike indices of the last step, plus the
         graded neurons' release changes (self.graded_out) from the same step."""
         xp, B = self.xp, self.batch
+        release = None
+        if self._graded is not None:
+            release = self.graded_out if self._release_scale is None else self.graded_out * self._release_scale
         if self.device == "cuda":
             spikes = xp.zeros((self.n, B), xp.float32)
             spikes.ravel()[fired] = 1.0
             if self._graded is not None:
-                spikes[self._graded] = self.graded_out
+                spikes[self._graded] = release
             if B == 1:
                 return (self._W @ spikes[:, 0])[:, None]
             return self._W @ spikes
@@ -268,7 +287,7 @@ class FlyBrain:
             amounts = np.ones(len(sources), np.float32)
             if self._graded is not None:
                 sources = np.concatenate([sources, self.graded])
-                amounts = np.concatenate([amounts, self.graded_out[:, b]])
+                amounts = np.concatenate([amounts, release[:, b]])
             columns.append(_propagate(self.indptr, self.indices, self.weights, sources, amounts, self.n))
         return np.column_stack(columns)
 

@@ -39,16 +39,22 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 * **The model brainfly inherited fails in three places, each traced to a modelling choice**
   ([below](#where-it-started)). Light dies at the first synapse after the eye, commands from the
   brain never reach the motor neurons, and scrambled wiring signals as well as the real wiring.
-* **Light now reaches the escape neuron through the eyes, weakly.** With the optic lobe graded and
-  the photoreceptor input MaleCNS lost at the edge of its imaged volume filled in, a looming shadow
-  raises the same side's LPLC2 looming detectors by 4.1–4.8 Hz and its giant fiber by 2.4–3.2 Hz,
-  with the other side flat, in three seeds. That is the whole path, from photoreceptors to the
-  neuron that fires the escape jump. It still fails its pre-registered test, because LC4 rises
-  about 2.7 Hz against a 3 Hz bar ([details](#where-it-started)). The eye is also still simple. It
-  is one-dimensional, so each photoreceptor knows only its azimuth, and the "shadow" is a dark,
-  full-height stripe that widens as it sweeps in, not an expanding disk. In the last 0.3 s of the
-  measurement the stripe starts to cover the other eye too, reaching half of it by the end, though
-  the response stays on the correct side.
+* **Light reaches the looming detectors through a realistic eye, but LC4 barely responds, and the
+  reason is the optic lobe model, not the stimulus.** A two-dimensional eye, built from a
+  micro-CT map of the real eye (`brainfly/eye2d.py`), shows the fly a looming disk to one side, and
+  flyvis's fitted optic lobe runs on MaleCNS's own wiring (`brainfly/optic.py`). All four T4 motion
+  detectors prefer their biologically correct direction, and LPLC2 looming detectors peak at 15–33 Hz
+  over 20 ms, the tens of Hz real ones reach. At the strongest coupling tried, a fast loom makes the
+  same side's giant fiber fire two spikes in every fly and the other side's none. LC4 rises about 1 Hz
+  at most, for slow and fast looms alike ([details](#where-it-started)). Two findings explain it. Run on MaleCNS wiring, flyvis's
+  parameters settle at the wrong operating point: the port leaves out CT1, MaleCNS has no Mi12, and
+  the retina fill adds no R7/R8. The resting inhibition these supply goes missing, and the shifts grow
+  through recurrent loops until the OFF pathway rests too far below threshold to respond. And flyvis's
+  T2, LC4's largest input, is an ON cell, while a real T2 is excited by both ON and OFF (Keleş et al.
+  2020). Next: flyvis on its own connectome, as its authors validated it, handing its output to MaleCNS
+  neurons column by column. An earlier, stronger result, with the giant fiber up 2.4–3.2 Hz, came from
+  an unrealistic stimulus: the old one-dimensional eye's "azimuth" actually tracked elevation, so its
+  "loom from the left" was a band sweeping across up to 90% of one eye.
 * **Rung 1 has failed twice.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
   brain, runs away on MaleCNS. Scaling each synapse by the size of its target shrinks the runaway
   22–37×, but doesn't end it, and then scrambled wiring drives the proboscis motor neuron too. No
@@ -65,7 +71,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 |---|---|---|---|
 | 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** twice |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | not started |
-| 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: light reaches the giant fiber through the eyes, weakly |
+| 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: T4 direction selectivity is right and LPLC2 peaks at tens of Hz, but LC4 rises about 1 Hz at most, because flyvis ported to MaleCNS wiring runs at the wrong operating point |
 | 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | not started |
 | 5. Nerve cord | Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons, strong descending drive | DNg100 and DNb08 produce 7–15 Hz leg rhythms | not started |
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | not started |
@@ -142,7 +148,7 @@ that no validated fly model makes:
 | Symptom | Measured | Likely causes | What the evidence points to |
 |---|---|---|---|
 | Light stops at the first synapse after the eye | L1 +0.1 Hz; LC4 and LPLC2 unmoved | Photoreceptors inhibit the lamina, and a spiking neuron that is silent at rest can't be inhibited further. | A graded retina and lamina. Done: right signs, too weak. |
-| Looming is too weak even with a graded eye | LPLC2 +1.2–1.5 Hz, against tens of Hz in real flies | MaleCNS has 3,377 of about 10,650 expected photoreceptors, and 962 of its 1,769 lamina columns get no photoreceptor input. Normalisation dilutes the rest; one gain for every type; a 100 ms membrane. | Fill in the missing input. Done: LPLC2 +4.1–4.8 Hz and the giant fiber +2.4–3.2 Hz, still short of the bar. Next, per-type time constants and resting levels. |
+| Looming is too weak even with a graded eye | LPLC2 +1.2–1.5 Hz, against tens of Hz in real flies | MaleCNS has 3,377 of about 10,650 expected photoreceptors, and 962 of its 1,769 lamina columns get no photoreceptor input. Normalisation dilutes the rest; one gain for every type; a 100 ms membrane. | Fill in the missing input, model the eye in 2-D, and give the optic lobe flyvis's fitted per-type time constants, resting levels and synapse strengths. All done: with a realistic looming disk, LPLC2 +3.4–5.1 Hz, LC4 +0.7 Hz and the giant fiber +1.4–1.7 Hz. A fast loom doesn't help LC4: on MaleCNS wiring, flyvis's OFF pathway rests below threshold. Next, flyvis on its own connectome, mapped to MaleCNS by column. |
 | Commands never reach the motor neurons | Under 0.6 Hz in every motor group | Sum-to-one normalisation dilutes a command roughly 100–1,000× per synapse; no size-scaled excitability; a slow membrane; weak drive; no electrical synapses. | Raw counts × one scale; excitability scaled by size; graded premotor neurons; test DNg100 and DNb08. |
 | Scrambled wiring signals as well as the real wiring | 0.87 vs 0.83 bits at 2 ms steps | Under normalisation a rewiring leaves every neuron's total input unchanged, and the test only measured loudness. | Tests of routing, against a ladder of null models. |
 | Resting activity runs hot | About 12 Hz in the central brain, against a metabolic ceiling of about 4 Hz | Constant drive; no presynaptic gain control. | A zero or fitted baseline. |
@@ -163,8 +169,16 @@ a sign that the approach is broken."
 | `FlyBrain(sensory_input=False)` | Why do the smell neurons sit at the rate ceiling? | Olfactory receptor neurons get 0.43 of their 0.45 net input from each other. Removing synapses onto sensory neurons ends the runaway. |
 | `experiments/flytalk.py` | Can two brains signal to each other through song and hearing? | Yes, but only through loudness, and at 2 ms steps scrambled wiring carries as much (0.87 vs 0.83 bits). |
 | `experiments/eyepath.py` | Does a graded retina and lamina let looming through? | With the right signs along the whole pathway, but LPLC2 rises only 1.2–1.5 Hz: a fail against its 3 Hz bar. |
-| `experiments/eyepath_filled.py` | With the missing photoreceptor input filled in, does looming reach the escape neuron through the eyes? | Yes, weakly, on a one-dimensional eye: the same side's LPLC2 rises 4.1–4.8 Hz and its giant fiber 2.4–3.2 Hz in three seeds. LC4's 2.7 Hz misses the 3 Hz bar, so the test fails. |
+| `experiments/eyepath_filled.py` | With the missing photoreceptor input filled in, does looming reach the escape neuron through the eyes? | Only with an unrealistic stimulus: on the 1-D eye, a band darkening up to 90% of one eye raised the same side's giant fiber by 2.4–3.2 Hz. LC4's 2.7 Hz missed its 3 Hz bar, so the test failed anyway. |
+| `experiments/eyepath_2d.py` | With a 2-D eye from a micro-CT map and a proper looming disk, does looming reach the escape neuron? | No. At settings that keep the resting network healthy, LPLC2 on the correct side rises about 1 Hz and LC4 0.5 Hz, and the giant fiber doesn't reliably respond. With the fill, blind parts of the eye respond like intact ones, but every response stays under 0.7 Hz. |
+| `experiments/eyepath_flyvis.py` | With flyvis's fitted optic lobe on MaleCNS wiring? | All four T4 subtypes prefer the correct direction (DSI 0.21–0.49; T5 only two of four). At the strongest coupling tried, looming raises LPLC2 by 3.4–5.1 Hz, but LC4 only 0.7 Hz and the giant fiber 1.4–1.7 Hz. A fail. |
+| `experiments/eyepath_fast.py` | Is LC4 only held back by the slow loom? A loom ten times faster, at 2 ms steps. | No. The fast loom raises LC4 no more than the slow one (+0.0–0.8 Hz at every coupling), while LPLC2 rises 1.1–8.4 Hz on average and peaks at 15–29 Hz. At the strongest coupling the loomed side's giant fiber fires two spikes in every fly and the other side's none, within 0.2 s after the projected contact, when a real fly would already be escaping. The test fails. (Its secondary ESCAPE test is also recorded as failed, only because the pre-registered t-test scores a response identical in every fly as t = 0.) The slow loom at 2 ms repeats the 20 ms result, and T4 direction selectivity is unchanged. |
+| `experiments/flyvis_port.py` | How faithful is the port of flyvis to MaleCNS wiring? | Faithful in the input layers (photoreceptors, lamina, Tm9), not deeper. On grey, T4a/b rest at +2.1 instead of 0, T2 at +7.7 instead of +3.5, and OFF cells so far below zero that an OFF step barely changes their output. The port lacks the resting inhibition of CT1 (left out), Mi12 (not in MaleCNS) and R7/R8 (absent from the filled columns), and recurrent loops amplify the shift. flyvis's own T2 responds to ON steps only. |
 | `experiments/vnc/` | Do commands from the brain reach the motor neurons? | No: under 0.6 Hz in every motor group. Three calibrations failed, and no stimulus of 20 drives a walking command. |
+
+Every eye experiment before `eyepath_2d.py` used the one-dimensional eye in `brainfly/eyes.py`, whose
+"azimuth" turned out to follow elevation (r = 0.93), so its looms were bands sweeping across most of
+one eye. The sides were right; the geometry wasn't.
 
 </details>
 
@@ -192,8 +206,9 @@ stay in the record.
 Two models share the package:
 
 * **`brainfly.FlyBrain`** is the inherited whole-CNS model: 20 ms steps (2 ms optional), faster than real
-  time on a recent CPU or an NVIDIA GPU, with opt-in graded neurons, per-type parameters and an
-  imputed retina. It is not validated, and its failures are listed above.
+  time on a recent CPU or an NVIDIA GPU, with opt-in graded neurons, per-type parameters, an
+  imputed retina, a 2-D eye (`brainfly.eye2d`) and flyvis's fitted optic lobe (`brainfly.optic`).
+  It is not validated, and its failures are listed above.
 * **`brainfly.shiu.ShiuBrain`** is rung 1: Shiu et al.'s recipe on MaleCNS, in 0.1 ms steps, with many
   trials run in parallel, any neurons silenced, or any synapse matrix (a shuffled one, say) swapped in.
 
@@ -201,10 +216,13 @@ Two models share the package:
 pip install "brainfly[build] @ git+https://github.com/joshuabradley012/brainfly"
 ```
 
-`[build]` adds pandas and pyarrow, which read the raw MaleCNS tables that `ShiuBrain` runs on. Its
-first run downloads them (~1.1 GB) and caches the synapse counts. `FlyBrain` alone needs neither: the
-first `FlyBrain()` fetches a prebuilt copy of its brain files (~260 MB). Add `[gpu]` for CuPy on
-an NVIDIA GPU (CUDA 12). Set `FLY_DATA=/some/path` to keep the data somewhere other than `~/fly-data`.
+`[build]` adds pandas and pyarrow, which read the raw MaleCNS tables that `ShiuBrain`,
+`brainfly.eye2d` and `brainfly.optic` run on, and rdata, which reads the eye map behind
+`brainfly.eye2d`. The first of them to run downloads the tables (~1.1 GB) and caches the synapse
+counts. `[flyvis]` adds flyvis and PyTorch for `brainfly.optic`, which fetches flyvis's pretrained
+models (3.4 MB) on first use. `FlyBrain` alone needs none of these: the first `FlyBrain()` fetches a
+prebuilt copy of its brain files (~260 MB). Add `[gpu]` for CuPy on an NVIDIA GPU (CUDA 12). Set
+`FLY_DATA=/some/path` to keep the data somewhere other than `~/fly-data`.
 
 The inherited model, looming on the left:
 
@@ -260,7 +278,9 @@ neurons and fits cross-validated linear readouts on them, without training the b
   noise. Inputs can be the same for every fly or differ per fly.
 * `dt` (default `0.020`): the step length. `tonic` is rescaled so a silent neuron settles at the same
   voltage. At `dt=0.002` the network runs far hotter unless you also set a refractory period;
-  `refractory=0.004` matched the 20 ms brain's resting descending-neuron rate.
+  `refractory=0.004` matched the 20 ms brain's resting descending-neuron rate. Graded release is set
+  per 20 ms, so a coupling carries over to other steps; eye input, as in the inherited model, is added
+  once per step.
 * `sensory_input` (default `True`): `False` removes every synapse onto sensory neurons.
 * `refractory` (default `0`): seconds a neuron is held at 0 after it spikes.
 * `graded` (default none): cell types or superclasses simulated as graded neurons that release
@@ -269,6 +289,9 @@ neurons and fits cross-validated linear readouts on them, without training the b
 * `fill_retina` (default `False`): adds an imputed photoreceptor bundle to each of the 962 lamina
   columns MaleCNS lost at the edge of its volume, wired like the median intact column
   (`brainfly/retina.py`). It is imputed, not observed.
+
+`brain.set_graded(neurons, release)` sets graded neurons' release from outside the model, which is
+how `FlyvisOpticLobe` drives the rest of the brain.
 
 `brain.cells([...])` accepts superclass names such as `"descending_neuron"` as well as cell types.
 
@@ -284,7 +307,9 @@ neurons and fits cross-validated linear readouts on them, without training the b
 | `brainfly/shiu.py` | `ShiuBrain`, rung 1, and the raw signed synapse counts it runs on |
 | `brainfly/retina.py` | the photoreceptor input MaleCNS lost at the edge of its volume, imputed from the intact columns |
 | `brainfly/build.py`, `data.py` | building the brain files from MaleCNS v1.0, or fetching a prebuilt copy |
-| `brainfly/eyes.py`, `reservoir.py` | a visual encoder for `FlyBrain`, and readouts trained on its spikes |
+| `brainfly/eye2d.py` | a 2-D compound eye: each photoreceptor looks in its measured direction, from a micro-CT eye map; looming disks and moving edges |
+| `brainfly/optic.py` | `FlyvisOpticLobe`: flyvis's fitted optic lobe on MaleCNS wiring, feeding `FlyBrain` |
+| `brainfly/eyes.py`, `reservoir.py` | the original 1-D eye and feature-detector input for `FlyBrain`, and readouts trained on its spikes |
 | `experiments/shiu_*.py` | rung 1: the two pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
 | `experiments/` (the rest) | the experiments on the inherited model, listed [above](#where-it-started) |
 | `examples/` | a notebook tour, and a readout trained end to end |
@@ -339,6 +364,13 @@ To look around the same data without downloading anything, use [neuPrint](https:
 * **Rung 1** reimplements the model of Shiu, P. K. et al. (2024), *A Drosophila computational brain
   model reveals sensorimotor processing*, *Nature* 634
   ([code](https://github.com/philshiu/Drosophila_brain_model)).
+* **The 2-D eye** uses the micro-CT eye map of Zhao et al., *Eye structure shapes neuron function in
+  Drosophila motion vision* ([reiserlab/eyemap_T4](https://github.com/reiserlab/eyemap_T4), GPL-3.0),
+  which `brainfly.eye2d` downloads on first use. It is not redistributed here.
+* **The optic lobe's parameters** come from flyvis: Lappalainen, J. K. et al. (2024),
+  *Connectome-constrained networks predict neural activity across the fly visual system*, *Nature*
+  634 ([code](https://github.com/TuragaLab/flyvis), MIT). `brainfly.optic` downloads the pretrained
+  models on first use.
 * **The inherited model** comes from [fly.ai](https://github.com/alextitonis/fly.ai) (MIT), whose
   neuron model, weight normalisation and optic-column handling follow
   [Fly64](https://github.com/ornata/fly) by Jessica Paquette.
