@@ -18,7 +18,7 @@ from pathlib import Path
 DATA = Path(os.environ.get("FLY_DATA", Path.home() / "fly-data"))
 
 RELEASE_URL = os.environ.get("BRAINFLY_DATA_URL",
-                             "https://github.com/alextitonis/fly.ai/releases/download/brain-v1")
+                             "https://github.com/joshuabradley012/brainfly/releases/download/brain-v1")
 
 # sha256 of the prebuilt files (166,700 neurons, 25,582,938 connections)
 FILES = {
