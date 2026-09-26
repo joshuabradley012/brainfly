@@ -1,0 +1,235 @@
+{
+ "question": "Past the eye: do the fly's own feature detectors drive the right command neurons?\n\nInstead of showing the fly a scene, this drives two sets of visual projection neurons on the fly's\nleft directly, with brainfly's default settings (tonic 0.14, gain 3.0), and records descending\nneurons on both sides:\n  loom   LC4 and LPLC2, the looming detectors, whose strongest target is the giant fiber (DNp01)\n  chase  LC10a, which males use to track a female during courtship, feeding the steering neuron DNa02\nEach detector gets 0.3 or 0.8 extra volts per 20 ms step for 2 s; rates are counted over the last\n1.5 s, 8 flies, the same noise with and without the drive, a bright blank field on the eye (drive\n0.45). Measure: each descending neuron's rate change on each side (t over flies).\nQuestion, stated before the run: does each drive raise its known target on the same side (loom:\nDNp01; chase: DNa02) by >= 3 Hz with t >= 4, and more than on the other side?\n\n    python experiments/inject.py            (writes experiments/inject.json)\n",
+ "rest_hz": {
+  "DNp01 L": 0.08,
+  "DNp01 R": 0.0,
+  "DNp10 L": 4.58,
+  "DNp10 R": 4.33,
+  "DNa02 L": 0.25,
+  "DNa02 R": 0.17,
+  "DNg13 L": 1.08,
+  "DNg13 R": 0.83,
+  "MDN L": 0.21,
+  "MDN R": 0.38,
+  "DNg100 L": 0.0,
+  "DNg100 R": 0.0
+ },
+ "drives": {
+  "loom x0.3": {
+   "cells": 165,
+   "change": {
+    "DNp01 L": {
+     "delta": 17.33,
+     "t": 137.6
+    },
+    "DNp01 R": {
+     "delta": 0.17,
+     "t": 1.5
+    },
+    "DNp10 L": {
+     "delta": -0.17,
+     "t": -1.5
+    },
+    "DNp10 R": {
+     "delta": 0.17,
+     "t": 1.5
+    },
+    "DNa02 L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "DNa02 R": {
+     "delta": 0.17,
+     "t": 1.5
+    },
+    "DNg13 L": {
+     "delta": -0.42,
+     "t": -3.4
+    },
+    "DNg13 R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "MDN L": {
+     "delta": -0.12,
+     "t": -2.0
+    },
+    "MDN R": {
+     "delta": 0.29,
+     "t": 3.9
+    },
+    "DNg100 L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "DNg100 R": {
+     "delta": 0.0,
+     "t": 0.0
+    }
+   },
+   "target_same_side": true
+  },
+  "loom x0.8": {
+   "cells": 165,
+   "change": {
+    "DNp01 L": {
+     "delta": 45.5,
+     "t": 94.0
+    },
+    "DNp01 R": {
+     "delta": 0.17,
+     "t": 1.5
+    },
+    "DNp10 L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "DNp10 R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "DNa02 L": {
+     "delta": 0.17,
+     "t": 1.0
+    },
+    "DNa02 R": {
+     "delta": 0.25,
+     "t": 2.0
+    },
+    "DNg13 L": {
+     "delta": -0.17,
+     "t": -0.8
+    },
+    "DNg13 R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "MDN L": {
+     "delta": -0.08,
+     "t": -1.0
+    },
+    "MDN R": {
+     "delta": 0.33,
+     "t": 2.4
+    },
+    "DNg100 L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "DNg100 R": {
+     "delta": 0.0,
+     "t": 0.0
+    }
+   },
+   "target_same_side": true
+  },
+  "chase x0.3": {
+   "cells": 135,
+   "change": {
+    "DNp01 L": {
+     "delta": -0.08,
+     "t": -1.0
+    },
+    "DNp01 R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "DNp10 L": {
+     "delta": -0.33,
+     "t": -2.6
+    },
+    "DNp10 R": {
+     "delta": -0.17,
+     "t": -1.5
+    },
+    "DNa02 L": {
+     "delta": 1.92,
+     "t": 9.7
+    },
+    "DNa02 R": {
+     "delta": 0.08,
+     "t": 0.6
+    },
+    "DNg13 L": {
+     "delta": 0.42,
+     "t": 1.9
+    },
+    "DNg13 R": {
+     "delta": 1.08,
+     "t": 3.5
+    },
+    "MDN L": {
+     "delta": -0.12,
+     "t": -2.0
+    },
+    "MDN R": {
+     "delta": 0.12,
+     "t": 1.2
+    },
+    "DNg100 L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "DNg100 R": {
+     "delta": 0.08,
+     "t": 1.0
+    }
+   },
+   "target_same_side": false
+  },
+  "chase x0.8": {
+   "cells": 135,
+   "change": {
+    "DNp01 L": {
+     "delta": -0.08,
+     "t": -1.0
+    },
+    "DNp01 R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "DNp10 L": {
+     "delta": -0.25,
+     "t": -1.4
+    },
+    "DNp10 R": {
+     "delta": -0.17,
+     "t": -1.5
+    },
+    "DNa02 L": {
+     "delta": 4.25,
+     "t": 24.2
+    },
+    "DNa02 R": {
+     "delta": -0.08,
+     "t": -1.0
+    },
+    "DNg13 L": {
+     "delta": 1.92,
+     "t": 12.7
+    },
+    "DNg13 R": {
+     "delta": 1.58,
+     "t": 7.3
+    },
+    "MDN L": {
+     "delta": -0.12,
+     "t": -2.0
+    },
+    "MDN R": {
+     "delta": -0.04,
+     "t": -0.6
+    },
+    "DNg100 L": {
+     "delta": 0.08,
+     "t": 1.0
+    },
+    "DNg100 R": {
+     "delta": 0.08,
+     "t": 1.0
+    }
+   },
+   "target_same_side": true
+  }
+ }
+}

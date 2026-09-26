@@ -1,0 +1,543 @@
+{
+ "question": "Does what the fly sees reach its command neurons? Fly64's settings against brainfly's.\n\nFly64 (github.com/ornata/fly) drove Super Mario 64 from this connectome, reading Mario's controls\nfrom descending neurons: DNg100 forward, DNa02 steering, DNp01 jump. Its tonic drive (0.18 per 20 ms)\nand gain (1.5) put every neuron's resting voltage at threshold (0.18 / (1 - exp(-0.2)) = 0.99, plus\nthe noise), so the network fires on its own whatever it sees. brainfly's defaults (tonic 0.14, gain\n3.0) rest neurons below threshold instead. This shows the 1-D eye (brainfly.eyes) seven scenes under\neach setting and records the four command groups built into brain.npz (forward DNg100, steer DNa02,\nescape DNp01, backward MDN) on each side.\n\nScenes, 3 s each, rates over the last 2 s, 8 flies, the same noise in every scene: dark (no eye\ninput), a blank bright field, a still object on the left or right, an object looming from the left or\nright, a bar sweeping across. Measure: each group's rate, and its change from the blank field\n(t over flies).\nQuestion, stated before the run: under Fly64's settings, does any scene change any command group by\nat least 3 Hz with t >= 4? (A signal would have to stand out from the network's own firing.)\n\n    python experiments/motor_readout.py            (writes experiments/motor_readout.json)\n",
+ "settings": {
+  "Fly64 (tonic 0.18, gain 1.5)": {
+   "rates": {
+    "dark": {
+     "forward_L": 0.75,
+     "forward_R": 0.75,
+     "steer_L": 4.31,
+     "steer_R": 3.94,
+     "escape_L": 3.81,
+     "escape_R": 3.81,
+     "backward_L": 3.38,
+     "backward_R": 3.5
+    },
+    "blank": {
+     "forward_L": 0.75,
+     "forward_R": 0.75,
+     "steer_L": 4.44,
+     "steer_R": 4.25,
+     "escape_L": 3.81,
+     "escape_R": 4.0,
+     "backward_L": 3.38,
+     "backward_R": 3.62
+    },
+    "object left": {
+     "forward_L": 0.88,
+     "forward_R": 0.88,
+     "steer_L": 4.44,
+     "steer_R": 3.94,
+     "escape_L": 3.81,
+     "escape_R": 3.75,
+     "backward_L": 3.34,
+     "backward_R": 3.5
+    },
+    "object right": {
+     "forward_L": 0.81,
+     "forward_R": 0.81,
+     "steer_L": 4.25,
+     "steer_R": 4.12,
+     "escape_L": 3.5,
+     "escape_R": 3.81,
+     "backward_L": 3.38,
+     "backward_R": 3.56
+    },
+    "looming left": {
+     "forward_L": 0.62,
+     "forward_R": 0.88,
+     "steer_L": 4.19,
+     "steer_R": 4.12,
+     "escape_L": 3.69,
+     "escape_R": 3.94,
+     "backward_L": 3.25,
+     "backward_R": 3.53
+    },
+    "looming right": {
+     "forward_L": 0.81,
+     "forward_R": 0.88,
+     "steer_L": 4.31,
+     "steer_R": 3.94,
+     "escape_L": 3.75,
+     "escape_R": 3.75,
+     "backward_L": 3.22,
+     "backward_R": 3.53
+    },
+    "bar sweeping": {
+     "forward_L": 0.81,
+     "forward_R": 0.75,
+     "steer_L": 4.38,
+     "steer_R": 4.06,
+     "escape_L": 3.69,
+     "escape_R": 3.75,
+     "backward_L": 3.34,
+     "backward_R": 3.72
+    }
+   },
+   "changes": {
+    "dark: forward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "dark: forward_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "dark: steer_L": {
+     "delta": -0.12,
+     "t": -1.5
+    },
+    "dark: steer_R": {
+     "delta": -0.31,
+     "t": -1.9
+    },
+    "dark: escape_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "dark: escape_R": {
+     "delta": -0.19,
+     "t": -1.4
+    },
+    "dark: backward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "dark: backward_R": {
+     "delta": -0.12,
+     "t": -1.3
+    },
+    "object left: forward_L": {
+     "delta": 0.12,
+     "t": 1.5
+    },
+    "object left: forward_R": {
+     "delta": 0.12,
+     "t": 1.5
+    },
+    "object left: steer_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object left: steer_R": {
+     "delta": -0.31,
+     "t": -1.9
+    },
+    "object left: escape_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object left: escape_R": {
+     "delta": -0.25,
+     "t": -1.9
+    },
+    "object left: backward_L": {
+     "delta": -0.03,
+     "t": -0.4
+    },
+    "object left: backward_R": {
+     "delta": -0.12,
+     "t": -1.3
+    },
+    "object right: forward_L": {
+     "delta": 0.06,
+     "t": 1.0
+    },
+    "object right: forward_R": {
+     "delta": 0.06,
+     "t": 0.6
+    },
+    "object right: steer_L": {
+     "delta": -0.19,
+     "t": -2.0
+    },
+    "object right: steer_R": {
+     "delta": -0.12,
+     "t": -1.5
+    },
+    "object right: escape_L": {
+     "delta": -0.31,
+     "t": -2.4
+    },
+    "object right: escape_R": {
+     "delta": -0.19,
+     "t": -1.4
+    },
+    "object right: backward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object right: backward_R": {
+     "delta": -0.06,
+     "t": -0.4
+    },
+    "looming left: forward_L": {
+     "delta": -0.12,
+     "t": -1.5
+    },
+    "looming left: forward_R": {
+     "delta": 0.12,
+     "t": 1.5
+    },
+    "looming left: steer_L": {
+     "delta": -0.25,
+     "t": -2.6
+    },
+    "looming left: steer_R": {
+     "delta": -0.12,
+     "t": -1.0
+    },
+    "looming left: escape_L": {
+     "delta": -0.12,
+     "t": -1.0
+    },
+    "looming left: escape_R": {
+     "delta": -0.06,
+     "t": -1.0
+    },
+    "looming left: backward_L": {
+     "delta": -0.12,
+     "t": -1.5
+    },
+    "looming left: backward_R": {
+     "delta": -0.09,
+     "t": -0.9
+    },
+    "looming right: forward_L": {
+     "delta": 0.06,
+     "t": 1.0
+    },
+    "looming right: forward_R": {
+     "delta": 0.12,
+     "t": 1.5
+    },
+    "looming right: steer_L": {
+     "delta": -0.12,
+     "t": -0.8
+    },
+    "looming right: steer_R": {
+     "delta": -0.31,
+     "t": -2.4
+    },
+    "looming right: escape_L": {
+     "delta": -0.06,
+     "t": -0.6
+    },
+    "looming right: escape_R": {
+     "delta": -0.25,
+     "t": -2.6
+    },
+    "looming right: backward_L": {
+     "delta": -0.16,
+     "t": -1.9
+    },
+    "looming right: backward_R": {
+     "delta": -0.09,
+     "t": -0.9
+    },
+    "bar sweeping: forward_L": {
+     "delta": 0.06,
+     "t": 1.0
+    },
+    "bar sweeping: forward_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "bar sweeping: steer_L": {
+     "delta": -0.06,
+     "t": -0.4
+    },
+    "bar sweeping: steer_R": {
+     "delta": -0.19,
+     "t": -1.2
+    },
+    "bar sweeping: escape_L": {
+     "delta": -0.12,
+     "t": -0.8
+    },
+    "bar sweeping: escape_R": {
+     "delta": -0.25,
+     "t": -2.6
+    },
+    "bar sweeping: backward_L": {
+     "delta": -0.03,
+     "t": -0.6
+    },
+    "bar sweeping: backward_R": {
+     "delta": 0.09,
+     "t": 0.8
+    }
+   },
+   "strong_changes": {}
+  },
+  "brainfly (tonic 0.14, gain 3.0)": {
+   "rates": {
+    "dark": {
+     "forward_L": 0.0,
+     "forward_R": 0.0,
+     "steer_L": 1.12,
+     "steer_R": 0.19,
+     "escape_L": 0.19,
+     "escape_R": 0.06,
+     "backward_L": 0.09,
+     "backward_R": 0.38
+    },
+    "blank": {
+     "forward_L": 0.0,
+     "forward_R": 0.06,
+     "steer_L": 0.81,
+     "steer_R": 0.12,
+     "escape_L": 0.12,
+     "escape_R": 0.06,
+     "backward_L": 0.06,
+     "backward_R": 0.38
+    },
+    "object left": {
+     "forward_L": 0.0,
+     "forward_R": 0.06,
+     "steer_L": 1.0,
+     "steer_R": 0.25,
+     "escape_L": 0.0,
+     "escape_R": 0.06,
+     "backward_L": 0.03,
+     "backward_R": 0.38
+    },
+    "object right": {
+     "forward_L": 0.0,
+     "forward_R": 0.0,
+     "steer_L": 1.0,
+     "steer_R": 0.25,
+     "escape_L": 0.06,
+     "escape_R": 0.0,
+     "backward_L": 0.06,
+     "backward_R": 0.34
+    },
+    "looming left": {
+     "forward_L": 0.0,
+     "forward_R": 0.0,
+     "steer_L": 0.94,
+     "steer_R": 0.06,
+     "escape_L": 0.12,
+     "escape_R": 0.0,
+     "backward_L": 0.09,
+     "backward_R": 0.38
+    },
+    "looming right": {
+     "forward_L": 0.0,
+     "forward_R": 0.06,
+     "steer_L": 1.12,
+     "steer_R": 0.31,
+     "escape_L": 0.12,
+     "escape_R": 0.12,
+     "backward_L": 0.06,
+     "backward_R": 0.31
+    },
+    "bar sweeping": {
+     "forward_L": 0.0,
+     "forward_R": 0.06,
+     "steer_L": 0.94,
+     "steer_R": 0.19,
+     "escape_L": 0.06,
+     "escape_R": 0.06,
+     "backward_L": 0.09,
+     "backward_R": 0.28
+    }
+   },
+   "changes": {
+    "dark: forward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "dark: forward_R": {
+     "delta": -0.06,
+     "t": -1.0
+    },
+    "dark: steer_L": {
+     "delta": 0.31,
+     "t": 2.4
+    },
+    "dark: steer_R": {
+     "delta": 0.06,
+     "t": 0.6
+    },
+    "dark: escape_L": {
+     "delta": 0.06,
+     "t": 1.0
+    },
+    "dark: escape_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "dark: backward_L": {
+     "delta": 0.03,
+     "t": 0.6
+    },
+    "dark: backward_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object left: forward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object left: forward_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object left: steer_L": {
+     "delta": 0.19,
+     "t": 1.2
+    },
+    "object left: steer_R": {
+     "delta": 0.12,
+     "t": 1.0
+    },
+    "object left: escape_L": {
+     "delta": -0.12,
+     "t": -1.5
+    },
+    "object left: escape_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object left: backward_L": {
+     "delta": -0.03,
+     "t": -1.0
+    },
+    "object left: backward_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object right: forward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object right: forward_R": {
+     "delta": -0.06,
+     "t": -1.0
+    },
+    "object right: steer_L": {
+     "delta": 0.19,
+     "t": 1.2
+    },
+    "object right: steer_R": {
+     "delta": 0.12,
+     "t": 0.7
+    },
+    "object right: escape_L": {
+     "delta": -0.06,
+     "t": -0.6
+    },
+    "object right: escape_R": {
+     "delta": -0.06,
+     "t": -1.0
+    },
+    "object right: backward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "object right: backward_R": {
+     "delta": -0.03,
+     "t": -0.4
+    },
+    "looming left: forward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "looming left: forward_R": {
+     "delta": -0.06,
+     "t": -1.0
+    },
+    "looming left: steer_L": {
+     "delta": 0.12,
+     "t": 1.0
+    },
+    "looming left: steer_R": {
+     "delta": -0.06,
+     "t": -0.6
+    },
+    "looming left: escape_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "looming left: escape_R": {
+     "delta": -0.06,
+     "t": -1.0
+    },
+    "looming left: backward_L": {
+     "delta": 0.03,
+     "t": 0.6
+    },
+    "looming left: backward_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "looming right: forward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "looming right: forward_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "looming right: steer_L": {
+     "delta": 0.31,
+     "t": 1.7
+    },
+    "looming right: steer_R": {
+     "delta": 0.19,
+     "t": 2.0
+    },
+    "looming right: escape_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "looming right: escape_R": {
+     "delta": 0.06,
+     "t": 1.0
+    },
+    "looming right: backward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "looming right: backward_R": {
+     "delta": -0.06,
+     "t": -0.6
+    },
+    "bar sweeping: forward_L": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "bar sweeping: forward_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "bar sweeping: steer_L": {
+     "delta": 0.12,
+     "t": 0.7
+    },
+    "bar sweeping: steer_R": {
+     "delta": 0.06,
+     "t": 0.6
+    },
+    "bar sweeping: escape_L": {
+     "delta": -0.06,
+     "t": -0.6
+    },
+    "bar sweeping: escape_R": {
+     "delta": 0.0,
+     "t": 0.0
+    },
+    "bar sweeping: backward_L": {
+     "delta": 0.03,
+     "t": 1.0
+    },
+    "bar sweeping: backward_R": {
+     "delta": -0.09,
+     "t": -0.9
+    }
+   },
+   "strong_changes": {}
+  }
+ }
+}
