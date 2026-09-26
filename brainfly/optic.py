@@ -25,10 +25,12 @@ MaleCNS's neurons and synapses. Two adjustments:
 Virtual photoreceptor bundles (FlyBrain(fill_retina=True)) are wired at flyvis's own per-column
 totals.
 
-FlyvisOpticLobe steps these neurons and hands FlyBrain their output: the change of relu(V) from
-its value on a blank field, times `gain`, as graded release (FlyBrain.set_graded). The first use
-downloads flyvis's pretrained models (pip install "brainfly[flyvis]"; 3.4 MB, to $FLYVIS_ROOT_DIR,
-by default <data>/flyvis), extracts the parameters and caches them in <data>/flyvis_<model>.npz.
+FlyvisOpticLobe steps these neurons at the brain's dt (flyvis trains at 20 ms and evaluates its
+stimuli at 5 ms; time constants shorter than the step are raised to it, as in flyvis) and hands
+FlyBrain their output: the change of relu(V) from its value on a blank field, times `gain`, as
+graded release (FlyBrain.set_graded). The first use downloads flyvis's pretrained models (pip
+install "brainfly[flyvis]"; 3.4 MB, to $FLYVIS_ROOT_DIR, by default <data>/flyvis), extracts the
+parameters and caches them in <data>/flyvis_<model>.npz.
 """
 from __future__ import annotations
 
@@ -176,6 +178,7 @@ class FlyvisOpticLobe:
         vis = {int(i): k for k, i in enumerate(brain.visual)}
         self._input = np.array([k for k, i in enumerate(self.neurons) if int(i) in vis])
         self._visual_row = np.array([vis[int(self.neurons[k])] for k in self._input])
+        self._settled = None
         self.reset()
 
     def _x(self, contrast):
@@ -186,12 +189,16 @@ class FlyvisOpticLobe:
             x[self._input] = BACKGROUND
         return x
 
-    def reset(self, steps: int = 500) -> None:
-        """Settle on a blank grey field; that state is what release changes are measured from."""
-        self.V = self.bias.copy()
-        x = self._x(None)
-        for _ in range(steps):
-            self._advance(x)
+    def reset(self, seconds: float = 10.0) -> None:
+        """Settle on a blank grey field; that state is what release changes are measured from.
+        The settled state is computed once and restored on later resets."""
+        if self._settled is None or self._settled[0] != seconds:
+            self.V = self.bias.copy()
+            x = self._x(None)
+            for _ in range(int(round(seconds / self.dt))):
+                self._advance(x)
+            self._settled = (seconds, self.V.copy())
+        self.V = self._settled[1].copy()
         self.rest = np.maximum(self.V, 0)
 
     def _advance(self, x) -> None:
@@ -199,7 +206,8 @@ class FlyvisOpticLobe:
         self.V = self.V + self.dt / self.tau * (-self.V + self.bias + drive + x)
 
     def step(self, contrast) -> np.ndarray:
-        """Advance one step on the light contrast per photoreceptor (CompoundEye.contrast); returns
-        the release change of each neuron in self.neurons, to pass to FlyBrain.set_graded."""
+        """Advance one step (the brain's dt) on the light contrast per photoreceptor
+        (CompoundEye.contrast); returns the release change of each neuron in self.neurons, per 20 ms
+        as FlyBrain.set_graded takes it."""
         self._advance(self._x(contrast))
         return (self.gain * (np.maximum(self.V, 0) - self.rest)).astype(np.float32)
