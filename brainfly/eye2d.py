@@ -52,6 +52,17 @@ class Disk:
     darkness: float = 0.9
 
 
+@dataclass
+class Edge:
+    """A straight edge sweeping across the field along one axis ("azimuth" or "elevation", in
+    degrees; azimuth positive to the fly's left). Where it has passed (coordinate on the `behind`
+    side of `position`: -1 below it, +1 above it) the contrast is `contrast` (+1 ON, -1 OFF)."""
+    axis: str
+    position: float
+    behind: int
+    contrast: float
+
+
 def direction(azimuth: float, elevation: float) -> np.ndarray:
     """Unit vector for an azimuth (degrees from straight ahead, positive to the fly's left) and an
     elevation (degrees above the horizon)."""
@@ -172,16 +183,28 @@ class CompoundEye:
         self.placed = ~np.isnan(self.directions[:, 0])
         self.sigma = np.radians(acceptance_deg) / (2 * np.sqrt(2 * np.log(2)))
 
-    def contrast(self, disks: list[Disk]) -> np.ndarray:
+    def contrast(self, objects: list) -> np.ndarray:
+        """Contrast per photoreceptor for dark Disks (the darkest one wins where they overlap) and
+        Edges (added), clipped to [-1, 1]."""
+        from scipy.special import ndtr
         from scipy.stats import chi2, ncx2
 
         cover = np.zeros(len(self.directions))
+        edges = np.zeros(len(self.directions))
         d = self.directions[self.placed]
-        for disk in disks:
-            delta = np.arccos(np.clip(d @ disk.center, -1.0, 1.0))
-            x = (disk.radius / self.sigma) ** 2
+        for obj in objects:
+            if isinstance(obj, Edge):
+                if obj.axis == "azimuth":
+                    q = np.degrees(np.arctan2(d[:, 1], d[:, 0]))
+                else:
+                    q = np.degrees(np.arcsin(np.clip(d[:, 2], -1.0, 1.0)))
+                passed = ndtr(obj.behind * (q - obj.position) / np.degrees(self.sigma))
+                edges[self.placed] += obj.contrast * passed
+                continue
+            delta = np.arccos(np.clip(d @ obj.center, -1.0, 1.0))
+            x = (obj.radius / self.sigma) ** 2
             nc = (delta / self.sigma) ** 2
             # share of a Gaussian blur centred delta from the disk's centre that falls inside it
             frac = np.where(nc > 1e-12, ncx2.cdf(x, 2, np.maximum(nc, 1e-12)), chi2.cdf(x, 2))
-            cover[self.placed] = np.maximum(cover[self.placed], disk.darkness * frac)
-        return (-cover).astype(np.float32)
+            cover[self.placed] = np.maximum(cover[self.placed], obj.darkness * frac)
+        return np.clip(edges - cover, -1.0, 1.0).astype(np.float32)

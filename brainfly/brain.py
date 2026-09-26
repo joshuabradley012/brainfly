@@ -249,6 +249,16 @@ class FlyBrain:
         """Add voltage to these neurons right now (before the next step)."""
         self.v[self.xp.asarray(idx)] += self._amount(amount)
 
+    def set_graded(self, idx: np.ndarray, values) -> None:
+        """Replace these graded neurons' release change for the next step, e.g. with the output of
+        brainfly.optic.FlyvisOpticLobe. values: one per neuron, or (neurons, batch)."""
+        idx = np.asarray(idx)
+        rows = np.searchsorted(self.graded, idx)
+        if len(idx) and (rows.max() >= len(self.graded) or not np.array_equal(self.graded[rows], idx)):
+            raise ValueError("set_graded: not all of these neurons are graded")
+        vals = self.xp.asarray(values, dtype=self.xp.float32)
+        self.graded_out[self.xp.asarray(rows)] = vals[:, None] if vals.ndim == 1 else vals
+
     def synaptic_input(self, fired):
         """Input current (n, batch) from the flat spike indices of the last step, plus the
         graded neurons' release changes (self.graded_out) from the same step."""

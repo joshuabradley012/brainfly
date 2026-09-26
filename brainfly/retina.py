@@ -35,7 +35,7 @@ class Fill:
     """What fill() added. The virtual bundles are neurons n, n+1, ... of the filled network."""
     column: np.ndarray        # (V, 3): side (0 left / 1 right), hex1, hex2 of each bundle
     azimuth: np.ndarray       # (V,)
-    targets: dict             # "L1"/"L2"/"L3" -> (V,) neuron index of that column's cell, -1 if none
+    targets: dict             # "L1"/"L2"/"L3"/"L4" -> (V,) neuron index of that column's cell, -1 if none
     template: dict            # median synapse counts and input shares used
     blind_l1: np.ndarray      # L1 cells that had no R1-6 input
     intact_l1: np.ndarray     # L1 cells whose columns served as templates
@@ -122,7 +122,7 @@ def fill(W: sparse.spmatrix, data: Path | str | None = None) -> tuple[sparse.csr
     az_of = dict(zip(visual.tolist(), azimuth.tolist()))
     h1_max = np.nanmax(h1)
     blind, rows, colsv, vals, fb = [], [], [], [], []
-    column, azs, targets = [], [], {x: [] for x in ("L1", "L2", "L3")}
+    column, azs, targets = [], [], {x: [] for x in ("L1", "L2", "L3", "L4")}
     for k, c in sorted(cols.items()):
         if "L1" not in c or len(r_in(c["L1"])):
             continue
@@ -132,6 +132,7 @@ def fill(W: sparse.spmatrix, data: Path | str | None = None) -> tuple[sparse.csr
         column.append((1 if s == "R" else 0, hx1, hx2))
         frac = (hx1 - 1) / max(h1_max - 1, 1)
         azs.append((0.06 + 0.94 * frac) * (1 if s == "R" else -1))
+        targets["L4"].append(c.get("L4", -1))
         for x in ("L1", "L2", "L3"):
             i = c.get(x, -1)
             targets[x].append(i)
