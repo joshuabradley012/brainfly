@@ -11,7 +11,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
 authors = [{ name = "Josh Bradley" }]
-keywords = ["connectome", "drosophila", "spiking neural network", "neuroscience", "reservoir computing"]
+keywords = ["connectome", "drosophila", "spiking neural network", "neuroscience"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",

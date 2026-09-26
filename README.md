@@ -139,8 +139,7 @@ don't) can't run here, because MaleCNS has no aBN1 annotation.
 
 ## Where it started
 
-brainfly began as a fork of [fly.ai](https://github.com/alextitonis/fly.ai), whose model is still
-here as `brainfly.FlyBrain`. It runs each of MaleCNS's 166,700 neurons as the same leaky
+brainfly began from a simple whole-CNS model, still here as `brainfly.FlyBrain`. It runs each of MaleCNS's 166,700 neurons as the same leaky
 integrate-and-fire unit, following [Fly64](https://github.com/ornata/fly): a 100 ms membrane stepped
 every 20 ms, a constant drive plus noise, and each neuron's inputs scaled to add up to 1. It is fast,
 about 6 ms per 20 ms step on an Apple M4 Pro CPU, and it gets short routes right. Drive the looming
@@ -183,7 +182,7 @@ a sign that the approach is broken."
 | `experiments/sweep.py` | Does looming reach the looming detectors through the eye? | No, in every setting tried: histamine from the photoreceptors silences the lamina. |
 | `experiments/inject.py` | Past the eye, do the detectors drive the right outputs? | Yes, on the same side only: looming detectors raise the giant fiber by 17–25 Hz, and courtship-tracking LC10a raises the steering neuron DNa02 by 1.4–3.7 Hz. |
 | `FlyBrain(sensory_input=False)` | Why do the smell neurons sit at the rate ceiling? | Olfactory receptor neurons get 0.43 of their 0.45 net input from each other. Removing synapses onto sensory neurons ends the runaway. |
-| `experiments/flytalk.py` | Can two brains signal to each other through song and hearing? | Yes, but only through loudness, and at 2 ms steps scrambled wiring carries as much (0.87 vs 0.83 bits). |
+| a two-fly song test (since removed) | Can two brains signal to each other through song and hearing? | Yes, but only through loudness, and at 2 ms steps scrambled wiring carries as much (0.87 vs 0.83 bits). |
 | `experiments/eyepath.py` | Does a graded retina and lamina let looming through? | With the right signs along the whole pathway, but LPLC2 rises only 1.2–1.5 Hz: a fail against its 3 Hz bar. |
 | `experiments/eyepath_filled.py` | With the missing photoreceptor input filled in, does looming reach the escape neuron through the eyes? | Only with an unrealistic stimulus: on the 1-D eye, a band darkening up to 90% of one eye raised the same side's giant fiber by 2.4–3.2 Hz. LC4's 2.7 Hz missed its 3 Hz bar, so the test failed anyway. |
 | `experiments/eyepath_2d.py` | With a 2-D eye from a micro-CT map and a proper looming disk, does looming reach the escape neuron? | No. At settings that keep the resting network healthy, LPLC2 on the correct side rises about 1 Hz and LC4 0.5 Hz, and the giant fiber doesn't reliably respond. With the fill, blind parts of the eye respond like intact ones, but every response stays under 0.7 Hz. |
@@ -282,11 +281,6 @@ print(f"MN9 {result.rates[mn9].mean():.0f} Hz, {hot.sum():,} other neurons above
 # MN9 53 Hz, 7,504 other neurons above 100 Hz
 ```
 
-To connect your own task to `FlyBrain`, `brainfly.reservoir` records spike traces from any set of
-neurons and fits cross-validated linear readouts on them, without training the brain itself.
-[`examples/reservoir.py`](examples/reservoir.py) runs it end to end, and
-[`examples/quickstart.ipynb`](examples/quickstart.ipynb) tours the brain in a notebook.
-
 <details>
 <summary><b><code>FlyBrain</code> options</b></summary>
 
@@ -331,10 +325,9 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/eye2d.py` | a 2-D compound eye: each photoreceptor looks in its measured direction, from a micro-CT eye map; looming disks and moving edges |
 | `brainfly/optic.py` | `FlyvisNative`: flyvis's own network tiled onto the male eye, feeding `FlyBrain`; `FlyvisOpticLobe`, the earlier port onto MaleCNS wiring |
 | `brainfly/body.py` | NeuroMechFly (FlyGym 2.1) walking in a virtual-reality arena, and `Loop`, which steps eyes, optic lobe, brain and body together (`pip install "brainfly[body]"`) |
-| `brainfly/eyes.py`, `reservoir.py` | the original 1-D eye and feature-detector input for `FlyBrain`, and readouts trained on its spikes |
+| `brainfly/eyes.py` | the original 1-D eye, kept so the early eye experiments still run |
 | `experiments/shiu_*.py` | rung 1: the two pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
 | `experiments/` (the rest) | the experiments on the inherited model, listed [above](#where-it-started) |
-| `examples/` | a notebook tour, and a readout trained end to end |
 | `assets/` | the logo and the looming figure, and the scripts that draw them from the data |
 
 <details>
@@ -396,8 +389,7 @@ To look around the same data without downloading anything, use [neuPrint](https:
   *Connectome-constrained networks predict neural activity across the fly visual system*, *Nature*
   634 ([code](https://github.com/TuragaLab/flyvis), MIT). `brainfly.optic` downloads the pretrained
   models on first use.
-* **The inherited model** comes from [fly.ai](https://github.com/alextitonis/fly.ai) (MIT), whose
-  neuron model, weight normalisation and optic-column handling follow
+* **The inherited model's** neuron model, weight normalisation and optic-column handling follow
   [Fly64](https://github.com/ornata/fly) by Jessica Paquette.
 * **Sources:** what this README says about other people's work comes from the
   [research report](reports/Embodied%20fly%20connectome%20simulation.md), which cites it inline.

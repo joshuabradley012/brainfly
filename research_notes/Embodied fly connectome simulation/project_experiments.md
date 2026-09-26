@@ -1,6 +1,6 @@
-# This project's own experiments (fly.ai repo, unpublished)
+# This project's own experiments (brainfly, unpublished)
 
-These are results from the fly.ai codebase itself, not from the literature. They show where the
+These are results from the brainfly codebase itself, not from the literature. They show where the
 project's model stands today, so the report's roadmap can start from it. None are peer-reviewed.
 
 ## The model today
