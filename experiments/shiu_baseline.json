@@ -1,0 +1,203 @@
+{
+ "criteria": "Does Shiu et al.'s validated whole-brain recipe reproduce its taste results on the MaleCNS connectome?\n\nRung 1 of the research report's plan. brainfly.shiu.ShiuBrain runs Shiu et al. 2024's leaky\nintegrate-and-fire model (raw synapse counts x w_syn, 0.1 ms steps, silent at rest, Poisson drive)\non MaleCNS v1.0, which unlike FlyWire includes the nerve cord.\n\nNeuron sets, all on the left side (MaleCNS types; the taste-modality labels are provisional):\n  sugar LB3b + LB3c   water LB3a   bitter LB1a-d   Ir94e LB1e   readout MN9 (left; right reported)\n  LB1a-d = bitter and LB1e = Ir94e-like follow the gustatory connectome papers as search results\n  summarise them (primary text not opened). LB3a = water, LB3b-c = sugar, LB3d = high salt follow the\n  flymsg MaleCNS port (unreviewed). Per-side counts agree with FlyWire's GRN lists (bitter 19 vs 20,\n  Ir94e 9.5 vs 9).\n\nCalibration, Shiu's procedure (\"activation of sugar GRNs at 100 Hz resulted in roughly 80% of maximal\nMN9 firing\"): for w_syn = 0.275 x {1, 0.8, 0.65, 0.55, 0.45, 0.35} mV, drive sugar at\n{10, 25, 50, 100, 150, 200} Hz (10 trials of 1 s each). Pick the w_syn whose MN9 L rate at 100 Hz is\nclosest to 80% of its maximum over those rates.\n\nTests at the calibrated w_syn, 30 trials of 1 s, drive at 100 Hz. Pass criteria, fixed before the\nfirst run (all must hold):\n  SUGAR   sugar raises MN9 L above 0 Hz (Shiu's \"activated\"). This is the calibration target, not an\n          independent test.\n  WATER   water raises MN9 L to >= 5 Hz (t >= 4 over trials)\n  BITTER  sugar + bitter leaves MN9 L at least 25% below sugar alone (Welch t >= 4)\n  IR94E   sugar + Ir94e leaves MN9 L at least 25% below sugar alone (Welch t >= 4)\n  STABLE  after 1 s of sugar drive, the last 250 ms of a 500 ms drive-free tail carries < 1% of the\n          network's spike rate during the drive, and <= 20 undriven neurons exceed 100 Hz during the drive\n  NULL    sugar activates MN9 L (> 0 Hz over 10 trials) in <= 2 of 20 weight shuffles (Shiu's null:\n          weights permuted across all connections) and in <= 2 of 20 degree-preserving rewirings\n          (targets permuted: each neuron keeps its in- and out-degree and its outgoing weights and signs)\nNot testable here: Shiu's JO-CE vs JO-F -> aBN1 grooming result, because MaleCNS v1.0 has no aBN1\nannotation.\nReported but not criteria: the same tests at Shiu's raw w_syn = 0.275; MN9 R; how many neurons sugar\nactivates (Shiu, FlyWire: 45 at 10 Hz, 455 at 200 Hz).\n\n    python experiments/shiu_baseline.py            (writes experiments/shiu_baseline.json)\n",
+ "sets": {
+  "sugar": 17,
+  "water": 9,
+  "bitter": 19,
+  "ir94e": 11
+ },
+ "calibration": {
+  "grid": [
+   {
+    "w_syn": 0.275,
+    "mn9_L_hz": [
+     0.4,
+     1.9,
+     63.3,
+     84.2,
+     104.7,
+     157.7
+    ],
+    "ratio_100": 0.534
+   },
+   {
+    "w_syn": 0.22,
+    "mn9_L_hz": [
+     0.0,
+     0.4,
+     1.3,
+     33.8,
+     75.7,
+     77.3
+    ],
+    "ratio_100": 0.437
+   },
+   {
+    "w_syn": 0.1788,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     2.2,
+     32.7,
+     40.2
+    ],
+    "ratio_100": 0.055
+   },
+   {
+    "w_syn": 0.1513,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     4.1,
+     21.0
+    ],
+    "ratio_100": 0.0
+   },
+   {
+    "w_syn": 0.1238,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     2.5
+    ],
+    "ratio_100": 0.0
+   },
+   {
+    "w_syn": 0.0963,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   }
+  ],
+  "w_syn": 0.275
+ },
+ "tests": {
+  "SUGAR": true,
+  "WATER": false,
+  "BITTER": true,
+  "IR94E": true,
+  "STABLE": false,
+  "mn9_L_hz": {
+   "sugar": 59.73,
+   "water": 3.63,
+   "sugar+bitter": 27.63,
+   "sugar+ir94e": 17.47
+  },
+  "mn9_R_hz": {
+   "sugar": 13.83,
+   "water": 0.37,
+   "sugar+bitter": 0.0,
+   "sugar+ir94e": 0.0
+  },
+  "t_water": 1.56,
+  "bitter_drop": 0.537,
+  "t_bitter": 4.38,
+  "ir94e_drop": 0.708,
+  "t_ir94e": 5.74,
+  "tail_fraction": 1.17297,
+  "undriven_over_100hz": 7443,
+  "network_hz_during_sugar": 1793780.8,
+  "activated_by_sugar": {
+   "10 Hz": 24422,
+   "200 Hz": 22441
+  }
+ },
+ "nulls": {
+  "weight_shuffle": {
+   "mn9_L_hz": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "activated": 0
+  },
+  "degree_preserving": {
+   "mn9_L_hz": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "activated": 0
+  },
+  "NULL": true
+ },
+ "pass": false,
+ "raw_w_syn_0.275": {
+  "SUGAR": true,
+  "WATER": false,
+  "BITTER": true,
+  "IR94E": true,
+  "STABLE": false,
+  "mn9_L_hz": {
+   "sugar": 59.73,
+   "water": 3.63,
+   "sugar+bitter": 27.63,
+   "sugar+ir94e": 17.47
+  },
+  "mn9_R_hz": {
+   "sugar": 13.83,
+   "water": 0.37,
+   "sugar+bitter": 0.0,
+   "sugar+ir94e": 0.0
+  },
+  "t_water": 1.56,
+  "bitter_drop": 0.537,
+  "t_bitter": 4.38,
+  "ir94e_drop": 0.708,
+  "t_ir94e": 5.74,
+  "tail_fraction": 1.17297,
+  "undriven_over_100hz": 7443,
+  "network_hz_during_sugar": 1793780.8,
+  "activated_by_sugar": {
+   "10 Hz": 24422,
+   "200 Hz": 22441
+  }
+ },
+ "seconds": 492
+}
