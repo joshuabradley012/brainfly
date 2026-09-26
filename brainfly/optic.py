@@ -27,8 +27,8 @@ totals.
 
 FlyvisOpticLobe steps these neurons and hands FlyBrain their output: the change of relu(V) from
 its value on a blank field, times `gain`, as graded release (FlyBrain.set_graded). The first use
-extracts the parameters with flyvis (pip install flyvis; its pretrained models download to
-$FLYVIS_ROOT_DIR) and caches them in <data>/flyvis_<model>.npz.
+downloads flyvis's pretrained models (pip install "brainfly[flyvis]"; 3.4 MB, to $FLYVIS_ROOT_DIR,
+by default <data>/flyvis), extracts the parameters and caches them in <data>/flyvis_<model>.npz.
 """
 from __future__ import annotations
 
@@ -61,6 +61,11 @@ def flyvis_params(model: str = MODEL, data: Path | str | None = None) -> dict:
     import flyvis
     from flyvis import NetworkView
 
+    if not (flyvis.results_dir / model).exists():             # flyvis doesn't fetch its own pretrained models
+        import subprocess
+        import sys
+        subprocess.run([sys.executable, "-m", "flyvis_cli.download_pretrained_models", "--skip_large_files"],
+                       check=True)
     net = NetworkView(flyvis.results_dir / model).init_network(checkpoint="best")
     arr = lambda p: p.semantic_values.detach().cpu().numpy()
     tau = dict(zip(net.node_params["time_const"].keys, arr(net.node_params["time_const"]).tolist()))
