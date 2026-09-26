@@ -1,0 +1,382 @@
+{
+ "criteria": "Does scaling each synapse by its target's size stop the MaleCNS runaway? (rung 1, second attempt)\n\nshiu_baseline.py failed. With Shiu's uniform w_syn, weights of 0.20 mV and above run away, and weights\nof 0.18 mV and below are stable but sugar barely reaches MN9 (shiu_runaway.py). Two findings point at\nthe uniform weight: synapse count predicts EPSP size best when divided by the target's size (Liu et\nal. 2022), and Pugliese et al. found size-scaled excitability \"crucial\" in their MaleCNS nerve-cord\nmodel. A synapse onto a big, leaky neuron should move it less.\n\nRecipes (both reported). s_i = neuron i's total synapses (input + output) / the median over neurons,\na stand-in for size (MaleCNS's flat files carry no volumes):\n  density   every synapse onto neuron i weighs w_syn * count / s_i\n  sqrt      every synapse onto neuron i weighs w_syn * count / sqrt(s_i)\nCalibration per recipe, Shiu's rule as in shiu_baseline.py (w_syn whose MN9 L rate at 100 Hz sugar\nis closest to 80% of its maximum over 10-200 Hz), over w_syn = 0.275 x {0.35, 0.5, 0.7, 1, 1.4, 2,\n2.8, 4} mV. The grid now runs both ways.\n\nTests per recipe at its calibrated w_syn: exactly shiu_baseline.py's (30 trials, 100 Hz, same neuron\nsets and seeds). Pass, fixed before the first run: STABLE and SUGAR and NULL (the runaway gone, sugar\nstill reaching MN9, and that route still depending on the real wiring). WATER, BITTER and IR94E are\nreported but are not part of the pass. Water never reached MN9 in any earlier variant, which points\nat the provisional LB3a = water label, and bitter and Ir94e were only ever measured inside a runaway\nnetwork.\n\n    python experiments/shiu_scaled.py            (writes experiments/shiu_scaled.json)\n",
+ "recipes": {
+  "density": {
+   "calibration": {
+    "grid": [
+     {
+      "w_syn": 0.0963,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.1375,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.1925,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.275,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.385,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.55,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.77,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       7.1
+      ],
+      "ratio_100": 0.0
+     },
+     {
+      "w_syn": 1.1,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       88.4,
+       124.4,
+       120.3,
+       118.2
+      ],
+      "ratio_100": 1.0
+     }
+    ],
+    "w_syn": 1.1
+   },
+   "tests": {
+    "SUGAR": true,
+    "WATER": false,
+    "BITTER": true,
+    "IR94E": true,
+    "STABLE": false,
+    "mn9_L_hz": {
+     "sugar": 127.87,
+     "water": 0.0,
+     "sugar+bitter": 47.87,
+     "sugar+ir94e": 51.07
+    },
+    "mn9_R_hz": {
+     "sugar": 112.47,
+     "water": 0.0,
+     "sugar+bitter": 50.53,
+     "sugar+ir94e": 50.33
+    },
+    "t_water": 0.0,
+    "bitter_drop": 0.626,
+    "t_bitter": 88.13,
+    "ir94e_drop": 0.601,
+    "t_ir94e": 82.86,
+    "tail_fraction": 0.81441,
+    "undriven_over_100hz": 201,
+    "network_hz_during_sugar": 80028.5,
+    "activated_by_sugar": {
+     "10 Hz": 102,
+     "200 Hz": 2882
+    }
+   },
+   "nulls": {
+    "weight_shuffle": {
+     "mn9_L_hz": [
+      5.5,
+      39.0,
+      33.9,
+      73.1,
+      49.3,
+      43.4,
+      65.9,
+      0.0,
+      6.8,
+      12.9,
+      0.0,
+      48.2,
+      29.9,
+      0.0,
+      77.3,
+      44.5,
+      5.5,
+      0.0,
+      0.0,
+      60.8
+     ],
+     "activated": 15
+    },
+    "degree_preserving": {
+     "mn9_L_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "activated": 0
+    },
+    "NULL": false
+   },
+   "pass": false
+  },
+  "sqrt": {
+   "calibration": {
+    "grid": [
+     {
+      "w_syn": 0.0963,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.1375,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.1925,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.275,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "ratio_100": null
+     },
+     {
+      "w_syn": 0.385,
+      "mn9_L_hz": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       2.0,
+       103.0
+      ],
+      "ratio_100": 0.0
+     },
+     {
+      "w_syn": 0.55,
+      "mn9_L_hz": [
+       0.0,
+       0.3,
+       33.8,
+       66.7,
+       83.0,
+       134.0
+      ],
+      "ratio_100": 0.498
+     },
+     {
+      "w_syn": 0.77,
+      "mn9_L_hz": [
+       35.7,
+       36.0,
+       42.9,
+       55.0,
+       59.1,
+       61.9
+      ],
+      "ratio_100": 0.889
+     },
+     {
+      "w_syn": 1.1,
+      "mn9_L_hz": [
+       31.2,
+       35.5,
+       43.6,
+       53.3,
+       50.4,
+       64.9
+      ],
+      "ratio_100": 0.821
+     }
+    ],
+    "w_syn": 1.1
+   },
+   "tests": {
+    "SUGAR": true,
+    "WATER": true,
+    "BITTER": true,
+    "IR94E": false,
+    "STABLE": false,
+    "mn9_L_hz": {
+     "sugar": 50.33,
+     "water": 40.07,
+     "sugar+bitter": 14.23,
+     "sugar+ir94e": 26.0
+    },
+    "mn9_R_hz": {
+     "sugar": 57.57,
+     "water": 49.93,
+     "sugar+bitter": 34.27,
+     "sugar+ir94e": 38.17
+    },
+    "t_water": 23.72,
+    "bitter_drop": 0.717,
+    "t_bitter": 10.6,
+    "ir94e_drop": 0.483,
+    "t_ir94e": 2.7,
+    "tail_fraction": 1.08476,
+    "undriven_over_100hz": 14662,
+    "network_hz_during_sugar": 4341004.7,
+    "activated_by_sugar": {
+     "10 Hz": 55391,
+     "200 Hz": 52968
+    }
+   },
+   "nulls": {
+    "weight_shuffle": {
+     "mn9_L_hz": [
+      7.3,
+      242.6,
+      177.0,
+      253.0,
+      227.7,
+      200.5,
+      238.4,
+      8.6,
+      67.4,
+      198.8,
+      158.8,
+      210.8,
+      183.0,
+      0.1,
+      262.7,
+      201.0,
+      132.7,
+      118.4,
+      202.8,
+      242.2
+     ],
+     "activated": 20
+    },
+    "degree_preserving": {
+     "mn9_L_hz": [
+      0.0,
+      0.1,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      47.4,
+      0.0,
+      0.0,
+      0.0,
+      16.8,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "activated": 3
+    },
+    "NULL": false
+   },
+   "pass": false
+  }
+ },
+ "seconds": 1398
+}
