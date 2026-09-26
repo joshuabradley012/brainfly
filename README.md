@@ -334,7 +334,8 @@ Three models share the package:
   spiking, with no rate ceiling, and can have its own membrane time constant, threshold, reset,
   refractory period, resting drive and synaptic scale. Chosen edges can act through a slow current.
   Its state carries over between calls, so it can be stepped in a loop with a body. With nothing
-  changed, it is Shiu's model exactly.
+  changed, it is Shiu's model exactly. On rung 1's network it simulates one fly faster than real
+  time on one core of an Apple M4 Pro (0.84 s per simulated second), and 8 flies in 0.88 s.
 
 ```sh
 pip install "brainfly[build] @ git+https://github.com/joshuabradley012/brainfly"
@@ -425,6 +426,7 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/brain.py` | `FlyBrain`, the inherited model, on CPU (numba) or NVIDIA GPU (CuPy), one fly or a batch |
 | `brainfly/shiu.py` | `ShiuBrain`, rung 1, and the raw signed synapse counts it runs on |
 | `brainfly/hybrid.py` | `HybridBrain`, brainfly's own per-type model, built on Shiu's kernel |
+| `brainfly/nulls.py` | null models: weight shuffles (global, or within each neuron's inputs) and rewiring (degree-preserving, or keeping each connection's target class), each under a second on the whole connectome |
 | `brainfly/retina.py` | the photoreceptor input MaleCNS lost at the edge of its volume, imputed from the intact columns |
 | `brainfly/build.py`, `data.py` | building the brain files from MaleCNS v1.0, or fetching a prebuilt copy |
 | `brainfly/eye2d.py` | a 2-D compound eye: each photoreceptor looks in its measured direction, from a micro-CT eye map; looming disks and moving edges |
