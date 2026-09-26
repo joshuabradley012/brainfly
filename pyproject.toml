@@ -29,6 +29,7 @@ dependencies = [
 gpu = ["cupy-cuda12x[ctk]>=13"]
 build = ["pandas>=2.2", "pyarrow>=15", "rdata>=0.11"]
 flyvis = ["flyvis>=1.2"]
+body = ["flygym>=2.1"]
 
 [project.scripts]
 brainfly = "brainfly.__main__:main"
