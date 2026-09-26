@@ -1,18 +1,17 @@
-"""Does anything Wiz can sense drive a walking command? A screen of all 1,314 descending neurons.
+"""Does any sense drive a walking command? A screen of all 1,314 descending neurons.
 
-probe.py found that looming drives DNp01 and targets drive DNa02, but nothing drove DNg100 or MDN,
-so Wiz never walks. This screens every descending neuron type (by side) against the inputs Wiz actually
-has: LPLC2 looming, LC4 threat, LPLC1 small moving objects, LC10a targets (each side, and looming on
-both sides at once) and tarsal touch (SNta, each side), at 0.5 V per step (Vision caps at 0.8).
+probe.py found that looming drives DNp01 and targets drive DNa02, but nothing drove the walking
+commands DNg100 or MDN. This screens every descending neuron type (by side) against visual and touch
+input: LPLC2 looming, LC4 threat, LPLC1 small moving objects, LC10a targets (each side, and looming on
+both sides at once) and tarsal touch (SNta, each side), at 0.5 V per step.
 
 Criterion, fixed before the run: WALK FOUND if any of these stimuli raises a forward-walking type
 (DNg100 = BDN2, oDN1, DNp09) or a backward-walking type (MDN) on either side by >= 3 Hz with t >= 4
 over 8 flies. Types from the literature (Bidaye et al. 2014, 2020; Sen et al. 2017). Every responder
 (>= 3 Hz, t >= 4) is also listed, whatever its known role.
 
-Second run (added before running it): the same criterion over senses Wiz does not have yet: food odour,
-vinegar, geosmin, CO2 and cVA receptor neurons, wind (Johnston's organ), taste and head bristles. A
-walking responder there would be a reason to give him that sense.
+Second run (added before running it): the same criterion over the other senses: food odour,
+vinegar, geosmin, CO2 and cVA receptor neurons, wind (Johnston's organ), taste and head bristles.
 
     python experiments/vnc/dnscreen.py            (PYTHONPATH must include the repo root)
 """
@@ -35,7 +34,7 @@ STIMULI = {
     "small L": [(["LPLC1"], "L")], "small R": [(["LPLC1"], "R")],
     "target L": [(["LC10a"], "L")], "target R": [(["LC10a"], "R")], "target both": [(["LC10a"], None)],
     "touch L": [("SNta*", "L")], "touch R": [("SNta*", "R")],
-    # senses Wiz does not have yet
+    # the other senses (second run)
     "food odour": [(["ORN_DM1", "ORN_DM2"], None)], "vinegar": [(["ORN_VL2a"], None)],
     "geosmin": [(["ORN_DA2"], None)], "CO2": [(["ORN_V"], None)], "cVA": [(["ORN_DA1", "ORN_VA1d"], None)],
     "wind": [(["JO-CM", "JO-EV1", "JO-EV2", "JO-EV3", "JO-EV5"], None)],

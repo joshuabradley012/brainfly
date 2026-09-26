@@ -1,8 +1,8 @@
 """Which motor neurons of the real connectome answer which stimulus, by side and leg segment.
 
-This decides how the connectome drives Wiz's bones (wings -> arms, legs -> legs, neck -> head,
-abdomen -> torso) from data instead of guesses. Each condition: a fresh batch of flies, 1 s to
-settle, 1 s baseline, 1 s stimulus. Rates are per fly; t is the paired change over flies.
+It measures how each motor neuron group (wing power and steering, each leg segment, neck,
+abdomen) answers each sense and four command neurons, from data instead of guesses. Each condition:
+a fresh batch of flies, 1 s to settle, 1 s baseline, 1 s stimulus. Rates are per fly; t is the paired change over flies.
 
     python experiments/vnc/probe.py [--flies 8] [--out experiments/vnc/probe.json]
 """
