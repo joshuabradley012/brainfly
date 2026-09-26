@@ -63,7 +63,7 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   flyvis's parameters onto MaleCNS's own wiring ran at the wrong operating point and is kept for
   comparison (`FlyvisOpticLobe`); an earlier giant fiber result came from a one-dimensional eye whose
   "azimuth" tracked elevation.
-* **Rung 1 has failed twice.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
+* **Rung 1 has failed three times.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
   brain, runs away on MaleCNS. Scaling each synapse by the size of its target shrinks the runaway
   22–37×, but doesn't end it, and then scrambled wiring drives the proboscis motor neuron too. No
   recipe tried so far gives Shiu's response without a runaway or a loss of specificity
@@ -85,7 +85,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 | Rung | What it adds | Passes when | Status |
 |---|---|---|---|
-| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** twice |
+| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** three times; the third passes every taste test but still runs away |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | not started |
 | 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: flyvis on its own terms gets all 16 T4/T5 directions right, drives LPLC2 and the giant fiber, and carries a rotating drum to the steering neuron DNa02 with the right sign; LC4 still barely responds |
 | 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | not started |
@@ -131,6 +131,20 @@ neurons above 100 Hz, but the activity still outlasts the drive, and now 15 of 2
 drive MN9 as well: the route is no longer specific to the wiring. The square root runs away harder,
 with 14,662 neurons above 100 Hz. No recipe tried so far, one weight for every synapse or one scaled
 by either measure of size, gives Shiu's MN9 response without a runaway or a loss of specificity.
+
+The third attempt, [`experiments/shiu_mb.py`](experiments/shiu_mb.py), pre-registered, follows the
+wiring. An average Kenyon cell gets about 284 synapses from other Kenyon cells and 55 from dopamine
+neurons, both counted as fast excitation, against 125 from olfactory projection neurons and 48
+inhibitory ones from APL. Neither is fast excitation in the fly: acetylcholine acts on Kenyon cells
+partly through inhibitory muscarinic receptors, and dopamine, octopamine and serotonin are slow
+modulators. Taking both out of the fast network (4.2 million monoamine and 1.2 million
+Kenyon-to-Kenyon synapses) lets every taste test pass for the first time: sugar drives MN9 at
+70 Hz, water at 14 Hz, and bitter and Ir94e cut sugar's drive by 100% and 88%. It still fails,
+because the network still runs away (5,252 undriven neurons above 100 Hz) and 4 of 20 weight
+shuffles also drive MN9. A diagnostic that wasn't pre-registered finds three sources left, each a
+mechanism the model lacks. Kenyon cells still run hot because APL saturates at 370 Hz, where the real
+APL is graded and has no spike-rate ceiling. Olfactory receptor neurons ignite each other with no
+presynaptic inhibition or synaptic depression. And the compass neurons (EPG, PEN) run hot.
 
 Two limits apply throughout. The taste-neuron labels are provisional: LB3a as water and LB3b–c as
 sugar come from an unreviewed MaleCNS port, and LB1a–d as bitter and LB1e as Ir94e-like from summaries

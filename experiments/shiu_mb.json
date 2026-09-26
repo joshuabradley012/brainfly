@@ -1,0 +1,205 @@
+{
+ "criteria": "Does taking the mushroom body's slow transmission out of fast excitation stop the MaleCNS runaway?\n(rung 1, third attempt)\n\nshiu_baseline.py and shiu_scaled.py failed: Shiu et al.'s recipe runs away on MaleCNS, and\nshiu_runaway.py placed the runaway among the mushroom body's Kenyon cells. The wiring says why. An\naverage Kenyon cell receives about 284 synapses from other Kenyon cells and 55 from dopamine neurons,\nboth counted as fast excitation by the transmitter sign rule, against about 125 from olfactory\nprojection neurons and 48 inhibitory synapses from APL. Neither large input is fast excitation in the\nfly. Acetylcholine acts on Kenyon cells partly through muscarinic receptors that inhibit them\n(mAChR-B; Bielopolski et al. 2019), a slow G-protein effect, and no recording shows Kenyon cells\nexciting each other. Dopamine, octopamine and serotonin act through G-protein receptors over hundreds\nof milliseconds, as modulation, which is rung 2 of the ladder. shiu_runaway.py removed each on its\nown, and each shrank the runaway without ending it. This removes both from the fast network at once\nand leaves everything else as in shiu_baseline.py.\n\nModel: brainfly.shiu.ShiuBrain (Shiu's parameters, raw signed synapse counts x w_syn, 0.1 ms steps) on\nthe MaleCNS counts with (a) every synapse from a neuron whose consensus or predicted transmitter is\ndopamine, octopamine or serotonin removed (shiu_runaway.py's definition), and (b) every synapse from\none Kenyon cell onto another removed.\nCalibration: Shiu's rule, as in shiu_scaled.py: the w_syn whose MN9 L rate at 100 Hz sugar is closest\nto 80% of its maximum over 10-200 Hz, over w_syn = 0.275 x {0.35, 0.5, 0.7, 1, 1.4, 2, 2.8, 4} mV,\n10 trials per point.\nTests at the calibrated w_syn: exactly shiu_baseline.py's (30 trials, 100 Hz, same neuron sets and\nseeds).\nPass, fixed before the first run: STABLE and SUGAR and NULL, as shiu_scaled.py defines them: the\nrunaway gone, sugar still reaching MN9, and 20 weight shuffles and 20 degree-preserving rewirings of\nthis modified matrix each activating MN9 in at most 2.\nReported, not part of the pass: WATER, BITTER, IR94E, and the Kenyon cells' and APL's rates during\nsugar.\n\n    python experiments/shiu_mb.py            (writes experiments/shiu_mb.json)\n",
+ "removed": {
+  "monoaminergic_neurons": 5074,
+  "kenyon_cells": 4064,
+  "synapses_removed_monoamine": 4152238,
+  "synapses_removed_kc_to_kc": 1153845,
+  "synapses_kept": 120023392
+ },
+ "calibration": {
+  "grid": [
+   {
+    "w_syn": 0.0963,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 0.1375,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.5,
+     8.9
+    ],
+    "ratio_100": 0.0
+   },
+   {
+    "w_syn": 0.1925,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     7.0,
+     13.6,
+     16.7
+    ],
+    "ratio_100": 0.419
+   },
+   {
+    "w_syn": 0.275,
+    "mn9_L_hz": [
+     0.4,
+     42.8,
+     32.5,
+     30.5,
+     21.7,
+     25.4
+    ],
+    "ratio_100": 0.713
+   },
+   {
+    "w_syn": 0.385,
+    "mn9_L_hz": [
+     98.6,
+     76.3,
+     74.6,
+     76.9,
+     73.6,
+     86.0
+    ],
+    "ratio_100": 0.78
+   },
+   {
+    "w_syn": 0.55,
+    "mn9_L_hz": [
+     221.5,
+     261.9,
+     320.3,
+     312.7,
+     339.4,
+     339.7
+    ],
+    "ratio_100": 0.921
+   },
+   {
+    "w_syn": 0.77,
+    "mn9_L_hz": [
+     341.9,
+     344.3,
+     363.4,
+     372.2,
+     376.2,
+     374.8
+    ],
+    "ratio_100": 0.989
+   },
+   {
+    "w_syn": 1.1,
+    "mn9_L_hz": [
+     357.6,
+     367.7,
+     368.0,
+     383.6,
+     384.8,
+     382.9
+    ],
+    "ratio_100": 0.997
+   }
+  ],
+  "w_syn": 0.385
+ },
+ "tests": {
+  "SUGAR": true,
+  "WATER": true,
+  "BITTER": true,
+  "IR94E": true,
+  "STABLE": false,
+  "mn9_L_hz": {
+   "sugar": 70.1,
+   "water": 13.73,
+   "sugar+bitter": 0.0,
+   "sugar+ir94e": 8.77
+  },
+  "mn9_R_hz": {
+   "sugar": 21.03,
+   "water": 1.2,
+   "sugar+bitter": 0.0,
+   "sugar+ir94e": 0.17
+  },
+  "t_water": 5.66,
+  "bitter_drop": 1.0,
+  "t_bitter": 18.14,
+  "ir94e_drop": 0.875,
+  "t_ir94e": 6.42,
+  "tail_fraction": 1.04394,
+  "undriven_over_100hz": 5252,
+  "network_hz_during_sugar": 1407555.2,
+  "activated_by_sugar": {
+   "10 Hz": 26065,
+   "200 Hz": 23643
+  }
+ },
+ "mushroom_body_during_sugar": {
+  "kenyon_cell_mean_hz": 69.991,
+  "kenyon_cells_over_100hz": 1383,
+  "apl_hz": [
+   371.6,
+   377.67
+  ]
+ },
+ "nulls": {
+  "weight_shuffle": {
+   "mn9_L_hz": [
+    0.0,
+    98.7,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.8,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    10.8,
+    0.3,
+    0.0,
+    0.0
+   ],
+   "activated": 4
+  },
+  "degree_preserving": {
+   "mn9_L_hz": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "activated": 0
+  },
+  "NULL": false
+ },
+ "pass": false,
+ "seconds": 410
+}
