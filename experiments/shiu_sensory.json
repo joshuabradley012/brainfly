@@ -1,0 +1,334 @@
+{
+ "criteria": "Does removing the network's input to sensory neurons end the lasting activity? (rung 1, fifth attempt)\n\nThe fourth attempt (shiu_signs.py) got closest yet. MN9 followed the sugar rate (0 Hz at 10 Hz sugar,\n62 Hz at 100 Hz), and only 8 undriven neurons passed 100 Hz. Two things failed.\n\nFirst, activity outlasted the drive at 14% of its level. The largest single source was the Ir94e\ntaste neurons: nothing drove them, yet they fired at about 36 Hz after the sugar stopped. Synapses\nfrom the network onto their axon terminals kept them going. In the fly a sensory neuron's firing is\nset by transduction, and synapses onto its terminals modulate its release (presynaptic inhibition;\nOlsen & Wilson 2008). A point neuron gets this wrong by letting them make it fire. The research\nreport's rung-1 recipe specifies \"no synapses onto sensory neurons\". Attempts 1-4 omitted this, and\nshiu_runaway.py tried it only as a variant of the runaway network.\n\nSecond, 18 of 20 weight shuffles drove MN9. A check afterwards (not pre-registered) showed that\nshuffling the counts runs these networks away (50,000-83,000 neurons above 100 Hz), and that even\nshuffling the final synaptic strengths leaves 9,000-27,000 there. A network that runs away drives MN9\nwhatever its routing, so that null can't ask whether the route depends on the wiring. The null here\nshuffles strengths only among the inputs of one sign onto one neuron. Each neuron keeps its total\nexcitatory and inhibitory input, and its partners, and the null asks whether it matters which partner\ncarries which strength. Degree-preserving rewiring stays as before. The global shuffle is still run\nand reported, but it isn't part of the pass.\n\nModel: exactly shiu_signs.py's (HybridBrain with Shiu's neuron model; fast transmission only from\nneurons with a consensus fast transmitter, sensory neurons exempted; no Kenyon-to-Kenyon synapses;\nthe density recipe), with every synapse onto a sensory neuron also removed (superclasses containing\n\"sensory\"). Sensory neurons keep their Poisson drive and their output.\nCalibration, tests and RESPONSE: exactly shiu_signs.py's.\nNulls: 20 within-neuron shuffles (each neuron's excitatory input counts permuted among its excitatory\ninputs, and inhibitory among inhibitory; as all of a neuron's inputs share its size scaling, this is\nalso a shuffle of its final strengths), and 20 degree-preserving rewirings, as before, 10 trials each.\nReported only: 20 global weight shuffles, as in shiu_signs.py.\nPass, fixed before the first run: STABLE and SUGAR and RESPONSE, as in shiu_signs.py, and NULL: the\nwithin-neuron shuffles and the degree-preserving rewirings each activate MN9 in at most 2 of 20.\nConfirmation: as in shiu_signs.py (STABLE, SUGAR and RESPONSE again on fresh seeds).\nReported, not part of the pass: WATER, BITTER, IR94E, what still fires after the drive (by type),\neach null network's MN9 rate and count of neurons above 100 Hz, and the global weight shuffles.\n\n    python experiments/shiu_sensory.py            (writes experiments/shiu_sensory.json)\n",
+ "removed": {
+  "monoaminergic_neurons": 541,
+  "no_fast_transmitter_neurons": 2352,
+  "exempted_sensory_neurons": 825,
+  "synapses_from_monoaminergic": 1183790,
+  "synapses_from_no_fast_transmitter": 1801813,
+  "synapses_kenyon_to_kenyon": 1153845,
+  "synapses_kept": 118195792,
+  "synapses_before": 124177616,
+  "sensory_neurons": 17937,
+  "synapses_onto_sensory_removed": 1842385
+ },
+ "calibration": {
+  "grid": [
+   {
+    "w_syn": 0.55,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 0.6541,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 0.7778,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 0.925,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "ratio_100": null
+   },
+   {
+    "w_syn": 1.1,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.9,
+     4.7
+    ],
+    "ratio_100": 0.0
+   },
+   {
+    "w_syn": 1.3081,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     0.0,
+     4.0,
+     22.2,
+     40.2
+    ],
+    "ratio_100": 0.1
+   },
+   {
+    "w_syn": 1.5556,
+    "mn9_L_hz": [
+     0.0,
+     0.0,
+     3.7,
+     42.7,
+     67.4,
+     67.6
+    ],
+    "ratio_100": 0.632
+   },
+   {
+    "w_syn": 1.85,
+    "mn9_L_hz": [
+     0.1,
+     5.9,
+     26.2,
+     36.0,
+     62.2,
+     79.2
+    ],
+    "ratio_100": 0.455
+   },
+   {
+    "w_syn": 2.2,
+    "mn9_L_hz": [
+     5.0,
+     9.5,
+     15.3,
+     26.4,
+     61.6,
+     78.4
+    ],
+    "ratio_100": 0.337
+   }
+  ],
+  "w_syn": 1.5556
+ },
+ "RESPONSE": true,
+ "tests": {
+  "SUGAR": true,
+  "WATER": false,
+  "BITTER": true,
+  "IR94E": true,
+  "STABLE": true,
+  "mn9_L_hz": {
+   "sugar": 43.33,
+   "water": 0.0,
+   "sugar+bitter": 0.03,
+   "sugar+ir94e": 7.07
+  },
+  "mn9_R_hz": {
+   "sugar": 45.1,
+   "water": 0.0,
+   "sugar+bitter": 3.63,
+   "sugar+ir94e": 9.1
+  },
+  "t_water": 0.0,
+  "bitter_drop": 0.999,
+  "t_bitter": 39.2,
+  "ir94e_drop": 0.837,
+  "t_ir94e": 26.76,
+  "tail_fraction": 0.0,
+  "undriven_over_100hz": 2,
+  "network_hz_during_sugar": 9920.9,
+  "activated_by_sugar": {
+   "10 Hz": 92,
+   "200 Hz": 6236
+  }
+ },
+ "lasting_activity": {
+  "neurons_over_1hz": 89,
+  "spikes_per_s": 497.4,
+  "by_superclass": {
+   "cb_intrinsic": 33,
+   "vnc_motor": 17,
+   "cb_motor": 15,
+   "descending_neuron": 14,
+   "vnc_intrinsic": 4,
+   "vnc_efferent": 3,
+   "ascending_neuron": 2,
+   "efferent_ascending": 1
+  },
+  "top_types_spikes_per_s": {
+   "MN4a": 8.8,
+   "MN4b": 6.6,
+   "MN9": 5.5,
+   "MN8": 4.5,
+   "GNG225": 4.3,
+   "EN21X001": 4.1,
+   "GNG116": 3.9,
+   "DNge106": 3.9,
+   "MN7": 3.9,
+   "GNG041": 3.5,
+   "AN12B008": 3.3,
+   "GNG186": 3.3
+  }
+ },
+ "nulls": {
+  "within_neuron_shuffle": {
+   "mn9_L_hz": [
+    0.1,
+    11.6,
+    8.2,
+    22.2,
+    0.0,
+    10.0,
+    0.1,
+    0.0,
+    0.0,
+    17.2,
+    9.6,
+    22.7,
+    23.9,
+    2.7,
+    39.1,
+    0.0,
+    0.5,
+    0.0,
+    5.7,
+    3.6
+   ],
+   "undriven_over_100hz": [
+    0,
+    0,
+    0,
+    885,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1,
+    14,
+    3,
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "activated": 15
+  },
+  "degree_preserving": {
+   "mn9_L_hz": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "undriven_over_100hz": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "activated": 0
+  },
+  "global_weight_shuffle": {
+   "mn9_L_hz": [
+    10.4,
+    69.4,
+    0.0,
+    0.0,
+    30.5,
+    56.9,
+    54.5,
+    35.7,
+    53.1,
+    31.1,
+    46.2,
+    58.3,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    26.9,
+    25.1,
+    69.8,
+    0.4
+   ],
+   "undriven_over_100hz": [
+    76006,
+    75047,
+    75728,
+    76325,
+    76502,
+    77742,
+    71888,
+    68748,
+    77230,
+    76497,
+    75732,
+    76857,
+    66237,
+    63342,
+    78669,
+    60605,
+    75556,
+    66574,
+    76616,
+    78040
+   ],
+   "activated": 14
+  },
+  "NULL": false
+ },
+ "pass": false,
+ "seconds": 1077
+}

@@ -63,15 +63,15 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   flyvis's parameters onto MaleCNS's own wiring ran at the wrong operating point and is kept for
   comparison (`FlyvisOpticLobe`); an earlier giant fiber result came from a one-dimensional eye whose
   "azimuth" tracked elevation.
-* **Rung 1 has failed three times.** Shiu et al.'s whole-brain recipe, the best-validated model of the fly
-  brain, runs away on MaleCNS. A test against Brian2, an idea borrowed from doomfly, found brainfly's
-  implementation of it running three steps out of line with Shiu's, which ran networks hot. All
-  three attempts were rerun on the corrected kernel, which matches Brian2 spike for spike, and every
-  verdict stood. Scaling each synapse by the size of its target comes closest: sugar drives MN9 in
-  proportion to its rate, and only 20 other neurons pass 100 Hz. But activity outlasts the drive,
-  and shuffled weights drive MN9 too. The third attempt turned out to have silenced nearly all
-  Kenyon-cell output by mistake, and its taste tests passed only because the runaway drove MN9
-  whatever the sugar rate ([details](#rung-1-in-detail)).
+* **Rung 1 has failed five times, and the fifth is the first stable network.** Shiu et al.'s whole-brain
+  recipe, the best-validated model of the fly brain, runs away on MaleCNS. A test against Brian2, an
+  idea borrowed from doomfly, found brainfly's implementation three steps out of line with Shiu's,
+  and the first three attempts were rerun on the corrected kernel with every verdict standing. The
+  fifth attempt runs on `HybridBrain`, brainfly's own engine. It divides each synapse by its
+  target's size, keeps fast transmission only from neurons with a known fast transmitter, and
+  removes synapses onto sensory neurons. The network stays stable, MN9 follows the sugar rate, and
+  degree-preserving rewiring abolishes the route. It fails its null all the same: shuffling the
+  strengths among each neuron's inputs leaves the route intact ([details](#rung-1-in-detail)).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/optomotor-dark.svg">
@@ -89,7 +89,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 | Rung | What it adds | Passes when | Status |
 |---|---|---|---|
-| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** four times (the first three rerun on a kernel corrected to match Shiu's Brian2 code); the fourth has MN9 follow the sugar rate with only 8 hot neurons, but activity outlasts the drive |
+| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** five times (the first three rerun on a kernel corrected to match Shiu's Brian2 code). The fifth is stable and follows the sugar rate, and rewiring abolishes it, but it survives shuffling the strengths among each neuron's inputs |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | not started |
 | 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: flyvis on its own terms gets all 16 T4/T5 directions right, drives LPLC2 and the giant fiber, and carries a rotating drum to the steering neuron DNa02 with the right sign; LC4 still barely responds |
 | 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | not started |
@@ -189,6 +189,22 @@ shuffles drive MN9, while no degree-preserving rewiring does. A check afterwards
 weight shuffle can't be passed. Shuffling the counts runs these networks away, with 50,000–83,000
 neurons above 100 Hz. Even shuffling the final synaptic strengths leaves 9,000–27,000 there. A
 network that runs away drives MN9 whatever its routing.
+
+The fifth attempt, [`experiments/shiu_sensory.py`](experiments/shiu_sensory.py), pre-registered,
+adds what the report's rung-1 recipe specifies and the first four left out: no synapses onto
+sensory neurons. It is the first network on MaleCNS to pass STABLE. Activity stops with the drive,
+apart from the proboscis motor program winding down over about 250 ms, and only 2 undriven neurons
+pass 100 Hz. MN9 follows the sugar rate (0 Hz at 10 Hz sugar, 43 Hz at 100 Hz), and bitter and Ir94e
+cut sugar's drive by 99.9% and 84%.
+
+It still fails, on its null. The global weight shuffle runs these networks away (61,000–79,000
+neurons above 100 Hz), so this attempt instead shuffled strengths among each neuron's inputs of one
+sign. That keeps every neuron's partners and its total excitation and inhibition. Sugar still drives
+MN9 in 15 of 20 such networks, which stay quiet. Degree-preserving rewiring, which scrambles who
+connects to whom, abolishes the route in all 20 and leaves the network quiet too. So in this model,
+the route from sugar to MN9 depends on which neurons connect, not on which of a neuron's partners
+carries which strength. Whether a route like that should pass is a question about the null, not the
+model, and it is open.
 
 Two limits apply throughout. The taste-neuron labels are provisional: LB3a as water and LB3b–c as
 sugar come from an unreviewed MaleCNS port, and LB1a–d as bitter and LB1e as Ir94e-like from summaries
