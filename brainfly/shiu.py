@@ -15,7 +15,10 @@ v0 = v_rst = -52 mV, v_th = -45 mV, t_mbr = 20 ms, tau = 5 ms, t_rfc = 2.2 ms, t
 w_syn = 0.275 mV are Shiu's values. w_syn was fitted on FlyWire, whose synapse counts run lower than
 MaleCNS's, so it needs refitting here. As in the original, a driven neuron gets Poisson input whose
 every event pushes it over threshold (and it has no refractory period), and a silenced neuron loses
-all its synapses. The equations are integrated exactly over each step.
+all its synapses. The equations are integrated exactly over each step, and each step runs in
+Brian2's order, as Shiu's did. A consequence easy to miss: Brian2 drops input that reaches a
+refractory neuron, because it gives variables marked "unless refractory" a conditional write.
+tests/test_shiu_brian2.py checks the kernel against Brian2 spike for spike.
 
     brain = ShiuBrain(w_syn=0.275)
     rates = brain.run(1.0, drive=[(brain.cells(["LB3b", "LB3c"], side="L"), 100.0)]).rates
@@ -76,8 +79,14 @@ def mcns_types(data: Path | str | None = None) -> np.ndarray:
 @numba.njit(parallel=True)
 def _simulate(indptr, indices, weights, n, trials, steps, drive_steps, delay, rfc_steps,
               a_vv, a_vx, a_xx, drive_idx, drive_p, w_poi, silenced, bin_steps, seed):
-    """Every trial in parallel. Returns spike counts (trials, n) over the whole run, spike counts
-    (trials, n) after the drive stops, and the network's spike count per bin (trials, bins)."""
+    """Every trial in parallel. Each step follows Brian2's schedule, which Shiu's results come from:
+    integrate every neuron that isn't refractory, find those over threshold, deliver the synaptic
+    input due now and the Poisson input, then reset the neurons that fired. A spike's input arrives
+    `delay` steps later. A neuron that fires at step t is refractory until step t + rfc_steps
+    (Brian2: while timestep(t - lastspike) < timestep(t_rfc)): frozen, and deaf, since Brian2 drops
+    writes to variables marked "unless refractory". Driven neurons have no refractory period, as in
+    Shiu's code. Returns spike counts (trials, n) over the whole run, spike counts (trials, n) after
+    the drive stops, and the network's spike count per bin (trials, bins)."""
     total = np.zeros((trials, n), np.int32)
     after = np.zeros((trials, n), np.int32)
     timeline = np.zeros((trials, (steps + bin_steps - 1) // bin_steps), np.int32)
@@ -88,44 +97,42 @@ def _simulate(indptr, indices, weights, n, trials, steps, drive_steps, delay, rf
         np.random.seed(seed + b)
         u = np.zeros(n, np.float32)            # v - v0
         x = np.zeros(n, np.float32)
-        refr = np.zeros(n, np.int32)
+        until = np.zeros(n, np.int64)          # first step at which the neuron is no longer refractory
         pending = np.zeros((delay, n), np.float32)   # input arriving `delay` steps after a spike
+        fired = np.empty(n, np.int64)
         for t in range(steps):
-            slot = t % delay
-            row = pending[slot]
+            m = 0
+            for i in range(n):
+                if t < until[i]:
+                    continue
+                ui = a_vv * u[i] + a_vx * x[i]
+                x[i] = a_xx * x[i]
+                u[i] = ui
+                if ui > V_TH - V0:
+                    fired[m] = i
+                    m += 1
+            row = pending[t % delay]
             for i in range(n):
                 if row[i] != 0.0:
-                    x[i] += row[i]
+                    if t >= until[i]:
+                        x[i] += row[i]
                     row[i] = 0.0
             if t < drive_steps:
                 for k in range(len(drive_idx)):
-                    if np.random.random() < drive_p[k]:
+                    if np.random.random() < drive_p[k] and t >= until[drive_idx[k]]:
                         u[drive_idx[k]] += w_poi
-            fired = 0
-            for i in range(n):
-                if refr[i] > 0:
-                    refr[i] -= 1
-                    continue
-                ui = u[i]
-                xi = x[i]
-                if ui <= V_TH - V0:            # driven neurons can already be over threshold
-                    ui = a_vv * ui + a_vx * xi
-                    xi = a_xx * xi
-                if ui > V_TH - V0:
-                    u[i] = V_RST - V0
-                    x[i] = 0.0
-                    refr[i] = 0 if driven[i] else rfc_steps
-                    total[b, i] += 1
-                    if t >= drive_steps:
-                        after[b, i] += 1
-                    fired += 1
-                    if not silenced[i]:
-                        for e in range(indptr[i], indptr[i + 1]):
-                            row[indices[e]] += weights[e]
-                else:
-                    u[i] = ui
-                    x[i] = xi
-            timeline[b, t // bin_steps] += fired
+            for s in range(m):                 # input that just reached these is reset away
+                i = fired[s]
+                u[i] = V_RST - V0
+                x[i] = 0.0
+                until[i] = t if driven[i] else t + rfc_steps
+                total[b, i] += 1
+                if t >= drive_steps:
+                    after[b, i] += 1
+                if not silenced[i]:
+                    for e in range(indptr[i], indptr[i + 1]):
+                        row[indices[e]] += weights[e]
+            timeline[b, t // bin_steps] += m
     return total, after, timeline
 
 
