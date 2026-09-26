@@ -19,7 +19,7 @@ project's model stands today, so the report's roadmap can start from it. None ar
 
 ## Results so far
 
-1. **Eye path, original model (experiments/sweep.py, experiments/eyepath.py reference run).** A dark object looming on one side
+1. **Eye path, original model (experiments/eyepath.py reference run; the original sweep.py has since been retired).** A dark object looming on one side
    changes photoreceptor firing (-7 Hz) but nothing past the lamina (L1 +0.1 Hz, L2 0; LC4, LPLC2, DNp01
    all 0.0 Hz). Photoreceptors inhibit L1-L3 via histamine; a spiking neuron silent at rest can't be
    inhibited further.
@@ -52,7 +52,7 @@ project's model stands today, so the report's roadmap can start from it. None ar
    fiber DNp01 by +17 to +25 Hz. Driving LC10a raises the same-side steering neuron DNa02 by +1.4 to
    +3.7 Hz. The other side and other readouts are unchanged.
 
-5. **Nerve cord relay (experiments/vnc/: probe.py, vnc.py, vnc2.py, vnc3.py).** Driving command neurons (DNg100,
+5. **Nerve cord relay (since reproduced by experiments/vnc/relay.py; the original probe.py, vnc.py, vnc2.py and vnc3.py have been retired).** Driving command neurons (DNg100,
    DNa02, DNp01, MDN) at ~25 Hz moves no motor neuron group (< 0.6 Hz). Raising VNC tonic drive and gain,
    or amplifying only the DN -> premotor and premotor -> MN synapses, failed all pre-registered criteria
    (REST, COMMAND, DISTINCT, LATERAL) in every setting.

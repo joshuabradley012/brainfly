@@ -1,4 +1,4 @@
-"""Command line: `brainfly download`, `brainfly build`, `brainfly info` (or `python -m brainfly ...`)."""
+"""brainfly's command line: `brainfly download | build | info`, or `python -m brainfly ...`."""
 from __future__ import annotations
 
 import argparse
@@ -8,43 +8,43 @@ from . import __version__
 from .data import DATA, FILES, RELEASE_URL, download, has_data
 
 
+def _info(data: Path) -> None:
+    from .brain import cuda_available
+
+    print(f"brainfly {__version__}")
+    print(f"data folder: {data}")
+    for name in FILES:
+        path = data / name
+        size = f"{path.stat().st_size / 1e6:,.0f} MB" if path.exists() else "missing"
+        print(f"  {name}: {size}")
+    if not has_data(data):
+        print("  `brainfly download` fetches them (creating a FlyBrain does too)")
+    print("cuda:", "available" if cuda_available() else 'not available (pip install "brainfly[gpu]")')
+
+
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(prog="brainfly", description="The MaleCNS fruit fly connectome as a spiking network.")
-    parser.add_argument("--version", action="version", version=f"brainfly {__version__}")
-    sub = parser.add_subparsers(dest="command", required=True)
-
-    fetch = sub.add_parser("download", help="fetch the prebuilt brain files (~260 MB)")
-    fetch.add_argument("--data", type=Path, default=DATA, help=f"where to put them (default {DATA}, or $FLY_DATA)")
-    fetch.add_argument("--url", default=RELEASE_URL, help="base URL of the files (or $BRAINFLY_DATA_URL)")
-    fetch.add_argument("--force", action="store_true", help="download again even if the files are there")
-
-    build = sub.add_parser("build", help="download MaleCNS v1.0 (~1.1 GB) and build the brain files from it")
-    build.add_argument("--data", type=Path, default=DATA, help=f"data folder (default {DATA}, or $FLY_DATA)")
-
-    info = sub.add_parser("info", help="show the data folder and whether a GPU is usable")
-    info.add_argument("--data", type=Path, default=DATA)
-
-    args = parser.parse_args(argv)
+    cli = argparse.ArgumentParser(prog="brainfly", description="The MaleCNS fruit fly connectome as a network you can run.")
+    cli.add_argument("--version", action="version", version=f"brainfly {__version__}")
+    commands = cli.add_subparsers(dest="command", required=True)
+    get = commands.add_parser("download", help="fetch the prebuilt network files (~260 MB)")
+    get.add_argument("--url", default=RELEASE_URL, help="where the files are (default this project's release, or $BRAINFLY_DATA_URL)")
+    get.add_argument("--force", action="store_true", help="fetch them again even if they're there")
+    commands.add_parser("build", help="fetch MaleCNS v1.0 (~1.1 GB) and build the network files from it")
+    commands.add_parser("info", help="show the data folder and whether a GPU can be used")
+    for command in commands.choices.values():
+        command.add_argument("--data", type=Path, default=DATA, help=f"the data folder (default {DATA}, or $FLY_DATA)")
+    args = cli.parse_args(argv)
     if args.command == "download":
         download(args.data, args.url, force=args.force)
-        print(f"brain files in {args.data}")
+        print(f"network files in {args.data}")
     elif args.command == "build":
         try:
-            from .build import build as build_brain
-        except ImportError as e:
-            raise SystemExit(f"building needs pandas and pyarrow ({e}): pip install \"brainfly[build]\"")
-        build_brain(args.data)
+            from .build import build
+        except ImportError as err:
+            raise SystemExit(f'building needs pandas, pyarrow and openpyxl ({err}): pip install "brainfly[build]"')
+        build(args.data)
     else:
-        from .brain import cuda_available
-        print(f"brainfly {__version__}")
-        print(f"data folder: {args.data}")
-        for name in FILES:
-            path = args.data / name
-            print(f"  {name}: {f'{path.stat().st_size / 1e6:,.0f} MB' if path.exists() else 'missing'}")
-        if not has_data(args.data):
-            print("  run `brainfly download` (or just create a FlyBrain) to fetch them")
-        gpu = "available" if cuda_available() else 'not available (pip install "brainfly[gpu]")'
-        print(f"cuda: {gpu}")
+        _info(args.data)
 
 
 if __name__ == "__main__":

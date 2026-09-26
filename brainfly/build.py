@@ -1,203 +1,209 @@
-"""Build a simulatable network from the MaleCNS v1.0 connectome.
+"""Build brainfly's network files from the MaleCNS v1.0 connectome.
 
-Same recipe as ornata/fly (fly64/data.py): all superclass-annotated neurons,
-synapse-count weights, sign from predicted neurotransmitter, per-neuron input
-normalization. Also records where each photoreceptor sits in the eye so a
-1-D "scene" (opponent to the left/right, near/far) can be projected onto it.
+Every neuron MaleCNS assigns a superclass becomes a node. A connection's weight is its synapse
+count, negative when the presynaptic neuron's consensus transmitter is inhibitory (GABA,
+glutamate, histamine); each neuron's inputs are then divided by their total absolute count, or by
+1 if that is smaller, so no neuron receives more than one unit of input. Photoreceptors get an
+azimuth from the medulla column they belong to (MaleCNS's optic column assignments), or failing
+that from the column of their strongest column-assigned target. The recipe follows Fly64
+(github.com/ornata/fly); this is an independent implementation.
 
-Output: <DATA>/brain.npz  (weights as CSR, neuron groups, eye azimuths)
+Writes <data>/weights.npz (the connection matrix, rows postsynaptic), <data>/brain.npz (cell types,
+sides, soma positions, superclasses, descending neuron groups, photoreceptors and their azimuths)
+and <data>/brain.json (counts).
 
     brainfly build [--data DIR]      (needs pip install "brainfly[build]")
 """
 from __future__ import annotations
 
 import json
-import re
 import urllib.request
-import zipfile
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
-import pyarrow.feather as feather
 from scipy import sparse
 
 from .data import DATA
 
-BUCKET = "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome"
+ANNOTATIONS = "body-annotations-male-cns-v1.0-minconf-0.5.feather"
+TRANSMITTERS = "body-neurotransmitters-male-cns-v1.0.feather"
+CONNECTIONS = "connectome-weights-male-cns-v1.0-minconf-0.5.feather"
+COLUMNS = "optic-columns.xlsx"
+_FLYEM = "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome"
 SOURCES = {
-    "body-annotations-male-cns-v1.0-minconf-0.5.feather": f"{BUCKET}/body-annotations-male-cns-v1.0-minconf-0.5.feather",
-    "body-neurotransmitters-male-cns-v1.0.feather": f"{BUCKET}/body-neurotransmitters-male-cns-v1.0.feather",
-    "connectome-weights-male-cns-v1.0-minconf-0.5.feather": f"{BUCKET}/connectome-weights-male-cns-v1.0-minconf-0.5.feather",
-    "optic-columns.xlsx": "https://raw.githubusercontent.com/flyconnectome/2025malecns/"
-                          "67767d2233657983993ff6c2be48e836a935863c/supplemental_data/optic-column-type-assignments-v1.0.xlsx",
+    ANNOTATIONS: f"{_FLYEM}/{ANNOTATIONS}",
+    TRANSMITTERS: f"{_FLYEM}/{TRANSMITTERS}",
+    CONNECTIONS: f"{_FLYEM}/{CONNECTIONS}",
+    COLUMNS: "https://raw.githubusercontent.com/flyconnectome/2025malecns/67767d2233657983993ff6c2be48e836a935863c/"
+             "supplemental_data/optic-column-type-assignments-v1.0.xlsx",
 }
+INHIBITORY = "gaba|glutamate|histamine"    # consensus transmitters that make a connection negative
+PHOTORECEPTORS = ["R1-6", "R7", "R8"]
+# Descending neurons kept as named read-outs: forward walking (DNg100), steering (DNa02), the giant
+# fiber's escape (DNp01) and backward walking (MDN, the "moonwalker" neurons).
+COMMANDS = {"forward": ["DNg100"], "steer": ["DNa02"], "escape": ["DNp01"], "backward": ["MDN"]}
+_CHUNK = 4_000_000                          # connection rows handled at a time
 
 
 def download_all(raw: Path) -> None:
-    """Fetch the MaleCNS v1.0 tables (~1.1 GB) into `raw` unless already present."""
+    """Fetch whichever MaleCNS source files (about 1.1 GB in all) aren't in `raw` yet."""
     raw.mkdir(parents=True, exist_ok=True)
     for name, url in SOURCES.items():
-        target = raw / name
-        if target.exists():
+        dest = raw / name
+        if dest.exists():
             continue
-        partial = target.with_suffix(target.suffix + ".part")
-        print(f"downloading {name}")
-
-        def progress(blocks, block_size, total):
-            if total > 0:
-                print(f"\r  {min(blocks * block_size, total) / 1e6:,.0f} / {total / 1e6:,.0f} MB", end="")
-
-        urllib.request.urlretrieve(url, partial, progress)
+        tmp = dest.parent / f"{dest.name}.part"
+        print(f"fetching {name}", flush=True)
+        with urllib.request.urlopen(url) as response, open(tmp, "wb") as out:
+            size, got = int(response.headers.get("Content-Length") or 0), 0
+            while block := response.read(1 << 22):
+                out.write(block)
+                got += len(block)
+                if size:
+                    print(f"\r  {got / 1e6:,.0f} of {size / 1e6:,.0f} MB", end="", flush=True)
         print()
-        partial.replace(target)
-INHIBITORY = "gaba|glutamate|histamine"
-
-# Descending neurons (brain -> body commands) used as motor read-outs.
-# Types follow the literature: DNa02 steering, DNp01 giant-fiber escape,
-# DNg100 forward walking (as in fly64), MDN = moonwalker (backward walking).
-# punch/kick have no fly equivalent; these picks are arbitrary: DNg11 (a
-# descending neuron with no known fighting role) and pIP10 (the male
-# courtship-song command neuron). Nothing we tested drives either of them.
-MOTOR_TYPES = {
-    "forward": ["DNg100"],
-    "steer": ["DNa02"],
-    "escape": ["DNp01"],
-    "backward": ["MDN"],
-    "punch": ["DNg11"],
-    "kick": ["pIP10"],
-}
+        tmp.replace(dest)
 
 
-def optic_columns(path: Path) -> dict[int, tuple[str, int, int]]:
-    """body id -> (eye side, h1, h2) hex column coordinates, from the xlsx."""
-    ns = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
-    result = {}
-    with zipfile.ZipFile(path) as archive:
-        strings = ["".join(e.itertext()) for e in ET.fromstring(archive.read("xl/sharedStrings.xml"))]
-        for sheet in (1, 2):
-            root = ET.fromstring(archive.read(f"xl/worksheets/sheet{sheet}.xml"))
-            for row in root.findall("s:sheetData/s:row", ns)[1:]:
-                cells = {}
-                for c in row:
-                    v = c.find("s:v", ns)
-                    if v is not None:
-                        cells[re.sub(r"\d", "", c.attrib["r"])] = strings[int(v.text)] if c.get("t") == "s" else v.text
-                match = re.fullmatch(r"ME_([LR])_col_(\d+)_(\d+)", cells.get("A", ""))
-                if not match:
-                    continue
-                side, h1, h2 = match.groups()
-                for col in ("B", "C", "E"):
-                    try:
-                        body = int(cells.get(col, -1))
-                    except ValueError:
-                        continue
-                    if body > 0:
-                        result[body] = (side, int(h1), int(h2))
-    return result
+def column_assignments(path: Path) -> dict[int, tuple[str, int, int]]:
+    """MaleCNS's optic column assignments: body id -> (side, hex1, hex2) for the L1, R7 and R8
+    neurons listed against each medulla column (a body listed twice keeps its last column)."""
+    import pandas as pd
+
+    out: dict[int, tuple[str, int, int]] = {}
+    for sheet in ("Right OL", "Left OL"):
+        table = pd.read_excel(path, sheet_name=sheet)
+        where = table["column"].astype(str).str.extract(r"^ME_([LR])_col_(\d+)_(\d+)$")
+        members = table[["L1", "R7", "R8"]].apply(pd.to_numeric, errors="coerce").to_numpy()
+        for (eye, h1, h2), bodies in zip(where.itertuples(index=False), members):
+            if not isinstance(eye, str):
+                continue
+            for body in bodies:
+                if body > 0:
+                    out[int(body)] = (eye, int(h1), int(h2))
+    return out
+
+
+def _lookup(ids: np.ndarray, bodies: np.ndarray):
+    """Row of each body id in the sorted `ids`, and whether it is there at all."""
+    row = np.searchsorted(ids, bodies)
+    row[row == len(ids)] = 0
+    return row, ids[row] == bodies
+
+
+def connections(path: Path, ids: np.ndarray):
+    """Presynaptic row, postsynaptic row and synapse count of every connection between nodes, in
+    file order."""
+    import pyarrow.feather as feather
+
+    table = feather.read_table(path, columns=["body_pre", "body_post", "weight"], memory_map=True)
+    pres, posts, counts = [], [], []
+    for start in range(0, table.num_rows, _CHUNK):
+        part = table.slice(start, _CHUNK)
+        pre, ok_pre = _lookup(ids, part.column("body_pre").to_numpy())
+        post, ok_post = _lookup(ids, part.column("body_post").to_numpy())
+        keep = ok_pre & ok_post
+        pres.append(pre[keep].astype(np.int32))
+        posts.append(post[keep].astype(np.int32))
+        counts.append(part.column("weight").to_numpy()[keep].astype(np.float32))
+        print(f"\r  read {min(start + _CHUNK, table.num_rows):,} of {table.num_rows:,} connection rows", end="", flush=True)
+    print()
+    return np.concatenate(pres), np.concatenate(posts), np.concatenate(counts)
+
+
+def transmitter_signs(raw: Path, ids: np.ndarray) -> np.ndarray:
+    """-1 for each neuron of `ids` whose consensus transmitter is inhibitory, else +1 (float32)."""
+    import pyarrow.feather as feather
+
+    transmitter = feather.read_table(raw / TRANSMITTERS, columns=["body", "consensus_nt"]).to_pandas()
+    transmitter = transmitter.drop_duplicates("body").set_index("body")["consensus_nt"].reindex(ids)
+    inhibitory = transmitter.fillna("unclear").str.lower().str.contains(INHIBITORY).to_numpy()
+    return np.where(inhibitory, np.float32(-1.0), np.float32(1.0))
+
+
+def _position(value) -> np.ndarray | None:
+    return value if isinstance(value, (list, np.ndarray)) and len(value) == 3 else None
 
 
 def build(data: Path | str = DATA) -> None:
-    """Download MaleCNS v1.0 into <data>/raw and write weights.npz, brain.npz and brain.json to `data`."""
+    """Fetch MaleCNS v1.0 into <data>/raw if needed and write weights.npz, brain.npz and brain.json."""
+    import pyarrow.feather as feather
+
     data = Path(data)
     raw = data / "raw"
     download_all(raw)
-    ann = feather.read_table(raw / "body-annotations-male-cns-v1.0-minconf-0.5.feather").to_pandas()
-    nt = feather.read_table(raw / "body-neurotransmitters-male-cns-v1.0.feather",
-                            columns=["body", "consensus_nt"]).to_pandas()
 
-    ann = ann.loc[ann["superclass"].notna() & ann["superclass"].ne("")]
-    ann = ann.drop_duplicates("bodyId").sort_values("bodyId").set_index("bodyId")
-    ids = ann.index.to_numpy(np.int64)
+    nodes = feather.read_table(raw / ANNOTATIONS).to_pandas()
+    nodes = nodes[nodes["superclass"].fillna("") != ""]
+    nodes = nodes.drop_duplicates("bodyId").sort_values("bodyId").set_index("bodyId")
+    ids = nodes.index.to_numpy(np.int64)
     n = len(ids)
-    print(f"{n:,} neurons")
+    print(f"{n:,} neurons", flush=True)
 
-    labels = nt.drop_duplicates("body").set_index("body").reindex(ids)["consensus_nt"]
-    sign = np.where(labels.fillna("unclear").str.lower().str.contains(INHIBITORY), -1.0, 1.0).astype(np.float32)
-
-    edges = feather.read_table(raw /"connectome-weights-male-cns-v1.0-minconf-0.5.feather",
-                               columns=["body_pre", "body_post", "weight"], memory_map=True)
-    pre_parts, post_parts, w_parts = [], [], []
-    for i, batch in enumerate(edges.to_batches(max_chunksize=4_000_000), 1):
-        pre_id = batch.column(0).to_numpy(zero_copy_only=False)
-        post_id = batch.column(1).to_numpy(zero_copy_only=False)
-        pre = np.minimum(np.searchsorted(ids, pre_id), n - 1)
-        post = np.minimum(np.searchsorted(ids, post_id), n - 1)
-        ok = (ids[pre] == pre_id) & (ids[post] == post_id)
-        pre_parts.append(pre[ok].astype(np.int32))
-        post_parts.append(post[ok].astype(np.int32))
-        w_parts.append(batch.column(2).to_numpy(zero_copy_only=False)[ok].astype(np.float32))
-        print(f"\r  scanned {min(i * 4_000_000, edges.num_rows):,} / {edges.num_rows:,} edge rows", end="")
-    print()
-    del edges
-    pre, post, w = (np.concatenate(p) for p in (pre_parts, post_parts, w_parts))
-    del pre_parts, post_parts, w_parts
+    sign = transmitter_signs(raw, ids)
+    pre, post, w = connections(raw / CONNECTIONS, ids)
     w *= sign[pre]
-    incoming = np.bincount(post, weights=np.abs(w), minlength=n).astype(np.float32)
-    w /= np.maximum(incoming[post], 1.0)
+    total_in = np.bincount(post, weights=np.abs(w), minlength=n).astype(np.float32)
+    w /= np.maximum(total_in[post], 1.0)
     W = sparse.csr_matrix((w, (post, pre)), shape=(n, n), dtype=np.float32)
-    print(f"{W.nnz:,} connections")
+    del pre, post, w
+    print(f"{W.nnz:,} connections", flush=True)
 
-    cell_type = ann["flywireType"].fillna(ann["type"]).fillna("").astype(str)
-    side = ann["somaSide"].fillna(ann["rootSide"]).fillna("").astype(str).str.upper()
-    instance = ann["instance"].fillna("").astype(str).str.upper()
-
-    # Soma (or soma-tract) position of each neuron, in EM voxels; NaN if unknown.
+    cell_type = nodes["flywireType"].combine_first(nodes["type"]).fillna("").astype(str)
+    side = nodes["somaSide"].combine_first(nodes["rootSide"]).fillna("").astype(str).str.upper()
+    instance = nodes["instance"].fillna("").astype(str).str.upper()
     positions = np.full((n, 3), np.nan, np.float32)
-    for i, (soma, to_soma) in enumerate(zip(ann["somaLocation"], ann["tosomaLocation"])):
-        loc = soma if isinstance(soma, (list, np.ndarray)) and len(soma) == 3 else to_soma
-        if isinstance(loc, (list, np.ndarray)) and len(loc) == 3:
-            positions[i] = loc
+    for row, (soma, tract) in enumerate(zip(nodes["somaLocation"], nodes["tosomaLocation"])):
+        at = _position(soma)
+        at = _position(tract) if at is None else at
+        if at is not None:
+            positions[row] = at
 
-    def pick(types, want_side=None):
-        mask = cell_type.isin(types)
-        if want_side:
-            mask &= (side == want_side) | instance.str.contains(f"_{want_side}")
-        return np.flatnonzero(mask.to_numpy()).astype(np.int32)
+    def of_types(types: list[str], on_side: str | None = None) -> np.ndarray:
+        chosen = cell_type.isin(types)
+        if on_side:
+            chosen &= (side == on_side) | instance.str.contains(f"_{on_side}")
+        return np.flatnonzero(chosen.to_numpy()).astype(np.int32)
 
-    groups = {}
-    for name, types in MOTOR_TYPES.items():
-        groups[f"{name}_L"] = pick(types, "L")
-        groups[f"{name}_R"] = pick(types, "R")
+    groups = {f"{name}_{s}": of_types(types, s) for name, types in COMMANDS.items() for s in "LR"}
+    empty = [name for name, rows in groups.items() if not len(rows)]
+    if empty:
+        raise RuntimeError(f"no neurons for the read-out groups {empty}; check COMMANDS")
 
-    # Photoreceptors and their azimuth in the eye (-1 = far left ... +1 = far right).
-    visual = pick(["R1-6", "R7", "R8"])
-    columns = optic_columns(raw / "optic-columns.xlsx")
-    known = np.array([i for i, b in enumerate(ids) if int(b) in columns], np.int32)
-    to_known = abs(W[known][:, visual]).tocsc()  # R1-6 -> strongest column-assigned partner
-    h1_max = max(h1 for _, h1, _ in columns.values())
+    # Photoreceptor azimuths: -1 far left ... +1 far right, from how far back its column sits (hex1)
+    visual = of_types(PHOTORECEPTORS)
+    columns = column_assignments(raw / COLUMNS)
+    placed = np.array([row for row, body in enumerate(ids) if int(body) in columns], np.int32)
+    to_placed = abs(W[placed][:, visual]).tocsc()       # column k: photoreceptor k's column-assigned targets
+    last_h1 = max(h1 for _, h1, _ in columns.values())
+    eye = side.to_numpy()[visual].astype(str)
     azimuth = np.full(len(visual), np.nan, np.float32)
-    eye = np.array([side.iat[v] for v in visual])
-    for k, neuron in enumerate(visual):
-        loc = columns.get(int(ids[neuron]))
-        if loc is None:
-            a, b = to_known.indptr[k:k + 2]
-            if b > a:
-                loc = columns[int(ids[known[to_known.indices[a + np.argmax(to_known.data[a:b])]]])]
-        if loc is not None:
-            eye_side, h1, _ = loc
-            eye[k] = eye_side
-            # h1 runs front->back within an eye (approximate, like fly64).
-            frac = (h1 - 1) / max(h1_max - 1, 1)
-            azimuth[k] = -(0.06 + 0.94 * frac) if eye_side == "L" else (0.06 + 0.94 * frac)
-    missing = np.isnan(azimuth)
-    azimuth[missing] = np.where(eye[missing] == "L", -0.5, 0.5)  # unplaced: mid-eye guess
-    print(f"{len(visual):,} photoreceptors ({missing.sum()} without a column estimate)")
-
-    for name, idx in groups.items():
-        print(f"  {name:11s} {len(idx):3d} neurons  {sorted(set(cell_type.iloc[idx]))}")
-    if any(len(g) == 0 for g in groups.values()):
-        raise RuntimeError("a motor group resolved to zero neurons; check MOTOR_TYPES")
+    for k, cell in enumerate(visual):
+        where = columns.get(int(ids[cell]))
+        if where is None:
+            lo, hi = to_placed.indptr[k], to_placed.indptr[k + 1]
+            if hi > lo:
+                strongest = to_placed.indices[lo + np.argmax(to_placed.data[lo:hi])]
+                where = columns[int(ids[placed[strongest]])]
+        if where is not None:
+            eye[k] = where[0]
+            depth = (where[1] - 1) / max(last_h1 - 1, 1)
+            reach = 0.06 + 0.94 * depth
+            azimuth[k] = -reach if where[0] == "L" else reach
+    unplaced = np.isnan(azimuth)
+    azimuth[unplaced] = np.where(eye[unplaced] == "L", -0.5, 0.5)    # no column: mid-eye
+    print(f"{len(visual):,} photoreceptors, {int(unplaced.sum())} without a column", flush=True)
 
     sparse.save_npz(data / "weights.npz", W, compressed=False)
-    np.savez(data / "brain.npz", ids=ids, visual=visual, azimuth=azimuth,
-             cell_type=cell_type.to_numpy().astype(str), side=side.to_numpy().astype(str),
-             positions=positions, superclass=ann["superclass"].to_numpy().astype(str),
-             **{f"group_{k}": v for k, v in groups.items()})
-    (data / "brain.json").write_text(json.dumps(
-        {"neurons": n, "connections": int(W.nnz), "photoreceptors": int(len(visual)),
-         "groups": {k: int(len(v)) for k, v in groups.items()}}, indent=2))
-    print(f"saved to {data}")
+    arrays = dict(ids=ids, visual=visual, azimuth=azimuth, positions=positions)
+    for name, column in (("cell_type", cell_type), ("side", side), ("superclass", nodes["superclass"])):
+        arrays[name] = column.to_numpy().astype(str)
+    arrays.update({f"group_{name}": rows for name, rows in groups.items()})
+    np.savez(data / "brain.npz", **arrays)
+    summary = {"neurons": n, "connections": int(W.nnz), "photoreceptors": int(len(visual)),
+               "groups": {name: int(len(rows)) for name, rows in groups.items()}}
+    (data / "brain.json").write_text(json.dumps(summary, indent=2))
+    print(f"saved to {data}", flush=True)
 
 
 if __name__ == "__main__":

@@ -178,12 +178,11 @@ a sign that the approach is broken."
 
 | Script | Question | Answer |
 |---|---|---|
-| `experiments/motor_readout.py` | With Fly64's settings, does what the fly sees reach its motor neurons? | No. Every neuron rests exactly at threshold, so the network ticks at about 4 Hz whatever the fly sees. |
-| `experiments/sweep.py` | Does looming reach the looming detectors through the eye? | No, in every setting tried: histamine from the photoreceptors silences the lamina. |
-| `experiments/inject.py` | Past the eye, do the detectors drive the right outputs? | Yes, on the same side only: looming detectors raise the giant fiber by 17–25 Hz, and courtship-tracking LC10a raises the steering neuron DNa02 by 1.4–3.7 Hz. |
+| `experiments/motor_readout.py` | Does what the fly sees reach its command neurons, with Fly64's settings or brainfly's? | No, with either. Under Fly64's settings every neuron rests at threshold, and the command neurons fire at 3–4 Hz (forward 0.8 Hz) whatever the scene, darkness included; no scene moves any of them by 3 Hz. Under brainfly's defaults they are nearly silent, and just as blind. |
+| `experiments/inject.py` | Past the eye, do the detectors drive the right outputs? | Yes, on the same side only: driving the left looming detectors raises the left giant fiber by 17 Hz (at 0.3 V a step) to 46 Hz (at 0.8 V), and courtship-tracking LC10a raises the left steering neuron DNa02 by 1.9–4.2 Hz; the right side's stay within 0.2 Hz. |
 | `FlyBrain(sensory_input=False)` | Why do the smell neurons sit at the rate ceiling? | Olfactory receptor neurons get 0.43 of their 0.45 net input from each other. Removing synapses onto sensory neurons ends the runaway. |
 | a two-fly song test (since removed) | Can two brains signal to each other through song and hearing? | Yes, but only through loudness, and at 2 ms steps scrambled wiring carries as much (0.87 vs 0.83 bits). |
-| `experiments/eyepath.py` | Does a graded retina and lamina let looming through? | With the right signs along the whole pathway, but LPLC2 rises only 1.2–1.5 Hz: a fail against its 3 Hz bar. |
+| `experiments/eyepath.py` | Does a graded retina and lamina let looming through? | With the right signs along the whole pathway, but LPLC2 rises only 1.2–1.5 Hz: a fail against its 3 Hz bar. Its all-spiking reference run shows the original model's failure: a loom drops the photoreceptors by 7 Hz, but L1 moves 0.1 Hz and LC4, LPLC2 and the giant fiber not at all. |
 | `experiments/eyepath_filled.py` | With the missing photoreceptor input filled in, does looming reach the escape neuron through the eyes? | Only with an unrealistic stimulus: on the 1-D eye, a band darkening up to 90% of one eye raised the same side's giant fiber by 2.4–3.2 Hz. LC4's 2.7 Hz missed its 3 Hz bar, so the test failed anyway. |
 | `experiments/eyepath_2d.py` | With a 2-D eye from a micro-CT map and a proper looming disk, does looming reach the escape neuron? | No. At settings that keep the resting network healthy, LPLC2 on the correct side rises about 1 Hz and LC4 0.5 Hz, and the giant fiber doesn't reliably respond. With the fill, blind parts of the eye respond like intact ones, but every response stays under 0.7 Hz. |
 | `experiments/eyepath_flyvis.py` | With flyvis's fitted optic lobe on MaleCNS wiring? | All four T4 subtypes prefer the correct direction (DSI 0.21–0.49; T5 only two of four). At the strongest coupling tried, looming raises LPLC2 by 3.4–5.1 Hz, but LC4 only 0.7 Hz and the giant fiber 1.4–1.7 Hz. A fail. |
@@ -194,7 +193,7 @@ a sign that the approach is broken."
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.7). |
 | `experiments/closed_loop.py` | With the brain steering NeuroMechFly through DNa02, does the fly turn with a rotating drum? | Yes: all 8 flies turn with it, +19.6 deg/s on average under a counterclockwise drum and -14.1 under a clockwise one (difference 33.7 deg/s, t = 8.7), against +4.7 with the drum still; about 0.4 times the drum's 40 deg/s. With the link cut, both directions give identical paths. |
-| `experiments/vnc/` | Do commands from the brain reach the motor neurons? | No: under 0.6 Hz in every motor group. Three calibrations failed, and no stimulus of 20 drives a walking command. |
+| `experiments/vnc/relay.py` | Do commands from the brain reach the motor neurons? | No. Walking, steering, escape and backward commands, each driven at 26 Hz, move no pool of motor neurons (neck, front, middle or hind segment, either side) by more than 0.17 Hz. Earlier calibrations with the inherited code, since retired, found the same: raising the nerve cord's gain and drive, or amplifying just the relay, let commands through only by driving the motor neurons at rest, and 2–5 ms steps didn't help. |
 
 Every eye experiment before `eyepath_2d.py` used the one-dimensional eye in `brainfly/eyes.py`, whose
 "azimuth" turned out to follow elevation (r = 0.93), so its looms were bands sweeping across most of
@@ -236,7 +235,7 @@ Two models share the package:
 pip install "brainfly[build] @ git+https://github.com/joshuabradley012/brainfly"
 ```
 
-`[build]` adds pandas and pyarrow, which read the raw MaleCNS tables that `ShiuBrain`,
+`[build]` adds pandas, pyarrow and openpyxl, which read the raw MaleCNS tables that `ShiuBrain`,
 `brainfly.eye2d` and `brainfly.optic` run on, and rdata, which reads the eye map behind
 `brainfly.eye2d`. The first of them to run downloads the tables (~1.1 GB) and caches the synapse
 counts. `[flyvis]` adds flyvis and PyTorch for `brainfly.optic`, which fetches flyvis's pretrained
@@ -297,7 +296,7 @@ print(f"MN9 {result.rates[mn9].mean():.0f} Hz, {hot.sum():,} other neurons above
   per 20 ms, so a coupling carries over to other steps; eye input, as in the inherited model, is added
   once per step.
 * `sensory_input` (default `True`): `False` removes every synapse onto sensory neurons.
-* `refractory` (default `0`): seconds a neuron is held at 0 after it spikes.
+* `refractory` (default `0`): how long, in seconds, a neuron stays at 0 after a spike.
 * `graded` (default none): cell types or superclasses simulated as graded neurons that release
   transmitter continuously, like the real retina and lamina.
 * `cell_params`: a time constant, threshold, tonic drive or gain per cell type or superclass.
@@ -308,7 +307,7 @@ print(f"MN9 {result.rates[mn9].mean():.0f} Hz, {hot.sum():,} other neurons above
 `brain.set_graded(neurons, release)` sets graded neurons' release from outside the model, which is
 how `FlyvisOpticLobe` drives the rest of the brain.
 
-`brain.cells([...])` accepts superclass names such as `"descending_neuron"` as well as cell types.
+`brain.cells([...])` takes cell types, or whole superclasses such as `"descending_neuron"`.
 
 </details>
 
@@ -335,33 +334,33 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 
 <br>
 
-There are no trained weights. The "model" is the fly's wiring diagram. `brainfly download` fetches a
-prebuilt copy of `FlyBrain`'s files (checked against their sha256); `brainfly build` builds them from
-the public MaleCNS v1.0 release, downloading these files into `$FLY_DATA/raw/` and skipping any that are
-already there:
+Nothing here is trained: the network is the fly's wiring diagram. `brainfly download` fetches the two
+network files this project builds and publishes (each checked against its sha256). `brainfly build`
+makes them yourself from the public MaleCNS v1.0 release, fetching the four source files below into
+`$FLY_DATA/raw/` first, unless they're already there:
 
-| File | Size | What it is | Source |
+| File | Size | Contents | From |
 |---|---|---|---|
-| `connectome-weights-male-cns-v1.0-minconf-0.5.feather` | 1.05 GB | every neuron-to-neuron connection, with synapse counts | [MaleCNS bucket](https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/connectome-weights-male-cns-v1.0-minconf-0.5.feather) |
-| `body-annotations-male-cns-v1.0-minconf-0.5.feather` | 14 MB | cell types, sides, classes, soma positions | [MaleCNS bucket](https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/body-annotations-male-cns-v1.0-minconf-0.5.feather) |
-| `body-neurotransmitters-male-cns-v1.0.feather` | 43 MB | predicted neurotransmitter for each neuron | [MaleCNS bucket](https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/body-neurotransmitters-male-cns-v1.0.feather) |
-| `optic-columns.xlsx` | 0.1 MB | which eye column each photoreceptor belongs to | [flyconnectome/2025malecns](https://github.com/flyconnectome/2025malecns/blob/67767d2233657983993ff6c2be48e836a935863c/supplemental_data/optic-column-type-assignments-v1.0.xlsx) |
+| `connectome-weights-male-cns-v1.0-minconf-0.5.feather` | 1.05 GB | synapse counts for every connected pair of neurons | [the MaleCNS release](https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/connectome-weights-male-cns-v1.0-minconf-0.5.feather) |
+| `body-annotations-male-cns-v1.0-minconf-0.5.feather` | 14 MB | each neuron's type, side, superclass and cell body position | [the MaleCNS release](https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/body-annotations-male-cns-v1.0-minconf-0.5.feather) |
+| `body-neurotransmitters-male-cns-v1.0.feather` | 43 MB | each neuron's predicted transmitter | [the MaleCNS release](https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/body-neurotransmitters-male-cns-v1.0.feather) |
+| `optic-columns.xlsx` | 0.1 MB | the medulla column of each L1, R7 and R8 neuron | [flyconnectome/2025malecns](https://github.com/flyconnectome/2025malecns/blob/67767d2233657983993ff6c2be48e836a935863c/supplemental_data/optic-column-type-assignments-v1.0.xlsx) |
 
-To download by hand instead (for example on a slow connection, or with `curl -C -` to resume):
+On a slow or flaky connection, fetch them yourself (curl's `-C -` resumes a partial download):
 
 ```sh
-mkdir -p ~/fly-data/raw && cd ~/fly-data/raw
-B=https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome
-curl -LO -C - $B/connectome-weights-male-cns-v1.0-minconf-0.5.feather
-curl -LO -C - $B/body-annotations-male-cns-v1.0-minconf-0.5.feather
-curl -LO -C - $B/body-neurotransmitters-male-cns-v1.0.feather
-curl -L -o optic-columns.xlsx https://raw.githubusercontent.com/flyconnectome/2025malecns/67767d2233657983993ff6c2be48e836a935863c/supplemental_data/optic-column-type-assignments-v1.0.xlsx
+cd "${FLY_DATA:-$HOME/fly-data}" && mkdir -p raw && cd raw
+SRC=https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome
+for f in connectome-weights body-annotations; do curl -LO -C - "$SRC/$f-male-cns-v1.0-minconf-0.5.feather"; done
+curl -LO -C - "$SRC/body-neurotransmitters-male-cns-v1.0.feather"
+curl -L -o optic-columns.xlsx "https://raw.githubusercontent.com/flyconnectome/2025malecns/67767d2233657983993ff6c2be48e836a935863c/supplemental_data/optic-column-type-assignments-v1.0.xlsx"
 ```
 
-Then `python -m brainfly build` builds the network in about a minute. It writes `weights.npz` (205 MB,
-the signed and normalised connection matrix) and `brain.npz` (neuron types, sides, positions, readout
-groups, eye layout) into `$FLY_DATA`. Expect exactly **166,700 neurons and 25,582,938 connections**.
-The first `ShiuBrain()` adds `counts.npz`, the same connections as raw signed synapse counts.
+`brainfly build` then takes under a minute. It writes `weights.npz` (205 MB: synapse counts, signed by
+transmitter, each neuron's input scaled to at most one unit) and `brain.npz` (cell types, sides, cell
+body positions, superclasses, four descending-neuron read-out groups, and the photoreceptors with their
+1-D azimuths) into `$FLY_DATA`: **166,700 neurons and 25,582,938 connections**. The first `ShiuBrain()`
+adds `counts.npz`, the same connections as raw signed synapse counts.
 
 To look around the same data without downloading anything, use [neuPrint](https://neuprint.janelia.org)
 (dataset `male-cns:v1.0`), where you can look up any neuron's inputs and outputs, or the
@@ -400,7 +399,7 @@ To look around the same data without downloading anything, use [neuPrint](https:
 
 ## License
 
-The code in this repository is released under the [MIT License](LICENSE).
+brainfly is MIT-licensed ([LICENSE](LICENSE)).
 
 The MaleCNS connectome data is **not** in the repository or the package. `brainfly build` downloads it
 from its source, and `brainfly download` fetches files derived from it (the normalised weight matrix
