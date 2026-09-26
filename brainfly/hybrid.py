@@ -95,54 +95,59 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     ng = len(g_list)
     for b in numba.prange(trials):
         fired = np.empty(n, np.int64)
+        # this trial's state in arrays of its own while it runs, which the compiler optimises better
+        ub, xb, sb, untilb, Rb = u[b].copy(), x[b].copy(), s[b].copy(), until[b].copy(), R[b].copy()
         for k in range(steps):
             t = t0 + k
             m = 0
             for i in range(n):
-                if t < until[b, i]:
+                if t < untilb[i]:
                     continue
                 c = cls[i]
-                ui = a_vv[c] * u[b, i] + a_vx[c] * x[b, i] + a_bias[c]
-                x[b, i] = a_xx * x[b, i]
+                ui = a_vv[c] * ub[i] + a_vx[c] * xb[i] + a_bias[c]
+                xb[i] = a_xx * xb[i]
                 if slow:
-                    ui += a_vs[c] * s[b, i]
-                    s[b, i] = a_ss * s[b, i]
-                u[b, i] = ui
+                    ui += a_vs[c] * sb[i]
+                    sb[i] = a_ss * sb[i]
+                ub[i] = ui
                 if ui > theta[c] and not graded[c]:
                     fired[m] = i
                     m += 1
             for q in range(ng):
                 i = g_list[q]
-                r = 0.0 if silenced[i] else min(max(g_gain[q] * (u[b, i] - g_at[q]), 0.0), g_max[q])
+                r = 0.0 if silenced[i] else min(max(g_gain[q] * (ub[i] - g_at[q]), 0.0), g_max[q])
                 change = r - rel[b, q]
                 if change != 0.0:
                     rel[b, q] = r
                     for e in range(ptr[i], ptr[i + 1]):
-                        R[b, idx[e]] += w[e] * change
+                        Rb[idx[e]] += w[e] * change
             slot = t % delay
             row = pend[b, slot]
             srow = spend[b, slot]
-            for i in range(n):
-                live = t >= until[b, i]
+            for i in range(n):                 # read the refractory state only where input arrives
                 if row[i] != 0.0:
-                    if live:
-                        x[b, i] += row[i]
+                    if t >= untilb[i]:
+                        xb[i] += row[i]
                     row[i] = 0.0
-                if ng and live and R[b, i] != 0.0:
-                    x[b, i] += R[b, i] * dt
-                if slow and srow[i] != 0.0:
-                    if live:
-                        s[b, i] += srow[i]
-                    srow[i] = 0.0
+            if ng:
+                for i in range(n):
+                    if Rb[i] != 0.0 and t >= untilb[i]:
+                        xb[i] += Rb[i] * dt
+            if slow:
+                for i in range(n):
+                    if srow[i] != 0.0:
+                        if t >= untilb[i]:
+                            sb[i] += srow[i]
+                        srow[i] = 0.0
             for q in range(len(drive_idx)):
                 j = drive_idx[q]
-                if _uniform(rng, b) < drive_p[q] and t >= until[b, j]:
-                    u[b, j] += w_poi
+                if _uniform(rng, b) < drive_p[q] and t >= untilb[j]:
+                    ub[j] += w_poi
             for f in range(m):
                 i = fired[f]
-                u[b, i] = reset[cls[i]]
-                x[b, i] = 0.0
-                until[b, i] = t if driven[i] else t + rfc[cls[i]]
+                ub[i] = reset[cls[i]]
+                xb[i] = 0.0
+                untilb[i] = t if driven[i] else t + rfc[cls[i]]
                 counts[b, i] += 1
                 strength = np.float32(1.0)
                 if depress[cls[i]] < 1.0:
@@ -157,6 +162,11 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                             srow[sidx[e]] += sw[e] * strength
             if bin_steps > 0:
                 timeline[b, (bin_start + k) // bin_steps] += m
+        u[b, :] = ub
+        x[b, :] = xb
+        s[b, :] = sb
+        until[b, :] = untilb
+        R[b, :] = Rb
 
 
 def consensus_transmitters(data: Path | str | None = None) -> np.ndarray:
@@ -271,7 +281,7 @@ class HybridBrain:
                 else:
                     values[rows, keys.index(name)] = numeric(name, value)
         combos, cls = np.unique(values, axis=0, return_inverse=True)
-        self.cls = cls.reshape(-1).astype(np.int32)
+        self.cls = cls.reshape(-1).astype(np.uint8 if len(combos) < 256 else np.int32)   # read every step: keep it small
         self.params = [{k: (("spiking", "graded")[int(v)] if k == "unit" else float(v)) for k, v in zip(keys, row)}
                        for row in combos]
         self.graded = np.flatnonzero(np.array([p["unit"] == "graded" for p in self.params])[self.cls])
