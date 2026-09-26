@@ -1,10 +1,11 @@
-"""Where the brain files live, and fetching them.
+"""Where brainfly keeps its network files, and fetching a prebuilt copy.
 
-FlyBrain needs two files built from the MaleCNS v1.0 connectome: weights.npz (the signed,
-normalized connection matrix) and brain.npz (cell types, sides, positions, readout groups,
-eye layout). They are too big for the package, so the first FlyBrain() downloads a prebuilt
-copy (~260 MB) into $FLY_DATA (default ~/fly-data). `brainfly build` makes the same files
-from the original MaleCNS release instead.
+FlyBrain runs on two files that brainfly.build makes from the MaleCNS v1.0 connectome: weights.npz,
+the signed and normalised connection matrix, and brain.npz, which holds cell types, sides, soma
+positions, superclasses, read-out groups and the photoreceptors with their azimuths. They are too
+big to ship with the package, so the first FlyBrain() fetches a prebuilt copy (~260 MB) from this
+project's GitHub release into $FLY_DATA (default ~/fly-data), checking each file's sha256.
+`brainfly build` makes the same files from the MaleCNS release instead.
 """
 from __future__ import annotations
 
@@ -16,65 +17,67 @@ import urllib.request
 from pathlib import Path
 
 DATA = Path(os.environ.get("FLY_DATA", Path.home() / "fly-data"))
-
 RELEASE_URL = os.environ.get("BRAINFLY_DATA_URL",
-                             "https://github.com/joshuabradley012/brainfly/releases/download/brain-v1")
-
-# sha256 of the prebuilt files (166,700 neurons, 25,582,938 connections)
+                             "https://github.com/joshuabradley012/brainfly/releases/download/brain-v2")
+# sha256 of the released files, built by brainfly.build (166,700 neurons, 25,582,938 connections)
 FILES = {
-    "brain.npz": "cc9bd1ecd00bd703a6fa648bc6ad145c93c7c1ee53debdcc9ce0d1f4305e6aca",
-    "weights.npz": "c29919aa44069a271b1ee978abe05fa9bf6e45e4ba3e436e92b624ef1b5be40c",
+    "brain.npz": "8fba1e790aabe8655ad0895c3fdcbb8e458f4bd5088fb601c48126b67cd9902f",
+    "weights.npz": "e00e3f2a9828c921fe1f093cc567bf45a85adad0526176be0aa1b8be09336eeb",
 }
 
 
 def has_data(data: Path | str = DATA) -> bool:
-    """True if both brain files are in `data`."""
-    return all((Path(data) / name).exists() for name in FILES)
+    """Whether both network files are in `data`."""
+    folder = Path(data)
+    return all((folder / name).is_file() for name in FILES)
+
+
+def _fetch(url: str, dest: Path, sha256: str) -> None:
+    """Stream `url` into `dest` via a .part file, keeping it only if its checksum matches."""
+    tmp = dest.parent / f"{dest.name}.part"
+    digest = hashlib.sha256()
+    try:
+        with urllib.request.urlopen(url) as response, open(tmp, "wb") as out:
+            size, got = int(response.headers.get("Content-Length") or 0), 0
+            while block := response.read(1 << 20):
+                out.write(block)
+                digest.update(block)
+                got += len(block)
+                if size:
+                    print(f"\r  {got / 1e6:,.0f} of {size / 1e6:,.0f} MB", end="", file=sys.stderr)
+        print(file=sys.stderr)
+    except (urllib.error.URLError, OSError) as err:
+        tmp.unlink(missing_ok=True)
+        raise RuntimeError(f"could not fetch {url}: {err}") from err
+    if digest.hexdigest() != sha256:
+        tmp.unlink(missing_ok=True)
+        raise RuntimeError(f"{url} doesn't match its published checksum; discarded it")
+    tmp.replace(dest)
 
 
 def download(data: Path | str = DATA, url: str = RELEASE_URL, force: bool = False) -> Path:
-    """Fetch the prebuilt brain files into `data`, checking their sha256. Files already
-    there are kept unless force=True."""
-    data = Path(data)
-    data.mkdir(parents=True, exist_ok=True)
-    for name, expected in FILES.items():
-        target = data / name
-        if target.exists() and not force:
+    """Fetch the prebuilt network files into `data`. Files already there are kept unless force=True."""
+    folder = Path(data)
+    folder.mkdir(parents=True, exist_ok=True)
+    for name, sha256 in FILES.items():
+        dest = folder / name
+        if dest.exists() and not force:
             continue
-        partial = target.with_suffix(target.suffix + ".part")
-        digest = hashlib.sha256()
-        print(f"downloading {name}", file=sys.stderr)
-        try:
-            with urllib.request.urlopen(f"{url.rstrip('/')}/{name}") as response, open(partial, "wb") as out:
-                total = int(response.headers.get("Content-Length") or 0)
-                done = 0
-                while chunk := response.read(1 << 20):
-                    out.write(chunk)
-                    digest.update(chunk)
-                    done += len(chunk)
-                    if total:
-                        print(f"\r  {done / 1e6:,.0f} / {total / 1e6:,.0f} MB", end="", file=sys.stderr)
-            print(file=sys.stderr)
-        except (urllib.error.URLError, OSError) as e:
-            partial.unlink(missing_ok=True)
-            raise RuntimeError(f"could not download {name} from {url}: {e}") from e
-        if digest.hexdigest() != expected:
-            partial.unlink(missing_ok=True)
-            raise RuntimeError(f"{name} from {url} has the wrong checksum; not using it")
-        partial.replace(target)
-    return data
+        print(f"fetching {name}", file=sys.stderr)
+        _fetch(f"{url.rstrip('/')}/{name}", dest, sha256)
+    return folder
 
 
 def ensure_data(data: Path | str | None = None) -> Path:
-    """The data folder, downloading the prebuilt brain first if it isn't there yet."""
-    data = DATA if data is None else Path(data)
-    if has_data(data):
-        return data
-    print(f"brainfly: no brain files in {data}; downloading the prebuilt brain (~260 MB, once)", file=sys.stderr)
+    """The data folder, after fetching the prebuilt network files into it if they're missing."""
+    folder = DATA if data is None else Path(data)
+    if has_data(folder):
+        return folder
+    print(f"brainfly: no network files in {folder}; fetching the prebuilt ones (~260 MB, once)", file=sys.stderr)
     try:
-        download(data)
-    except RuntimeError as e:
+        download(folder)
+    except RuntimeError as err:
         raise FileNotFoundError(
-            f"no brain files in {data} and the download failed ({e}). Build them from the MaleCNS "
-            f"release instead: pip install \"brainfly[build]\" && brainfly build --data \"{data}\"") from e
-    return data
+            f"no network files in {folder}, and fetching them failed ({err}). Build them from the MaleCNS "
+            f"release instead: pip install \"brainfly[build]\" && brainfly build --data \"{folder}\"") from err
+    return folder

@@ -1,30 +1,30 @@
-"""Leaky integrate-and-fire simulation of the MaleCNS connectome.
+"""FlyBrain: the MaleCNS connectome as a network of leaky integrate-and-fire neurons.
 
-Dynamics follow ornata/fly (fly64/model.py) so results are comparable:
-    v <- exp(-dt/tau) v + gain * W @ spikes + tonic + noise + eye input
-    v >= 1 -> spike, reset to 0
-tonic/gain/noise are hand-calibrated, not measured. fly64 used tonic 0.18,
-gain 1.5, which parks every neuron at threshold (0.18 / (1 - 0.82) = 1.0) so
-the network ticks on its own. inject.py showed tonic 0.14, gain 3.0 keeps
-descending neurons quiet at rest (~1 Hz) while LC4/LPLC2 -> DNp01 and
-LC10a -> DNa02 signals still get through, ipsilaterally.
+Every step of length dt, each neuron's voltage decays with a 100 ms time constant and gains the
+synaptic input from the last step's spikes, a constant tonic drive, random noise kicks and, for
+photoreceptors, the light:
 
-Two optional departures from that model, both off by default:
-* cell_params: tau, threshold, tonic and gain per cell type or superclass
-  instead of one value for the whole brain.
-* graded: cell types simulated as graded (non-spiking) neurons, like the
-  photoreceptors and lamina neurons of a real fly. A graded neuron integrates
-  the same way but never spikes; it releases transmitter continuously, and its
-  synapses pass on the change in release from its resting level:
-      out = clip(graded_gain * (v - v_rest), -graded_release, 1 - graded_release)
-  in the units of a spike per 20 ms step (1 = as much as one spike), scaled to
-  the step length so it means the same at any dt. A drop below rest reaches its
-  targets too, which a silent spiking neuron can't signal: that is how a light
-  increment, which hyperpolarises the lamina, gets through.
+    v <- exp(-dt/tau) v + gain * W @ spikes + tonic + noise + eye input,  spike and reset to 0 at v >= 1
 
-batch > 1 runs that many independent flies (same wiring, own voltages and
-noise) in lock-step; on a GPU one sparse multiply serves them all, so 8 flies
-cost about as much as 1-2.
+W is brainfly.build's matrix: synapse counts, negative for inhibitory transmitters, each neuron's
+inputs scaled to at most one unit in total. The recipe is Fly64's (github.com/ornata/fly),
+implemented independently here. The constants are set by hand, not measured: Fly64's tonic 0.18
+with gain 1.5 holds every neuron at threshold (0.18 / (1 - exp(-0.2)) = 1.0), so the network
+fires on its own; tonic 0.14 with gain 3.0 keeps descending neurons near 1 Hz at rest while
+driving the looming detectors still reaches the giant fiber (DNp01) on the same side.
+
+Options, all off by default (see FlyBrain):
+* cell_params: a time constant, threshold, tonic drive and gain per cell type or superclass.
+* graded: neurons simulated as graded, like the real retina and lamina. They integrate the same
+  way but never spike; each passes on the change in its transmitter release from rest,
+      out = clip(graded_gain * (v - v_rest), -graded_release, 1 - graded_release),
+  in units of one spike per 20 ms, scaled to the step so it means the same at any dt. A drop
+  below rest reaches the targets too, which a silent spiking neuron can't signal: that is how a
+  light increment, which hyperpolarises the lamina, gets through.
+* fill_retina, rewire, sensory_input, refractory, dt: see FlyBrain.
+
+With batch > 1 the same wiring runs that many flies at once, each with its own voltages and noise;
+on a GPU one sparse product serves them all.
 """
 from __future__ import annotations
 
@@ -35,10 +35,21 @@ import numba
 import numpy as np
 from scipy import sparse
 
-from .data import DATA, ensure_data
+from .data import ensure_data
+
+PARAMS = ("tau", "threshold", "tonic", "gain")   # the parameters cell_params can set per cell type
 
 
-PARAMS = ("tau", "threshold", "tonic", "gain")   # settable per cell type (cell_params)
+def cuda_available() -> bool:
+    """Whether CuPy is installed and sees an NVIDIA GPU."""
+    try:
+        import cupy
+    except ImportError:
+        return False
+    try:
+        return cupy.cuda.runtime.getDeviceCount() > 0
+    except Exception:
+        return False
 
 
 def _rewire(W, seed: int):
@@ -54,87 +65,84 @@ def _rewire(W, seed: int):
 
 
 @numba.njit(nogil=True, parallel=True)
-def _propagate(indptr, indices, weights, sources, amounts, n):
-    """Sum the outgoing weights (CSC columns) of every source neuron, each scaled by
-    its amount (1 for a spike, the release change for a graded neuron).
-    Each thread scatters into its own buffer; buffers are summed at the end."""
-    threads = numba.get_num_threads()
-    partial = np.zeros((threads, n), np.float32)
-    chunk = (len(sources) + threads - 1) // threads
-    for t in numba.prange(threads):
-        acc = partial[t]
-        for k in range(t * chunk, min(len(sources), (t + 1) * chunk)):
-            j = sources[k]
-            a = amounts[k]
-            for e in range(indptr[j], indptr[j + 1]):
-                acc[indices[e]] += weights[e] * a
-    current = np.zeros(n, np.float32)
+def _scatter(indptr, targets, weights, sources, amounts, n):
+    """Input to each of n neurons from `sources`, the columns of a CSC matrix, each column scaled
+    by its amount (1 for a spike, the release change for a graded neuron). Each thread takes one
+    contiguous share of the sources and accumulates into its own row; the rows are then added in
+    thread order, so the sum doesn't depend on scheduling."""
+    workers = numba.get_num_threads()
+    rows = np.zeros((workers, n), np.float32)
+    share = (len(sources) + workers - 1) // workers
+    for w in numba.prange(workers):
+        row = rows[w]
+        for k in range(w * share, min(len(sources), (w + 1) * share)):
+            col = sources[k]
+            amount = amounts[k]
+            for e in range(indptr[col], indptr[col + 1]):
+                row[targets[e]] += weights[e] * amount
+    out = np.zeros(n, np.float32)
     for i in numba.prange(n):
-        s = np.float32(0.0)
-        for t in range(threads):
-            s += partial[t, i]
-        current[i] = s
-    return current
-
-
-def cuda_available() -> bool:
-    try:
-        import cupy
-        return cupy.cuda.runtime.getDeviceCount() > 0
-    except Exception:
-        return False
+        total = np.float32(0.0)
+        for w in range(workers):
+            total += rows[w, i]
+        out[i] = total
+    return out
 
 
 class FlyBrain:
-    """device: "cpu" (numba), "cuda" (CuPy, NVIDIA GPU) or "auto"; defaults to
-    $FLY_DEVICE, else "cpu". Both run the same model; the noise streams differ,
-    so individual spikes differ between devices but statistics match.
+    """The whole MaleCNS network, stepped dt at a time on the CPU (numba) or an NVIDIA GPU (CuPy).
 
-    batch: number of independent flies. Voltages are (n, batch). With batch 1,
-    step() returns the fired neuron indices; with batch > 1, a list of them,
-    one array per fly. Inputs broadcast: an amount can be a number (same for
-    every fly) or an array of length batch (one per fly)."""
-    dt = 0.020
-    tau = 0.100
-    gain = 3.0
-    tonic = 0.14            # calibrated at dt = 0.020; rescaled for other steps (see __init__)
+    One or more flies share the wiring (batch); voltages have shape (n, batch). Inputs broadcast:
+    an amount is a number for every fly or an array with one value per fly. step() returns the
+    neurons that fired: an array of neuron indices with batch 1, else a list of arrays, one per fly.
+    The CPU and GPU run the same model but draw different noise, so their spikes differ in detail."""
+
+    # Hand-set constants, per 20 ms step unless noted (see the module docstring).
+    dt = 0.020               # step, s
+    tau = 0.100              # membrane time constant, s
+    gain = 3.0               # voltage per unit of synaptic input
+    tonic = 0.14             # constant drive; rescaled for other steps so rest stays put
     threshold = 1.0
-    noise_hz = 1.2
-    noise_amp = 0.22
-    eye_gain = 0.62
-    # Graded neurons, hand-set: eyepath.py's strongest setting that kept the network at rest.
-    graded_gain = 0.15      # release change per unit of voltage away from rest
-    graded_release = 0.3    # release at rest, so the most a drop below rest can take away
+    noise_hz = 1.2           # rate of random voltage kicks per neuron
+    noise_amp = 0.22         # size of each kick
+    eye_gain = 0.62          # voltage per unit of eye input
+    graded_gain = 0.15       # graded neurons: release change per unit of voltage from rest
+    graded_release = 0.3     # graded neurons: release at rest, the most a drop can remove
 
     def __init__(self, data: Path | str | None = None, seed: int = 64, device: str | None = None, batch: int = 1,
                  dt: float | None = None, sensory_input: bool = True, refractory: float = 0.0,
                  cell_params: dict[str, dict[str, float]] | None = None, graded: list[str] | tuple = (),
                  fill_retina: bool = False, rewire: int | None = None):
-        """data: folder with brain.npz and weights.npz (default $FLY_DATA, else ~/fly-data).
-        If they aren't there, the prebuilt brain is downloaded into it first (~260 MB, once).
+        """data: the folder with brain.npz and weights.npz (default $FLY_DATA, else ~/fly-data);
+        the prebuilt files are fetched into it on first use (~260 MB).
 
-        dt: step length in seconds (default 0.020). tonic is rescaled so a silent
-        neuron settles at the same voltage as in the calibrated 20 ms model, and graded
-        release is per 20 ms, so it carries over. Eye input, as in the original model, is
-        added once per step.
+        seed: the noise seed reset() starts from.
 
-        sensory_input: False removes every synapse onto sensory neurons (any superclass
-        containing "sensory"), so they fire only from noise and what you inject. With
-        True (the original model), olfactory receptor neurons excite each other into a
-        runaway loop and sit near maximum rate at rest, so odours add nothing.
+        device: "cpu", "cuda" or "auto" (default $FLY_DEVICE, else "cpu").
 
-        refractory: seconds a neuron is held at 0 after it spikes (0 = none; at 20 ms
-        steps the step itself already caps rates at 50 Hz).
+        batch: how many flies to run at once.
+
+        dt: step length in seconds (default 0.020). tonic is rescaled so a silent neuron settles
+        where it does at 20 ms, and graded release is per 20 ms, so it carries over. Eye input is
+        added once per step, as in the original model.
+
+        sensory_input: False removes every synapse onto sensory neurons (superclasses containing
+        "sensory"), so they fire only from noise and injected input. With True, the original model,
+        olfactory receptor neurons excite each other into a runaway and sit near their top rate at
+        rest, so odours add nothing.
+
+        refractory: seconds a neuron is held at 0 after a spike (0 = none; at 20 ms steps the step
+        itself caps rates at 50 Hz).
 
         cell_params: {cell type or superclass: {"tau": s, "threshold": v, "tonic": v, "gain": x}},
-        overriding the whole-brain value for those neurons (tonic is per 20 ms step, like
-        the default). Later entries win where they overlap, so list broad classes first.
-        Without cell_params the model is exactly the original.
+        replacing the whole-brain value for those neurons (tonic per 20 ms step, like the default).
+        Later entries win where they overlap, so list broad classes first. Without cell_params the
+        model is exactly the original.
 
-        graded: cell types or superclasses simulated as graded (non-spiking) neurons, e.g.
-        ["R1-6", "R7", "R8", "L1", "L2", "L3", "L4", "L5"] for the retina and lamina. Graded
-        photoreceptors want a signed contrast drive (Eyes.contrast) rather than Eyes.drive,
-        since they rest at the background they are adapted to.
+        graded: cell types or superclasses simulated as graded neurons, e.g. ["R1-6", "R7", "R8",
+        "L1", "L2", "L3", "L4", "L5"] for the retina and lamina. Graded photoreceptors want a signed
+        contrast (Eyes.contrast) rather than Eyes.drive, as they rest at the background they are
+        adapted to.
 
         fill_retina: add a virtual photoreceptor bundle to each lamina column whose R1-6 input
         MaleCNS lost at the edge of its volume (about half of them), wired like the intact
@@ -146,27 +154,58 @@ class FlyBrain:
         number of inputs and outputs (up to the 0.3% of connections that land on an already
         connected pair and merge); then each neuron's inputs are rescaled to their original total
         absolute weight, so only the routing changes (0.6% of the original pairs stay connected)."""
-        device = device or os.environ.get("FLY_DEVICE", "cpu")
-        if device == "auto":
-            device = "cuda" if cuda_available() else "cpu"
-        if device not in ("cpu", "cuda"):
-            raise ValueError(f"device must be cpu, cuda or auto, not {device!r}")
-        self.device = device
+        choice = device or os.environ.get("FLY_DEVICE", "cpu")
+        if choice == "auto":
+            choice = "cuda" if cuda_available() else "cpu"
+        if choice not in ("cpu", "cuda"):
+            raise ValueError(f"device must be cpu, cuda or auto, not {choice!r}")
+        self.device = choice
         self.batch = int(batch)
         if dt is not None:
             self.dt = float(dt)
-        self.refractory_steps = int(round(refractory / self.dt))
+        self.refractory_steps = round(refractory / self.dt)
         self.sensory_input = sensory_input
-        data = ensure_data(data)
-        meta = np.load(data / "brain.npz")
+        W = self._load(ensure_data(data), fill_retina)
+        if not sensory_input:
+            if self.superclass is None:
+                raise RuntimeError("brain.npz has no superclass; rebuild it with `brainfly build`")
+            deaf = np.char.find(self.superclass.astype(str), "sensory") >= 0
+            W = sparse.diags((~deaf).astype(np.float32)) @ W.tocsr()     # rows are postsynaptic
+        if rewire is not None:
+            W = _rewire(W, rewire)
+        self.xp = np
+        if self.device == "cuda":
+            import cupy
+            from cupyx.scipy import sparse as cusparse
+
+            self.xp = cupy
+            self._W = cusparse.csr_matrix(W.tocsr().astype(np.float32))
+        by_source = W.tocsc()                                               # columns are presynaptic
+        self.n = by_source.shape[0]
+        self.indptr, self.indices, self.weights = by_source.indptr, by_source.indices, by_source.data
+        self._visual = self.xp.asarray(self.visual)
+        self._set_parameters(cell_params or {}, graded)
+        self.graded = self.cells(list(graded)) if graded else np.empty(0, np.int64)
+        self._graded = self.xp.asarray(self.graded) if len(self.graded) else None
+        self._spiking = None
+        if self._graded is not None:
+            spiking = np.ones((self.n, 1), bool)
+            spiking[self.graded] = False
+            self._spiking = self.xp.asarray(spiking)
+        self.reset(seed)
+
+    def _load(self, data: Path, fill_retina: bool):
+        """Read brain.npz into attributes and return weights.npz's matrix (rows postsynaptic),
+        with the retina filled in if asked."""
+        info = np.load(data / "brain.npz")
         W = sparse.load_npz(data / "weights.npz")
-        self.visual = meta["visual"]
-        self.azimuth = meta["azimuth"]  # -1 far left ... +1 far right
-        self.cell_type = meta["cell_type"]
-        self.side = meta["side"]
-        self.positions = meta["positions"] if "positions" in meta.files else None
-        self.superclass = meta["superclass"] if "superclass" in meta.files else None
-        self.groups = {k.removeprefix("group_"): meta[k] for k in meta.files if k.startswith("group_")}
+        self.visual = info["visual"]                  # photoreceptor rows
+        self.azimuth = info["azimuth"]                # their 1-D eye azimuth, -1 far left ... +1 far right
+        self.cell_type = info["cell_type"]
+        self.side = info["side"]
+        self.positions = info["positions"] if "positions" in info.files else None
+        self.superclass = info["superclass"] if "superclass" in info.files else None
+        self.groups = {k.removeprefix("group_"): info[k] for k in info.files if k.startswith("group_")}
         self.filled = None
         if fill_retina:
             from .retina import fill
@@ -180,25 +219,10 @@ class FlyBrain:
             self.superclass = np.concatenate([self.superclass.astype(str), added["superclass"]])
             if self.positions is not None:
                 self.positions = np.concatenate([self.positions, np.full((V, 3), np.nan, self.positions.dtype)])
-        if not sensory_input:
-            if self.superclass is None:
-                raise RuntimeError("brain.npz has no superclass; run `brainfly build`")
-            sensory = np.char.find(self.superclass.astype(str), "sensory") >= 0
-            W = sparse.diags((~sensory).astype(np.float32)) @ W.tocsr()   # rows = postsynaptic
-        if rewire is not None:
-            W = _rewire(W, rewire)
-        if device == "cuda":
-            import cupy
-            from cupyx.scipy import sparse as cusparse
-            self.xp = cupy
-            self._W = cusparse.csr_matrix(W.tocsr().astype(np.float32))  # rows = postsynaptic
-        else:
-            self.xp = np
-        W = W.tocsc()
-        self.n = W.shape[0]
-        self.indptr, self.indices, self.weights = W.indptr, W.indices, W.data
-        self._visual = self.xp.asarray(self.visual)
-        cell_params = cell_params or {}
+        return W
+
+    def _set_parameters(self, cell_params: dict, graded) -> None:
+        """Per-cell-type overrides, the tonic drive and decay for this dt, and the release scale."""
         for key, values in cell_params.items():
             if set(values) - set(PARAMS):
                 raise ValueError(f"unknown cell parameters for {key!r}: {sorted(set(values) - set(PARAMS))}; "
@@ -213,6 +237,7 @@ class FlyBrain:
                 for key, value in overrides:
                     per_neuron[self.cells([key])] = value
                 setattr(self, name, per_neuron)
+        # the tonic drive that holds a silent neuron where it rests at 20 ms steps, and the decay per step
         self.tonic = self.tonic * (1 - np.exp(-self.dt / self.tau)) / (1 - np.exp(-0.020 / self.tau))
         self.decay = np.float32(np.exp(-self.dt / self.tau))
         # graded release is per 20 ms step (in spike units); scale it to this step
@@ -222,25 +247,18 @@ class FlyBrain:
         for name in ("threshold", "tonic", "gain", "decay"):
             if np.ndim(getattr(self, name)):
                 setattr(self, name, self.xp.asarray(getattr(self, name)))
-        self.graded = self.cells(list(graded)) if graded else np.empty(0, np.int64)
-        self._graded = self.xp.asarray(self.graded) if len(self.graded) else None
-        self._spiking = None
-        if self._graded is not None:
-            spiking = np.ones((self.n, 1), bool)
-            spiking[self.graded] = False
-            self._spiking = self.xp.asarray(spiking)
-        self.reset(seed)
 
     def reset(self, seed: int | None = None) -> None:
-        """Silence the network (all voltages 0, no spikes) and restart the noise.
-        Graded neurons start at their resting voltage, releasing at their resting level."""
+        """Start over: every voltage at 0, no spikes, the noise restarted from `seed`. Graded
+        neurons start at their resting voltage, releasing at their resting level."""
         xp = self.xp
         self.rng = xp.random.default_rng(seed)
         self.v = xp.zeros((self.n, self.batch), xp.float32)
-        self.fired = xp.empty(0, xp.int64)   # flat indices into v
+        self.fired = xp.empty(0, xp.int64)                    # flat indices into v of the last step's spikes
         self.steps = 0
-        # step of each neuron's last spike, for the refractory period
-        self.last_spike = xp.full((self.n, self.batch), -10**6, xp.int32) if self.refractory_steps else None
+        self.last_spike = None                                # the step of each neuron's last spike
+        if self.refractory_steps:
+            self.last_spike = xp.full((self.n, self.batch), -1_000_000, xp.int32)
         if self._graded is not None:
             self.v[self._graded] = self._graded_rest()
             # change in release from rest, per graded neuron (rows follow self.graded) and fly
@@ -256,28 +274,28 @@ class FlyBrain:
         return rest[self._graded] if np.ndim(rest) else rest
 
     def cells(self, types: list[str], side: str | None = None) -> np.ndarray:
-        """Neurons whose cell type is in `types`. A superclass name
-        ("descending_neuron", "visual_projection", ...) selects the whole class."""
-        mask = np.isin(self.cell_type, types)
+        """Indices of the neurons whose cell type is in `types`; a superclass name there
+        ("descending_neuron", "visual_projection", ...) takes the whole class. side: "L" or "R"."""
+        chosen = np.isin(self.cell_type, types)
         if self.superclass is not None:
-            mask |= np.isin(self.superclass, types)
+            chosen |= np.isin(self.superclass, types)
         if side:
-            mask &= self.side == side
-        return np.flatnonzero(mask)
+            chosen &= self.side == side
+        return np.flatnonzero(chosen)
 
     def _amount(self, amount):
-        """A number, or one value per fly, shaped to broadcast over v[idx]."""
-        a = self.xp.asarray(amount, dtype=self.xp.float32)
-        return a if a.ndim == 0 else a.reshape(1, -1)
+        """An amount as float32: a scalar, or one value per fly shaped (1, batch)."""
+        value = self.xp.asarray(amount, dtype=self.xp.float32)
+        return value.reshape(1, -1) if value.ndim else value
 
     def stimulate(self, idx: np.ndarray, amount) -> None:
-        """Add voltage to these neurons right now (before the next step)."""
+        """Add voltage to these neurons now, before the next step."""
         self.v[self.xp.asarray(idx)] += self._amount(amount)
 
     def set_graded(self, idx: np.ndarray, values) -> None:
         """Replace these graded neurons' release change for the next step, e.g. with the output of
-        brainfly.optic.FlyvisOpticLobe. values: one per neuron, or (neurons, batch), per 20 ms
-        like self.graded_out."""
+        brainfly.optic.FlyvisNative. values: one per neuron, or (neurons, batch), per 20 ms like
+        self.graded_out."""
         idx = np.asarray(idx)
         rows = np.searchsorted(self.graded, idx)
         if len(idx) and (rows.max() >= len(self.graded) or not np.array_equal(self.graded[rows], idx)):
@@ -286,63 +304,64 @@ class FlyBrain:
         self.graded_out[self.xp.asarray(rows)] = vals[:, None] if vals.ndim == 1 else vals
 
     def synaptic_input(self, fired):
-        """Input current (n, batch) from the flat spike indices of the last step, plus the
-        graded neurons' release changes (self.graded_out) from the same step."""
+        """Synaptic input (n, batch) from the last step: its spikes (flat indices into v), plus
+        the graded neurons' release changes (self.graded_out)."""
         xp, B = self.xp, self.batch
         release = None
         if self._graded is not None:
             release = self.graded_out if self._release_scale is None else self.graded_out * self._release_scale
         if self.device == "cuda":
-            spikes = xp.zeros((self.n, B), xp.float32)
-            spikes.ravel()[fired] = 1.0
-            if self._graded is not None:
-                spikes[self._graded] = release
-            if B == 1:
-                return (self._W @ spikes[:, 0])[:, None]
-            return self._W @ spikes
-        rows, cols = np.divmod(fired, B)
-        columns = []
+            activity = xp.zeros((self.n, B), xp.float32)
+            activity.ravel()[fired] = 1.0
+            if release is not None:
+                activity[self._graded] = release
+            return (self._W @ activity[:, 0])[:, None] if B == 1 else self._W @ activity
+        neuron, fly = np.divmod(fired, B)
+        per_fly = []
         for b in range(B):
-            sources = rows[cols == b]
+            sources = neuron[fly == b]                        # spikes first, then the graded neurons
             amounts = np.ones(len(sources), np.float32)
-            if self._graded is not None:
+            if release is not None:
                 sources = np.concatenate([sources, self.graded])
                 amounts = np.concatenate([amounts, release[:, b]])
-            columns.append(_propagate(self.indptr, self.indices, self.weights, sources, amounts, self.n))
-        return np.column_stack(columns)
+            per_fly.append(_scatter(self.indptr, self.indices, self.weights, sources, amounts, self.n))
+        return np.column_stack(per_fly)
 
     def step(self, eye_drive: np.ndarray | None = None, inject=()):
-        """Advance one step (dt, 20 ms by default). eye_drive: 0..1 per photoreceptor (len(self.visual)), or
-        (len(self.visual), batch), signed contrast for graded photoreceptors; inject: (neuron
-        indices, extra voltage) pairs added this step. Returns the indices of the neurons that
-        fired (NumPy): one array with batch 1, else a list with one array per fly. Graded
-        neurons never fire; their output this step is in self.graded_out."""
+        """Advance one step of dt. eye_drive: input per photoreceptor (len(self.visual), or
+        (len(self.visual), batch)): 0..1 from Eyes.drive, or a signed contrast for graded
+        photoreceptors. inject: (neuron indices, extra voltage) pairs added this step. Returns the
+        neurons that fired (see the class docstring); graded neurons' output is in
+        self.graded_out."""
         xp, B = self.xp, self.batch
         current = self.synaptic_input(self.fired) * self.gain
         self.v *= self.decay
         self.v += current + self.tonic
-        self.v += (self.rng.random((self.n, B)) < self.noise_hz * self.dt) * np.float32(self.noise_amp)
+        kicks = self.rng.random((self.n, B)) < self.noise_hz * self.dt
+        self.v += kicks * np.float32(self.noise_amp)
         if eye_drive is not None:
-            drive = xp.asarray(eye_drive, dtype=xp.float32)
-            self.v[self._visual] += (drive[:, None] if drive.ndim == 1 else drive) * self.eye_gain
+            light = xp.asarray(eye_drive, dtype=xp.float32)
+            if light.ndim == 1:
+                light = light[:, None]
+            self.v[self._visual] += light * self.eye_gain
         for idx, amount in inject:
             self.v[xp.asarray(idx)] += self._amount(amount)
         if self.refractory_steps:
-            self.v[(self.steps - self.last_spike) <= self.refractory_steps] = 0.0
-        above = self.v >= self.threshold
+            recovering = (self.steps - self.last_spike) <= self.refractory_steps
+            self.v[recovering] = 0.0
+        crossed = self.v >= self.threshold
         if self._graded is not None:
-            above &= self._spiking
+            crossed &= self._spiking
             self.graded_out = xp.clip(self.graded_gain * (self.v[self._graded] - self._graded_rest()),
                                       -self.graded_release, 1 - self.graded_release).astype(xp.float32)
-        fired = xp.flatnonzero(above)
+        fired = xp.flatnonzero(crossed)
         self.v.ravel()[fired] = 0.0
         if self.refractory_steps:
             self.last_spike.ravel()[fired] = self.steps
         self.fired = fired
         self.steps += 1
-        flat = fired if xp is np else fired.get()
+        spikes = fired.get() if xp is not np else fired
         if B == 1:
-            return flat
-        rows, cols = np.divmod(flat, B)
-        order = np.argsort(cols, kind="stable")
-        return np.split(rows[order], np.cumsum(np.bincount(cols, minlength=B))[:-1])
+            return spikes
+        neuron, fly = np.divmod(spikes, B)
+        return [neuron[fly == b] for b in range(B)]

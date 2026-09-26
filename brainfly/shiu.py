@@ -42,9 +42,7 @@ def counts(data: Path | str | None = None) -> sparse.csr_matrix:
     brain.npz (rows = postsynaptic), negative where the presynaptic neuron's transmitter is GABA,
     glutamate or histamine (build.py's rule). Cached as <data>/counts.npz. The first call reads the
     MaleCNS tables in <data>/raw, downloading them (~1.1 GB) if they aren't there."""
-    import pyarrow.feather as feather
-
-    from .build import INHIBITORY, download_all
+    from .build import CONNECTIONS, connections, download_all, transmitter_signs
 
     data = ensure_data(data)
     cache = data / "counts.npz"
@@ -53,25 +51,9 @@ def counts(data: Path | str | None = None) -> sparse.csr_matrix:
     raw = data / "raw"
     download_all(raw)
     ids = np.load(data / "brain.npz")["ids"]
-    n = len(ids)
-    nt = feather.read_table(raw / "body-neurotransmitters-male-cns-v1.0.feather",
-                            columns=["body", "consensus_nt"]).to_pandas()
-    labels = nt.drop_duplicates("body").set_index("body").reindex(ids)["consensus_nt"]
-    sign = np.where(labels.fillna("unclear").str.lower().str.contains(INHIBITORY), -1.0, 1.0).astype(np.float32)
-    edges = feather.read_table(raw / "connectome-weights-male-cns-v1.0-minconf-0.5.feather",
-                               columns=["body_pre", "body_post", "weight"], memory_map=True)
-    pre_parts, post_parts, w_parts = [], [], []
-    for batch in edges.to_batches(max_chunksize=4_000_000):
-        pre_id = batch.column(0).to_numpy(zero_copy_only=False)
-        post_id = batch.column(1).to_numpy(zero_copy_only=False)
-        pre = np.minimum(np.searchsorted(ids, pre_id), n - 1)
-        post = np.minimum(np.searchsorted(ids, post_id), n - 1)
-        ok = (ids[pre] == pre_id) & (ids[post] == post_id)
-        pre_parts.append(pre[ok].astype(np.int32))
-        post_parts.append(post[ok].astype(np.int32))
-        w_parts.append(batch.column(2).to_numpy(zero_copy_only=False)[ok].astype(np.float32))
-    pre, post, w = (np.concatenate(p) for p in (pre_parts, post_parts, w_parts))
-    C = sparse.csr_matrix((w * sign[pre], (post, pre)), shape=(n, n), dtype=np.float32)
+    sign = transmitter_signs(raw, ids)
+    pre, post, synapses = connections(raw / CONNECTIONS, ids)
+    C = sparse.csr_matrix((synapses * sign[pre], (post, pre)), shape=(len(ids), len(ids)), dtype=np.float32)
     sparse.save_npz(cache, C, compressed=False)
     return C
 
@@ -186,10 +168,8 @@ class ShiuBrain:
     def cells(self, types: list[str], side: str | None = None) -> np.ndarray:
         """Neurons whose cell type (FlyWire's or MaleCNS's own) or superclass is in `types`,
         optionally on one side."""
-        mask = np.isin(self.cell_type, types) | np.isin(self.mcns_type, types) | np.isin(self.superclass, types)
-        if side:
-            mask &= self.side == side
-        return np.flatnonzero(mask)
+        named = np.isin(self.cell_type, types) | np.isin(self.mcns_type, types) | np.isin(self.superclass, types)
+        return np.flatnonzero(named & (self.side == side) if side else named)
 
     def run(self, seconds: float, drive=(), silence=(), tail: float = 0.0, seed: int = 0,
             bin: float = 0.01) -> Result:
