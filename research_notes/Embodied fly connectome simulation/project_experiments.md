@@ -57,7 +57,7 @@ project's model stands today, so the report's roadmap can start from it. None ar
    or amplifying only the DN -> premotor and premotor -> MN synapses, failed all pre-registered criteria
    (REST, COMMAND, DISTINCT, LATERAL) in every setting.
 
-6. **Two brains signalling (experiments/flytalk.py).** A song carried 0.3-0.83 bits about the singer's situation. At
+6. **Two brains signalling (a two-fly song test, since removed).** A song carried 0.3-0.83 bits about the singer's situation. At
    2 ms steps a degree-preserving scrambled wiring carried as many bits (0.87), so the "real wiring
    matters" test failed at 2 ms.
 

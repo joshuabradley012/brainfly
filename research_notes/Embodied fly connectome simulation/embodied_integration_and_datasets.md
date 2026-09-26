@@ -144,7 +144,7 @@ No one has yet shown a connectome-driven fly body whose behaviour or internal dy
   - It predicts that DNb08 drives rhythmic leg movement, which was confirmed optogenetically in behaving flies. Code is public.
 
   — [bioRxiv](https://www.biorxiv.org/content/10.1101/2025.09.12.675944v1); [GitHub](https://github.com/smpuglie/Pugliese_cpg_2025)
-  - Follow-up preprint: "Central versus peripheral neural control of a coordinated walking pattern in Drosophila" (bioRxiv Apr 2026). — [bioRxiv](https://www.biorxiv.org/content/10.64898/2026.04.29.721658v1.full)
+  - Related preprint, not by Pugliese et al.: Sapkal et al. (Bidaye lab), "Central versus peripheral neural control of a coordinated walking pattern in Drosophila" (bioRxiv Apr 2026), experiments rather than a simulation. — [bioRxiv](https://www.biorxiv.org/content/10.64898/2026.04.29.721658v1.full)
 - **Antennal grooming coordination** (Özdil et al., Ramdya lab, Nature Communications, 23 Apr 2026; PR; cited by Eon as "Özdil et al.").
   - Kinematic replay in NeuroMechFly infers contacts and forces.
   - Amputation and immobilisation show that body-part coordination does not need cross-body proprioceptive feedback.
