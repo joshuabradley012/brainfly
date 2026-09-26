@@ -76,7 +76,7 @@ def mcns_types(data: Path | str | None = None) -> np.ndarray:
     return ann.drop_duplicates("bodyId").set_index("bodyId").reindex(ids)["type"].fillna("").astype(str).to_numpy()
 
 
-@numba.njit(parallel=True)
+@numba.njit(parallel=True, cache=True)
 def _simulate(indptr, indices, weights, n, trials, steps, drive_steps, delay, rfc_steps,
               a_vv, a_vx, a_xx, drive_idx, drive_p, w_poi, silenced, bin_steps, seed):
     """Every trial in parallel. Each step follows Brian2's schedule, which Shiu's results come from:

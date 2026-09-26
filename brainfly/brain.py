@@ -67,7 +67,7 @@ def _rewire(W, seed: int):
 SHARES = 14    # _scatter's split of the sources; fixed so float sums don't depend on the thread count
 
 
-@numba.njit(nogil=True, parallel=True)
+@numba.njit(nogil=True, parallel=True, cache=True)
 def _scatter(indptr, targets, weights, sources, amounts, n):
     """Input to each of n neurons from `sources`, the columns of a CSC matrix, each column scaled
     by its amount (1 for a spike, the release change for a graded neuron). The sources are split

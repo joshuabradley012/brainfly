@@ -64,7 +64,7 @@ def _approach(tau_in: float, tau_m: float, dt: float) -> float:
     return tau_in / (tau_in - tau_m) * (np.exp(-dt / tau_in) - np.exp(-dt / tau_m))
 
 
-@numba.njit(inline="always")
+@numba.njit(inline="always", cache=True)
 def _uniform(rng, b):
     """The next number in [0, 1) from trial b's splitmix64 stream, whose state lives in rng[b], so it
     carries over from one call to the next."""
@@ -76,7 +76,7 @@ def _uniform(rng, b):
     return np.float64(z >> np.uint64(11)) * (1.0 / 9007199254740992.0)
 
 
-@numba.njit(parallel=True)
+@numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
              cls, a_vv, a_vx, a_vs, a_bias, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform,
              g_list, g_gain, g_at, g_max,
