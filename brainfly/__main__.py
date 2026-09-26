@@ -1,4 +1,4 @@
-"""Command line: `flybrain download`, `flybrain build`, `flybrain info` (or `python -m flybrain ...`)."""
+"""Command line: `brainfly download`, `brainfly build`, `brainfly info` (or `python -m brainfly ...`)."""
 from __future__ import annotations
 
 import argparse
@@ -9,13 +9,13 @@ from .data import DATA, FILES, RELEASE_URL, download, has_data
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(prog="flybrain", description="The MaleCNS fruit fly connectome as a spiking network.")
-    parser.add_argument("--version", action="version", version=f"flybrain {__version__}")
+    parser = argparse.ArgumentParser(prog="brainfly", description="The MaleCNS fruit fly connectome as a spiking network.")
+    parser.add_argument("--version", action="version", version=f"brainfly {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
     fetch = sub.add_parser("download", help="fetch the prebuilt brain files (~260 MB)")
     fetch.add_argument("--data", type=Path, default=DATA, help=f"where to put them (default {DATA}, or $FLY_DATA)")
-    fetch.add_argument("--url", default=RELEASE_URL, help="base URL of the files (or $FLYBRAIN_DATA_URL)")
+    fetch.add_argument("--url", default=RELEASE_URL, help="base URL of the files (or $BRAINFLY_DATA_URL)")
     fetch.add_argument("--force", action="store_true", help="download again even if the files are there")
 
     build = sub.add_parser("build", help="download MaleCNS v1.0 (~1.1 GB) and build the brain files from it")
@@ -32,18 +32,18 @@ def main(argv: list[str] | None = None) -> None:
         try:
             from .build import build as build_brain
         except ImportError as e:
-            raise SystemExit(f"building needs pandas and pyarrow ({e}): pip install \"flybrain[build]\"")
+            raise SystemExit(f"building needs pandas and pyarrow ({e}): pip install \"brainfly[build]\"")
         build_brain(args.data)
     else:
         from .brain import cuda_available
-        print(f"flybrain {__version__}")
+        print(f"brainfly {__version__}")
         print(f"data folder: {args.data}")
         for name in FILES:
             path = args.data / name
             print(f"  {name}: {f'{path.stat().st_size / 1e6:,.0f} MB' if path.exists() else 'missing'}")
         if not has_data(args.data):
-            print("  run `flybrain download` (or just create a FlyBrain) to fetch them")
-        gpu = "available" if cuda_available() else 'not available (pip install "flybrain[gpu]")'
+            print("  run `brainfly download` (or just create a FlyBrain) to fetch them")
+        gpu = "available" if cuda_available() else 'not available (pip install "brainfly[gpu]")'
         print(f"cuda: {gpu}")
 
 

@@ -26,7 +26,7 @@ from pathlib import Path
 
 import numpy as np
 
-from flybrain import FlyBrain
+from brainfly import FlyBrain
 from probe import groups, run
 from vnc import COMMANDS, DN_VOLTS, motor_keys, verdict
 

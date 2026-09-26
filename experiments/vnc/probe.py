@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-from flybrain import FlyBrain
+from brainfly import FlyBrain
 
 STEPS = 50  # 1 s at 20 ms
 

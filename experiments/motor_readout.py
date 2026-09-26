@@ -10,8 +10,8 @@ import time
 
 import numpy as np
 
-from flybrain import FlyBrain
-from flybrain.eyes import Eyes, blob_for
+from brainfly import FlyBrain
+from brainfly.eyes import Eyes, blob_for
 
 SECONDS = 3.0
 

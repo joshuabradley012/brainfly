@@ -23,7 +23,7 @@ from pathlib import Path
 
 import numpy as np
 
-from flybrain import FlyBrain
+from brainfly import FlyBrain
 from probe import groups
 from vnc import measure, motor_keys, verdict
 

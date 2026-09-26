@@ -14,7 +14,7 @@ import sys
 import numpy as np
 import pyarrow.feather as feather
 
-from flybrain import DATA, FlyBrain
+from brainfly import DATA, FlyBrain
 
 SECONDS = 2.0
 SEEDS = 6

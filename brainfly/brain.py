@@ -135,7 +135,7 @@ class FlyBrain:
         W = sparse.load_npz(data / "weights.npz")
         if not sensory_input:
             if "superclass" not in meta.files:
-                raise RuntimeError("brain.npz has no superclass; run `flybrain build`")
+                raise RuntimeError("brain.npz has no superclass; run `brainfly build`")
             sensory = np.char.find(meta["superclass"].astype(str), "sensory") >= 0
             W = sparse.diags((~sensory).astype(np.float32)) @ W.tocsr()   # rows = postsynaptic
         if device == "cuda":

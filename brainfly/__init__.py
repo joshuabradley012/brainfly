@@ -1,7 +1,7 @@
-"""flybrain: the complete fruit fly nervous system (MaleCNS v1.0 connectome, 166,700 neurons)
+"""brainfly: the complete fruit fly nervous system (MaleCNS v1.0 connectome, 166,700 neurons)
 as a spiking network you can stimulate, read out and train readouts on.
 
-    from flybrain import FlyBrain
+    from brainfly import FlyBrain
     brain = FlyBrain(device="auto")      # downloads the brain files on first use
     brain.stimulate(brain.cells(["LC4", "LPLC2"], side="L"), 0.8)
     fired = brain.step()                 # indices of the neurons that spiked this 20 ms step

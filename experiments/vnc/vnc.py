@@ -3,7 +3,7 @@
 probe.py found that driving DNg100, DNa02, DNp01 or MDN at ~25 Hz moves no motor neuron group
 (< 0.6 Hz): with incoming weights normalised to sum to 1, the DN -> premotor -> MN chain dies out.
 This sweeps two knobs on the VNC stage only (superclasses vnc_intrinsic and vnc_motor), without
-touching the flybrain package:
+touching the brainfly package:
 
   tonic+  extra constant voltage per step for VNC neurons (global tonic is 0.14)
   gain x  multiplier on every synapse onto a VNC neuron
@@ -27,7 +27,7 @@ from pathlib import Path
 
 import numpy as np
 
-from flybrain import FlyBrain
+from brainfly import FlyBrain
 from probe import STEPS, groups, run
 
 TONIC = [0.0, 0.01, 0.02, 0.03, 0.035]
