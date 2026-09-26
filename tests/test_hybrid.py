@@ -145,3 +145,16 @@ def built_matrix(edges, n):
 def built_labels(n):
     return {"cell_type": np.array([f"c{i}" for i in range(n)]), "side": np.array(["L"] * n),
             "superclass": np.array(["test"] * n)}
+
+
+def test_delivery_is_the_same_whether_or_not_the_target_lists_overflow():
+    """Input waiting for delivery is found through a list of the targets that received some, or by
+    scanning every neuron when that list overflows; both must give the same spikes."""
+    edges, slow, types, n = random_circuit()
+    drive = [(np.arange(4), 150.0)]
+    listed = small(edges, n, types=types, trials=2, w_poi=30.0)
+    scanned = small(edges, n, types=types, trials=2, w_poi=30.0)
+    scanned.touched = np.zeros((2, scanned.delay, 1), np.int32)     # room for one target: nearly always overflows
+    np.testing.assert_array_equal(listed.advance(3000, drive), scanned.advance(3000, drive))
+    np.testing.assert_array_equal(listed.x, scanned.x)
+    assert listed.advance(1000, drive).sum() > 50
