@@ -25,12 +25,13 @@ MaleCNS's neurons and synapses. Two adjustments:
 Virtual photoreceptor bundles (FlyBrain(fill_retina=True)) are wired at flyvis's own per-column
 totals.
 
-FlyvisOpticLobe steps these neurons at the brain's dt (flyvis trains at 20 ms and evaluates its
-stimuli at 5 ms; time constants shorter than the step are raised to it, as in flyvis) and hands
-FlyBrain their output: the change of relu(V) from its value on a blank field, times `gain`, as
-graded release (FlyBrain.set_graded). The first use downloads flyvis's pretrained models (pip
-install "brainfly[flyvis]"; 3.4 MB, to $FLYVIS_ROOT_DIR, by default <data>/flyvis), extracts the
-parameters and caches them in <data>/flyvis_<model>.npz.
+Known deviations (experiments/flyvis_port.py): on a grey field this port rests at a different
+operating point from flyvis on its own connectome. The inhibition flyvis gets from CT1 (left out),
+Mi12 (not in MaleCNS) and R7/R8 (absent from the filled columns) goes missing, and recurrent loops
+amplify the shift: T4a/b rest at +2.1 instead of 0, T2 at +7.7 instead of +3.5, and the OFF cells
+Tm2, Tm4 and TmY3 so far below zero that an OFF step barely moves their output (Tm1 rests normally
+but loses its OFF response). Only two of the four T5 subtypes get the right direction. The input
+layers (R1-6, L1-L5, Tm9) match.
 """
 from __future__ import annotations
 
