@@ -52,14 +52,8 @@ R16 = ["R1", "R2", "R3", "R4", "R5", "R6"]
 RENAME = {"Lai": "Am", "TmY9a": "TmY9", "TmY9b": "TmY9", "TmY9q": "TmY9", "TmY9q__perp": "TmY9"}
 
 
-def flyvis_params(model: str = MODEL, data: Path | str | None = None) -> dict:
-    """Per-type time constants and biases, and per type pair (sign, strength, total synapses a
-    target neuron receives), with flyvis's R1-R6 merged into one type "R1-6"."""
-    data = ensure_data(data)
-    cache = data / f"flyvis_{model.replace('/', '_')}.npz"
-    if cache.exists():
-        z = np.load(cache, allow_pickle=True)
-        return z["params"].item()
+def _network(model: str, data: Path):
+    """flyvis's pretrained network (downloading the models first if needed)."""
     os.environ.setdefault("FLYVIS_ROOT_DIR", str(data / "flyvis"))
     import flyvis
     from flyvis import NetworkView
@@ -69,7 +63,18 @@ def flyvis_params(model: str = MODEL, data: Path | str | None = None) -> dict:
         import sys
         subprocess.run([sys.executable, "-m", "flyvis_cli.download_pretrained_models", "--skip_large_files"],
                        check=True)
-    net = NetworkView(flyvis.results_dir / model).init_network(checkpoint="best")
+    return NetworkView(flyvis.results_dir / model).init_network(checkpoint="best")
+
+
+def flyvis_params(model: str = MODEL, data: Path | str | None = None) -> dict:
+    """Per-type time constants and biases, and per type pair (sign, strength, total synapses a
+    target neuron receives), with flyvis's R1-R6 merged into one type "R1-6"."""
+    data = ensure_data(data)
+    cache = data / f"flyvis_{model.replace('/', '_')}.npz"
+    if cache.exists():
+        z = np.load(cache, allow_pickle=True)
+        return z["params"].item()
+    net = _network(model, data)
     arr = lambda p: p.semantic_values.detach().cpu().numpy()
     tau = dict(zip(net.node_params["time_const"].keys, arr(net.node_params["time_const"]).tolist()))
     bias = dict(zip(net.node_params["bias"].keys, arr(net.node_params["bias"]).tolist()))
@@ -212,3 +217,252 @@ class FlyvisOpticLobe:
         as FlyBrain.set_graded takes it."""
         self._advance(self._x(contrast))
         return (self.gain * (np.maximum(self.V, 0) - self.rest)).astype(np.float32)
+
+
+# flyvis on its own terms: its fitted network tiled onto the male eye's columns.
+
+S3 = np.sqrt(3) / 2
+
+
+def to_mcns(du, dv):
+    """A flyvis lattice offset (source minus target, in flyvis's axial (u, v)) as a MaleCNS column
+    offset (hex1, hex2). Found from anatomy (experiments/flyvis_native.py): under this map, and no
+    other symmetry of the hex lattice, T4a-d's Mi4, Mi9 and C3 inputs and T5a-d's Tm9 inputs lie in
+    the same directions from their Mi1 / Tm1 inputs in both connectomes, on both sides."""
+    return -du, -du - dv
+
+
+def from_mcns(a, b):
+    """The inverse of to_mcns."""
+    return -a, a - b
+
+
+def plane(h1, h2) -> np.ndarray:
+    """MaleCNS column coordinates as points in the plane, neighbouring columns one unit apart."""
+    b = -np.asarray(h2, float)
+    return np.stack([np.asarray(h1, float) + b / 2, S3 * b], -1)
+
+
+def flyvis_filters(model: str = MODEL, data: Path | str | None = None) -> dict:
+    """flyvis's network as it defines it, by spatial filters: per type a time constant and a bias;
+    per type pair a sign and a strength; per filter element (source, target, du, dv) a synapse
+    count, (du, dv) being the target's position minus the source's in flyvis's axial lattice
+    coordinates; and the positions of the types that don't tile every column (Lawf1, Lawf2)."""
+    data = ensure_data(data)
+    cache = data / f"flyvis_filters_{model.replace('/', '_')}.npz"
+    if cache.exists():
+        return np.load(cache, allow_pickle=True)["filters"].item()
+    net = _network(model, data)
+    arr = lambda p: p.semantic_values.detach().cpu().numpy().tolist()
+    npar, epar = net.node_params, net.edge_params
+    out = {"tau": {str(k): x for k, x in zip(npar["time_const"].keys, arr(npar["time_const"]))},
+           "bias": {str(k): x for k, x in zip(npar["bias"].keys, arr(npar["bias"]))},
+           "sign": {(str(s), str(t)): x for (s, t), x in zip(epar["sign"].keys, arr(epar["sign"]))},
+           "strength": {(str(s), str(t)): x for (s, t), x in zip(epar["syn_strength"].keys, arr(epar["syn_strength"]))},
+           "count": {(str(s), str(t), int(du), int(dv)): x
+                     for (s, t, du, dv), x in zip(epar["syn_count"].keys, arr(epar["syn_count"]))}}
+    c = net.connectome
+    ty = np.asarray(c.nodes.type[:]).astype(str)
+    u, v = np.asarray(c.nodes.u[:]), np.asarray(c.nodes.v[:])
+    full = int((ty == "L1").sum())
+    out["sparse"] = {str(t): np.stack([u[ty == t], v[ty == t]], 1) for t in np.unique(ty) if (ty == t).sum() < full}
+    out["radius"] = int(np.max(np.maximum(np.maximum(abs(u), abs(v)), abs(u + v))))
+    np.savez(cache, filters=np.array(out, dtype=object))
+    return out
+
+
+def _sublattice(points: np.ndarray, radius: int) -> np.ndarray:
+    """Basis (rows) of the lattice through the origin that `points` (flyvis (u, v)) fill inside
+    flyvis's hexagon of this radius."""
+    ring = lambda q: np.maximum(np.maximum(abs(q[..., 0]), abs(q[..., 1])), abs(q[..., 0] + q[..., 1]))
+    diffs = {tuple(d) for d in (points[:, None] - points[None]).reshape(-1, 2).tolist() if any(d)}
+    cand = sorted(diffs, key=lambda d: ring(np.array(d)))[:40]
+    grid = np.array([(a, b) for a in range(-radius, radius + 1) for b in range(-radius, radius + 1)])
+    grid = grid[ring(grid) <= radius]
+    want = set(map(tuple, points.tolist()))
+    best = None
+    for i, b1 in enumerate(cand):
+        for b2 in cand[i + 1:]:
+            B = np.array([b1, b2], float)
+            det = abs(np.linalg.det(B))
+            if det < 0.5 or (best is not None and det >= best[0]):
+                continue
+            coef = np.linalg.solve(B.T, grid.T).T
+            member = np.all(np.abs(coef - np.round(coef)) < 1e-6, 1)
+            if set(map(tuple, grid[member].tolist())) == want:
+                best = (det, np.array([b1, b2]))
+    if best is None:
+        raise ValueError("these cells don't form a lattice")
+    return best[1]
+
+
+def tile(columns: np.ndarray, origin: np.ndarray, f: dict):
+    """flyvis's cells and synapses on MaleCNS columns (N, 2) of (hex1, hex2): one cell of each type
+    per column, the sparse types on their sub-lattice through `origin`. Returns each cell's type,
+    its column (an index into `columns`) and the weights (rows postsynaptic)."""
+    types = sorted(f["tau"])
+    reach = int(np.abs(np.array([(k[2], k[3]) for k in f["count"]])).max()) * 2 + 1
+    lo = columns.min(0) - reach
+    grid = -np.ones((len(types),) + tuple(columns.max(0) - lo + reach + 1), int)
+    cell_type, cell_col = [], []
+    for k, t in enumerate(types):
+        hosts = np.arange(len(columns))
+        if t in f["sparse"]:
+            B = _sublattice(f["sparse"][t], f["radius"]).astype(float)
+            uv = np.stack(from_mcns(*(columns - origin).T), 1)
+            coef = np.linalg.solve(B.T, uv.T).T
+            hosts = hosts[np.all(np.abs(coef - np.round(coef)) < 1e-6, 1)]
+        grid[k][tuple((columns[hosts] - lo).T)] = len(cell_type) + np.arange(len(hosts))
+        cell_type += [t] * len(hosts)
+        cell_col += hosts.tolist()
+    cell_type, cell_col = np.array(cell_type), np.array(cell_col)
+    of_type = {t: np.flatnonzero(cell_type == t) for t in types}
+    index = {t: k for k, t in enumerate(types)}
+    rows, cols, vals = [], [], []
+    for (s, t, du, dv), n in f["count"].items():
+        tgt = of_type[t]
+        src = grid[index[s]][tuple((columns[cell_col[tgt]] + (du, du + dv) - lo).T)]
+        ok = src >= 0
+        rows.append(tgt[ok])
+        cols.append(src[ok])
+        vals.append(np.full(int(ok.sum()), f["sign"][(s, t)] * f["strength"][(s, t)] * n))
+    W = sparse.csr_matrix((np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))),
+                          shape=(len(cell_type),) * 2)
+    return cell_type, cell_col, W
+
+
+class FlyvisNative:
+    """flyvis's fitted network on its own terms, driving a FlyBrain. Its cells and synapses are tiled
+    onto the male fly's eye: one cell of each of flyvis's 65 types per MaleCNS optic lobe column
+    (Lawf1/2 on flyvis's sparse sub-lattice), wired by flyvis's spatial filters and oriented by
+    to_mcns, one copy per eye. Each column looks in its measured direction (brainfly.eye2d). A
+    MaleCNS neuron of a flyvis type takes the activity of its type's cell in its column; neurons
+    without an assigned column (T4, T5, T2, the TmY cells, photoreceptors, ...) take the column at
+    the synapse-weighted centroid of their column-assigned partners. The change of relu(V) from rest, times `gain`, reaches FlyBrain
+    as graded release (FlyBrain.set_graded), per 20 ms. Deterministic: one simulation serves every
+    fly in a batch."""
+
+    def __init__(self, brain, model: str = MODEL, gain: float = 1.0, data: Path | str | None = None):
+        import pyarrow.feather as feather
+
+        from .eye2d import ACCEPTANCE_DEG, column_directions
+        from .shiu import counts, mcns_types
+
+        data = ensure_data(data)
+        f = flyvis_filters(model, data)
+        dirs = column_directions(data)
+        blocks, cell_type, cell_col, cell_side, keys = [], [], [], [], []
+        self.origin = {}
+        for side in "LR":
+            ks = sorted(k for k in dirs if k[0] == side)
+            C = np.array([(h1, h2) for _, h1, h2 in ks])
+            xy = plane(*C.T)
+            self.origin[side] = C[np.argmin(((xy - xy.mean(0)) ** 2).sum(1))]
+            ct, cc, W = tile(C, self.origin[side], f)
+            blocks.append(W)
+            cell_type.append(ct)
+            cell_col.append(cc + len(keys))
+            cell_side.append(np.full(len(ct), side))
+            keys += ks
+        self.W = sparse.block_diag(blocks, format="csr")
+        self.cell_type = np.concatenate(cell_type)
+        self.cell_col = np.concatenate(cell_col)
+        self.cell_side = np.concatenate(cell_side)
+        self.column_keys = keys                                    # (side, hex1, hex2) per column
+        self.directions = np.array([dirs[k] for k in keys])
+        self.sigma = np.radians(ACCEPTANCE_DEG) / (2 * np.sqrt(2 * np.log(2)))
+        self.dt = brain.dt
+        self.tau = np.array([max(f["tau"][t], brain.dt) for t in self.cell_type])
+        self.bias = np.array([f["bias"][t] for t in self.cell_type])
+        self._input = np.flatnonzero(np.isin(self.cell_type, R16 + ["R7", "R8"]))
+        self.gain = float(gain)
+
+        # MaleCNS neurons of flyvis types, and the cell(s) each one reads
+        ftype = flyvis_type(brain, mcns_types(data), set(f["tau"]) | {"R1-6"})
+        meta = np.load(data / "brain.npz")
+        n0 = len(meta["ids"])
+        ann = feather.read_table(data / "raw" / "body-annotations-male-cns-v1.0-minconf-0.5.feather",
+                                 columns=["bodyId", "assignedOlHex1", "assignedOlHex2"]).to_pandas()
+        ann = ann.drop_duplicates("bodyId").set_index("bodyId").reindex(meta["ids"])
+        hexes = ann[["assignedOlHex1", "assignedOlHex2"]].to_numpy(float)
+        has = ~np.isnan(hexes[:, 0])
+        side = brain.side.astype(str)
+        pos = np.full((n0, 2), np.nan)
+        pos[has] = plane(hexes[has, 0], hexes[has, 1])
+        col_index = {k: j for j, k in enumerate(keys)}
+        col_xy = {s: (np.array([j for j, k in enumerate(keys) if k[0] == s]),
+                      plane(*np.array([(k[1], k[2]) for k in keys if k[0] == s]).T)) for s in "LR"}
+        cell_at = {(t, int(c)): i for i, (t, c) in enumerate(zip(self.cell_type, self.cell_col))}
+        hosts = {t: np.unique(self.cell_col[self.cell_type == t]) for t in f["sparse"]}
+        C = abs(counts(data)).tocsr()                              # rows postsynaptic
+        partners = (C + C.T).tocsr()                               # inputs and outputs
+        rows, cells, weights, neurons, types = [], [], [], [], []
+        for i in np.flatnonzero(ftype != ""):
+            t, s = ftype[i], side[i]
+            if s not in "LR":
+                continue
+            if i >= n0:                                            # a filled photoreceptor bundle
+                sc, h1, h2 = brain.filled.column[i - n0]
+                col = col_index.get(("R" if sc == 1 else "L", int(h1), int(h2)))
+            elif has[i]:
+                col = col_index.get((s, int(hexes[i, 0]), int(hexes[i, 1])))
+            else:                                                  # the centroid of its column-assigned partners
+                row = partners[i]
+                ok = has[row.indices] & (side[row.indices] == s)
+                if not ok.any():
+                    continue
+                w = row.data[ok]
+                centre = pos[row.indices[ok]].T @ w / w.sum()
+                idx, xy = col_xy[s]
+                allowed = np.isin(idx, hosts[t]) if t in hosts else slice(None)
+                j = np.argmin(((xy[allowed] - centre) ** 2).sum(1))
+                col = int(idx[allowed][j])
+            if col is None:
+                continue
+            reads = [cell_at.get((r, col)) for r in (R16 if t == "R1-6" else [t])]
+            reads = [r for r in reads if r is not None]
+            if not reads:
+                continue
+            rows += [len(neurons)] * len(reads)
+            cells += reads
+            weights += [1.0 / len(reads)] * len(reads)
+            neurons.append(i)
+            types.append(t)
+        self.neurons = np.array(neurons)
+        self.types = np.array(types)
+        missing = np.setdiff1d(self.neurons, brain.graded)
+        if len(missing):
+            raise ValueError(f"{len(missing)} flyvis-type neurons aren't graded in this FlyBrain; build it with graded=GRADED")
+        self.readout = sparse.csr_matrix((weights, (rows, cells)), shape=(len(neurons), len(self.cell_type)))
+        self._settled = None
+        self.reset()
+
+    def contrast(self, objects: list) -> np.ndarray:
+        """Contrast per column for eye2d objects (Disks, Edges), seen through the facet blur."""
+        from .eye2d import render
+
+        return render(self.directions, np.ones(len(self.directions), bool), objects, self.sigma)
+
+    def _advance(self, contrast) -> None:
+        x = np.zeros(len(self.cell_type))
+        c = BACKGROUND if contrast is None else BACKGROUND * (1 + np.asarray(contrast, float)[self.cell_col[self._input]])
+        x[self._input] = c
+        drive = self.W @ np.maximum(self.V, 0)
+        self.V = self.V + self.dt / self.tau * (-self.V + self.bias + drive + x)
+
+    def reset(self, seconds: float = 10.0) -> None:
+        """Settle on a blank grey field (computed once, restored after); release changes are
+        measured from this state."""
+        if self._settled is None or self._settled[0] != seconds:
+            self.V = self.bias.copy()
+            for _ in range(int(round(seconds / self.dt))):
+                self._advance(None)
+            self._settled = (seconds, self.V.copy())
+        self.V = self._settled[1].copy()
+        self.rest = self.readout @ np.maximum(self.V, 0)
+
+    def step(self, contrast) -> np.ndarray:
+        """Advance one step on the contrast per column (self.contrast; None for grey); returns the
+        release change of each neuron in self.neurons, per 20 ms, for FlyBrain.set_graded."""
+        self._advance(contrast)
+        return (self.gain * (self.readout @ np.maximum(self.V, 0) - self.rest)).astype(np.float32)

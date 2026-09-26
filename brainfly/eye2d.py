@@ -186,25 +186,32 @@ class CompoundEye:
     def contrast(self, objects: list) -> np.ndarray:
         """Contrast per photoreceptor for dark Disks (the darkest one wins where they overlap) and
         Edges (added), clipped to [-1, 1]."""
-        from scipy.special import ndtr
-        from scipy.stats import chi2, ncx2
+        return render(self.directions, self.placed, objects, self.sigma)
 
-        cover = np.zeros(len(self.directions))
-        edges = np.zeros(len(self.directions))
-        d = self.directions[self.placed]
-        for obj in objects:
-            if isinstance(obj, Edge):
-                if obj.axis == "azimuth":
-                    q = np.degrees(np.arctan2(d[:, 1], d[:, 0]))
-                else:
-                    q = np.degrees(np.arcsin(np.clip(d[:, 2], -1.0, 1.0)))
-                passed = ndtr(obj.behind * (q - obj.position) / np.degrees(self.sigma))
-                edges[self.placed] += obj.contrast * passed
-                continue
-            delta = np.arccos(np.clip(d @ obj.center, -1.0, 1.0))
-            x = (obj.radius / self.sigma) ** 2
-            nc = (delta / self.sigma) ** 2
-            # share of a Gaussian blur centred delta from the disk's centre that falls inside it
-            frac = np.where(nc > 1e-12, ncx2.cdf(x, 2, np.maximum(nc, 1e-12)), chi2.cdf(x, 2))
-            cover[self.placed] = np.maximum(cover[self.placed], obj.darkness * frac)
-        return np.clip(edges - cover, -1.0, 1.0).astype(np.float32)
+
+def render(directions: np.ndarray, placed: np.ndarray, objects: list, sigma: float) -> np.ndarray:
+    """Contrast seen along each of `directions` (unit vectors; only rows where `placed` is true are
+    drawn, the rest stay 0) through a Gaussian blur of width sigma (radians), for dark Disks (the
+    darkest one wins where they overlap) and Edges (added), clipped to [-1, 1]."""
+    from scipy.special import ndtr
+    from scipy.stats import chi2, ncx2
+
+    cover = np.zeros(len(directions))
+    edges = np.zeros(len(directions))
+    d = directions[placed]
+    for obj in objects:
+        if isinstance(obj, Edge):
+            if obj.axis == "azimuth":
+                q = np.degrees(np.arctan2(d[:, 1], d[:, 0]))
+            else:
+                q = np.degrees(np.arcsin(np.clip(d[:, 2], -1.0, 1.0)))
+            passed = ndtr(obj.behind * (q - obj.position) / np.degrees(sigma))
+            edges[placed] += obj.contrast * passed
+            continue
+        delta = np.arccos(np.clip(d @ obj.center, -1.0, 1.0))
+        x = (obj.radius / sigma) ** 2
+        nc = (delta / sigma) ** 2
+        # share of a Gaussian blur centred delta from the disk's centre that falls inside it
+        frac = np.where(nc > 1e-12, ncx2.cdf(x, 2, np.maximum(nc, 1e-12)), chi2.cdf(x, 2))
+        cover[placed] = np.maximum(cover[placed], obj.darkness * frac)
+    return np.clip(edges - cover, -1.0, 1.0).astype(np.float32)
