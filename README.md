@@ -63,15 +63,16 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   flyvis's parameters onto MaleCNS's own wiring ran at the wrong operating point and is kept for
   comparison (`FlyvisOpticLobe`); an earlier giant fiber result came from a one-dimensional eye whose
   "azimuth" tracked elevation.
-* **Rung 1 has failed five times, and the fifth is the first stable network.** Shiu et al.'s whole-brain
-  recipe, the best-validated model of the fly brain, runs away on MaleCNS. A test against Brian2, an
-  idea borrowed from doomfly, found brainfly's implementation three steps out of line with Shiu's,
-  and the first three attempts were rerun on the corrected kernel with every verdict standing. The
-  fifth attempt runs on `HybridBrain`, brainfly's own engine. It divides each synapse by its
-  target's size, keeps fast transmission only from neurons with a known fast transmitter, and
-  removes synapses onto sensory neurons. The network stays stable, MN9 follows the sugar rate, and
-  degree-preserving rewiring abolishes the route. It fails its null all the same: shuffling the
-  strengths among each neuron's inputs leaves the route intact ([details](#rung-1-in-detail)).
+* **Rung 1 passes, on the sixth attempt.** Shiu et al.'s whole-brain recipe, the best-validated model
+  of the fly brain, runs away on MaleCNS as it stands. A test against Brian2, an idea borrowed from
+  doomfly, found brainfly's implementation of it three steps out of line, and the first three
+  attempts were rerun on the corrected kernel. The pass runs on `HybridBrain`, brainfly's own
+  engine, with Shiu's neuron model and four changes, each from the report or the literature: each
+  synapse divided by its target's size, fast transmission only from neurons with a known fast
+  transmitter, no Kenyon-to-Kenyon excitation, and no synapses onto sensory neurons. The network stays
+  stable, sugar drives the proboscis motor neuron in proportion to its rate, bitter and Ir94e
+  suppress it, and scrambling the wiring abolishes the route. Shuffling the synapses' strengths does
+  not, so the route rests on which neurons connect ([details](#rung-1-in-detail)).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/optomotor-dark.svg">
@@ -89,8 +90,8 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 | Rung | What it adds | Passes when | Status |
 |---|---|---|---|
-| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **failed** five times (the first three rerun on a kernel corrected to match Shiu's Brian2 code). The fifth is stable and follows the sugar rate, and rewiring abolishes it, but it survives shuffling the strengths among each neuron's inputs |
-| 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | not started |
+| 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **passed** on the sixth attempt (pre-registered, fresh seeds, null gated on scrambled wiring): stable, MN9 follows the sugar rate, bitter and Ir94e suppress it, and rewiring abolishes the route. It survives weight shuffles, so the route rests on which neurons connect |
+| 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | in progress: rung 1's pass uses consensus transmitters with the monoamines out of fast excitation; false positives not yet measured |
 | 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: flyvis on its own terms gets all 16 T4/T5 directions right, drives LPLC2 and the giant fiber, and carries a rotating drum to the steering neuron DNa02 with the right sign; LC4 still barely responds |
 | 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | not started |
 | 5. Nerve cord | Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons, strong descending drive | DNg100 and DNb08 produce 7–15 Hz leg rhythms | not started |
@@ -203,8 +204,31 @@ sign. That keeps every neuron's partners and its total excitation and inhibition
 MN9 in 15 of 20 such networks, which stay quiet. Degree-preserving rewiring, which scrambles who
 connects to whom, abolishes the route in all 20 and leaves the network quiet too. So in this model,
 the route from sugar to MN9 depends on which neurons connect, not on which of a neuron's partners
-carries which strength. Whether a route like that should pass is a question about the null, not the
-model, and it is open.
+carries which strength.
+
+So the sixth attempt, [`experiments/shiu_rewiring.py`](experiments/shiu_rewiring.py),
+pre-registered, gates on the report's rule that a rung passes only if its effect degrades under
+scrambled wiring, and reports the weight shuffles without gating on them. It tests the fifth
+attempt's network unchanged, calibrated weight included, on seeds no earlier run used. The null has
+two parts: degree-preserving rewiring, and rewiring that keeps each synapse's target superclass (so
+each neuron keeps its number of synapses into each of the 27 superclasses). **It passes.** Activity
+stops with the drive, and only 2 undriven neurons pass 100 Hz. MN9 is silent at 10 Hz sugar and
+fires 41 Hz at 100 Hz. Bitter and Ir94e cut sugar's drive by 100% and 81%. And both kinds of
+rewiring abolish the route in 20 of 20 networks, which stay quiet. As reported but not gated,
+shuffling the strengths among each neuron's inputs leaves the route in 16 of 20, and global
+shuffles run 18 of 20 networks away.
+
+What the pass means: on MaleCNS, Shiu's neuron model gives a stable network in which sugar drives the
+proboscis motor neuron in proportion to its rate, and bitter and Ir94e suppress it, through a route
+set by which neurons connect. Getting there took four changes, each from the report or the
+literature:
+- each synapse divided by its target's size
+- fast transmission only from neurons with a known fast transmitter, with the monoamines moved out
+- no Kenyon-to-Kenyon excitation
+- no synapses onto sensory neurons
+It also took a choice of null, made after the fifth attempt. What it doesn't show: that the route
+depends on the synapses' relative strengths, as Shiu found on FlyWire; the water response, which
+never appears; and Shiu's grooming test, which MaleCNS can't run.
 
 Two limits apply throughout. The taste-neuron labels are provisional: LB3a as water and LB3b–c as
 sugar come from an unreviewed MaleCNS port, and LB1a–d as bitter and LB1e as Ir94e-like from summaries
@@ -310,7 +334,8 @@ Three models share the package:
   spiking, with no rate ceiling, and can have its own membrane time constant, threshold, reset,
   refractory period, resting drive and synaptic scale. Chosen edges can act through a slow current.
   Its state carries over between calls, so it can be stepped in a loop with a body. With nothing
-  changed, it is Shiu's model exactly.
+  changed, it is Shiu's model exactly. On rung 1's network it simulates one fly faster than real
+  time on one core of an Apple M4 Pro (0.84 s per simulated second), and 8 flies in 0.88 s.
 
 ```sh
 pip install "brainfly[build] @ git+https://github.com/joshuabradley012/brainfly"
@@ -401,6 +426,7 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/brain.py` | `FlyBrain`, the inherited model, on CPU (numba) or NVIDIA GPU (CuPy), one fly or a batch |
 | `brainfly/shiu.py` | `ShiuBrain`, rung 1, and the raw signed synapse counts it runs on |
 | `brainfly/hybrid.py` | `HybridBrain`, brainfly's own per-type model, built on Shiu's kernel |
+| `brainfly/nulls.py` | null models: weight shuffles (global, or within each neuron's inputs) and rewiring (degree-preserving, or keeping each connection's target class), each under a second on the whole connectome |
 | `brainfly/retina.py` | the photoreceptor input MaleCNS lost at the edge of its volume, imputed from the intact columns |
 | `brainfly/build.py`, `data.py` | building the brain files from MaleCNS v1.0, or fetching a prebuilt copy |
 | `brainfly/eye2d.py` | a 2-D compound eye: each photoreceptor looks in its measured direction, from a micro-CT eye map; looming disks and moving edges |

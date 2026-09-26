@@ -1,0 +1,41 @@
+"""FlyvisNative's fast matrix-vector product gives exactly scipy's numbers, so the optic lobe's output,
+and every experiment that used it, is unchanged. Needs flyvis and the network files; skipped without."""
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+from brainfly.data import has_data
+
+pytest.importorskip("flyvis")
+pytestmark = pytest.mark.skipif(not has_data(), reason="needs the network files: python -m brainfly download")
+
+
+@pytest.fixture(scope="module")
+def optic():
+    from brainfly import FlyBrain
+    from brainfly.optic import GRADED, FlyvisNative
+
+    brain = FlyBrain(batch=1, graded=GRADED, dt=0.002, refractory=0.004)
+    return FlyvisNative(brain)
+
+
+def test_matvec_matches_scipy_bit_for_bit(optic):
+    from brainfly.optic import matvec
+
+    rng = np.random.default_rng(0)
+    for x in (np.maximum(optic.V, 0), rng.random(optic.W.shape[1]), rng.normal(0, 3, optic.W.shape[1])):
+        assert np.array_equal(matvec(optic.W, x), optic.W @ x)
+
+
+def test_optic_lobe_output_is_unchanged(optic, monkeypatch):
+    import brainfly.optic as module
+    from brainfly.eye2d import Disk, direction
+
+    def run():                                  # a dark disk sweeping across the left eye
+        optic.reset()
+        return np.array([optic.step(optic.contrast([Disk(direction(-40 + 4 * k, 0), np.radians(12))])) for k in range(25)])
+
+    fast = run()
+    monkeypatch.setattr(module, "matvec", lambda W, x: W @ x)
+    np.testing.assert_array_equal(fast, run())
