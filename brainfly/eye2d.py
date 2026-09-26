@@ -63,6 +63,16 @@ class Edge:
     contrast: float
 
 
+@dataclass
+class Grating:
+    """A sine grating on a distant vertical cylinder around the fly, as on a drum: contrast varies
+    as `contrast` x sin(2 pi (azimuth - phase) / period) (degrees; azimuth positive to the fly's
+    left) at every elevation. Added to the other objects' contrast."""
+    period: float
+    phase: float
+    contrast: float = 1.0
+
+
 def direction(azimuth: float, elevation: float) -> np.ndarray:
     """Unit vector for an azimuth (degrees from straight ahead, positive to the fly's left) and an
     elevation (degrees above the horizon)."""
@@ -192,7 +202,7 @@ class CompoundEye:
 def render(directions: np.ndarray, placed: np.ndarray, objects: list, sigma: float) -> np.ndarray:
     """Contrast seen along each of `directions` (unit vectors; only rows where `placed` is true are
     drawn, the rest stay 0) through a Gaussian blur of width sigma (radians), for dark Disks (the
-    darkest one wins where they overlap) and Edges (added), clipped to [-1, 1]."""
+    darkest one wins where they overlap) and Edges and Gratings (added), clipped to [-1, 1]."""
     from scipy.special import ndtr
     from scipy.stats import chi2, ncx2
 
@@ -200,6 +210,13 @@ def render(directions: np.ndarray, placed: np.ndarray, objects: list, sigma: flo
     edges = np.zeros(len(directions))
     d = directions[placed]
     for obj in objects:
+        if isinstance(obj, Grating):
+            # a sine grating through a Gaussian blur keeps its shape and loses amplitude by
+            # exp(-2 pi^2 sigma^2 / lambda^2); at elevation e its period spans lambda cos(e) of visual angle
+            az = np.degrees(np.arctan2(d[:, 1], d[:, 0]))
+            lam = np.radians(obj.period) * np.sqrt(np.maximum(1 - d[:, 2] ** 2, 1e-6))
+            edges[placed] += obj.contrast * np.sin(2 * np.pi * (az - obj.phase) / obj.period) * np.exp(-2 * np.pi ** 2 * sigma ** 2 / lam ** 2)
+            continue
         if isinstance(obj, Edge):
             if obj.axis == "azimuth":
                 q = np.degrees(np.arctan2(d[:, 1], d[:, 0]))
