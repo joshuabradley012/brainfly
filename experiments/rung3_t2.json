@@ -1,0 +1,729 @@
+{
+ "criteria": "Rung 3 (pre-registered): does flyvis's model 006, fine-tuned so that its T2 answers light decrements, meet all of\nrung 3's criteria?\n\nrung3_verdict.py tested flow/0000/001, whose T2 answers light increments and decrements as a real T2 does (Keles\net al. 2020). With it, looming drives LC4 (eyepath_native_t2.py), but it got 29 of the 32 known contrast\npolarities (30 needed) and T5a's direction wrong. flyvis_screen.py found no pretrained flyvis model with both a\nT2 that answers decrements and at least 30 polarities. So a model has to be trained with T2's decrement response\nas a constraint. T2 is not among flyvis's 32 known polarities, so the constraint leaves them untouched. The pilots\n(flyvis_t2_pilot.py, 2 and 3; exploratory, none measured the tests below) found:\n- fine-tuning flyvis's best model, 000, only shrinks T2's ON response;\n- model 006, the one flyvis model with all 32 polarities right, has a T2 that already answers decrements weakly\n  (0.95 against 4.94). Fine-tuned, it answers both within 150 iterations (ON 4.6, OFF 4.0 after 500), with\n  flyvis's validation error rising from 5.27 to 5.50.\nModel: flow/0000/006, fine-tuned with brainfly.vistrain on flyvis's own training task (Sintel flow, Adam, batch 4)\nplus flyvis_t2_pilot3.py's symmetric T2 penalty at weight 1000 and learning rate 5e-6, for 1000 iterations,\nseed 1 (the pilots used seed 0), keeping the final state. It is saved as flyvis model flow/9006/000. Its\ndirection selectivity and looming responses were never measured, before or after fine-tuning.\nTests, rung 3's criteria as rung3_verdict.py reads them:\n  POLARITY   flyvis's flash response index (the central cell of each type, Flashes at radius 6) has the known\n             polarity's sign for at least 30 of flyvis's 32 known types\n  DIRECTION  flyvis_native.py's direction-selectivity check with this model tiled onto the male eye: all 8 T4/T5\n             subtypes prefer their expected direction in both eyes, 16 of 16\n  LOOMING    eyepath_native.py's protocol with this model: the gain sweep {0.3, 1, 3, 10} on seed 1 (6 flies),\n             the lowest gain passing REST, RELAY and SIDE confirmed on seed 2 (8 flies). In the confirmation,\n             the fast loom drives the loomed side's LC4 and LPLC2 to peaks of at least 20 Hz, for looms on\n             either side. No confirmed gain means no LOOMING.\nPass: all three. POLARITY is a check that fixing T2 keeps 006's polarities, not a prediction, since 006 was\nchosen for getting all 32. DIRECTION and LOOMING played no part in choosing anything.\nReported: T2 as flyvis_screen.py measures it (trained on, so not a test); flyvis's validation error; which\npolarities changed from 006's; and, measured after the tests, 006's own direction selectivity.\n\n    python experiments/rung3_t2.py            (writes experiments/rung3_t2.json; the model to flyvis's results)\n",
+ "start": "flow/0000/006",
+ "model": "flow/9006/000",
+ "training": {
+  "trace": [
+   {
+    "iteration": 100,
+    "flow_loss": 1257.48,
+    "penalty": 675.5943,
+    "seconds": 97
+   },
+   {
+    "iteration": 200,
+    "flow_loss": 1284.27,
+    "penalty": 0.0,
+    "seconds": 207
+   },
+   {
+    "iteration": 300,
+    "flow_loss": 1321.26,
+    "penalty": 0.0,
+    "seconds": 306
+   },
+   {
+    "iteration": 400,
+    "flow_loss": 1286.21,
+    "penalty": 0.0,
+    "seconds": 406
+   },
+   {
+    "iteration": 500,
+    "flow_loss": 1239.48,
+    "penalty": 0.0,
+    "seconds": 509
+   },
+   {
+    "iteration": 600,
+    "flow_loss": 1352.25,
+    "penalty": 0.0,
+    "seconds": 613
+   },
+   {
+    "iteration": 700,
+    "flow_loss": 1274.08,
+    "penalty": 0.0,
+    "seconds": 730
+   },
+   {
+    "iteration": 800,
+    "flow_loss": 1252.46,
+    "penalty": 0.0,
+    "seconds": 853
+   },
+   {
+    "iteration": 900,
+    "flow_loss": 1292.52,
+    "penalty": 0.0,
+    "seconds": 980
+   },
+   {
+    "iteration": 1000,
+    "flow_loss": 1278.75,
+    "penalty": 0.0,
+    "seconds": 1146
+   }
+  ],
+  "val_epe_start": 5.2709,
+  "val_epe": 5.473,
+  "val_epe_000": 5.1348,
+  "device": "mps"
+ },
+ "t2": {
+  "t2_on": 3.047,
+  "t2_off": 1.36,
+  "T2": true
+ },
+ "polarity": {
+  "correct": 31,
+  "of": 32,
+  "wrong": [
+   "T5b"
+  ],
+  "types": {
+   "R1": {
+    "fri": 0.451,
+    "known": 1,
+    "correct": true
+   },
+   "R2": {
+    "fri": 0.045,
+    "known": 1,
+    "correct": true
+   },
+   "R3": {
+    "fri": 0.288,
+    "known": 1,
+    "correct": true
+   },
+   "R4": {
+    "fri": 0.455,
+    "known": 1,
+    "correct": true
+   },
+   "R5": {
+    "fri": 0.156,
+    "known": 1,
+    "correct": true
+   },
+   "R6": {
+    "fri": 0.252,
+    "known": 1,
+    "correct": true
+   },
+   "R7": {
+    "fri": 0.096,
+    "known": 1,
+    "correct": true
+   },
+   "R8": {
+    "fri": 0.427,
+    "known": 1,
+    "correct": true
+   },
+   "L1": {
+    "fri": -0.135,
+    "known": -1,
+    "correct": true
+   },
+   "L2": {
+    "fri": -0.013,
+    "known": -1,
+    "correct": true
+   },
+   "L3": {
+    "fri": -0.375,
+    "known": -1,
+    "correct": true
+   },
+   "L4": {
+    "fri": -0.027,
+    "known": -1,
+    "correct": true
+   },
+   "L5": {
+    "fri": 0.091,
+    "known": 1,
+    "correct": true
+   },
+   "C3": {
+    "fri": 0.101,
+    "known": 1,
+    "correct": true
+   },
+   "CT1(Lo1)": {
+    "fri": -0.012,
+    "known": -1,
+    "correct": true
+   },
+   "CT1(M10)": {
+    "fri": 0.11,
+    "known": 1,
+    "correct": true
+   },
+   "Mi1": {
+    "fri": 0.166,
+    "known": 1,
+    "correct": true
+   },
+   "Mi4": {
+    "fri": 0.143,
+    "known": 1,
+    "correct": true
+   },
+   "Mi9": {
+    "fri": -0.386,
+    "known": -1,
+    "correct": true
+   },
+   "T4a": {
+    "fri": 0.128,
+    "known": 1,
+    "correct": true
+   },
+   "T4b": {
+    "fri": 0.11,
+    "known": 1,
+    "correct": true
+   },
+   "T4c": {
+    "fri": 0.196,
+    "known": 1,
+    "correct": true
+   },
+   "T4d": {
+    "fri": 0.199,
+    "known": 1,
+    "correct": true
+   },
+   "T5a": {
+    "fri": -0.298,
+    "known": -1,
+    "correct": true
+   },
+   "T5b": {
+    "fri": 0.171,
+    "known": -1,
+    "correct": false
+   },
+   "T5c": {
+    "fri": -0.182,
+    "known": -1,
+    "correct": true
+   },
+   "T5d": {
+    "fri": -0.299,
+    "known": -1,
+    "correct": true
+   },
+   "Tm1": {
+    "fri": -0.029,
+    "known": -1,
+    "correct": true
+   },
+   "Tm2": {
+    "fri": -0.114,
+    "known": -1,
+    "correct": true
+   },
+   "Tm3": {
+    "fri": 0.122,
+    "known": 1,
+    "correct": true
+   },
+   "Tm4": {
+    "fri": -0.224,
+    "known": -1,
+    "correct": true
+   },
+   "Tm9": {
+    "fri": -0.377,
+    "known": -1,
+    "correct": true
+   }
+  }
+ },
+ "POLARITY": true,
+ "direction_selectivity": {
+  "R T4a": {
+   "responses": {
+    "front-to-back": 2.006,
+    "back-to-front": 0.371,
+    "upward": 0.569,
+    "downward": 0.457
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.688,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "R T4b": {
+   "responses": {
+    "front-to-back": 3.276,
+    "back-to-front": 3.548,
+    "upward": 3.607,
+    "downward": 3.983
+   },
+   "preferred": "downward",
+   "dsi": 0.05,
+   "expected": "back-to-front",
+   "correct": false
+  },
+  "R T4c": {
+   "responses": {
+    "front-to-back": 0.325,
+    "back-to-front": 0.452,
+    "upward": 1.274,
+    "downward": 0.202
+   },
+   "preferred": "upward",
+   "dsi": 0.726,
+   "expected": "upward",
+   "correct": true
+  },
+  "R T4d": {
+   "responses": {
+    "front-to-back": 0.579,
+    "back-to-front": 0.519,
+    "upward": 0.29,
+    "downward": 1.643
+   },
+   "preferred": "downward",
+   "dsi": 0.7,
+   "expected": "downward",
+   "correct": true
+  },
+  "R T5a": {
+   "responses": {
+    "front-to-back": 0.148,
+    "back-to-front": 0.169,
+    "upward": 0.157,
+    "downward": 0.175
+   },
+   "preferred": "downward",
+   "dsi": 0.054,
+   "expected": "front-to-back",
+   "correct": false
+  },
+  "R T5b": {
+   "responses": {
+    "front-to-back": 0.115,
+    "back-to-front": 0.016,
+    "upward": 0.024,
+    "downward": 0.028
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.753,
+   "expected": "back-to-front",
+   "correct": false
+  },
+  "R T5c": {
+   "responses": {
+    "front-to-back": 0.478,
+    "back-to-front": 0.462,
+    "upward": 0.454,
+    "downward": 0.466
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.017,
+   "expected": "upward",
+   "correct": false
+  },
+  "R T5d": {
+   "responses": {
+    "front-to-back": 0.029,
+    "back-to-front": 0.027,
+    "upward": 0.028,
+    "downward": 0.028
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.032,
+   "expected": "downward",
+   "correct": false
+  },
+  "L T4a": {
+   "responses": {
+    "front-to-back": 1.971,
+    "back-to-front": 0.379,
+    "upward": 0.554,
+    "downward": 0.453
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.677,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "L T4b": {
+   "responses": {
+    "front-to-back": 3.231,
+    "back-to-front": 3.494,
+    "upward": 3.558,
+    "downward": 3.936
+   },
+   "preferred": "downward",
+   "dsi": 0.05,
+   "expected": "back-to-front",
+   "correct": false
+  },
+  "L T4c": {
+   "responses": {
+    "front-to-back": 0.341,
+    "back-to-front": 0.459,
+    "upward": 1.286,
+    "downward": 0.2
+   },
+   "preferred": "upward",
+   "dsi": 0.73,
+   "expected": "upward",
+   "correct": true
+  },
+  "L T4d": {
+   "responses": {
+    "front-to-back": 0.572,
+    "back-to-front": 0.524,
+    "upward": 0.284,
+    "downward": 1.64
+   },
+   "preferred": "downward",
+   "dsi": 0.705,
+   "expected": "downward",
+   "correct": true
+  },
+  "L T5a": {
+   "responses": {
+    "front-to-back": 0.146,
+    "back-to-front": 0.166,
+    "upward": 0.158,
+    "downward": 0.176
+   },
+   "preferred": "downward",
+   "dsi": 0.052,
+   "expected": "front-to-back",
+   "correct": false
+  },
+  "L T5b": {
+   "responses": {
+    "front-to-back": 0.105,
+    "back-to-front": 0.014,
+    "upward": 0.019,
+    "downward": 0.025
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.771,
+   "expected": "back-to-front",
+   "correct": false
+  },
+  "L T5c": {
+   "responses": {
+    "front-to-back": 0.473,
+    "back-to-front": 0.455,
+    "upward": 0.448,
+    "downward": 0.461
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.02,
+   "expected": "upward",
+   "correct": false
+  },
+  "L T5d": {
+   "responses": {
+    "front-to-back": 0.03,
+    "back-to-front": 0.028,
+    "upward": 0.028,
+    "downward": 0.03
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.032,
+   "expected": "downward",
+   "correct": false
+  }
+ },
+ "DIRECTION": false,
+ "looming_sweep": [
+  {
+   "gain": 0.3,
+   "pass": false,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "ESCAPE": false,
+   "relay": {
+    "fastL LC4": {
+     "delta": 0.254,
+     "t": 5.25
+    },
+    "fastL LPLC2": {
+     "delta": -0.106,
+     "t": -5.0
+    },
+    "fastR LC4": {
+     "delta": 0.255,
+     "t": 27.11
+    },
+    "fastR LPLC2": {
+     "delta": -0.161,
+     "t": -4.45
+    }
+   }
+  },
+  {
+   "gain": 1.0,
+   "pass": false,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "ESCAPE": false,
+   "relay": {
+    "fastL LC4": {
+     "delta": 0.592,
+     "t": 25.72
+    },
+    "fastL LPLC2": {
+     "delta": 0.145,
+     "t": 3.84
+    },
+    "fastR LC4": {
+     "delta": 0.739,
+     "t": 20.56
+    },
+    "fastR LPLC2": {
+     "delta": 0.037,
+     "t": 1.07
+    }
+   }
+  },
+  {
+   "gain": 3.0,
+   "pass": false,
+   "REST": true,
+   "RELAY": false,
+   "SIDE": false,
+   "ESCAPE": false,
+   "relay": {
+    "fastL LC4": {
+     "delta": 0.723,
+     "t": 18.9
+    },
+    "fastL LPLC2": {
+     "delta": 0.387,
+     "t": 7.75
+    },
+    "fastR LC4": {
+     "delta": 0.818,
+     "t": 21.29
+    },
+    "fastR LPLC2": {
+     "delta": 0.462,
+     "t": 30.74
+    }
+   }
+  }
+ ],
+ "LOOMING": null,
+ "looming_note": "not completed: the run was stopped during the sweep, when the machine ran out of memory, after gains 0.3, 1 and 3 had failed RELAY (loomed-side LC4 rose by at most 0.8 Hz and LPLC2 by at most 0.5 Hz); gain 10 wasn't run. The verdict doesn't depend on it, since DIRECTION failed.",
+ "pass": false,
+ "direction_selectivity_006": {
+  "correct": 12,
+  "wrong": [
+   "R T4b",
+   "R T5a",
+   "L T4b",
+   "L T5a"
+  ],
+  "types": {
+   "R T4a": {
+    "responses": {
+     "front-to-back": 3.784,
+     "back-to-front": 0.422,
+     "upward": 1.001,
+     "downward": 0.52
+    },
+    "preferred": "front-to-back",
+    "dsi": 0.799,
+    "expected": "front-to-back",
+    "correct": true
+   },
+   "R T4b": {
+    "responses": {
+     "front-to-back": 8.534,
+     "back-to-front": 8.54,
+     "upward": 8.535,
+     "downward": 8.648
+    },
+    "preferred": "downward",
+    "dsi": 0.007,
+    "expected": "back-to-front",
+    "correct": false
+   },
+   "R T4c": {
+    "responses": {
+     "front-to-back": 0.468,
+     "back-to-front": 0.803,
+     "upward": 2.449,
+     "downward": 0.151
+    },
+    "preferred": "upward",
+    "dsi": 0.884,
+    "expected": "upward",
+    "correct": true
+   },
+   "R T4d": {
+    "responses": {
+     "front-to-back": 1.119,
+     "back-to-front": 0.637,
+     "upward": 0.215,
+     "downward": 3.328
+    },
+    "preferred": "downward",
+    "dsi": 0.879,
+    "expected": "downward",
+    "correct": true
+   },
+   "R T5a": {
+    "responses": {
+     "front-to-back": 2.925,
+     "back-to-front": 3.178,
+     "upward": 3.235,
+     "downward": 3.179
+    },
+    "preferred": "upward",
+    "dsi": 0.009,
+    "expected": "front-to-back",
+    "correct": false
+   },
+   "R T5b": {
+    "responses": {
+     "front-to-back": 0.204,
+     "back-to-front": 0.252,
+     "upward": 0.129,
+     "downward": 0.093
+    },
+    "preferred": "back-to-front",
+    "dsi": 0.106,
+    "expected": "back-to-front",
+    "correct": true
+   },
+   "R T5c": {
+    "responses": {
+     "front-to-back": 0.998,
+     "back-to-front": 1.04,
+     "upward": 1.119,
+     "downward": 0.957
+    },
+    "preferred": "upward",
+    "dsi": 0.078,
+    "expected": "upward",
+    "correct": true
+   },
+   "R T5d": {
+    "responses": {
+     "front-to-back": 0.063,
+     "back-to-front": 0.062,
+     "upward": 0.066,
+     "downward": 0.074
+    },
+    "preferred": "downward",
+    "dsi": 0.062,
+    "expected": "downward",
+    "correct": true
+   },
+   "L T4a": {
+    "responses": {
+     "front-to-back": 3.793,
+     "back-to-front": 0.424,
+     "upward": 0.994,
+     "downward": 0.513
+    },
+    "preferred": "front-to-back",
+    "dsi": 0.799,
+    "expected": "front-to-back",
+    "correct": true
+   },
+   "L T4b": {
+    "responses": {
+     "front-to-back": 8.504,
+     "back-to-front": 8.511,
+     "upward": 8.506,
+     "downward": 8.62
+    },
+    "preferred": "downward",
+    "dsi": 0.007,
+    "expected": "back-to-front",
+    "correct": false
+   },
+   "L T4c": {
+    "responses": {
+     "front-to-back": 0.459,
+     "back-to-front": 0.797,
+     "upward": 2.45,
+     "downward": 0.152
+    },
+    "preferred": "upward",
+    "dsi": 0.883,
+    "expected": "upward",
+    "correct": true
+   },
+   "L T4d": {
+    "responses": {
+     "front-to-back": 1.113,
+     "back-to-front": 0.626,
+     "upward": 0.218,
+     "downward": 3.328
+    },
+    "preferred": "downward",
+    "dsi": 0.877,
+    "expected": "downward",
+    "correct": true
+   },
+   "L T5a": {
+    "responses": {
+     "front-to-back": 2.917,
+     "back-to-front": 3.175,
+     "upward": 3.226,
+     "downward": 3.172
+    },
+    "preferred": "upward",
+    "dsi": 0.008,
+    "expected": "front-to-back",
+    "correct": false
+   },
+   "L T5b": {
+    "responses": {
+     "front-to-back": 0.205,
+     "back-to-front": 0.253,
+     "upward": 0.129,
+     "downward": 0.092
+    },
+    "preferred": "back-to-front",
+    "dsi": 0.106,
+    "expected": "back-to-front",
+    "correct": true
+   },
+   "L T5c": {
+    "responses": {
+     "front-to-back": 0.998,
+     "back-to-front": 1.04,
+     "upward": 1.117,
+     "downward": 0.957
+    },
+    "preferred": "upward",
+    "dsi": 0.077,
+    "expected": "upward",
+    "correct": true
+   },
+   "L T5d": {
+    "responses": {
+     "front-to-back": 0.064,
+     "back-to-front": 0.063,
+     "upward": 0.066,
+     "downward": 0.075
+    },
+    "preferred": "downward",
+    "dsi": 0.065,
+    "expected": "downward",
+    "correct": true
+   }
+  }
+ }
+}
