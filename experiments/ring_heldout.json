@@ -1,0 +1,218 @@
+{
+ "question": "Exploratory, not pre-registered: does ring_fit.py's best ring hold its bump on seeds it wasn't fitted on,\nover rung 4's full runs?\n\nring_fit.py fitted the head-direction ring's class gains and biases on one seed, with 8 runs of 20 s.\nHere its best parameters run as rung 4 scores the bump (rest_calibration.py's BUMP: 8 runs of 300 s\nafter 2 s to settle, strength per bridge side in 1-s windows against 1,000 glomerulus-label shuffles,\nand the resultant of the runs' mean positions under 0.6) on four seeds it never saw (2 to 5), with\nring_fit.py's width, busiest wedge and group rates.\n\n    python experiments/ring_heldout.py            (writes experiments/ring_heldout.json)\n",
+ "params": {
+  "gE": 1.7101,
+  "gI": 0.8806,
+  "loop": 1.4108,
+  "epg_epg": 0.2743,
+  "delta7": 5.7769,
+  "to_er": 3.7721,
+  "from_er": 1.2736,
+  "er_er": 0.6116,
+  "dep_f": 0.8009,
+  "dep_tau": 0.3951,
+  "slow_tau": 0.3,
+  "b_EPG": 3.4508,
+  "b_PEN_a": 5.94,
+  "b_PEN_b": 1.4009,
+  "b_PEG": 4.4043,
+  "b_Delta7": 1.143,
+  "b_ER": -2.094,
+  "b_ExR": -5.0904
+ },
+ "seeds": [
+  {
+   "seed": 2,
+   "BUMP": true,
+   "bump": {
+    "L": {
+     "strength": 0.912,
+     "shuffle_p99": 0.646,
+     "run_positions_deg": [
+      -36.2,
+      -44.6,
+      175.7,
+      -175.6,
+      -179.9,
+      -32.3,
+      -179.8,
+      -179.3
+     ],
+     "resultant": 0.402
+    },
+    "R": {
+     "strength": 0.909,
+     "shuffle_p99": 0.667,
+     "run_positions_deg": [
+      -1.3,
+      4.2,
+      169.0,
+      160.3,
+      164.6,
+      -5.3,
+      164.7,
+      164.5
+     ],
+     "resultant": 0.278
+    }
+   },
+   "fwhm_deg": 67.5,
+   "busiest_wedge_hz": 10.9,
+   "epg_hz": 1.8,
+   "group_hz": {
+    "EPG": 2.31,
+    "PEN_a": 4.0,
+    "PEN_b": 2.09,
+    "PEG": 1.82,
+    "Delta7": 1.55,
+    "ER": 2.54,
+    "ExR": 7.82
+   }
+  },
+  {
+   "seed": 3,
+   "BUMP": true,
+   "bump": {
+    "L": {
+     "strength": 0.909,
+     "shuffle_p99": 0.625,
+     "run_positions_deg": [
+      -33.4,
+      -24.5,
+      -176.9,
+      179.8,
+      -173.7,
+      -31.2,
+      -37.9,
+      -179.0
+     ],
+     "resultant": 0.294
+    },
+    "R": {
+     "strength": 0.901,
+     "shuffle_p99": 0.645,
+     "run_positions_deg": [
+      -3.4,
+      -15.4,
+      161.5,
+      164.9,
+      158.5,
+      -5.4,
+      2.5,
+      163.4
+     ],
+     "resultant": 0.109
+    }
+   },
+   "fwhm_deg": 67.5,
+   "busiest_wedge_hz": 10.6,
+   "epg_hz": 1.72,
+   "group_hz": {
+    "EPG": 2.51,
+    "PEN_a": 3.73,
+    "PEN_b": 1.84,
+    "PEG": 1.93,
+    "Delta7": 1.56,
+    "ER": 2.51,
+    "ExR": 7.55
+   }
+  },
+  {
+   "seed": 4,
+   "BUMP": true,
+   "bump": {
+    "L": {
+     "strength": 0.913,
+     "shuffle_p99": 0.666,
+     "run_positions_deg": [
+      177.6,
+      -175.7,
+      -180.0,
+      173.6,
+      -24.8,
+      179.6,
+      -175.7,
+      -27.0
+     ],
+     "resultant": 0.535
+    },
+    "R": {
+     "strength": 0.915,
+     "shuffle_p99": 0.667,
+     "run_positions_deg": [
+      167.0,
+      160.2,
+      164.7,
+      170.2,
+      -15.3,
+      165.2,
+      160.2,
+      -12.0
+     ],
+     "resultant": 0.499
+    }
+   },
+   "fwhm_deg": 67.5,
+   "busiest_wedge_hz": 11.1,
+   "epg_hz": 1.85,
+   "group_hz": {
+    "EPG": 2.19,
+    "PEN_a": 4.15,
+    "PEN_b": 2.16,
+    "PEG": 1.74,
+    "Delta7": 1.55,
+    "ER": 2.55,
+    "ExR": 7.92
+   }
+  },
+  {
+   "seed": 5,
+   "BUMP": true,
+   "bump": {
+    "L": {
+     "strength": 0.908,
+     "shuffle_p99": 0.625,
+     "run_positions_deg": [
+      -27.6,
+      174.8,
+      -178.5,
+      -179.8,
+      -35.8,
+      -32.7,
+      -179.5,
+      -33.5
+     ],
+     "resultant": 0.272
+    },
+    "R": {
+     "strength": 0.901,
+     "shuffle_p99": 0.645,
+     "run_positions_deg": [
+      -11.9,
+      169.7,
+      163.2,
+      164.8,
+      -0.4,
+      -6.6,
+      164.1,
+      -2.6
+     ],
+     "resultant": 0.08
+    }
+   },
+   "fwhm_deg": 67.5,
+   "busiest_wedge_hz": 10.5,
+   "epg_hz": 1.72,
+   "group_hz": {
+    "EPG": 2.5,
+    "PEN_a": 3.75,
+    "PEN_b": 1.86,
+    "PEG": 1.93,
+    "Delta7": 1.56,
+    "ER": 2.51,
+    "ExR": 7.54
+   }
+  }
+ ],
+ "seconds": 15
+}
