@@ -1,0 +1,551 @@
+{
+ "criteria": "Rung 3's verdict for flyvis flow/0000/001, the model with which eyepath_native_t2.py's looming\nreached LC4 (pre-registered; written after that result, before any of the checks below were run).\n\nRung 3 passes, by the ladder's criteria (README, fixed when the ladder was drawn up), on \"contrast\npolarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of\nHz\". For model 001, read as:\n  POLARITY   flyvis's flash response index (flyvis.analysis.flash_responses.flash_response_index on\n             its Flashes at radius 6, the central cell of each type) has the sign of the known\n             polarity for at least 30 of the 32 types flyvis's ground truth gives one\n             (flyvis.utils.groundtruth_utils.polarity)\n  DIRECTION  flyvis_native.py's direction-selectivity check, run on model 001 tiled onto the male eye:\n             all 8 T4/T5 subtypes prefer their expected direction (Maisak et al. 2013) in both eyes,\n             16 of 16\n  LOOMING    in eyepath_native_t2.py's confirmation (recorded before this test), the fast loom drives\n             the loomed side's LC4 and LPLC2 to peaks of at least 20 Hz, for looms on either side\nPass: all three.\nAlso reported: the same polarity count for model 000, which flyvis's authors report as 30 of 32,\nchecking that this reading of their method reproduces theirs.\n\n    python experiments/rung3_verdict.py            (writes experiments/rung3_verdict.json)\n",
+ "model": "flow/0000/001",
+ "polarity": {
+  "flow/0000/001": {
+   "correct": 29,
+   "of": 32,
+   "wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "types": {
+    "R1": {
+     "fri": 0.479,
+     "known": 1,
+     "correct": true
+    },
+    "R2": {
+     "fri": 0.331,
+     "known": 1,
+     "correct": true
+    },
+    "R3": {
+     "fri": -0.08,
+     "known": 1,
+     "correct": false
+    },
+    "R4": {
+     "fri": 0.438,
+     "known": 1,
+     "correct": true
+    },
+    "R5": {
+     "fri": 0.429,
+     "known": 1,
+     "correct": true
+    },
+    "R6": {
+     "fri": 0.03,
+     "known": 1,
+     "correct": true
+    },
+    "R7": {
+     "fri": 0.153,
+     "known": 1,
+     "correct": true
+    },
+    "R8": {
+     "fri": 0.194,
+     "known": 1,
+     "correct": true
+    },
+    "L1": {
+     "fri": -0.288,
+     "known": -1,
+     "correct": true
+    },
+    "L2": {
+     "fri": 0.259,
+     "known": -1,
+     "correct": false
+    },
+    "L3": {
+     "fri": -0.097,
+     "known": -1,
+     "correct": true
+    },
+    "L4": {
+     "fri": -0.641,
+     "known": -1,
+     "correct": true
+    },
+    "L5": {
+     "fri": 0.285,
+     "known": 1,
+     "correct": true
+    },
+    "C3": {
+     "fri": 0.36,
+     "known": 1,
+     "correct": true
+    },
+    "CT1(Lo1)": {
+     "fri": -0.203,
+     "known": -1,
+     "correct": true
+    },
+    "CT1(M10)": {
+     "fri": 0.305,
+     "known": 1,
+     "correct": true
+    },
+    "Mi1": {
+     "fri": 0.303,
+     "known": 1,
+     "correct": true
+    },
+    "Mi4": {
+     "fri": 0.386,
+     "known": 1,
+     "correct": true
+    },
+    "Mi9": {
+     "fri": -0.239,
+     "known": -1,
+     "correct": true
+    },
+    "T4a": {
+     "fri": 0.26,
+     "known": 1,
+     "correct": true
+    },
+    "T4b": {
+     "fri": 0.295,
+     "known": 1,
+     "correct": true
+    },
+    "T4c": {
+     "fri": 0.335,
+     "known": 1,
+     "correct": true
+    },
+    "T4d": {
+     "fri": 0.299,
+     "known": 1,
+     "correct": true
+    },
+    "T5a": {
+     "fri": -0.07,
+     "known": -1,
+     "correct": true
+    },
+    "T5b": {
+     "fri": -0.167,
+     "known": -1,
+     "correct": true
+    },
+    "T5c": {
+     "fri": -0.229,
+     "known": -1,
+     "correct": true
+    },
+    "T5d": {
+     "fri": -0.317,
+     "known": -1,
+     "correct": true
+    },
+    "Tm1": {
+     "fri": -0.245,
+     "known": -1,
+     "correct": true
+    },
+    "Tm2": {
+     "fri": 0.128,
+     "known": -1,
+     "correct": false
+    },
+    "Tm3": {
+     "fri": 0.528,
+     "known": 1,
+     "correct": true
+    },
+    "Tm4": {
+     "fri": -0.181,
+     "known": -1,
+     "correct": true
+    },
+    "Tm9": {
+     "fri": -0.194,
+     "known": -1,
+     "correct": true
+    }
+   }
+  },
+  "flow/0000/000": {
+   "correct": 30,
+   "of": 32,
+   "wrong": [
+    "C3",
+    "T4d"
+   ],
+   "types": {
+    "R1": {
+     "fri": 0.139,
+     "known": 1,
+     "correct": true
+    },
+    "R2": {
+     "fri": 0.158,
+     "known": 1,
+     "correct": true
+    },
+    "R3": {
+     "fri": 0.217,
+     "known": 1,
+     "correct": true
+    },
+    "R4": {
+     "fri": 0.128,
+     "known": 1,
+     "correct": true
+    },
+    "R5": {
+     "fri": 0.101,
+     "known": 1,
+     "correct": true
+    },
+    "R6": {
+     "fri": 0.091,
+     "known": 1,
+     "correct": true
+    },
+    "R7": {
+     "fri": 0.518,
+     "known": 1,
+     "correct": true
+    },
+    "R8": {
+     "fri": 0.137,
+     "known": 1,
+     "correct": true
+    },
+    "L1": {
+     "fri": -0.334,
+     "known": -1,
+     "correct": true
+    },
+    "L2": {
+     "fri": -0.332,
+     "known": -1,
+     "correct": true
+    },
+    "L3": {
+     "fri": -0.335,
+     "known": -1,
+     "correct": true
+    },
+    "L4": {
+     "fri": -0.009,
+     "known": -1,
+     "correct": true
+    },
+    "L5": {
+     "fri": 0.348,
+     "known": 1,
+     "correct": true
+    },
+    "C3": {
+     "fri": -0.172,
+     "known": 1,
+     "correct": false
+    },
+    "CT1(Lo1)": {
+     "fri": -0.311,
+     "known": -1,
+     "correct": true
+    },
+    "CT1(M10)": {
+     "fri": 0.143,
+     "known": 1,
+     "correct": true
+    },
+    "Mi1": {
+     "fri": 0.32,
+     "known": 1,
+     "correct": true
+    },
+    "Mi4": {
+     "fri": 0.315,
+     "known": 1,
+     "correct": true
+    },
+    "Mi9": {
+     "fri": -0.337,
+     "known": -1,
+     "correct": true
+    },
+    "T4a": {
+     "fri": 0.407,
+     "known": 1,
+     "correct": true
+    },
+    "T4b": {
+     "fri": 0.431,
+     "known": 1,
+     "correct": true
+    },
+    "T4c": {
+     "fri": 0.434,
+     "known": 1,
+     "correct": true
+    },
+    "T4d": {
+     "fri": -0.312,
+     "known": 1,
+     "correct": false
+    },
+    "T5a": {
+     "fri": -0.237,
+     "known": -1,
+     "correct": true
+    },
+    "T5b": {
+     "fri": -0.325,
+     "known": -1,
+     "correct": true
+    },
+    "T5c": {
+     "fri": -0.351,
+     "known": -1,
+     "correct": true
+    },
+    "T5d": {
+     "fri": -0.51,
+     "known": -1,
+     "correct": true
+    },
+    "Tm1": {
+     "fri": -0.133,
+     "known": -1,
+     "correct": true
+    },
+    "Tm2": {
+     "fri": -0.294,
+     "known": -1,
+     "correct": true
+    },
+    "Tm3": {
+     "fri": 0.198,
+     "known": 1,
+     "correct": true
+    },
+    "Tm4": {
+     "fri": -0.082,
+     "known": -1,
+     "correct": true
+    },
+    "Tm9": {
+     "fri": -0.326,
+     "known": -1,
+     "correct": true
+    }
+   }
+  }
+ },
+ "direction_selectivity": {
+  "R T4a": {
+   "responses": {
+    "front-to-back": 1.92,
+    "back-to-front": 0.077,
+    "upward": 0.374,
+    "downward": 0.213
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.923,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "R T4b": {
+   "responses": {
+    "front-to-back": 0.258,
+    "back-to-front": 1.685,
+    "upward": 0.537,
+    "downward": 0.518
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.735,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "R T4c": {
+   "responses": {
+    "front-to-back": 0.439,
+    "back-to-front": 0.475,
+    "upward": 1.735,
+    "downward": 0.073
+   },
+   "preferred": "upward",
+   "dsi": 0.919,
+   "expected": "upward",
+   "correct": true
+  },
+  "R T4d": {
+   "responses": {
+    "front-to-back": 0.691,
+    "back-to-front": 0.324,
+    "upward": 0.174,
+    "downward": 1.718
+   },
+   "preferred": "downward",
+   "dsi": 0.816,
+   "expected": "downward",
+   "correct": true
+  },
+  "R T5a": {
+   "responses": {
+    "front-to-back": 0.19,
+    "back-to-front": 0.188,
+    "upward": 0.21,
+    "downward": 0.183
+   },
+   "preferred": "upward",
+   "dsi": 0.07,
+   "expected": "front-to-back",
+   "correct": false
+  },
+  "R T5b": {
+   "responses": {
+    "front-to-back": 0.486,
+    "back-to-front": 0.684,
+    "upward": 0.63,
+    "downward": 0.515
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.17,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "R T5c": {
+   "responses": {
+    "front-to-back": 0.853,
+    "back-to-front": 0.75,
+    "upward": 1.08,
+    "downward": 0.677
+   },
+   "preferred": "upward",
+   "dsi": 0.229,
+   "expected": "upward",
+   "correct": true
+  },
+  "R T5d": {
+   "responses": {
+    "front-to-back": 0.697,
+    "back-to-front": 0.682,
+    "upward": 0.679,
+    "downward": 0.753
+   },
+   "preferred": "downward",
+   "dsi": 0.052,
+   "expected": "downward",
+   "correct": true
+  },
+  "L T4a": {
+   "responses": {
+    "front-to-back": 1.925,
+    "back-to-front": 0.075,
+    "upward": 0.371,
+    "downward": 0.211
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.925,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "L T4b": {
+   "responses": {
+    "front-to-back": 0.255,
+    "back-to-front": 1.687,
+    "upward": 0.535,
+    "downward": 0.514
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.737,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "L T4c": {
+   "responses": {
+    "front-to-back": 0.432,
+    "back-to-front": 0.472,
+    "upward": 1.737,
+    "downward": 0.072
+   },
+   "preferred": "upward",
+   "dsi": 0.921,
+   "expected": "upward",
+   "correct": true
+  },
+  "L T4d": {
+   "responses": {
+    "front-to-back": 0.689,
+    "back-to-front": 0.319,
+    "upward": 0.175,
+    "downward": 1.72
+   },
+   "preferred": "downward",
+   "dsi": 0.816,
+   "expected": "downward",
+   "correct": true
+  },
+  "L T5a": {
+   "responses": {
+    "front-to-back": 0.191,
+    "back-to-front": 0.189,
+    "upward": 0.212,
+    "downward": 0.184
+   },
+   "preferred": "upward",
+   "dsi": 0.069,
+   "expected": "front-to-back",
+   "correct": false
+  },
+  "L T5b": {
+   "responses": {
+    "front-to-back": 0.482,
+    "back-to-front": 0.682,
+    "upward": 0.625,
+    "downward": 0.512
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.171,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "L T5c": {
+   "responses": {
+    "front-to-back": 0.854,
+    "back-to-front": 0.751,
+    "upward": 1.079,
+    "downward": 0.677
+   },
+   "preferred": "upward",
+   "dsi": 0.229,
+   "expected": "upward",
+   "correct": true
+  },
+  "L T5d": {
+   "responses": {
+    "front-to-back": 0.698,
+    "back-to-front": 0.682,
+    "upward": 0.678,
+    "downward": 0.753
+   },
+   "preferred": "downward",
+   "dsi": 0.052,
+   "expected": "downward",
+   "correct": true
+  }
+ },
+ "looming_peaks_hz": {
+  "fastL LC4 L": 26.7,
+  "fastL LPLC2 L": 29.4,
+  "fastR LC4 R": 25.9,
+  "fastR LPLC2 R": 21.5
+ },
+ "POLARITY": false,
+ "DIRECTION": false,
+ "LOOMING": true,
+ "pass": false
+}

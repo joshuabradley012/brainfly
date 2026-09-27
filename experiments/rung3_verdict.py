@@ -47,11 +47,12 @@ def polarity(models: list[str]) -> dict:
     known = {k: v for k, v in known.items() if v != 0}
     ens = EnsembleView(flyvis.results_dir / "flow/0000")
     fri = flash_response_index(flash_responses(ens, radius=(6,), dt=0.005, batch_size=4), radius=6)
+    fri = fri.squeeze("sample") if "sample" in fri.dims else fri                  # (network_id, neuron)
     names = list(fri["network_name"].values)
     cells = list(fri["cell_type"].values)
     out = {}
     for model in models:
-        v = fri.values[names.index(model)] if fri.dims[0] == "network_id" else fri.values[:, names.index(model)]
+        v = fri.isel(network_id=names.index(model)).values
         rows = {ct: {"fri": round(float(v[cells.index(ct)]), 3), "known": int(pol),
                      "correct": bool(np.sign(v[cells.index(ct)]) == pol)} for ct, pol in known.items()}
         out[model] = {"correct": int(sum(r["correct"] for r in rows.values())), "of": len(rows),
