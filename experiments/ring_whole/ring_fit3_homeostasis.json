@@ -1,0 +1,108 @@
+{
+ "question": "Exploratory, not pre-registered: does the fitted head-direction ring keep its bump inside the whole resting\nbrain?\n\nring_fit.py (and ring_fit2.py, which also penalizes preferred places) fitted the ring's class gains,\nslow current, depression and group biases in its 460-neuron sub-network, where ring neurons get only the\nbackground. Here those settings go into escape_at_rest2.py's resting brain (which passed): the class\ngains on every synapse between two of the 460 neurons, the excitatory ring edges through the slow\ncurrent, the depression on the ring's excitatory outputs. The ring can't be calibrated the way the rest\nof the brain is (ring_calibrated.py: it's bistable), so its groups keep the fitted biases, each less\nthe mean input its neurons get from outside the ring at rest (each input's resting rate times its\nweight, its depression's steady efficacy at that rate and the 5 ms synaptic time constant), and are\nleft out of the calibration. Procedure: the eyes-open start (escape_at_rest2.py's biases), the ring's\nbiases uncorrected, 8 fresh-start rounds of the usual calibration (k = 1 mV, then 0.5) for everything\nelse; then the correction from a 2-s resting run, and 4 more rounds (k = 0.5). Measured: rung 4's BUMP\nover 8 runs of 60 s at grey (strength per bridge side, 1,000 shuffles, the resultant), the bump's\nposition entropy over the 16 wedges (as ring_fit2.py), width, the busiest wedge, the ring's group\nrates, and the brain's own mean rate and neurons over 100 Hz.\n\nWith --homeostasis, each ring neuron also keeps its own bias from ring_homeostasis.py --slow (for that\nfit), and the correction for outside input is made neuron by neuron rather than per group, so outside input\nadds no new unevenness around the ring. Also measured then: the bump's drift (ring_drift.py's D, from\n0.5-s windows).\n\n    python experiments/ring_whole.py --fit ring_fit3 --homeostasis   (writes experiments/ring_whole/<fit>[_homeostasis].json)\n",
+ "fit": "ring_fit3",
+ "params": {
+  "gE": 0.8202,
+  "gI": 2.9503,
+  "loop": 2.4017,
+  "epg_epg": 0.2102,
+  "delta7": 6.1718,
+  "to_er": 4.0439,
+  "from_er": 0.7586,
+  "er_er": 0.2518,
+  "dep_f": 0.8811,
+  "dep_tau": 0.5235,
+  "slow_tau": 0.5,
+  "b_EPG": 4.3568,
+  "b_PEN_a": 6.3146,
+  "b_PEN_b": 7.4884,
+  "b_PEG": 5.9396,
+  "b_Delta7": 0.2289,
+  "b_ER": -2.5948,
+  "b_ExR": -5.4064,
+  "wedge_norm": 0.0
+ },
+ "calibration": {
+  "round": 4,
+  "mean_hz_own": 1.692,
+  "over_100hz": 0,
+  "groups_within_2x": 0.9995
+ },
+ "BUMP": false,
+ "bump": {
+  "L": {
+   "strength": 0.634,
+   "shuffle_p99": 0.357,
+   "run_positions_deg": [
+    83.7,
+    -61.5,
+    -53.4,
+    -54.2,
+    -60.9,
+    -7.3,
+    -2.9,
+    -46.4
+   ],
+   "resultant": 0.74
+  },
+  "R": {
+   "strength": 0.622,
+   "shuffle_p99": 0.363,
+   "run_positions_deg": [
+    -96.0,
+    16.9,
+    4.9,
+    -26.4,
+    20.2,
+    -44.8,
+    -43.2,
+    2.4
+   ],
+   "resultant": 0.807
+  }
+ },
+ "position_entropy": 0.871,
+ "drift_D_rad2_per_s": 0.04,
+ "position_histogram": [
+  0.081,
+  0.123,
+  0.156,
+  0.106,
+  0.112,
+  0.09,
+  0.038,
+  0.006,
+  0.004,
+  0.01,
+  0.006,
+  0.01,
+  0.012,
+  0.058,
+  0.077,
+  0.108
+ ],
+ "fwhm_deg": 112.5,
+ "busiest_wedge_hz": 6.7,
+ "epg_hz": 2.16,
+ "ring_group_hz": {
+  "EPG": 2.4,
+  "PEN_a": 4.54,
+  "PEN_b": 12.18,
+  "PEG": 1.21,
+  "Delta7": 0.6,
+  "ER": 2.26,
+  "ExR": 9.2
+ },
+ "outside_input_mv": {
+  "EPG": 0.16,
+  "PEN_a": 0.5,
+  "PEN_b": 0.26,
+  "PEG": 0.93,
+  "Delta7": 0.13,
+  "ER": 0.31,
+  "ExR": 0.36
+ },
+ "own_mean_hz": 1.647,
+ "own_over_100hz": 0,
+ "seconds": 478
+}
