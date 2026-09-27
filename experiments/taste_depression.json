@@ -1,0 +1,25 @@
+{
+ "question": "Exploratory, not pre-registered: why does rung 1's taste pathway fail in the resting brain?\n\ntaste_at_rest.py found that sugar no longer moves MN9 in rung 4's resting brain (rest_calibration2.py),\nwhich has short-term depression at every cholinergic synapse. This takes rung 1's own brain, silent at\nrest (shiu_rewiring.py's network and w_syn, no background, no biases), and adds only that depression,\nat every cholinergic synapse or on part of them: MN9 L's rate under 1 s of sugar at 100 Hz, 8 trials,\nand how many neurons pass 5 Hz. The ORN-to-PN values (Nagel, Hong & Wilson 2015: 0.78 of the strength\nleft per spike, recovering with 0.89 s) and a milder version (0.9).\n\n    python experiments/taste_depression.py            (writes experiments/taste_depression.json)\n",
+ "cases": {
+  "none (rung 1 as it passed)": {
+   "mn9_L_hz": 39.8,
+   "neurons_over_5hz": 343
+  },
+  "every cholinergic synapse": {
+   "mn9_L_hz": 0.0,
+   "neurons_over_5hz": 20
+  },
+  "every cholinergic synapse, milder": {
+   "mn9_L_hz": 0.0,
+   "neurons_over_5hz": 27
+  },
+  "cholinergic sensory neurons only": {
+   "mn9_L_hz": 0.0,
+   "neurons_over_5hz": 21
+  },
+  "every cholinergic synapse but sensory neurons'": {
+   "mn9_L_hz": 0.0,
+   "neurons_over_5hz": 44
+  }
+ }
+}
