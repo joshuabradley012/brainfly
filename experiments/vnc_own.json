@@ -1,0 +1,367 @@
+{
+ "question": "Exploratory, not pre-registered: does the nerve cord rhythm survive when brainfly builds Pugliese et al.'s network\nfrom its own copy of MaleCNS?\n\nvnc_rhythm.py reran Pugliese et al.'s male CNS model on their own network files and reproduced their result:\nDNg100 drives 12-13 Hz leg rhythms, and a rewired network doesn't. This builds the same 4,310 neurons' network from\nbrainfly's data instead (brainfly.shiu.counts, from MaleCNS v1.0 at confidence 0.5, signed by brainfly's consensus\ntransmitters: acetylcholine excitatory, GABA and glutamate inhibitory, others left out; connections under 5 synapses\ndropped). It differs from theirs in counting every synapse between two of these neurons, brain-side ones\nincluded, where theirs keeps the nerve cord's only; one untyped sensory neuron of theirs isn't in brainfly's\nMaleCNS and gets no synapses. It reports how the two networks compare, then runs\nvnc_rhythm.py's model, score and 16 replicates with DNg100 on each side driven at 400, with two sizes:\n  volume    their neuron volumes, as in vnc_rhythm.py\n  synapses  brainfly's size proxy (each neuron's synapses in and out, over the median; shiu_scaled.sizes), which the\n            rest of brainfly uses and which needs no volumes, so it extends to neurons their table lacks\n\n    python experiments/vnc_own.py            (writes experiments/vnc_own.json)\n",
+ "compare": {
+  "their_connections": 118920,
+  "our_connections": 141936,
+  "shared": 118680,
+  "same_sign_of_shared": 1.0,
+  "count_correlation_of_shared": 0.9629,
+  "size_proxy_vs_volume_spearman": 0.931
+ },
+ "DNg100_L, volume": {
+  "score_mean": 0.817,
+  "rhythmic_replicates": 16,
+  "freq_hz_median": 13.4,
+  "active_mn_median": 4,
+  "mn_peak_hz_median": 0.0,
+  "replicates": [
+   {
+    "score": 0.7489258630556017,
+    "active_mn": 4,
+    "freq_hz": 16.666666666666668
+   },
+   {
+    "score": 0.867513312937923,
+    "active_mn": 4,
+    "freq_hz": 13.888888888888888
+   },
+   {
+    "score": 0.7337560994990495,
+    "active_mn": 4,
+    "freq_hz": 13.698630136986303
+   },
+   {
+    "score": 0.5998005604577921,
+    "active_mn": 5,
+    "freq_hz": 12.658227848101266
+   },
+   {
+    "score": 0.7496006766470182,
+    "active_mn": 4,
+    "freq_hz": 12.658227848101266
+   },
+   {
+    "score": 0.9998856963735906,
+    "active_mn": 4,
+    "freq_hz": 13.157894736842106
+   },
+   {
+    "score": 0.7493765568581452,
+    "active_mn": 4,
+    "freq_hz": 13.333333333333334
+   },
+   {
+    "score": 0.5990871448178814,
+    "active_mn": 5,
+    "freq_hz": 15.625
+   },
+   {
+    "score": 0.9679368019214767,
+    "active_mn": 4,
+    "freq_hz": 11.11111111111111
+   },
+   {
+    "score": 0.9709848783577245,
+    "active_mn": 4,
+    "freq_hz": 10.526315789473685
+   },
+   {
+    "score": 0.9878215672534045,
+    "active_mn": 4,
+    "freq_hz": 13.513513513513514
+   },
+   {
+    "score": 0.7494226286677587,
+    "active_mn": 4,
+    "freq_hz": 14.285714285714285
+   },
+   {
+    "score": 0.7491037210739044,
+    "active_mn": 4,
+    "freq_hz": 14.285714285714285
+   },
+   {
+    "score": 0.7997167934537385,
+    "active_mn": 5,
+    "freq_hz": 14.492753623188404
+   },
+   {
+    "score": 0.9991414136229846,
+    "active_mn": 4,
+    "freq_hz": 13.333333333333334
+   },
+   {
+    "score": 0.7998420604463982,
+    "active_mn": 5,
+    "freq_hz": 10.75268817204301
+   }
+  ]
+ },
+ "DNg100_R, volume": {
+  "score_mean": 0.893,
+  "rhythmic_replicates": 16,
+  "freq_hz_median": 11.6,
+  "active_mn_median": 9,
+  "mn_peak_hz_median": 0.0,
+  "replicates": [
+   {
+    "score": 0.7678174003041213,
+    "active_mn": 15,
+    "freq_hz": 11.627906976744185
+   },
+   {
+    "score": 0.9994325470137205,
+    "active_mn": 8,
+    "freq_hz": 11.904761904761903
+   },
+   {
+    "score": 0.9831052277816303,
+    "active_mn": 8,
+    "freq_hz": 10.526315789473685
+   },
+   {
+    "score": 0.9987932445255505,
+    "active_mn": 8,
+    "freq_hz": 11.76470588235294
+   },
+   {
+    "score": 0.9930564137596943,
+    "active_mn": 6,
+    "freq_hz": 12.195121951219512
+   },
+   {
+    "score": 0.8989716489178935,
+    "active_mn": 10,
+    "freq_hz": 11.235955056179776
+   },
+   {
+    "score": 0.8577072973343577,
+    "active_mn": 15,
+    "freq_hz": 11.904761904761903
+   },
+   {
+    "score": 0.8847258595039467,
+    "active_mn": 10,
+    "freq_hz": 10.638297872340425
+   },
+   {
+    "score": 0.8733900202596894,
+    "active_mn": 14,
+    "freq_hz": 11.494252873563218
+   },
+   {
+    "score": 0.8699745941120707,
+    "active_mn": 8,
+    "freq_hz": 10.1010101010101
+   },
+   {
+    "score": 0.8738536725161122,
+    "active_mn": 8,
+    "freq_hz": 11.904761904761903
+   },
+   {
+    "score": 0.866493129586447,
+    "active_mn": 9,
+    "freq_hz": 11.11111111111111
+   },
+   {
+    "score": 0.8863493755825491,
+    "active_mn": 9,
+    "freq_hz": 11.627906976744185
+   },
+   {
+    "score": 0.8903554230230369,
+    "active_mn": 10,
+    "freq_hz": 12.345679012345679
+   },
+   {
+    "score": 0.8739728449213308,
+    "active_mn": 8,
+    "freq_hz": 11.494252873563218
+   },
+   {
+    "score": 0.7733464933147421,
+    "active_mn": 9,
+    "freq_hz": 10.869565217391305
+   }
+  ]
+ },
+ "DNg100_L, synapses": {
+  "score_mean": 0.0,
+  "rhythmic_replicates": 0,
+  "freq_hz_median": null,
+  "active_mn_median": 1,
+  "mn_peak_hz_median": 0.0,
+  "replicates": [
+   {
+    "score": 0.0,
+    "active_mn": 0,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 3,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 0,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 0,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 2,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 0,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   }
+  ]
+ },
+ "DNg100_R, synapses": {
+  "score_mean": 0.0,
+  "rhythmic_replicates": 0,
+  "freq_hz_median": null,
+  "active_mn_median": 1,
+  "mn_peak_hz_median": 0.0,
+  "replicates": [
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 0,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 2,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 3,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 3,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 3,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 0,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 2,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 1,
+    "freq_hz": null
+   },
+   {
+    "score": 0.0,
+    "active_mn": 4,
+    "freq_hz": null
+   }
+  ]
+ }
+}

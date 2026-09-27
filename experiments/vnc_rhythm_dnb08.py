@@ -6,6 +6,9 @@ vnc_rhythm.py drove each descending neuron with 400, Pugliese et al.'s male CNS 
 threshold and gain scale with size, a drive of 400 pushes a DNb08 far past threshold. Pugliese et al. drove one
 DNb08 with 65 in MANC, where their DNg100 drive was 250 (400 in the male CNS). This sweeps 65, 104 (65 x 400 / 250)
 and 160 for each DNb08 alone, 8 replicates each, with vnc_rhythm.py's model and score.
+Ran: little rhythm at 65 and 104 (at most 2 of 8 replicates); at 160 one neuron, DNb08(VES082)_L, is rhythmic in 6 of 8
+but at 16.4 Hz. Their paper gives no male CNS drive for DNb08 (their DN screen set drives by a recruitment rule, which
+rung5_vnc.py uses) and no DNb08 frequency.
 
     python experiments/vnc_rhythm_dnb08.py            (writes experiments/vnc_rhythm_dnb08.json)
 """

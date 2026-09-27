@@ -1,0 +1,593 @@
+{
+ "question": "Exploratory, not pre-registered: does DNb08 drive leg rhythms in Pugliese et al.'s male CNS nerve cord model at\nthe drive they used for it?\n\nvnc_rhythm.py drove each descending neuron with 400, Pugliese et al.'s male CNS value for DNg100. DNg100 then gave\n12-13 Hz rhythms, but the DNb08 neurons, which are a fifth of DNg100's volume, gave weak scores (0.19-0.26). Since\nthreshold and gain scale with size, a drive of 400 pushes a DNb08 far past threshold. Pugliese et al. drove one\nDNb08 with 65 in MANC, where their DNg100 drive was 250 (400 in the male CNS). This sweeps 65, 104 (65 x 400 / 250)\nand 160 for each DNb08 alone, 8 replicates each, with vnc_rhythm.py's model and score.\n\n    python experiments/vnc_rhythm_dnb08.py            (writes experiments/vnc_rhythm_dnb08.json)\n",
+ "conditions": {
+  "DNb08(VES082)_R at 65": {
+   "score_mean": 0.0,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": null,
+   "active_mn_median": 0,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_R at 65": {
+   "score_mean": 0.0,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": null,
+   "active_mn_median": 0,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_L at 65": {
+   "score_mean": 0.0,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": null,
+   "active_mn_median": 0,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 1,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 1,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES082)_L at 65": {
+   "score_mean": 0.103,
+   "rhythmic_replicates": 1,
+   "freq_hz_median": 13.1,
+   "active_mn_median": 4,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 2,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 2,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.7964304036341382,
+     "active_mn": 4,
+     "freq_hz": 19.6078431372549
+    },
+    {
+     "score": 0.029756606082517744,
+     "active_mn": 4,
+     "freq_hz": 6.666666666666667
+    }
+   ]
+  },
+  "DNb08(VES082)_R at 104": {
+   "score_mean": 0.0,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": null,
+   "active_mn_median": 3,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_R at 104": {
+   "score_mean": 0.0,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": null,
+   "active_mn_median": 3,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 0,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 1,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_L at 104": {
+   "score_mean": 0.191,
+   "rhythmic_replicates": 2,
+   "freq_hz_median": 17.2,
+   "active_mn_median": 4,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.048589754820938455,
+     "active_mn": 4,
+     "freq_hz": 10.0
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.5739288111435807,
+     "active_mn": 5,
+     "freq_hz": 20.408163265306122
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.9081516225657189,
+     "active_mn": 5,
+     "freq_hz": 17.241379310344826
+    }
+   ]
+  },
+  "DNb08(VES082)_L at 104": {
+   "score_mean": 0.027,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": 20.0,
+   "active_mn_median": 4,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.21429182861046928,
+     "active_mn": 6,
+     "freq_hz": 20.0
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES082)_R at 160": {
+   "score_mean": 0.0,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": null,
+   "active_mn_median": 5,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_R at 160": {
+   "score_mean": 0.0,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": null,
+   "active_mn_median": 3,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_L at 160": {
+   "score_mean": 0.128,
+   "rhythmic_replicates": 1,
+   "freq_hz_median": 16.0,
+   "active_mn_median": 8,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 8,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 11,
+     "freq_hz": null
+    },
+    {
+     "score": 0.02853954778484963,
+     "active_mn": 8,
+     "freq_hz": 18.181818181818183
+    },
+    {
+     "score": 0.0,
+     "active_mn": 10,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.9988371857673628,
+     "active_mn": 8,
+     "freq_hz": 13.888888888888888
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 11,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES082)_L at 160": {
+   "score_mean": 0.663,
+   "rhythmic_replicates": 6,
+   "freq_hz_median": 16.4,
+   "active_mn_median": 11,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.5850787642095568,
+     "active_mn": 11,
+     "freq_hz": 18.181818181818183
+    },
+    {
+     "score": 0.838434228294267,
+     "active_mn": 13,
+     "freq_hz": 16.39344262295082
+    },
+    {
+     "score": 0.8498787362699777,
+     "active_mn": 14,
+     "freq_hz": 11.494252873563218
+    },
+    {
+     "score": 0.0,
+     "active_mn": 9,
+     "freq_hz": null
+    },
+    {
+     "score": 0.8938169588582207,
+     "active_mn": 11,
+     "freq_hz": 16.39344262295082
+    },
+    {
+     "score": 0.7667324314205889,
+     "active_mn": 12,
+     "freq_hz": 17.241379310344826
+    },
+    {
+     "score": 0.8818628890489534,
+     "active_mn": 11,
+     "freq_hz": 13.888888888888888
+    },
+    {
+     "score": 0.48841184483682654,
+     "active_mn": 9,
+     "freq_hz": 20.0
+    }
+   ]
+  }
+ }
+}
