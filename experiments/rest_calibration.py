@@ -256,11 +256,13 @@ def report() -> None:
                   for b in x["bump"].values())
     summary = {k: {f: v[f] for f in ("r", "r_independent", "mean_hz", "over_100hz", "groups_within_2x", "bump", "seconds")}
                for k, v in got.items()}
+    rest = json.loads(Path(__file__).with_name("rest_fc.json").read_text())
+    data_fc, _ = imaging.connectivity(imaging.rest_signals(imaging.turner()))
+    equal = np.corrcoef(pairs(data_fc), pairs(imaging.measurement_only(imaging.region_weights())))[0, 1]
+    for_scale = {"structure_r": rest["structure_r"], "ceiling_r": rest["ceiling_split_half_r"],
+                 "measurement_only_equal_variance_r": round(float(equal), 3), "uncalibrated_r": rest["model"]["r"]}
     results = {"criteria": __doc__, "FC": fc_ok, "RATE": rate_ok, "BUMP": bump_ok, "pass": bool(fc_ok and rate_ok and bump_ok),
-               "r": x["r"], "rivals": rivals, "for_scale": {"structure_r": 0.65, "ceiling_r": 0.921,
-                                                              "measurement_only_equal_variance_r": 0.377,
-                                                              "uncalibrated_r": 0.248},
-               "conditions": summary, "missing": missing}
+               "r": x["r"], "rivals": rivals, "for_scale": for_scale, "conditions": summary, "missing": missing}
     OUT.write_text(json.dumps(results, indent=1))
     print(json.dumps({k: results[k] for k in ("FC", "RATE", "BUMP", "pass", "r", "rivals", "missing")}))
     for k, v in summary.items():
