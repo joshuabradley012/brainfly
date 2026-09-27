@@ -1,0 +1,337 @@
+{
+ "question": "Exploratory, not pre-registered: does one spike in each jump motor neuron make NeuroMechFly jump like a fly,\nonce the jump muscle's strength is calibrated on launch speed alone?\n\nbrainfly.jump drives the body with the jump motor neurons' (TTMn) spike times: a TTM twitch on each middle\nleg's coxa-trochanter joint, 1 ms after its own side's TTMn spike, with a scripted tibia extension half as\nstrong 0.5 ms later. The research notes (escape_circuit.md, 1.5) give the recipe and the numbers to check it\nagainst. This calibrates the one free number, the TTM's peak torque tau_max, once: one spike in each TTMn at\nt = 0, and a 1-D search over tau_max (30-300 µN·mm) for a launch speed of 0.48 m/s, the centre of mass's mean\nspeed over the first 2 ms of flight in flies' escape takeoffs (Card & Dickinson 2008, J Exp Biol). Then,\nwithout retuning, it reports the checks the notes list, against these ranges:\n  - leg extension (first 1° of femur extension to takeoff): flies 3.33 ms (IQR 0.46); accept 2-5 ms.\n  - takeoff after the giant fiber spike, which comes 0.4 ms before the TTMn spike (0.3 ms axon, 0.1 ms\n    junction): about 7 ms (Fotowat et al. 2009, across preparations); accept 5-10 ms.\n  - launch angle: \"roughly 45° from the horizontal\" (Card & Dickinson 2008). The notes give no spread;\n    accept 30-60°.\n  - pitch at takeoff: head up (39 of 43 flies started takeoff pitching head up); accept any head-up change\n    from rest.\n  - peak acceleration of the centre of mass (velocities over 0.5 ms), each axis: flies 112 m/s² vertical\n    (IQR 47.8) and 107 m/s² horizontal; accept 60-160 m/s², about the median ± one IQR.\nIt also reports what the brain can send: a loom on one side fires only that side's TTMn (own-side pairing,\nescape_circuit.md 1.2 point 5). Does the fly still take off on one leg, and how does it turn? And it reports\nhow much the answers depend on choices the notes don't fix: the timestep (halved and doubled), when the\nother legs let go, the scripted tibia extension, and the braced coxa.\n\n    python experiments/jump_calibration.py         (writes experiments/jump_calibration.json, about 1 min)\n",
+ "constants": {
+  "ttm_delay_ms": 1.0,
+  "gf_to_ttmn_ms": 0.4,
+  "twitch_rise_ms": 1.3,
+  "twitch_decay_ms": 9.0,
+  "tibia": 0.5,
+  "tibia_lag_ms": 0.5,
+  "release_ms": 1.0,
+  "brace": 20.0,
+  "torque_range": 250.0,
+  "timestep_ms": 0.05,
+  "mass_mg": 1.02431
+ },
+ "twitch": {
+  "peak_ms": 2.69,
+  "rise_10_90_ms": 1.44,
+  "half_decay_after_onset_ms": 10.1,
+  "two_spikes_1ms_apart_peak": 1.0
+ },
+ "calibration": {
+  "target_m_s": 0.48,
+  "grid": [
+   [
+    30,
+    0.1785
+   ],
+   [
+    50,
+    0.31
+   ],
+   [
+    75,
+    0.4354
+   ],
+   [
+    100,
+    0.5375
+   ],
+   [
+    150,
+    0.7116
+   ],
+   [
+    200,
+    0.8525
+   ],
+   [
+    300,
+    1.0114
+   ]
+  ],
+  "tau_max": 85.6,
+  "tau_max_as_force_per_leg_uN": 109.2
+ },
+ "bilateral": {
+  "sides_fired": "LR",
+  "took_off": true,
+  "takeoff_ms": 5.4,
+  "takeoff_after_gf_ms": 5.8,
+  "extension_ms": 4.1,
+  "force_to_takeoff_ms": 4.4,
+  "legs_off_ms": [
+   2.05,
+   5.4,
+   2.25,
+   2.05,
+   5.25,
+   2.25
+  ],
+  "launch_speed_m_s": 0.4801,
+  "launch_angle_deg": 79.22,
+  "launch_velocity_mm_s": [
+   -89.8,
+   0.5,
+   471.6
+  ],
+  "launch_heading_deg": 179.7,
+  "peak_vertical_acceleration_m_s2": 190.2,
+  "peak_horizontal_acceleration_m_s2": 40.1,
+  "com_rise_mm": 1.066,
+  "pitch_at_takeoff_deg": -4.1,
+  "pitch_at_end_deg": -49.1,
+  "roll_at_takeoff_deg": -0.03,
+  "roll_at_end_deg": 6.59,
+  "yaw_at_takeoff_deg": -0.01,
+  "yaw_at_end_deg": 1.58,
+  "most_head_up_before_takeoff_deg": 0.32,
+  "most_head_up_at_ms": 3.15,
+  "pitch_rate_at_takeoff_deg_s": -3322.0,
+  "roll_rate_at_takeoff_deg_s": 529.0,
+  "yaw_rate_at_takeoff_deg_s": 69.0,
+  "ctr_L_deg_rest_takeoff": [
+   -97.5,
+   7.5
+  ],
+  "fti_L_deg_rest_takeoff": [
+   121.4,
+   31.2
+  ],
+  "ctr_R_deg_rest_takeoff": [
+   -97.5,
+   6.7
+  ],
+  "fti_R_deg_rest_takeoff": [
+   121.4,
+   31.7
+  ]
+ },
+ "checks": {
+  "extension_ms": {
+   "model": 4.1,
+   "flies": "3.33 ms (IQR 0.46)",
+   "accept": [
+    2.0,
+    5.0
+   ],
+   "pass": true
+  },
+  "takeoff_after_gf_ms": {
+   "model": 5.8,
+   "flies": "about 7 ms",
+   "accept": [
+    5.0,
+    10.0
+   ],
+   "pass": true
+  },
+  "launch_angle_deg": {
+   "model": 79.22,
+   "flies": "about 45°",
+   "accept": [
+    30.0,
+    60.0
+   ],
+   "pass": false
+  },
+  "pitch_at_takeoff_deg": {
+   "model": -4.1,
+   "flies": "head up in 39 of 43",
+   "accept": [
+    0.0,
+    null
+   ],
+   "pass": false
+  },
+  "peak_vertical_acceleration_m_s2": {
+   "model": 190.2,
+   "flies": "112 m/s² (IQR 47.8)",
+   "accept": [
+    60.0,
+    160.0
+   ],
+   "pass": false
+  },
+  "peak_horizontal_acceleration_m_s2": {
+   "model": 40.1,
+   "flies": "107 m/s²",
+   "accept": [
+    60.0,
+    160.0
+   ],
+   "pass": false
+  }
+ },
+ "passed": 2,
+ "of": 6,
+ "unilateral": {
+  "L": {
+   "sides_fired": "L",
+   "took_off": true,
+   "takeoff_ms": 6.85,
+   "takeoff_after_gf_ms": 7.25,
+   "extension_ms": 5.55,
+   "force_to_takeoff_ms": 5.85,
+   "legs_off_ms": [
+    2.05,
+    4.3,
+    2.15,
+    4.35,
+    6.85,
+    3.05
+   ],
+   "launch_speed_m_s": 0.1994,
+   "launch_angle_deg": 43.66,
+   "launch_velocity_mm_s": [
+    -42.6,
+    -137.8,
+    137.7
+   ],
+   "launch_heading_deg": -107.2,
+   "peak_vertical_acceleration_m_s2": 75.6,
+   "peak_horizontal_acceleration_m_s2": 60.5,
+   "com_rise_mm": 0.624,
+   "pitch_at_takeoff_deg": -0.85,
+   "pitch_at_end_deg": 17.45,
+   "roll_at_takeoff_deg": 82.06,
+   "roll_at_end_deg": 249.88,
+   "yaw_at_takeoff_deg": 15.85,
+   "yaw_at_end_deg": 55.05,
+   "most_head_up_before_takeoff_deg": 0.05,
+   "most_head_up_at_ms": 2.8,
+   "pitch_rate_at_takeoff_deg_s": -181.0,
+   "roll_rate_at_takeoff_deg_s": 10046.0,
+   "yaw_rate_at_takeoff_deg_s": 3767.0,
+   "ctr_L_deg_rest_takeoff": [
+    -97.5,
+    4.8
+   ],
+   "fti_L_deg_rest_takeoff": [
+    121.4,
+    -2.8
+   ]
+  },
+  "R": {
+   "sides_fired": "R",
+   "took_off": true,
+   "takeoff_ms": 6.95,
+   "takeoff_after_gf_ms": 7.35,
+   "extension_ms": 5.65,
+   "force_to_takeoff_ms": 5.95,
+   "legs_off_ms": [
+    4.2,
+    6.95,
+    3.05,
+    2.05,
+    4.25,
+    2.15
+   ],
+   "launch_speed_m_s": 0.1971,
+   "launch_angle_deg": 43.25,
+   "launch_velocity_mm_s": [
+    -42.0,
+    137.3,
+    135.0
+   ],
+   "launch_heading_deg": 107.0,
+   "peak_vertical_acceleration_m_s2": 75.4,
+   "peak_horizontal_acceleration_m_s2": 60.4,
+   "com_rise_mm": 0.634,
+   "pitch_at_takeoff_deg": -0.84,
+   "pitch_at_end_deg": 16.21,
+   "roll_at_takeoff_deg": -81.8,
+   "roll_at_end_deg": -241.6,
+   "yaw_at_takeoff_deg": -15.94,
+   "yaw_at_end_deg": -54.66,
+   "most_head_up_before_takeoff_deg": 0.07,
+   "most_head_up_at_ms": 2.85,
+   "pitch_rate_at_takeoff_deg_s": -173.0,
+   "roll_rate_at_takeoff_deg_s": -9943.0,
+   "yaw_rate_at_takeoff_deg_s": -3652.0,
+   "ctr_R_deg_rest_takeoff": [
+    -97.5,
+    4.8
+   ],
+   "fti_R_deg_rest_takeoff": [
+    121.4,
+    -5.0
+   ]
+  }
+ },
+ "sensitivity": {
+  "timestep 0.025 ms (halved)": {
+   "took_off": true,
+   "takeoff_after_gf_ms": 5.75,
+   "extension_ms": 4.075,
+   "launch_speed_m_s": 0.4782,
+   "launch_angle_deg": 79.18,
+   "peak_vertical_acceleration_m_s2": 185.9,
+   "peak_horizontal_acceleration_m_s2": 39.8,
+   "pitch_at_takeoff_deg": -4.11
+  },
+  "timestep 0.1 ms (doubled)": {
+   "took_off": true,
+   "takeoff_after_gf_ms": 5.7,
+   "extension_ms": 4.0,
+   "launch_speed_m_s": 0.4758,
+   "launch_angle_deg": 79.05,
+   "peak_vertical_acceleration_m_s2": 205.9,
+   "peak_horizontal_acceleration_m_s2": 44.3,
+   "pitch_at_takeoff_deg": -0.34
+  },
+  "other legs let go at force onset": {
+   "took_off": true,
+   "takeoff_after_gf_ms": 5.8,
+   "extension_ms": 4.1,
+   "launch_speed_m_s": 0.4805,
+   "launch_angle_deg": 79.07,
+   "peak_vertical_acceleration_m_s2": 190.4,
+   "peak_horizontal_acceleration_m_s2": 40.3,
+   "pitch_at_takeoff_deg": -4.05
+  },
+  "other legs let go 2 ms after force onset": {
+   "took_off": true,
+   "takeoff_after_gf_ms": 5.75,
+   "extension_ms": 4.05,
+   "launch_speed_m_s": 0.4803,
+   "launch_angle_deg": 77.82,
+   "peak_vertical_acceleration_m_s2": 191.8,
+   "peak_horizontal_acceleration_m_s2": 41.3,
+   "pitch_at_takeoff_deg": -2.9
+  },
+  "no tibia extension": {
+   "took_off": true,
+   "takeoff_after_gf_ms": 6.65,
+   "extension_ms": 4.95,
+   "launch_speed_m_s": 0.3796,
+   "launch_angle_deg": 80.86,
+   "peak_vertical_acceleration_m_s2": 133.0,
+   "peak_horizontal_acceleration_m_s2": 26.4,
+   "pitch_at_takeoff_deg": -2.97
+  },
+  "coxa not braced (the demo servos)": {
+   "took_off": true,
+   "takeoff_after_gf_ms": 5.5,
+   "extension_ms": 3.85,
+   "launch_speed_m_s": 0.3208,
+   "launch_angle_deg": 88.23,
+   "peak_vertical_acceleration_m_s2": 135.3,
+   "peak_horizontal_acceleration_m_s2": 15.1,
+   "pitch_at_takeoff_deg": 8.78
+  },
+  "coxa not braced, recalibrated": {
+   "tau_max": 216.7,
+   "took_off": true,
+   "takeoff_after_gf_ms": 4.3,
+   "extension_ms": 2.7,
+   "launch_speed_m_s": 0.48,
+   "launch_angle_deg": 88.68,
+   "peak_vertical_acceleration_m_s2": 278.0,
+   "peak_horizontal_acceleration_m_s2": 19.6,
+   "pitch_at_takeoff_deg": 11.09
+  }
+ },
+ "seconds": 6.8
+}
