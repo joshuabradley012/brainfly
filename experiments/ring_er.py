@@ -62,7 +62,7 @@ def whole():
 
 
 class Ring:
-    def __init__(self, recipe: dict, trials: int, seed: int):
+    def __init__(self, recipe: dict, trials: int, seed: int, bias: np.ndarray | None = None):
         M, scale, labels, types, (epg, side, glom), ring_neurons = whole()
         names = RING + (ring_neurons if recipe["ring neurons"] else [])
         sel = np.flatnonzero(np.isin(types, names))
@@ -70,6 +70,9 @@ class Ring:
         pre, post = types[sel][Ms.col], types[sel][Ms.row]
         gE, gI = recipe["gains"]
         data = np.where(Ms.data > 0, Ms.data * gE, Ms.data * gI)
+        pen = ["PEN_a(PEN1)", "PEN_b(PEN2)"]
+        loop = ((pre == "EPG") & np.isin(post, pen)) | (np.isin(pre, pen) & (post == "EPG"))
+        data = np.where(loop, data * recipe.get("loop", 1.0), data)
         slow = None
         if recipe["slow"]:
             m = np.isin(pre, EXC) & np.isin(post, RING) & (data > 0)
@@ -86,6 +89,8 @@ class Ring:
         self.epg, self.side, self.glom = np.array([at[i] for i in epg]), side, glom
         self.wedge = np.where(side == "R", (2 * glom) % 16, (19 - 2 * glom) % 16)
         self.types = types[sel]
+        self.bias = np.zeros(len(sel)) if bias is None else np.asarray(bias, float)
+        self.brain.set_bias(self.bias)
 
     def windows(self, seconds: int) -> tuple[np.ndarray, np.ndarray]:
         """EPG spike counts in 1-s windows (runs x windows x EPGs), and every neuron's mean rate."""
@@ -112,8 +117,8 @@ def width_and_peak(p: np.ndarray) -> tuple[float | None, float]:
     return 22.5 * float((aligned >= aligned.max() / 2).sum()), float(flat.max(1).mean())
 
 
-def spontaneous(recipe: dict) -> dict:
-    r = Ring(recipe, RUNS, seed=1)
+def spontaneous(recipe: dict, bias: np.ndarray | None = None) -> dict:
+    r = Ring(recipe, RUNS, seed=1, bias=bias)
     b = r.brain
     b.advance(int(round(1.0 / b.dt)))
     w, rate = r.windows(SPONTANEOUS)
@@ -126,17 +131,17 @@ def spontaneous(recipe: dict) -> dict:
             "rate_hz": {k: round(float(rate[:, np.isin(r.types, v)].mean()), 2) for k, v in groups.items() if np.isin(r.types, v).any()}}
 
 
-def seeded(recipe: dict) -> dict:
+def seeded(recipe: dict, bias: np.ndarray | None = None) -> dict:
     out = []
     for k, start in enumerate(SEEDS):
-        r = Ring(recipe, 2, seed=10 + k)
+        r = Ring(recipe, 2, seed=10 + k, bias=bias)
         b = r.brain
         b.advance(int(round(1.0 / b.dt)))
-        kick = np.zeros(b.n)
-        kick[r.epg[np.isin(r.wedge, [(start + d) % 16 for d in (-1, 0, 1)])]] = 10.0
+        kick = r.bias.copy()
+        kick[r.epg[np.isin(r.wedge, [(start + d) % 16 for d in (-1, 0, 1)])]] += 10.0
         b.set_bias(kick)
         b.advance(int(round(0.3 / b.dt)))
-        b.set_bias(np.zeros(b.n))
+        b.set_bias(r.bias)
         b.advance(int(round((FREE - 1) / b.dt)))
         w, _ = r.windows(1)
         z = r.profile(w)[:, 0] @ np.exp(2j * np.pi * np.arange(16) / 16)

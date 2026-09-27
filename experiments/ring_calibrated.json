@@ -1,0 +1,474 @@
+{
+ "question": "Exploratory, not pre-registered: does letting each ring neuron set its own excitability free the bump\nfrom preferred wedges?\n\nring_er.py's sub-network (the head-direction ring with its ring neurons, a slow current on the ring's\nexcitation, depression on its excitatory outputs, gains of 3 and 1.5) holds a bump. But it fails rung\n4's BUMP test because runs settle on the same few wedges, and it's 45 deg wide against flies' 80-120.\nMaleCNS wedges hold 2 to 4 EPGs each, so some wedges excite themselves twice as strongly as others.\nRenart, Song & Wang (2003, Neuron 38:473) found that homeostasis in each neuron evens out such\ndifferences in a bump attractor: a neuron that fires too much at a spot lowers its own excitability\nand the spot loses its pull. Here each condition's biases are fitted as rung 4 fits them (fresh starts,\n8 runs of 1 s to settle and 5 s measured, 20 rounds, the bias moving by k ln((target + 0.5) /\n(rate + 0.5)) mV, at most k, k = 2 for rounds 1-10 and 1 after, kept within -30 and +20 mV; targets\nrung 4's: PEN_a 3.9 Hz, every other type 2) either\n  per type     one bias per cell type (rung 4's calibration)\n  per neuron   one bias per neuron, each neuron to its type's target\nand then scored as ring_er.py scores it (8 spontaneous runs of 30 s with rung 4's BUMP measures,\nwidth and peak; 16 seeded runs of 10 s). Conditions: the recipe, and the recipe with the EPG-PEN loop\n(EPG to PEN_a and PEN_b, and back) 1.5 and 2 times stronger, which the notes found widens the bump but\ndrives it hot.\n\n    python experiments/ring_calibrated.py            (writes experiments/ring_calibrated.json)\n",
+ "conditions": [
+  {
+   "loop": 1.0,
+   "calibration": "per type",
+   "last_round": {
+    "round": 20,
+    "within_2x": 0.775,
+    "epg_hz": 0.19,
+    "epg_max_hz": 1.8
+   },
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.965,
+      "shuffle_p99": 0.813,
+      "run_positions_deg": [
+       175.1,
+       176.6,
+       178.1,
+       176.8,
+       173.1,
+       -94.5,
+       -95.0,
+       175.5
+      ],
+      "resultant": 0.793
+     },
+     "R": {
+      "strength": 0.973,
+      "shuffle_p99": 0.808,
+      "run_positions_deg": [
+       176.2,
+       173.2,
+       172.9,
+       174.1,
+       175.7,
+       89.6,
+       89.8,
+       173.6
+      ],
+      "resultant": 0.813
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 45.0,
+    "busiest_wedge_hz": 89.3,
+    "rate_hz": {
+     "EPG": 11.79,
+     "PEN_a": 14.7,
+     "PEN_b": 27.5,
+     "PEG": 15.12,
+     "Delta7": 7.94,
+     "ER": 3.04,
+     "ExR": 8.58
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     1.9,
+     35.1,
+     81.3,
+     7.7,
+     36.6,
+     36.2,
+     7.0,
+     9.0,
+     4.3,
+     36.3,
+     10.9,
+     8.2,
+     0.8,
+     52.7,
+     43.1,
+     38.5
+    ],
+    "held": 14,
+    "runs": 16
+   }
+  },
+  {
+   "loop": 1.0,
+   "calibration": "per neuron",
+   "last_round": {
+    "round": 20,
+    "within_2x": 0.543,
+    "epg_hz": 44.11,
+    "epg_max_hz": 87.9
+   },
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.863,
+      "shuffle_p99": 0.54,
+      "run_positions_deg": [
+       162.6,
+       162.3,
+       123.7,
+       126.6,
+       -6.3,
+       123.1,
+       136.5,
+       25.0
+      ],
+      "resultant": 0.593
+     },
+     "R": {
+      "strength": 0.879,
+      "shuffle_p99": 0.553,
+      "run_positions_deg": [
+       172.4,
+       172.6,
+       -149.8,
+       -152.6,
+       -31.9,
+       -149.6,
+       -162.2,
+       -50.8
+      ],
+      "resultant": 0.619
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 90.0,
+    "busiest_wedge_hz": 173.5,
+    "rate_hz": {
+     "EPG": 44.62,
+     "PEN_a": 42.04,
+     "PEN_b": 64.24,
+     "PEG": 55.65,
+     "Delta7": 25.12,
+     "ER": 3.9,
+     "ExR": 12.74
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     135.5,
+     139.5,
+     22.7,
+     147.2,
+     145.7,
+     134.1,
+     110.4,
+     80.3,
+     158.1,
+     77.5,
+     33.9,
+     3.5,
+     108.2,
+     13.3,
+     66.3,
+     59.9
+    ],
+    "held": 4,
+    "runs": 16
+   }
+  },
+  {
+   "loop": 1.5,
+   "calibration": "per type",
+   "last_round": {
+    "round": 20,
+    "within_2x": 0.65,
+    "epg_hz": 32.59,
+    "epg_max_hz": 125.9
+   },
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": NaN,
+      "shuffle_p99": NaN,
+      "run_positions_deg": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "resultant": 1.0
+     },
+     "R": {
+      "strength": NaN,
+      "shuffle_p99": NaN,
+      "run_positions_deg": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "resultant": 1.0
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": null,
+    "busiest_wedge_hz": 0.0,
+    "rate_hz": {
+     "EPG": 0.0,
+     "PEN_a": 0.05,
+     "PEN_b": 0.0,
+     "PEG": 0.0,
+     "Delta7": 0.0,
+     "ER": 1.71,
+     "ExR": 1.15
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     180.0,
+     180.0,
+     180.0,
+     180.0,
+     0.0,
+     0.0
+    ],
+    "held": 12,
+    "runs": 16
+   }
+  },
+  {
+   "loop": 1.5,
+   "calibration": "per neuron",
+   "last_round": {
+    "round": 20,
+    "within_2x": 0.574,
+    "epg_hz": 43.44,
+    "epg_max_hz": 100.4
+   },
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": NaN,
+      "shuffle_p99": NaN,
+      "run_positions_deg": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "resultant": 1.0
+     },
+     "R": {
+      "strength": NaN,
+      "shuffle_p99": NaN,
+      "run_positions_deg": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "resultant": 1.0
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": null,
+    "busiest_wedge_hz": 0.0,
+    "rate_hz": {
+     "EPG": 0.0,
+     "PEN_a": 0.15,
+     "PEN_b": 0.0,
+     "PEG": 0.0,
+     "Delta7": 1.17,
+     "ER": 1.46,
+     "ExR": 2.06
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     30.3,
+     54.7,
+     0.0,
+     127.5,
+     0.0,
+     1.9,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     180.0,
+     180.0,
+     12.2,
+     12.8,
+     57.3,
+     57.2
+    ],
+    "held": 10,
+    "runs": 16
+   }
+  },
+  {
+   "loop": 2.0,
+   "calibration": "per type",
+   "last_round": {
+    "round": 20,
+    "within_2x": 0.575,
+    "epg_hz": 58.58,
+    "epg_max_hz": 125.7
+   },
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.818,
+      "shuffle_p99": 0.626,
+      "run_positions_deg": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       -153.7,
+       0.0,
+       0.0
+      ],
+      "resultant": 0.765
+     },
+     "R": {
+      "strength": 0.836,
+      "shuffle_p99": 0.623,
+      "run_positions_deg": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       132.9,
+       0.0,
+       0.0
+      ],
+      "resultant": 0.795
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 112.5,
+    "busiest_wedge_hz": 240.9,
+    "rate_hz": {
+     "EPG": 3.94,
+     "PEN_a": 3.82,
+     "PEN_b": 5.16,
+     "PEG": 1.03,
+     "Delta7": 1.29,
+     "ER": 1.95,
+     "ExR": 2.75
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     104.0,
+     105.0,
+     8.5,
+     9.0,
+     58.9,
+     58.4,
+     42.7,
+     14.4,
+     1.4,
+     9.5,
+     19.0,
+     7.4,
+     92.2,
+     70.5,
+     101.0,
+     104.9
+    ],
+    "held": 8,
+    "runs": 16
+   }
+  },
+  {
+   "loop": 2.0,
+   "calibration": "per neuron",
+   "last_round": {
+    "round": 20,
+    "within_2x": 0.613,
+    "epg_hz": 25.73,
+    "epg_max_hz": 46.9
+   },
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.967,
+      "shuffle_p99": 0.932,
+      "run_positions_deg": [
+       -45.0,
+       -126.0,
+       -45.0,
+       -45.0,
+       -45.0,
+       -45.0,
+       -45.0,
+       -45.0
+      ],
+      "resultant": 0.903
+     },
+     "R": {
+      "strength": 0.931,
+      "shuffle_p99": 0.86,
+      "run_positions_deg": [
+       180.0,
+       113.4,
+       180.0,
+       180.0,
+       180.0,
+       180.0,
+       0.0,
+       180.0
+      ],
+      "resultant": 0.684
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 157.5,
+    "busiest_wedge_hz": 24.3,
+    "rate_hz": {
+     "EPG": 1.84,
+     "PEN_a": 1.75,
+     "PEN_b": 2.13,
+     "PEG": 5.07,
+     "Delta7": 2.25,
+     "ER": 1.59,
+     "ExR": 4.89
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     0.0,
+     0.0,
+     54.1,
+     57.3,
+     15.6,
+     12.9,
+     32.5,
+     32.0,
+     91.3,
+     0.0,
+     31.7,
+     63.5,
+     12.9,
+     45.7,
+     0.0,
+     0.0
+    ],
+    "held": 11,
+    "runs": 16
+   }
+  }
+ ],
+ "seconds": 32
+}

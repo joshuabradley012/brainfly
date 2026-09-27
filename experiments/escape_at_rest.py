@@ -83,16 +83,17 @@ def taste(s: eyes.Setup) -> dict:
     return out
 
 
-def main() -> None:
+def main(model=model, out: Path = OUT, here: Path = HERE, criteria: str = __doc__) -> None:
+    """Run the test with `model` (later tests pass their own), writing `out` and here/intact.npz."""
     t0 = time.perf_counter()
     attempt2.model = model
-    eyes.HERE = HERE
-    HERE.mkdir(exist_ok=True)
-    results = {"criteria": __doc__, "model": eyes.MODEL, "sweep": [], "drum": {}, "confirm": None, "nulls": []}
+    eyes.HERE = here
+    here.mkdir(exist_ok=True)
+    results = {"criteria": criteria, "model": eyes.MODEL, "sweep": [], "drum": {}, "confirm": None, "nulls": []}
     s = eyes.Setup(None, seed=5)
     s.bias = np.load(Path(__file__).with_name("eyes_at_rest") / "intact.npz")["bias"]
     results["calibration"] = s.calibrate()
-    np.savez_compressed(HERE / "intact.npz", groups=s.names, bias=s.bias)
+    np.savez_compressed(here / "intact.npz", groups=s.names, bias=s.bias)
     results["taste"] = taste(s)
     print("taste:", results["taste"], flush=True)
     for gain in eyes.GAINS:
@@ -101,7 +102,7 @@ def main() -> None:
         eyes.show(f"gain {gain}", v)
         results["drum"][str(gain)] = d = eyes.drum(s, gain, seed=1)
         print(f"  drum: HS {d['HS_signal_hz']:+.1f} Hz, DNa02 {d['DNa02_signal_hz']:+.2f} Hz", flush=True)
-        OUT.write_text(json.dumps(results, indent=1))
+        out.write_text(json.dumps(results, indent=1))
     passing = [v["gain"] for v in results["sweep"] if v["pass"]]
     if not passing:
         results["pass"] = False
@@ -120,7 +121,7 @@ def main() -> None:
         results["pass"] = bool(v["pass"] and results["NULL"])
     results["seconds"] = round(time.perf_counter() - t0)
     print(f"{'PASS' if results['pass'] else 'FAIL'} ({results['seconds']} s)", flush=True)
-    OUT.write_text(json.dumps(results, indent=1))
+    out.write_text(json.dumps(results, indent=1))
 
 
 if __name__ == "__main__":
