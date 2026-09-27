@@ -1,0 +1,196 @@
+{
+ "question": "Exploratory, not pre-registered: which short-term depression rule keeps the resting brain calm and\nstill lets sensory signals through?\n\neyes_at_rest.py and taste_at_rest.py found rung 4's resting brain (rest_calibration2.py: the ORN-to-PN\ndepression, 0.78 of the strength left per spike and 0.89 s to recover, at every cholinergic synapse)\ncalm, but unable to pass looming on to the giant fiber or sugar to MN9. Each rule below starts from\neyes_at_rest.py's setup (flyvis's eyes, model 001, the eyes-open biases), is recalibrated from fresh\nstarts (10 rounds), and is then measured, 8 flies each:\n  rest     10 s at grey: the brain's own mean rate, neurons over 100 Hz, neurons whose 1-s Fano\n           factor passes 10 (bursting), and the median Fano factor of the central-complex types that\n           burst in attempt 1\n  taste    MN9 L's rise over rest under 1 s of sugar at 100 Hz, at 10 Hz, and with bitter\n  looming  eyes_at_rest.py's tests at gain 1 (REST, RELAY, SIDE, ESCAPE) and the giant fiber's rise\nRules: as in rest_calibration2.py; without depression on LC4's and LPLC2's outputs; depression only\nat central-brain intrinsic neurons' synapses; recovering in 0.1 s instead of 0.89; leaving 0.9 of the\nstrength instead of 0.78.\n\n    python experiments/depression_rules.py            (writes experiments/depression_rules.json)\n",
+ "rules": [
+  {
+   "rule": "as attempt 2",
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 1.659,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9999
+   },
+   "rest": {
+    "mean_hz_own": 1.636,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 0,
+    "cx_median_fano": {
+     "FR1": 2.5,
+     "LNO1": 0.8,
+     "PFNv": 1.2
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": 0.62,
+    "sugar 10 Hz": 2.12,
+    "sugar+bitter": -1.88
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": false
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 3.0,
+    "fastR DNp01": 1.5
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 16.83,
+    "fastR LC4": 17.22
+   }
+  },
+  {
+   "rule": "LC4 and LPLC2 undepressed",
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 1.79,
+    "over_100hz": 5,
+    "groups_within_2x": 0.9942
+   },
+   "rest": {
+    "mean_hz_own": 1.666,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 204,
+    "cx_median_fano": {
+     "FR1": 2.1,
+     "LNO1": 0.6,
+     "PFNv": 1.0
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": -0.38,
+    "sugar 10 Hz": -1.75,
+    "sugar+bitter": -1.12
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 59.75,
+    "fastR DNp01": 47.0
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 26.94,
+    "fastR LC4": 22.41
+   }
+  },
+  {
+   "rule": "central-brain intrinsic only",
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 1.883,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9295
+   },
+   "rest": {
+    "mean_hz_own": 2.114,
+    "over_100hz": 7,
+    "bursting_fano_over_10": 387,
+    "cx_median_fano": {
+     "FR1": 2.5,
+     "LNO1": 0.9,
+     "PFNv": 1.3
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": -0.88,
+    "sugar 10 Hz": -0.5,
+    "sugar+bitter": -4.62
+   },
+   "looming": {
+    "REST": false,
+    "RELAY": false,
+    "SIDE": false,
+    "ESCAPE": false
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 13.25,
+    "fastR DNp01": 46.0
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 15.71,
+    "fastR LC4": 22.12
+   }
+  },
+  {
+   "rule": "fast recovery (0.1 s)",
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 1.638,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9852
+   },
+   "rest": {
+    "mean_hz_own": 1.639,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 135,
+    "cx_median_fano": {
+     "FR1": 3.5,
+     "LNO1": 1.3,
+     "PFNv": 2.3
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": -0.75,
+    "sugar 10 Hz": 0.25,
+    "sugar+bitter": -0.88
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 22.0,
+    "fastR DNp01": 16.75
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 19.87,
+    "fastR LC4": 18.69
+   }
+  },
+  {
+   "rule": "milder (0.9)",
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 1.656,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9988
+   },
+   "rest": {
+    "mean_hz_own": 1.645,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 3,
+    "cx_median_fano": {
+     "FR1": 5.1,
+     "LNO1": 1.7,
+     "PFNv": 2.8
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": 2.0,
+    "sugar 10 Hz": -1.0,
+    "sugar+bitter": -0.88
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 8.5,
+    "fastR DNp01": 12.25
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 18.72,
+    "fastR LC4": 18.34
+   }
+  }
+ ],
+ "seconds": 988
+}

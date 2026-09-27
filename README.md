@@ -114,6 +114,30 @@ One simulated fly at rest in attempt 2 (left; 1 s of brain time per loop, each r
 firing in that 100 ms). The types measured in real flies sit at their literature rates in attempt 2
 (red) and were far off in attempt 1 (grey). The flies' resting FC is broad and diffuse, and the
 model's runs along a few strong pairs (bottom). `python assets/rest.py` redraws it.
+* **The resting brain sees, but can't yet escape, and it has lost its sense of taste.** Given
+  flyvis's eyes, rung 4's resting brain stays at rest, and a looming disk drives the loomed side's LC4
+  and LPLC2 by 17–61 Hz while the other side's stay put (pre-registered;
+  [`experiments/eyes_at_rest.py`](experiments/eyes_at_rest.py)). But the giant fiber rises only
+  2–4 Hz, and sugar no longer reaches the proboscis motor neuron at all
+  ([`experiments/taste_at_rest.py`](experiments/taste_at_rest.py)). The short-term depression that
+  gave the brain its rest is why. Taken from one synapse (ORN to PN) and applied to every cholinergic
+  synapse, it caps what a fast input can pass on. Lifting it from LC4 and LPLC2 alone gives the giant
+  fiber 47–60 Hz, and a milder depression everywhere gives it 8–12 Hz, both with the brain still calm
+  ([`experiments/depression_rules.py`](experiments/depression_rules.py)). Taste is harder: rung 1's
+  route runs on sustained recurrent amplification that no depressing synapse, and no stronger
+  inhibition, allows, even in rung 1's own silent brain
+  ([`experiments/taste_depression.py`](experiments/taste_depression.py)). Which fly synapses really
+  depress, and which relay reliably, decides the next model.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/sees-dark.svg">
+  <img src="assets/sees-light.svg" width="100%" alt="Left: the fly's brain seen from the front as a cloud of neurons flickering with resting activity; as a dark disk looms at the left eye, the left eye's looming detectors, LC4 and LPLC2, light up as a cluster of red markers on the fly's left. Right: the disk growing in the left eye's view, and the loomed side's LC4 and LPLC2 rising to about 40 spikes a second around contact, and the giant fiber flickering to about 20.">
+</picture>
+
+One simulated fly with flyvis's eyes, at rest until a dark disk looms at its left eye. The left
+eye's looming detectors light up over the resting activity; on the right, the loomed side's LC4,
+LPLC2 and giant fiber, mean of 8 flies. `python assets/sees.py` redraws it.
+
 * **The model brainfly inherited fails in three places, each traced to a modelling choice**
   ([below](#where-it-started)). Light dies at the first synapse after the eye, commands from the
   brain never reach the motor neurons, and scrambled wiring signals as well as the real wiring.
@@ -355,6 +379,7 @@ a sign that the approach is broken."
 | `experiments/rest_measurement.py` | Exploratory, not pre-registered: how much of the flies' resting FC does the measurement explain before any dynamics? | Much of it. Weighting each neuron's activity by its synapses in a region, as brainfly.imaging does, independent firing matches the flies at r = 0.38. Weighting neurons more evenly raises that to 0.50 (square root of synapses), 0.53 (log) and 0.56 (mere presence), with no dynamics at all: the synapse weighting lets a few synapse-rich neurons carry a region. Attempt 2's FC and its rewirings' correlate 0.63–0.65 with their own measurement-only FC. The flies' regions also co-fluctuate far more strongly (mean z 0.29, against 0.12–0.13 for those models and 0.04 for independent firing), a broad signal no model makes yet. A fair FC test needs a forward model closer to what a voxel of the imaging sees, and a decision on what that broad signal is. |
 | `experiments/eyes_at_rest.py` | Pre-registered: does the resting brain see? rest_calibration2.py's brain with flyvis's eyes (model 001), recalibrated with the eyes open at grey, under eyepath_native.py's looms | **Fail**, on the escape neuron alone. The brain stays at rest (1.6 Hz, nothing over 100 Hz) and at every gain a loom drives the loomed side's LC4 by 17–61 Hz and LPLC2 by 14–51 Hz, with the other side unmoved (t up to 400). But the giant fiber rises only 2–4 Hz, short of 3 Hz for the right-side loom, and doesn't grow with the gain. An exploratory rerun without the short-term depression on LC4's and LPLC2's outputs, the rest unchanged, gives the loomed side's giant fiber 48–61 Hz at gain 1 and passes every test: depression taken from one synapse (ORN to PN) and applied to every cholinergic synapse caps what a fast input can pass on at about 5 spikes a second. A drum drives the HS cells with the right direction selectivity but never the steering neuron DNa02, calibrated to a standing fly's near silence. |
 | `experiments/taste_at_rest.py` | Pre-registered: does rung 1's taste pathway survive in the resting brain? | **Fail**. Sugar, which drives MN9 to 40 Hz in rung 1's silent brain, doesn't move it from its resting 4.9 Hz (−1.1 Hz), and so neither bitter nor Ir94e has anything to cut. The brain stays calm and returns to rest. The same generalized depression is the likely cause: rung 1's route has to pass 100 Hz of taste input through several cholinergic synapses. |
+| `experiments/depression_rules.py` | Exploratory, not pre-registered: which short-term depression rule keeps the resting brain calm and still lets sensory signals through? | Four rules keep it calm, and none brings taste back. With the ORN-to-PN depression at every cholinergic synapse (attempt 2), the loomed side's giant fiber rises 1.5–3 Hz. Without it on LC4's and LPLC2's outputs, 47–60 Hz, though 204 neurons then burst. With faster recovery (0.1 s), 17–22 Hz with 135 bursting. With a milder depression (0.9 of the strength left per spike), 8–12 Hz with 3 bursting, the cleanest rest of all. Limiting depression to central-brain interneurons leaves 7 neurons hot and 387 bursting. Under every rule, sugar moves MN9 by 2 Hz at most. |
 | `experiments/taste_depression.py` | Exploratory, not pre-registered: why does the taste pathway fail in the resting brain? | Short-term depression alone abolishes it, even in rung 1's silent brain. Without depression, 100 Hz of sugar drives MN9 to 40 Hz through 343 active neurons, ramping up over about 200 ms. With the ORN-to-PN depression at every cholinergic synapse, at a milder strength, on the sensory neurons' outputs alone, or everywhere but there, MN9 stays at 0 from the first millisecond. Making every inhibitory synapse stronger instead, the other usual way to calm a network, does the same: 1.6 Hz at 1.5 times, 0 at twice. Rung 1's route runs on sustained recurrent amplification at exactly the balance its synaptic weight was tuned to, the same strength of excitation that makes a resting brain run away. |
 | `experiments/rest_hot.py` | Exploratory, not pre-registered: which neurons does that calibration leave over 100 Hz, and why? | On a fresh start, 44 neurons, all but one in the central brain: lateral-horn, SLP and antennal-lobe loops, three-quarters of whose excitatory drive comes from each other. None of their groups has its bias at the floor. Several were silent while the calibration ran, so it raised their biases, even to the +20 mV ceiling. |
 | `experiments/vnc/relay.py` | Do commands from the brain reach the motor neurons? | No. Walking, steering, escape and backward commands, each driven at 26 Hz, move no pool of motor neurons (neck, front, middle or hind segment, either side) by more than 0.17 Hz. Earlier calibrations with the inherited code, since retired, found the same: raising the nerve cord's gain and drive, or amplifying just the relay, let commands through only by driving the motor neurons at rest, and 2–5 ms steps didn't help. |
