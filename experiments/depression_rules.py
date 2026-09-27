@@ -78,7 +78,9 @@ def measure(rule: str) -> dict:
     tastes = {"sugar": taste([(sugar, 100.0)], 1), "sugar 10 Hz": taste([(sugar, 10.0)], 5),
               "sugar+bitter": taste([(sugar, 100.0), (bitter, 100.0)], 3)}
     v = eyes.loom_tests(s, 1.0, seed=1)
-    return {"rule": rule, "calibration": log[-1], "rest": rest, "taste_rise_hz": {k: round(x, 2) for k, x in tastes.items()},
+    blank = s.run(lambda t: [], 1.0, seed=1, window=(eyes.SCENE - eyes.LATE, eyes.SCENE))["rates"]
+    per_fly = {k: np.round(blank[:, s.cells[k]].mean(1), 1).tolist() for k in ("LPLC2 L", "LC4 L", "DNp01 L")}
+    return {"rule": rule, "resting_per_fly_hz": per_fly, "calibration": log[-1], "rest": rest, "taste_rise_hz": {k: round(x, 2) for k, x in tastes.items()},
             "looming": {k: v[k] for k in ("REST", "RELAY", "SIDE", "ESCAPE")},
             "giant_fiber_rise_hz": {k: x["delta"] for k, x in v["escape"].items() if "near" not in k},
             "lc4_rise_hz": {k: x["delta"] for k, x in v["relay"].items() if "LC4" in k}}
