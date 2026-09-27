@@ -1,0 +1,354 @@
+{
+ "question": "Exploratory, not pre-registered: does the head-direction ring hold a bump once its ring neurons are in?\n\nring_alone.py found no bump in the 152 neurons of the ring's own types at any uniform gains.\nresearch_notes/Rung 4 resting state data/head_direction_models.md explains why. Ring neurons (ER) and\nextrinsic ring neurons (ExR) supply 75% of the EPGs' input, as inhibition that is flat around the ring\nand partly driven by the EPGs themselves, and no published model got a bump from synapse counts times\none weight. Its toy (a research agent's, run from the session scratchpad) held a bump with the ring\nneurons added and three changes. This repeats that toy in the repo and scores it with rung 4's bump\nmeasures. Network: the 460 neurons of the ring's types (EPG, EPGt, PEN_a, PEN_b, PEG, Delta7) plus\nevery ER and ExR type, with their MaleCNS wiring (rung 1's network: synapses over target size, w_syn\n1.5556 mV), Poisson background (1 mV kicks at 200 Hz) and bias 0. The recipe:\n  - SLOW       the excitatory edges from EPG, EPGt, PEN_a, PEN_b and PEG onto the ring's six types act\n               through a 100 ms current, weighted by 5/100 so each spike delivers the same charge as\n               through the usual 5 ms one\n  - DEPRESSION short-term depression on those five types' outputs (0.9 of the strength left per spike,\n               recovering in 0.3 s)\n  - GAINS      every excitatory synapse in the sub-network times 3, every inhibitory one times 1.5\nConditions: the recipe; the recipe with each change taken away in turn; the ring's six types alone with\nall three changes.\nMeasured, 8 runs each:\n  spontaneous  30 s after 1 s to settle, no cue: rung 4's BUMP measures (strength per bridge side in\n               1-s windows, the 99th percentile of 1,000 glomerulus-label shuffles, the resultant of the\n               runs' mean positions; BUMP holds if strength >= 0.3 and above the shuffles on both sides\n               and the resultant is under 0.6); in 1-s windows, the busiest wedge's rate and the bump's\n               full width at half maximum over the 16 ellipsoid-body wedges, peak-aligned; each type's\n               mean rate\n  seeded       a 10 mV bias on the EPGs of 3 adjacent wedges for 0.3 s, at 8 positions 45 deg apart,\n               then 10 s free: the bump's distance from the seed over the last second (held if under\n               45 deg)\nAn EPG's wedge comes from its bridge glomerulus (the notes' map from EPG-to-EPG contacts): R_k to wedge\n2k mod 16, L_k to (19 - 2k) mod 16.\n\n    python experiments/ring_er.py            (writes experiments/ring_er.json)\n",
+ "conditions": {
+  "recipe": {
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.985,
+      "shuffle_p99": 0.775,
+      "run_positions_deg": [
+       -47.3,
+       -135.8,
+       -45.6,
+       -92.2,
+       178.1,
+       177.8,
+       -136.0,
+       -136.3
+      ],
+      "resultant": 0.659
+     },
+     "R": {
+      "strength": 0.992,
+      "shuffle_p99": 0.81,
+      "run_positions_deg": [
+       125.3,
+       134.3,
+       42.7,
+       90.0,
+       180.0,
+       180.0,
+       134.7,
+       134.9
+      ],
+      "resultant": 0.761
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 45.0,
+    "busiest_wedge_hz": 31.2,
+    "rate_hz": {
+     "EPG": 3.75,
+     "PEN_a": 1.07,
+     "PEN_b": 10.25,
+     "PEG": 5.57,
+     "Delta7": 5.47,
+     "ER": 1.82,
+     "ExR": 6.66
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     9.6,
+     10.1,
+     83.0,
+     64.0,
+     13.0,
+     166.3,
+     36.1,
+     9.9,
+     10.6,
+     10.5,
+     76.8,
+     55.6,
+     13.9,
+     168.6,
+     11.1,
+     10.9
+    ],
+    "held": 10,
+    "runs": 16
+   }
+  },
+  "no slow current": {
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.223,
+      "shuffle_p99": 0.15,
+      "run_positions_deg": [
+       -143.8,
+       -145.2,
+       -142.5,
+       -132.5,
+       -137.6,
+       -148.9,
+       -142.3,
+       -130.3
+      ],
+      "resultant": 0.995
+     },
+     "R": {
+      "strength": 0.213,
+      "shuffle_p99": 0.16,
+      "run_positions_deg": [
+       178.1,
+       -160.8,
+       -176.5,
+       -109.4,
+       -163.0,
+       -169.0,
+       179.8,
+       -137.3
+      ],
+      "resultant": 0.921
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 112.5,
+    "busiest_wedge_hz": 9.0,
+    "rate_hz": {
+     "EPG": 4.87,
+     "PEN_a": 7.64,
+     "PEN_b": 10.52,
+     "PEG": 4.82,
+     "Delta7": 7.63,
+     "ER": 3.12,
+     "ExR": 13.09
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     114.9,
+     123.1,
+     169.8,
+     136.9,
+     170.3,
+     167.1,
+     54.2,
+     29.4,
+     152.7,
+     89.5,
+     68.9,
+     57.4,
+     91.0,
+     147.4,
+     6.7,
+     128.2
+    ],
+    "held": 2,
+    "runs": 16
+   }
+  },
+  "no depression": {
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.103,
+      "shuffle_p99": 0.101,
+      "run_positions_deg": [
+       -123.6,
+       -121.8,
+       -121.1,
+       -119.8,
+       -126.2,
+       -120.6,
+       -123.0,
+       -127.5
+      ],
+      "resultant": 0.999
+     },
+     "R": {
+      "strength": 0.101,
+      "shuffle_p99": 0.095,
+      "run_positions_deg": [
+       -125.9,
+       -118.4,
+       -123.1,
+       -121.4,
+       -126.0,
+       -122.5,
+       -123.6,
+       -128.4
+      ],
+      "resultant": 0.999
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 360.0,
+    "busiest_wedge_hz": 435.4,
+    "rate_hz": {
+     "EPG": 413.72,
+     "PEN_a": 418.19,
+     "PEN_b": 424.29,
+     "PEG": 418.32,
+     "Delta7": 414.84,
+     "ER": 76.53,
+     "ExR": 230.42
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     168.2,
+     12.9,
+     0.0,
+     50.9,
+     82.1,
+     66.4,
+     125.1,
+     24.0,
+     14.7,
+     135.5,
+     120.6,
+     99.1,
+     156.6,
+     69.9,
+     130.7,
+     65.9
+    ],
+    "held": 4,
+    "runs": 16
+   }
+  },
+  "unit gains": {
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.42,
+      "shuffle_p99": 0.42,
+      "run_positions_deg": [
+       152.5,
+       172.0,
+       -5.1,
+       157.0,
+       164.5,
+       -177.3,
+       168.7,
+       144.8
+      ],
+      "resultant": 0.734
+     },
+     "R": {
+      "strength": 0.42,
+      "shuffle_p99": 0.409,
+      "run_positions_deg": [
+       -134.0,
+       -154.6,
+       -102.0,
+       174.4,
+       -92.1,
+       -134.6,
+       178.2,
+       -123.6
+      ],
+      "resultant": 0.853
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 22.5,
+    "busiest_wedge_hz": 1.2,
+    "rate_hz": {
+     "EPG": 0.35,
+     "PEN_a": 7.62,
+     "PEN_b": 14.37,
+     "PEG": 0.53,
+     "Delta7": 1.5,
+     "ER": 1.47,
+     "ExR": 8.99
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     123.1,
+     1.9,
+     135.0,
+     105.9,
+     156.3,
+     85.4,
+     150.2,
+     120.1,
+     112.9,
+     61.8,
+     70.4,
+     33.5,
+     92.8,
+     160.8,
+     42.3,
+     176.4
+    ],
+    "held": 3,
+    "runs": 16
+   }
+  },
+  "ring's six types alone": {
+   "spontaneous": {
+    "bump": {
+     "L": {
+      "strength": 0.084,
+      "shuffle_p99": 0.089,
+      "run_positions_deg": [
+       -142.8,
+       -138.3,
+       -143.1,
+       -135.8,
+       -143.0,
+       -142.2,
+       -133.4,
+       -134.4
+      ],
+      "resultant": 0.998
+     },
+     "R": {
+      "strength": 0.075,
+      "shuffle_p99": 0.088,
+      "run_positions_deg": [
+       -138.7,
+       -134.7,
+       -138.5,
+       -134.9,
+       -149.5,
+       -144.0,
+       -144.5,
+       -142.5
+      ],
+      "resultant": 0.996
+     }
+    },
+    "BUMP": false,
+    "fwhm_deg": 360.0,
+    "busiest_wedge_hz": 246.5,
+    "rate_hz": {
+     "EPG": 231.78,
+     "PEN_a": 282.78,
+     "PEN_b": 300.04,
+     "PEG": 234.0,
+     "Delta7": 56.7
+    }
+   },
+   "seeded": {
+    "distance_from_seed_deg": [
+     146.2,
+     137.2,
+     146.6,
+     174.5,
+     108.4,
+     117.0,
+     90.4,
+     81.8,
+     43.5,
+     8.0,
+     177.7,
+     27.9,
+     97.2,
+     68.2,
+     93.5,
+     130.0
+    ],
+    "held": 3,
+    "runs": 16
+   }
+  }
+ },
+ "seconds": 13
+}

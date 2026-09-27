@@ -6,7 +6,7 @@ presynaptic class instead (escape_at_rest.py's model), with unmeasured central c
 the knob: 0.9 of the strength left per spike, recovering in 0.2 s first, 0.5 s if loops persist. And
 if the subesophageal interneurons still block taste, it suggests exempting the neurons that take most
 of their input from gustatory receptor neurons. Measured as in depression_rules.py (eyes_at_rest.py's
-setup and eyes-open biases, 12 fresh-start rounds, 8 flies): rest, taste and looming at gain 1, for
+setup and eyes-open biases, 10 fresh-start rounds, 8 flies): rest, taste and looming at gain 1, for
   class rule, central recovery 0.2 s
   class rule, central recovery 0.5 s                (escape_at_rest.py's model)
   the same, plus neurons taking at least 20% of their input synapses from GRNs left undepressed
@@ -54,7 +54,6 @@ def class_model(recovery: float, grn_share: float, vpn: dict | None = None):
 
 def main() -> None:
     t0 = time.perf_counter()
-    eyes.ROUNDS = [1.0] * 8 + [0.5] * 4
     out = {"question": __doc__, "rules": []}
     for label, recovery, share, vpn in (("class rule, central recovery 0.2 s", 0.2, 0.0, None),
                                         ("class rule, central recovery 0.5 s", 0.5, 0.0, None),
