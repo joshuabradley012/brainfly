@@ -182,7 +182,14 @@ def bump(windows: np.ndarray, side: np.ndarray, glom: np.ndarray, rng: np.random
     return out
 
 
-def condition(name: str) -> None:
+def attempt1_model(types: np.ndarray, superclass: np.ndarray) -> tuple[dict, dict | None]:
+    """This attempt's per-type properties, as HybridBrain types and sets."""
+    return {"all": BACKGROUND, "APL": {"unit": "graded"}}, None
+
+
+def condition(name: str, model=attempt1_model, fit=calibrate, here: Path = HERE) -> None:
+    """Fit one condition's biases with `fit`, test it, and write here/<name>.json (later attempts
+    pass their own model and fit)."""
     t0 = time.perf_counter()
     seed, default = CONDITIONS[name]
     index = list(CONDITIONS).index(name)
@@ -192,13 +199,14 @@ def condition(name: str) -> None:
     key = np.where(types != "", types, np.char.add("superclass:", superclass))
     names, gid = np.unique(key, return_inverse=True)
     target = targets(types, superclass, default)
+    spec, sets = model(types, superclass)
     brain = HybridBrain(trials=TRIALS, w_syn=W_SYN, matrix=M, scale=scale, labels=labels, seed=10 + index,
-                        types={"all": BACKGROUND, "APL": {"unit": "graded"}})
+                        types=spec, sets=sets)
     graded = np.zeros(brain.n, bool)
     graded[brain.graded] = True
-    bias, log = calibrate(brain, gid, target, graded)
-    HERE.mkdir(exist_ok=True)
-    np.savez_compressed(HERE / f"{name}.npz", groups=names, bias=bias)
+    bias, log = fit(brain, gid, target, graded)
+    here.mkdir(exist_ok=True)
+    np.savez_compressed(here / f"{name}.npz", groups=names, bias=bias)
 
     weights = imaging.region_weights()
     epg, side, glom = epgs(types)
@@ -238,13 +246,13 @@ def condition(name: str) -> None:
                            for k in np.argsort(-np.abs(err))[:10]],
         "bump": bump(windows, side, glom, np.random.default_rng(7)),
         "fc": np.round(fc, 3).tolist(), "seconds": round(time.perf_counter() - t0)}
-    (HERE / f"{name}.json").write_text(json.dumps(result, indent=1))
+    (here / f"{name}.json").write_text(json.dumps(result, indent=1))
     print(f"{name}: r {result['r']} (independent {result['r_independent']}); mean {result['mean_hz']} Hz, "
           f"{result['over_100hz']:.4%} over 100 Hz; bump {json.dumps(result['bump'])}; {result['seconds']} s", flush=True)
 
 
-def report() -> None:
-    got = {name: json.loads((HERE / f"{name}.json").read_text()) for name in CONDITIONS if (HERE / f"{name}.json").exists()}
+def report(here: Path = HERE, out: Path = OUT, criteria: str = __doc__) -> None:
+    got = {name: json.loads((here / f"{name}.json").read_text()) for name in CONDITIONS if (here / f"{name}.json").exists()}
     missing = sorted(set(CONDITIONS) - set(got))
     if {"intact", "rewired-1", "rewired-2"} - set(got):
         raise SystemExit(f"missing conditions: {missing}")
@@ -261,9 +269,9 @@ def report() -> None:
     equal = np.corrcoef(pairs(data_fc), pairs(imaging.measurement_only(imaging.region_weights())))[0, 1]
     for_scale = {"structure_r": rest["structure_r"], "ceiling_r": rest["ceiling_split_half_r"],
                  "measurement_only_equal_variance_r": round(float(equal), 3), "uncalibrated_r": rest["model"]["r"]}
-    results = {"criteria": __doc__, "FC": fc_ok, "RATE": rate_ok, "BUMP": bump_ok, "pass": bool(fc_ok and rate_ok and bump_ok),
+    results = {"criteria": criteria, "FC": fc_ok, "RATE": rate_ok, "BUMP": bump_ok, "pass": bool(fc_ok and rate_ok and bump_ok),
                "r": x["r"], "rivals": rivals, "for_scale": for_scale, "conditions": summary, "missing": missing}
-    OUT.write_text(json.dumps(results, indent=1))
+    out.write_text(json.dumps(results, indent=1))
     print(json.dumps({k: results[k] for k in ("FC", "RATE", "BUMP", "pass", "r", "rivals", "missing")}))
     for k, v in summary.items():
         print(k, json.dumps(v))

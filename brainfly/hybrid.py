@@ -348,15 +348,16 @@ class HybridBrain:
     also in matrix), with tau_slow its time constant, s. w_poi: mV per Poisson event (default
     Shiu's, 250 x w_syn, which pushes any neuron over threshold). scale: a multiplier per neuron on
     every synapse onto it (e.g. 1 / size), on top of its type's. bias: mV per neuron added to its
-    type's bias, for calibrating groups that types can't name (set_bias changes it). labels:
-    {"cell_type", "side",
-    "superclass"} arrays for a network of your own, given as matrix, instead of MaleCNS."""
+    type's bias, for calibrating groups that types can't name (set_bias changes it). sets: {name:
+    neuron indices}, named groups that types can use as keys like a cell type, for groups types
+    don't name (every cholinergic neuron, say). labels: {"cell_type", "side", "superclass"} arrays
+    for a network of your own, given as matrix, instead of MaleCNS."""
 
     def __init__(self, data: Path | str | None = None, trials: int = 1, dt: float = 1e-4, w_syn: float = W_SYN,
                  types: dict[str, dict] | None = None, matrix: sparse.spmatrix | None = None,
                  slow: sparse.spmatrix | None = None, tau_slow: float = 0.1, w_poi: float | None = None,
                  scale: np.ndarray | None = None, bias: np.ndarray | None = None, seed: int = 0,
-                 labels: dict[str, np.ndarray] | None = None):
+                 labels: dict[str, np.ndarray] | None = None, sets: dict[str, np.ndarray] | None = None):
         if labels is None:
             data = ensure_data(data)
             meta = np.load(data / "brain.npz")
@@ -369,6 +370,7 @@ class HybridBrain:
         self.trials, self.dt = int(trials), float(dt)
         self._fixed_poi = None if w_poi is None else float(w_poi)
         self.types = dict(types or {})
+        self.sets = {k: np.asarray(v, np.int64) for k, v in (sets or {}).items()}
         self._tables()
         self.set_bias(bias)
         if scale is not None:
@@ -420,7 +422,7 @@ class HybridBrain:
                 raise ValueError(f"unknown parameters for {key!r}: {sorted(unknown)}; known: {list(DEFAULTS)}")
             if "unit" in given and given["unit"] not in UNIT:
                 raise ValueError(f"unit must be one of {list(UNIT)}, not {given['unit']!r}")
-            rows = np.arange(self.n) if key == "all" else self.cells([key])
+            rows = np.arange(self.n) if key == "all" else self.sets[key] if key in self.sets else self.cells([key])
             if not len(rows):
                 raise ValueError(f"no neurons of type or superclass {key!r}")
             for name, value in given.items():

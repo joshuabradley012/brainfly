@@ -277,3 +277,11 @@ def test_adaptation_slows_a_tonic_neuron_and_survives_pieces():
     assert once.sum() > 100
     np.testing.assert_array_equal(once, parts)
     np.testing.assert_array_equal(whole.ad, pieces.ad)
+
+
+def test_a_named_set_takes_parameters_like_a_type():
+    """Parameters given to a named set reach exactly its neurons, and combine with their types'."""
+    brain = small([], 4, types={"c1": {"threshold": 10.0}, "picked": {"bias": 3.0}}, sets={"picked": [1, 3]})
+    params = [brain.params[c] for c in brain.cls]
+    assert [p["bias"] for p in params] == [0.0, 3.0, 0.0, 3.0]
+    assert [p["threshold"] for p in params] == [7.0, 10.0, 7.0, 7.0]
