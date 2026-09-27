@@ -431,6 +431,7 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/brain.py` | `FlyBrain`, the inherited model, on CPU (numba) or NVIDIA GPU (CuPy), one fly or a batch |
 | `brainfly/shiu.py` | `ShiuBrain`, rung 1, and the raw signed synapse counts it runs on |
 | `brainfly/hybrid.py` | `HybridBrain`, brainfly's own per-type model, built on Shiu's kernel |
+| `brainfly/imaging.py` | rung 4's measurement: Turner et al.'s resting-state imaging of 20 flies, their functional connectivity reproduced exactly, their 66 central regions mapped onto MaleCNS, and the same measurement taken of a simulation |
 | `brainfly/nulls.py` | null models: weight shuffles (global, or within each neuron's inputs) and rewiring (degree-preserving, or keeping each connection's target class), each under a second on the whole connectome |
 | `brainfly/retina.py` | the photoreceptor input MaleCNS lost at the edge of its volume, imputed from the intact columns |
 | `brainfly/build.py`, `data.py` | building the brain files from MaleCNS v1.0, or fetching a prebuilt copy |
