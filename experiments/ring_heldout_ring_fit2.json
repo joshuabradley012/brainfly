@@ -1,0 +1,295 @@
+{
+ "question": "Exploratory, not pre-registered: does ring_fit.py's best ring hold its bump on seeds it wasn't fitted on,\nover rung 4's full runs?\n\nring_fit.py fitted the head-direction ring's class gains and biases on one seed, with 8 runs of 20 s.\nHere its best parameters run as rung 4 scores the bump (rest_calibration.py's BUMP: 8 runs of 300 s\nafter 2 s to settle, strength per bridge side in 1-s windows against 1,000 glomerulus-label shuffles,\nand the resultant of the runs' mean positions under 0.6) on four seeds it never saw (2 to 5), with\nring_fit.py's width, busiest wedge and group rates.\n\n    python experiments/ring_heldout.py                  (writes experiments/ring_heldout.json)\n    python experiments/ring_heldout.py --fit ring_fit2  (ring_fit2.py's best, with the position entropy of ring_fit2.py;\n                                                         writes experiments/ring_heldout_ring_fit2.json)\n",
+ "params": {
+  "gE": 0.9454,
+  "gI": 4.1629,
+  "loop": 2.0604,
+  "epg_epg": 0.25,
+  "delta7": 8.5847,
+  "to_er": 4.0,
+  "from_er": 1.353,
+  "er_er": 0.4283,
+  "dep_f": 0.8,
+  "dep_tau": 0.3143,
+  "slow_tau": 0.3,
+  "b_EPG": 5.1699,
+  "b_PEN_a": 8.4621,
+  "b_PEN_b": 7.2777,
+  "b_PEG": 7.999,
+  "b_Delta7": 1.4582,
+  "b_ER": -4.6351,
+  "b_ExR": -8.1961,
+  "wedge_norm": 0.3913
+ },
+ "seeds": [
+  {
+   "seed": 2,
+   "BUMP": false,
+   "bump": {
+    "L": {
+     "strength": 0.663,
+     "shuffle_p99": 0.396,
+     "run_positions_deg": [
+      -4.3,
+      -86.1,
+      -33.1,
+      16.1,
+      -26.7,
+      -48.8,
+      -126.8,
+      34.1
+     ],
+     "resultant": 0.677
+    },
+    "R": {
+     "strength": 0.687,
+     "shuffle_p99": 0.42,
+     "run_positions_deg": [
+      -54.6,
+      -91.4,
+      -35.8,
+      -87.4,
+      -39.2,
+      -78.4,
+      -143.9,
+      -87.3
+     ],
+     "resultant": 0.85
+    }
+   },
+   "position_entropy": 0.862,
+   "position_histogram": [
+    0.078,
+    0.242,
+    0.164,
+    0.037,
+    0.018,
+    0.006,
+    0.012,
+    0.029,
+    0.051,
+    0.086,
+    0.076,
+    0.082,
+    0.052,
+    0.025,
+    0.017,
+    0.025
+   ],
+   "fwhm_deg": 112.5,
+   "busiest_wedge_hz": 6.5,
+   "epg_hz": 1.89,
+   "group_hz": {
+    "EPG": 2.75,
+    "PEN_a": 4.8,
+    "PEN_b": 8.1,
+    "PEG": 1.16,
+    "Delta7": 0.73,
+    "ER": 1.31,
+    "ExR": 6.22
+   }
+  },
+  {
+   "seed": 3,
+   "BUMP": false,
+   "bump": {
+    "L": {
+     "strength": 0.665,
+     "shuffle_p99": 0.404,
+     "run_positions_deg": [
+      -22.7,
+      -30.2,
+      -20.4,
+      -13.2,
+      171.0,
+      -15.5,
+      -139.6,
+      -32.0
+     ],
+     "resultant": 0.583
+    },
+    "R": {
+     "strength": 0.685,
+     "shuffle_p99": 0.424,
+     "run_positions_deg": [
+      -50.1,
+      -41.4,
+      -46.0,
+      -41.0,
+      -165.9,
+      -36.0,
+      -163.6,
+      -32.3
+     ],
+     "resultant": 0.642
+    }
+   },
+   "position_entropy": 0.845,
+   "position_histogram": [
+    0.075,
+    0.291,
+    0.159,
+    0.036,
+    0.015,
+    0.014,
+    0.017,
+    0.028,
+    0.059,
+    0.068,
+    0.064,
+    0.065,
+    0.045,
+    0.026,
+    0.014,
+    0.023
+   ],
+   "fwhm_deg": 112.5,
+   "busiest_wedge_hz": 6.4,
+   "epg_hz": 1.88,
+   "group_hz": {
+    "EPG": 2.78,
+    "PEN_a": 4.77,
+    "PEN_b": 8.07,
+    "PEG": 1.16,
+    "Delta7": 0.73,
+    "ER": 1.31,
+    "ExR": 6.2
+   }
+  },
+  {
+   "seed": 4,
+   "BUMP": false,
+   "bump": {
+    "L": {
+     "strength": 0.671,
+     "shuffle_p99": 0.405,
+     "run_positions_deg": [
+      -20.2,
+      -39.2,
+      178.4,
+      2.3,
+      -27.7,
+      -23.9,
+      0.9,
+      -70.7
+     ],
+     "resultant": 0.694
+    },
+    "R": {
+     "strength": 0.692,
+     "shuffle_p99": 0.426,
+     "run_positions_deg": [
+      -36.9,
+      -21.4,
+      -143.7,
+      -91.2,
+      -34.7,
+      -40.5,
+      -80.2,
+      -109.8
+     ],
+     "resultant": 0.769
+    }
+   },
+   "position_entropy": 0.845,
+   "position_histogram": [
+    0.073,
+    0.27,
+    0.17,
+    0.044,
+    0.022,
+    0.012,
+    0.009,
+    0.027,
+    0.05,
+    0.071,
+    0.069,
+    0.084,
+    0.048,
+    0.024,
+    0.011,
+    0.016
+   ],
+   "fwhm_deg": 112.5,
+   "busiest_wedge_hz": 6.5,
+   "epg_hz": 1.89,
+   "group_hz": {
+    "EPG": 2.78,
+    "PEN_a": 4.75,
+    "PEN_b": 8.1,
+    "PEG": 1.15,
+    "Delta7": 0.73,
+    "ER": 1.31,
+    "ExR": 6.2
+   }
+  },
+  {
+   "seed": 5,
+   "BUMP": false,
+   "bump": {
+    "L": {
+     "strength": 0.666,
+     "shuffle_p99": 0.395,
+     "run_positions_deg": [
+      -41.9,
+      96.7,
+      -33.1,
+      -19.6,
+      -44.6,
+      30.9,
+      -22.3,
+      -78.8
+     ],
+     "resultant": 0.689
+    },
+    "R": {
+     "strength": 0.687,
+     "shuffle_p99": 0.417,
+     "run_positions_deg": [
+      -86.2,
+      -99.6,
+      -35.8,
+      -48.0,
+      -77.5,
+      -79.8,
+      -66.8,
+      -98.8
+     ],
+     "resultant": 0.932
+    }
+   },
+   "position_entropy": 0.861,
+   "position_histogram": [
+    0.075,
+    0.262,
+    0.132,
+    0.045,
+    0.018,
+    0.015,
+    0.005,
+    0.018,
+    0.064,
+    0.081,
+    0.065,
+    0.086,
+    0.066,
+    0.026,
+    0.019,
+    0.021
+   ],
+   "fwhm_deg": 112.5,
+   "busiest_wedge_hz": 6.5,
+   "epg_hz": 1.9,
+   "group_hz": {
+    "EPG": 2.75,
+    "PEN_a": 4.81,
+    "PEN_b": 8.12,
+    "PEG": 1.15,
+    "Delta7": 0.73,
+    "ER": 1.31,
+    "ExR": 6.22
+   }
+  }
+ ],
+ "seconds": 15
+}

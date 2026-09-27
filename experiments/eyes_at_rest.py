@@ -58,6 +58,7 @@ GAINS = [1.0, 3.0, 10.0]
 ROUNDS = [1.0] * 8 + [0.5] * 4
 SETTLE, SCENE, LATE, BIN = 1.0, 2.0, 0.5, 0.02
 TRACE = ["LC4", "LPLC2", "DNp01"]
+SUBNETWORK = None      # (M, types, superclass) -> (M, slow, tau_slow), for later models; None here
 
 
 class Setup:
@@ -69,12 +70,15 @@ class Setup:
         self.names, self.gid = np.unique(key, return_inverse=True)
         self.target = attempt1.targets(self.types, superclass, 2.0)
         spec, sets = attempt2.model(self.types, superclass)
+        slow, tau_slow = None, 0.1
+        if SUBNETWORK is not None:          # later models' per-class changes, applied after any rewiring
+            M, slow, tau_slow = SUBNETWORK(M, self.types, superclass)
         start = attempt2.HERE / ("intact.npz" if rewiring is None else f"rewired-{rewiring}.npz")
         saved = np.load(start)
         assert np.array_equal(saved["groups"], self.names)
         self.bias = saved["bias"].copy()
-        self.brain = HybridBrain(trials=TRIALS, w_syn=W_SYN, matrix=M, scale=scale, labels=labels, seed=seed,
-                                 types=spec, sets=sets, bias=self.bias[self.gid])
+        self.brain = HybridBrain(trials=TRIALS, w_syn=W_SYN, matrix=M, slow=slow, tau_slow=tau_slow, scale=scale, labels=labels,
+                                 seed=seed, types=spec, sets=sets, bias=self.bias[self.gid])
         self.ol = FlyvisNative(self.brain, model=MODEL, dt=OPTIC_DT)
         self.silent = np.zeros(len(self.ol.neurons), np.float32)
         self.brain.set_release(self.ol.neurons, self.silent)

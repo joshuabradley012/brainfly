@@ -1,0 +1,95 @@
+{
+ "question": "Exploratory, not pre-registered: does evening out each wedge's EPG output free ring_fit2.py's bump from\nits favored place?\n\nring_heldout.py found ring_fit2.py's bump spending about 40% of its time near wedges 1-2. MaleCNS wedges\nhold 2 to 4 EPGs each (wedges 0 and 3 hold 4), and ring_fit2.py's wedge normalization (every synapse from\nan EPG times (the mean number of EPGs per wedge / the number in its wedge) to the power b) ended at\nb = 0.39. Here ring_fit2.py's best with b = 0.39, 0.7 and 1 (every wedge's EPGs giving the same total\noutput): 8 runs of 60 s on seed 2, the bump's position entropy over the 16 wedges (as ring_fit2.py) and\nrung 4's bump measures.\n\n    python experiments/ring_wedges.py            (writes experiments/ring_wedges.json)\n",
+ "conditions": [
+  {
+   "wedge_norm": 0.39,
+   "position_entropy": 0.857,
+   "position_histogram": [
+    0.069,
+    0.254,
+    0.177,
+    0.04,
+    0.023,
+    0.029,
+    0.019,
+    0.031,
+    0.056,
+    0.088,
+    0.071,
+    0.073,
+    0.023,
+    0.01,
+    0.017,
+    0.021
+   ],
+   "strength": [
+    0.671,
+    0.684
+   ],
+   "resultant": [
+    0.516,
+    0.382
+   ]
+  },
+  {
+   "wedge_norm": 0.7,
+   "position_entropy": 0.788,
+   "position_histogram": [
+    0.044,
+    0.279,
+    0.252,
+    0.062,
+    0.019,
+    0.008,
+    0.019,
+    0.021,
+    0.05,
+    0.079,
+    0.052,
+    0.058,
+    0.029,
+    0.008,
+    0.01,
+    0.008
+   ],
+   "strength": [
+    0.697,
+    0.703
+   ],
+   "resultant": [
+    0.667,
+    0.469
+   ]
+  },
+  {
+   "wedge_norm": 1.0,
+   "position_entropy": 0.702,
+   "position_histogram": [
+    0.035,
+    0.4,
+    0.242,
+    0.048,
+    0.015,
+    0.017,
+    0.006,
+    0.012,
+    0.004,
+    0.052,
+    0.042,
+    0.052,
+    0.029,
+    0.017,
+    0.019,
+    0.01
+   ],
+   "strength": [
+    0.703,
+    0.719
+   ],
+   "resultant": [
+    0.99,
+    0.971
+   ]
+  }
+ ]
+}

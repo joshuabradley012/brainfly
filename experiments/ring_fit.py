@@ -88,6 +88,13 @@ class Ring:
         data *= np.where(ring_exc[Ms.col] & er[Ms.row], p["to_er"], 1.0)
         data *= np.where(er[Ms.col] & ~er[Ms.row], p["from_er"], 1.0)
         data *= np.where(er[Ms.col] & er[Ms.row], p["er_er"], 1.0)
+        if p.get("wedge_norm", 0.0):                 # synaptic scaling: each wedge's EPGs give the same total output
+            at_sub = {g: k for k, g in enumerate(sel)}
+            wedge = np.where(side == "R", (2 * glom) % 16, (19 - 2 * glom) % 16)
+            n_w = np.bincount(wedge, minlength=16)
+            f = np.ones(len(sel))
+            f[[at_sub[i] for i in epg]] = (n_w.mean() / n_w[wedge]) ** p["wedge_norm"]
+            data *= f[Ms.col]
         m = ring_exc[Ms.col] & np.isin(post, ring_er.RING) & (data > 0)
         slow = sparse.csr_matrix((data[m] * TAU / p["slow_tau"], (Ms.row[m], Ms.col[m])), shape=(len(sel),) * 2)
         W = sparse.csr_matrix((np.where(m, 0.0, data), (Ms.row, Ms.col)), shape=(len(sel),) * 2)
