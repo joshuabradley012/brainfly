@@ -31,6 +31,9 @@ brainfly.shiu, and lets each cell type differ:
                   of their strength each spike leaves, recovering toward full with time constant
                   recovery, s (default 1: none; olfactory receptor neurons onto projection neurons:
                   0.78 and 0.893, Nagel, Hong & Wilson 2015)
+    adaptation, adaptation_tau    spike-frequency adaptation: each spike adds a hyperpolarising
+                  current that holds the neuron about `adaptation` mV lower and decays with time
+                  constant adaptation_tau, s (default 0: none, as in Shiu's model; 0.2 s)
 
 A spike adds w_syn x (signed synapse count) to a fast current in each target (tau 5 ms, as in
 Shiu), or to a slow current (tau_slow) along the edges given as slow, t_dly later. As in Brian2,
@@ -59,7 +62,8 @@ from .shiu import F_POI, T_DLY, T_MBR, T_RFC, TAU, V0, V_RST, V_TH, W_SYN, Resul
 UNIT = {"spiking": False, "graded": True}
 DEFAULTS = {"unit": "spiking", "tau_m": T_MBR, "threshold": V_TH - V0, "reset": V_RST - V0, "refractory": T_RFC,
             "bias": 0.0, "scale": 1.0, "gain": 6.0, "release_at": V_TH - V0, "max_release": np.inf,
-            "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0}
+            "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0, "adaptation": 0.0,
+            "adaptation_tau": 0.2}
 MONOAMINES = ("dopamine", "octopamine", "serotonin")
 
 
@@ -105,9 +109,9 @@ def _poisson(rng, b, lam):
 
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
-             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
+             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
-             u, x, s, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
+             u, x, s, ad, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
              drive_idx, drive_p, w_poi, driven, external, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
@@ -127,7 +131,9 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     g_targets lists the only neurons R or E can reach: the targets of graded and external neurons.
 
     Per-neuron parameters come from a small table indexed by cls, and tonic[i], when given, adds
-    each step's share of neuron i's own bias on top of its class's. A depressing neuron's spike carries
+    each step's share of neuron i's own bias on top of its class's. ad[b, i], when given, is an
+    adaptation current: it pulls v down like the slow current (a_va), decays by a_aa a step, keeps
+    decaying through the refractory period and grows by adapt[cls] with each spike. A depressing neuron's spike carries
     the fraction left[b, i] of its full strength, recovered toward 1 (time constant recover, in
     steps) since its last spike, and leaves depress times that. counts[b, i] gains each spike, and
     timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0."""
@@ -136,10 +142,12 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     ng = len(g_list)
     cap = touched.shape[2]
     tonic_on = len(tonic) > 0
+    adapt_on = ad.shape[1] > 0
     for b in numba.prange(trials):
         fired = np.empty(n, np.int64)
         # this trial's state in arrays of its own while it runs, which the compiler optimises better
         ub, xb, sb, untilb, Rb = u[b].copy(), x[b].copy(), s[b].copy(), until[b].copy(), R[b].copy()
+        adb = ad[b].copy()
         tl, nt = touched[b], n_touched[b]
         rlist = np.empty(n, np.int64)          # the refractory neurons, and the slow current each is frozen with
         rs = np.empty(n if slow else 0, np.float32)
@@ -151,6 +159,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                     rs[rn] = sb[i]
                 rn += 1
         A, B, C, TH = a_vv[0], a_vx[0], a_bias[0], theta[0]
+        VA, AA = a_va[0], a_aa[0]
         for k in range(steps):
             t = t0 + k
             kept = 0                           # drop the neurons whose refractory period ends now
@@ -168,6 +177,9 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                     ui = A * ub[i] + B * xb[i] + C
                     if tonic_on:
                         ui += tonic[i]
+                    if adapt_on:
+                        ui -= VA * adb[i]
+                        adb[i] = AA * adb[i]
                     xb[i] = a_xx * xb[i]
                     ub[i] = ui
                     if ui > TH and not external[i]:
@@ -179,6 +191,9 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                     ui = a_vv[c] * ub[i] + a_vx[c] * xb[i] + a_bias[c]
                     if tonic_on:
                         ui += tonic[i]
+                    if adapt_on:
+                        ui -= a_va[c] * adb[i]
+                        adb[i] = a_aa[c] * adb[i]
                     xb[i] = a_xx * xb[i]
                     if slow:
                         ui += a_vs[c] * sb[i]
@@ -244,6 +259,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                 spikes += 1
                 ub[i] = reset[cls[i]]
                 xb[i] = 0.0
+                if adapt_on:
+                    adb[i] += adapt[cls[i]]
                 untilb[i] = t if driven[i] else t + rfc[cls[i]]
                 if untilb[i] > t:
                     rlist[rn] = i
@@ -274,6 +291,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
         u[b, :] = ub
         x[b, :] = xb
         s[b, :] = sb
+        ad[b, :] = adb
         until[b, :] = untilb
         R[b, :] = Rb
 
@@ -426,6 +444,8 @@ class HybridBrain:
             a_vx=f32(lambda p: _approach(TAU, p["tau_m"], dt)),
             a_vs=f32(lambda p: _approach(self.tau_slow, p["tau_m"], dt)),
             a_bias=f32(lambda p: (1 - np.exp(-dt / p["tau_m"])) * p["bias"]),
+            a_va=f32(lambda p: _approach(p["adaptation_tau"], p["tau_m"], dt)),
+            a_aa=f32(lambda p: np.exp(-dt / p["adaptation_tau"])), adapt=f32(lambda p: p["adaptation"]),
             theta=f32(lambda p: p["threshold"]), reset=f32(lambda p: p["reset"]),
             rfc=np.array([int(round(p["refractory"] / dt)) for p in table], np.int64),
             graded=np.array([UNIT[p["unit"]] for p in table], np.bool_),
@@ -453,6 +473,8 @@ class HybridBrain:
         shape = (self.trials, self.n)
         self.u, self.x, self.s = np.zeros(shape, np.float32), np.zeros(shape, np.float32), np.zeros(shape, np.float32)
         self.until = np.zeros(shape, np.int64)
+        adapting = any(p["adaptation"] != 0 for p in self.params)
+        self.ad = np.zeros(shape if adapting else (self.trials, 0), np.float32)
         self.pending = np.zeros((self.trials, self.delay, self.n), np.float32)
         slow_n = self.n if len(self.slow_weights) else 0
         self.pending_slow = np.zeros((self.trials, self.delay, slow_n), np.float32)
@@ -490,12 +512,12 @@ class HybridBrain:
         g = [self.params[c] for c in self.cls[self.graded]]
         counts = np.zeros((self.trials, self.n), np.int32)
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights,
-                 self.sptr, self.sidx, self.slow_weights, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic,
+                 self.sptr, self.sidx, self.slow_weights, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  np.float32(np.exp(-self.dt / TAU)), np.float32(np.exp(-self.dt / self.tau_slow)), k["theta"],
                  k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], self._uniform(),
                  bool(len(self.graded) or self.external.any()), self.graded.astype(np.int64),
                  np.array([p["gain"] for p in g], np.float32), np.array([p["release_at"] for p in g], np.float32),
-                 np.array([p["max_release"] for p in g], np.float32), self._graded_targets(), self.u, self.x, self.s, self.until,
+                 np.array([p["max_release"] for p in g], np.float32), self._graded_targets(), self.u, self.x, self.s, self.ad, self.until,
                  self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.release,
                  self.rng, self.left, self.last,
                  drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self.external_input,

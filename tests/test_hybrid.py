@@ -244,3 +244,36 @@ def test_a_bias_given_per_neuron_acts_as_the_same_type_bias():
     later.set_bias(np.array([4.0, -1.0]))
     later.advance(6000)
     np.testing.assert_allclose(later.u[0], [4.0, -1.0], atol=1e-3)
+
+
+def test_adaptation_current_decays_and_holds_the_neuron_down():
+    """An adaptation current of 5 mV on a silent neuron decays with adaptation_tau and, being slow,
+    holds v at -a tau_a / (tau_a - tau_m)."""
+    brain = small([], 1, types={"c0": {"adaptation": 1.0, "adaptation_tau": 0.2}})
+    brain.ad[0, 0] = 5.0
+    brain.advance(2000)
+    a = 5.0 * np.exp(-2000 * DT / 0.2)
+    assert brain.ad[0, 0] == pytest.approx(a, rel=1e-4)
+    assert brain.u[0, 0] == pytest.approx(-a * 0.2 / (0.2 - T_MBR), rel=1e-3)
+
+
+def test_adaptation_slows_a_tonic_neuron_and_survives_pieces():
+    """A neuron held above threshold fires fast at first and slower once adapted, at a steady rate
+    whose adaptation current is about rate x step x tau; and pieces give the same spikes."""
+    types = {"c0": {"bias": 20.0, "adaptation": 1.0, "adaptation_tau": 0.2}}
+    brain = small([], 1, types=types)
+    onset = brain.advance(500)[0, 0] / 0.05
+    brain.advance(19500)
+    late = brain.advance(10000)[0, 0] / 1.0
+    assert onset > 1.5 * late > 0
+    assert brain.ad[0, 0] == pytest.approx(late * 1.0 * 0.2, rel=0.2)
+    edges, slow, circuit, n = random_circuit()
+    circuit = dict(circuit, c1={"adaptation": 2.0, "adaptation_tau": 0.05}, c6={"adaptation": 0.5})
+    whole = small(edges, n, slow, types=circuit, trials=2, w_poi=30.0)
+    pieces = small(edges, n, slow, types=circuit, trials=2, w_poi=30.0)
+    drive = [(np.arange(4), 120.0)]
+    once = whole.advance(2000, drive)
+    parts = sum(pieces.advance(k, drive) for k in (3, 997, 1000))
+    assert once.sum() > 100
+    np.testing.assert_array_equal(once, parts)
+    np.testing.assert_array_equal(whole.ad, pieces.ad)
