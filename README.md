@@ -138,6 +138,15 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 ## Rung 1 in detail
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/taste-dark.svg">
+  <img src="assets/taste-light.svg" width="100%" alt="Left: bar charts of the proboscis motor neuron MN9. Sugar drives it at about 40 spikes a second on each side; water leaves it at 0; adding bitter taste neurons silences it; adding Ir94e cuts it to 8 to 10. MN9 is at 0 with 10 Hz of sugar and 41 with 100 Hz. Right: MN9 under sugar is 41 spikes a second in the real network and 0 in all 20 degree-preserving and all 20 class-preserving rewirings; within-neuron weight shuffles, reported but not gating, leave it anywhere from 0 to 33.">
+</picture>
+
+The pass, on fresh seeds ([`experiments/shiu_rewiring.py`](experiments/shiu_rewiring.py)): sugar drives
+the proboscis motor neuron in proportion to its rate, bitter and Ir94e taste neurons suppress it, and in
+40 networks with scrambled wiring sugar never reaches it. `python assets/taste.py` redraws it.
+
 [Shiu et al. (2024)](https://pmc.ncbi.nlm.nih.gov/articles/PMC11446845/) simulated the FlyWire brain
 as leaky integrate-and-fire neurons sharing one set of parameters, with a single free parameter: how
 much one synapse moves its target. 91% of its 164 testable predictions held, nearly all of them in taste and grooming circuits.
