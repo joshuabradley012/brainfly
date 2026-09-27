@@ -1,0 +1,83 @@
+{
+ "criteria": "Does rung 1's taste pathway survive in rung 4's resting brain? (pre-registered)\n\nRung 1 passed (shiu_rewiring.py) in a brain that is silent at rest: sugar taste neurons drive the\nproboscis motor neuron MN9, bitter and Ir94e neurons suppress it, and scrambled wiring abolishes it.\nRung 4's resting brain (rest_calibration2.py) adds per-type properties, short-term depression at\ncholinergic synapses and a calibrated resting activity in every neuron. Each rung has to keep the\nones below it passing, so this repeats rung 1's tests there, measured against MN9's resting rate.\nModel: rest_calibration2.py's, with its intact biases, unchanged (no recalibration). Protocol, 30\ntrials per condition: a fresh start, 1 s to settle, then 1 s with the taste neurons driven by\nPoisson input at 100 Hz (rung 1's drive: w_poi = 250 x w_syn, SETS of shiu_baseline.py), then 0.5 s\nwithout. MN9's rate at rest is taken over the 0.5 s before the drive.\nTests (MN9 L, as rung 1's):\n  SUGAR     sugar raises MN9 by at least 10 Hz over its resting rate (t >= 4 over trials)\n  RESPONSE  at 10 Hz of sugar, MN9's rise is at most 25% of its rise at 100 Hz\n  BITTER    adding bitter neurons cuts sugar's rise by at least 25% (Welch t >= 4)\n  IR94E     adding Ir94e neurons cuts sugar's rise by at least 25% (Welch t >= 4)\n  STABLE    during sugar at most 0.1% of the undriven neurons pass 100 Hz, and in the last 0.25 s\n            after it the brain's mean rate is within 20% of its rate at rest\n  NULL      in rest_calibration2.py's 2 degree-preserving rewirings, with their own biases, sugar\n            raises MN9 by less than 10 Hz\nPass: all six. Reported: WATER (MN9's rise under water neurons) and MN9 R.\n\n    python experiments/taste_at_rest.py            (writes experiments/taste_at_rest.json)\n",
+ "mn9_L_hz": {
+  "sugar": {
+   "rest": 4.93,
+   "driven": 3.83
+  },
+  "sugar 10 Hz": {
+   "rest": 4.67,
+   "driven": 3.57
+  },
+  "water": {
+   "rest": 4.47,
+   "driven": 3.63
+  },
+  "sugar+bitter": {
+   "rest": 4.53,
+   "driven": 3.07
+  },
+  "sugar+ir94e": {
+   "rest": 4.13,
+   "driven": 3.83
+  }
+ },
+ "mn9_R_hz": {
+  "sugar": {
+   "rest": 1.07,
+   "driven": 0.73
+  },
+  "sugar 10 Hz": {
+   "rest": 0.8,
+   "driven": 0.67
+  },
+  "water": {
+   "rest": 0.93,
+   "driven": 0.57
+  },
+  "sugar+bitter": {
+   "rest": 1.07,
+   "driven": 0.53
+  },
+  "sugar+ir94e": {
+   "rest": 0.53,
+   "driven": 0.53
+  }
+ },
+ "rise_hz": {
+  "sugar": -1.1,
+  "sugar 10 Hz": -1.1,
+  "water": -0.83,
+  "sugar+bitter": -1.47,
+  "sugar+ir94e": -0.3
+ },
+ "t_sugar": -1.7,
+ "bitter_cut": 0.0,
+ "t_bitter": 0.4,
+ "ir94e_cut": 0.0,
+ "t_ir94e": -0.8,
+ "undriven_over_100hz": 0.0,
+ "brain_rest_hz": 1.889,
+ "brain_late_hz": 1.725,
+ "SUGAR": false,
+ "RESPONSE": true,
+ "BITTER": false,
+ "IR94E": false,
+ "STABLE": true,
+ "WATER_rise_hz": -0.83,
+ "nulls": [
+  {
+   "rewiring": 1,
+   "rise_hz": 0.23,
+   "rest_hz": 0.0
+  },
+  {
+   "rewiring": 2,
+   "rise_hz": 0.07,
+   "rest_hz": 0.6
+  }
+ ],
+ "NULL": true,
+ "pass": false,
+ "seconds": 205
+}
