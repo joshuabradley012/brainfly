@@ -1,0 +1,918 @@
+{
+ "question": "Exploratory, not pre-registered: does the connectome's head-direction ring hold a bump on its own?\n\nrest_calibration2.py's resting brain has no head-direction bump: every EPG fires near its calibrated\n2 Hz, and exempting the ring's excitatory types from depression changes nothing. This takes the 152\nneurons of the ring's types (EPG, EPGt, PEN_a, PEN_b, PEG, Delta7) with their MaleCNS wiring (rung 1's\nnetwork, synapses divided by target size, w_syn 1.5556 mV), alone, with Poisson background (1 mV kicks\nat 200 Hz) and a tonic bias of 0 or 5 mV, every excitatory synapse scaled by gE and every inhibitory\none by gI. 8 runs of 10 s each: the EPGs' mean and highest rates and rest_calibration.py's bump measures\n(strength, the shuffle's 99th percentile, the runs' resultant; a real bump: strength about 0.7).\n\n    python experiments/ring_alone.py            (writes experiments/ring_alone.json)\n",
+ "neurons": 152,
+ "sweep": [
+  {
+   "gE": 0.05,
+   "gI": 1.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 4.3,
+   "epg_max_hz": 6.1,
+   "bump": {
+    "L": {
+     "strength": 0.115,
+     "shuffle_p99": 0.117,
+     "resultant": 0.969
+    },
+    "R": {
+     "strength": 0.105,
+     "shuffle_p99": 0.116,
+     "resultant": 0.972
+    }
+   }
+  },
+  {
+   "gE": 0.05,
+   "gI": 1.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 34.8,
+   "epg_max_hz": 38.5,
+   "bump": {
+    "L": {
+     "strength": 0.093,
+     "shuffle_p99": 0.091,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.081,
+     "shuffle_p99": 0.089,
+     "resultant": 0.999
+    }
+   }
+  },
+  {
+   "gE": 0.05,
+   "gI": 4.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 4.1,
+   "epg_max_hz": 5.6,
+   "bump": {
+    "L": {
+     "strength": 0.121,
+     "shuffle_p99": 0.12,
+     "resultant": 0.965
+    },
+    "R": {
+     "strength": 0.116,
+     "shuffle_p99": 0.118,
+     "resultant": 0.97
+    }
+   }
+  },
+  {
+   "gE": 0.05,
+   "gI": 4.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 32.9,
+   "epg_max_hz": 38.6,
+   "bump": {
+    "L": {
+     "strength": 0.115,
+     "shuffle_p99": 0.105,
+     "resultant": 0.995
+    },
+    "R": {
+     "strength": 0.102,
+     "shuffle_p99": 0.103,
+     "resultant": 0.998
+    }
+   }
+  },
+  {
+   "gE": 0.05,
+   "gI": 10.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 3.9,
+   "epg_max_hz": 5.4,
+   "bump": {
+    "L": {
+     "strength": 0.135,
+     "shuffle_p99": 0.125,
+     "resultant": 0.956
+    },
+    "R": {
+     "strength": 0.125,
+     "shuffle_p99": 0.123,
+     "resultant": 0.966
+    }
+   }
+  },
+  {
+   "gE": 0.05,
+   "gI": 10.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 31.1,
+   "epg_max_hz": 38.7,
+   "bump": {
+    "L": {
+     "strength": 0.132,
+     "shuffle_p99": 0.123,
+     "resultant": 0.973
+    },
+    "R": {
+     "strength": 0.149,
+     "shuffle_p99": 0.12,
+     "resultant": 0.995
+    }
+   }
+  },
+  {
+   "gE": 0.1,
+   "gI": 1.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 5.2,
+   "epg_max_hz": 7.0,
+   "bump": {
+    "L": {
+     "strength": 0.117,
+     "shuffle_p99": 0.112,
+     "resultant": 0.973
+    },
+    "R": {
+     "strength": 0.101,
+     "shuffle_p99": 0.111,
+     "resultant": 0.977
+    }
+   }
+  },
+  {
+   "gE": 0.1,
+   "gI": 1.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 44.3,
+   "epg_max_hz": 51.1,
+   "bump": {
+    "L": {
+     "strength": 0.103,
+     "shuffle_p99": 0.101,
+     "resultant": 0.999
+    },
+    "R": {
+     "strength": 0.095,
+     "shuffle_p99": 0.099,
+     "resultant": 0.999
+    }
+   }
+  },
+  {
+   "gE": 0.1,
+   "gI": 4.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 4.8,
+   "epg_max_hz": 6.7,
+   "bump": {
+    "L": {
+     "strength": 0.127,
+     "shuffle_p99": 0.119,
+     "resultant": 0.955
+    },
+    "R": {
+     "strength": 0.112,
+     "shuffle_p99": 0.116,
+     "resultant": 0.971
+    }
+   }
+  },
+  {
+   "gE": 0.1,
+   "gI": 4.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 41.3,
+   "epg_max_hz": 50.8,
+   "bump": {
+    "L": {
+     "strength": 0.138,
+     "shuffle_p99": 0.126,
+     "resultant": 0.996
+    },
+    "R": {
+     "strength": 0.141,
+     "shuffle_p99": 0.122,
+     "resultant": 0.999
+    }
+   }
+  },
+  {
+   "gE": 0.1,
+   "gI": 10.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 4.7,
+   "epg_max_hz": 6.7,
+   "bump": {
+    "L": {
+     "strength": 0.135,
+     "shuffle_p99": 0.122,
+     "resultant": 0.962
+    },
+    "R": {
+     "strength": 0.132,
+     "shuffle_p99": 0.121,
+     "resultant": 0.956
+    }
+   }
+  },
+  {
+   "gE": 0.1,
+   "gI": 10.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 38.6,
+   "epg_max_hz": 51.6,
+   "bump": {
+    "L": {
+     "strength": 0.169,
+     "shuffle_p99": 0.143,
+     "resultant": 0.986
+    },
+    "R": {
+     "strength": 0.19,
+     "shuffle_p99": 0.138,
+     "resultant": 0.982
+    }
+   }
+  },
+  {
+   "gE": 0.2,
+   "gI": 1.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 25.0,
+   "epg_max_hz": 33.4,
+   "bump": {
+    "L": {
+     "strength": 0.144,
+     "shuffle_p99": 0.131,
+     "resultant": 0.998
+    },
+    "R": {
+     "strength": 0.141,
+     "shuffle_p99": 0.127,
+     "resultant": 0.998
+    }
+   }
+  },
+  {
+   "gE": 0.2,
+   "gI": 1.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 70.2,
+   "epg_max_hz": 81.4,
+   "bump": {
+    "L": {
+     "strength": 0.105,
+     "shuffle_p99": 0.108,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.111,
+     "shuffle_p99": 0.106,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 0.2,
+   "gI": 4.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 19.2,
+   "epg_max_hz": 29.0,
+   "bump": {
+    "L": {
+     "strength": 0.198,
+     "shuffle_p99": 0.156,
+     "resultant": 0.985
+    },
+    "R": {
+     "strength": 0.202,
+     "shuffle_p99": 0.147,
+     "resultant": 0.985
+    }
+   }
+  },
+  {
+   "gE": 0.2,
+   "gI": 4.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 63.9,
+   "epg_max_hz": 80.6,
+   "bump": {
+    "L": {
+     "strength": 0.161,
+     "shuffle_p99": 0.144,
+     "resultant": 0.996
+    },
+    "R": {
+     "strength": 0.167,
+     "shuffle_p99": 0.138,
+     "resultant": 0.999
+    }
+   }
+  },
+  {
+   "gE": 0.2,
+   "gI": 10.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 17.2,
+   "epg_max_hz": 27.0,
+   "bump": {
+    "L": {
+     "strength": 0.241,
+     "shuffle_p99": 0.179,
+     "resultant": 0.992
+    },
+    "R": {
+     "strength": 0.24,
+     "shuffle_p99": 0.163,
+     "resultant": 0.993
+    }
+   }
+  },
+  {
+   "gE": 0.2,
+   "gI": 10.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 58.8,
+   "epg_max_hz": 81.5,
+   "bump": {
+    "L": {
+     "strength": 0.209,
+     "shuffle_p99": 0.168,
+     "resultant": 0.912
+    },
+    "R": {
+     "strength": 0.247,
+     "shuffle_p99": 0.162,
+     "resultant": 0.929
+    }
+   }
+  },
+  {
+   "gE": 0.35,
+   "gI": 1.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 80.5,
+   "epg_max_hz": 95.5,
+   "bump": {
+    "L": {
+     "strength": 0.11,
+     "shuffle_p99": 0.113,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.117,
+     "shuffle_p99": 0.11,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 0.35,
+   "gI": 1.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 104.6,
+   "epg_max_hz": 118.3,
+   "bump": {
+    "L": {
+     "strength": 0.092,
+     "shuffle_p99": 0.1,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.1,
+     "shuffle_p99": 0.098,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 0.35,
+   "gI": 4.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 69.1,
+   "epg_max_hz": 92.4,
+   "bump": {
+    "L": {
+     "strength": 0.208,
+     "shuffle_p99": 0.173,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.215,
+     "shuffle_p99": 0.168,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 0.35,
+   "gI": 4.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 95.3,
+   "epg_max_hz": 116.5,
+   "bump": {
+    "L": {
+     "strength": 0.152,
+     "shuffle_p99": 0.138,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.156,
+     "shuffle_p99": 0.135,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 0.35,
+   "gI": 10.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 61.6,
+   "epg_max_hz": 92.5,
+   "bump": {
+    "L": {
+     "strength": 0.269,
+     "shuffle_p99": 0.196,
+     "resultant": 0.662
+    },
+    "R": {
+     "strength": 0.291,
+     "shuffle_p99": 0.182,
+     "resultant": 0.822
+    }
+   }
+  },
+  {
+   "gE": 0.35,
+   "gI": 10.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 88.0,
+   "epg_max_hz": 117.0,
+   "bump": {
+    "L": {
+     "strength": 0.21,
+     "shuffle_p99": 0.151,
+     "resultant": 0.595
+    },
+    "R": {
+     "strength": 0.197,
+     "shuffle_p99": 0.145,
+     "resultant": 0.553
+    }
+   }
+  },
+  {
+   "gE": 1.0,
+   "gI": 1.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 179.4,
+   "epg_max_hz": 190.3,
+   "bump": {
+    "L": {
+     "strength": 0.085,
+     "shuffle_p99": 0.087,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.074,
+     "shuffle_p99": 0.088,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 1.0,
+   "gI": 1.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 189.6,
+   "epg_max_hz": 199.0,
+   "bump": {
+    "L": {
+     "strength": 0.084,
+     "shuffle_p99": 0.086,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.074,
+     "shuffle_p99": 0.086,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 1.0,
+   "gI": 4.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 169.7,
+   "epg_max_hz": 189.2,
+   "bump": {
+    "L": {
+     "strength": 0.095,
+     "shuffle_p99": 0.103,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.108,
+     "shuffle_p99": 0.101,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 1.0,
+   "gI": 4.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 180.5,
+   "epg_max_hz": 197.9,
+   "bump": {
+    "L": {
+     "strength": 0.089,
+     "shuffle_p99": 0.099,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.103,
+     "shuffle_p99": 0.098,
+     "resultant": 0.999
+    }
+   }
+  },
+  {
+   "gE": 1.0,
+   "gI": 10.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 159.3,
+   "epg_max_hz": 187.6,
+   "bump": {
+    "L": {
+     "strength": 0.136,
+     "shuffle_p99": 0.128,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.142,
+     "shuffle_p99": 0.126,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 1.0,
+   "gI": 10.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 171.2,
+   "epg_max_hz": 196.5,
+   "bump": {
+    "L": {
+     "strength": 0.124,
+     "shuffle_p99": 0.121,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.129,
+     "shuffle_p99": 0.118,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 2.0,
+   "gI": 1.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 238.5,
+   "epg_max_hz": 246.2,
+   "bump": {
+    "L": {
+     "strength": 0.08,
+     "shuffle_p99": 0.082,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.074,
+     "shuffle_p99": 0.083,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 2.0,
+   "gI": 1.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 244.1,
+   "epg_max_hz": 250.8,
+   "bump": {
+    "L": {
+     "strength": 0.08,
+     "shuffle_p99": 0.081,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.074,
+     "shuffle_p99": 0.082,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 2.0,
+   "gI": 4.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 232.1,
+   "epg_max_hz": 244.0,
+   "bump": {
+    "L": {
+     "strength": 0.081,
+     "shuffle_p99": 0.088,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.088,
+     "shuffle_p99": 0.088,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 2.0,
+   "gI": 4.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 238.0,
+   "epg_max_hz": 249.2,
+   "bump": {
+    "L": {
+     "strength": 0.08,
+     "shuffle_p99": 0.087,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.087,
+     "shuffle_p99": 0.087,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 2.0,
+   "gI": 10.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 225.4,
+   "epg_max_hz": 244.4,
+   "bump": {
+    "L": {
+     "strength": 0.092,
+     "shuffle_p99": 0.099,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.1,
+     "shuffle_p99": 0.097,
+     "resultant": 0.998
+    }
+   }
+  },
+  {
+   "gE": 2.0,
+   "gI": 10.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 231.6,
+   "epg_max_hz": 248.8,
+   "bump": {
+    "L": {
+     "strength": 0.089,
+     "shuffle_p99": 0.097,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.098,
+     "shuffle_p99": 0.095,
+     "resultant": 0.999
+    }
+   }
+  },
+  {
+   "gE": 4.0,
+   "gI": 1.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 291.4,
+   "epg_max_hz": 296.7,
+   "bump": {
+    "L": {
+     "strength": 0.077,
+     "shuffle_p99": 0.079,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.079,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 4.0,
+   "gI": 1.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 294.1,
+   "epg_max_hz": 298.7,
+   "bump": {
+    "L": {
+     "strength": 0.077,
+     "shuffle_p99": 0.078,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.078,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 4.0,
+   "gI": 4.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 286.6,
+   "epg_max_hz": 289.6,
+   "bump": {
+    "L": {
+     "strength": 0.078,
+     "shuffle_p99": 0.079,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.079,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 4.0,
+   "gI": 4.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 289.6,
+   "epg_max_hz": 292.4,
+   "bump": {
+    "L": {
+     "strength": 0.078,
+     "shuffle_p99": 0.078,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.078,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 4.0,
+   "gI": 10.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 281.9,
+   "epg_max_hz": 292.8,
+   "bump": {
+    "L": {
+     "strength": 0.078,
+     "shuffle_p99": 0.086,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.088,
+     "shuffle_p99": 0.086,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 4.0,
+   "gI": 10.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 285.2,
+   "epg_max_hz": 295.4,
+   "bump": {
+    "L": {
+     "strength": 0.078,
+     "shuffle_p99": 0.085,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.087,
+     "shuffle_p99": 0.085,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 8.0,
+   "gI": 1.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 315.4,
+   "epg_max_hz": 317.6,
+   "bump": {
+    "L": {
+     "strength": 0.075,
+     "shuffle_p99": 0.075,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.075,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 8.0,
+   "gI": 1.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 317.0,
+   "epg_max_hz": 318.4,
+   "bump": {
+    "L": {
+     "strength": 0.075,
+     "shuffle_p99": 0.075,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.075,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 8.0,
+   "gI": 4.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 314.4,
+   "epg_max_hz": 315.7,
+   "bump": {
+    "L": {
+     "strength": 0.075,
+     "shuffle_p99": 0.075,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.075,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 8.0,
+   "gI": 4.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 315.5,
+   "epg_max_hz": 319.0,
+   "bump": {
+    "L": {
+     "strength": 0.075,
+     "shuffle_p99": 0.075,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.075,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 8.0,
+   "gI": 10.0,
+   "bias_mv": 0.0,
+   "epg_mean_hz": 315.5,
+   "epg_max_hz": 316.8,
+   "bump": {
+    "L": {
+     "strength": 0.075,
+     "shuffle_p99": 0.076,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.076,
+     "shuffle_p99": 0.076,
+     "resultant": 1.0
+    }
+   }
+  },
+  {
+   "gE": 8.0,
+   "gI": 10.0,
+   "bias_mv": 5.0,
+   "epg_mean_hz": 316.6,
+   "epg_max_hz": 317.2,
+   "bump": {
+    "L": {
+     "strength": 0.075,
+     "shuffle_p99": 0.076,
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.075,
+     "shuffle_p99": 0.076,
+     "resultant": 1.0
+    }
+   }
+  }
+ ]
+}
