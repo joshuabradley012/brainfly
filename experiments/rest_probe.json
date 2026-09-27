@@ -1,0 +1,294 @@
+{
+ "question": "Exploratory, not pre-registered: can background activity alone give the rung-1 brain a resting state?\n\nThe vision probes (optomotor_hybrid.py, optomotor_hybrid2.py) found that a brain silent at rest, as\nShiu's is, has no gain at which a visual signal reaches DNa02 without igniting recurrent circuits.\nFlyBrain, whose neurons idle near threshold, does. A realistic brain idles at a low mean rate (the\nresearch report's energy budget: 4 Hz or less). This asks what uniform background does to rung 1's\nnetwork (shiu_sensory.py's, w_syn = 1.5556 mV), with no stimulus: every neuron gets Poisson kicks of\nk mV at r Hz (HybridBrain's noise_rate and noise_kick), for 3 s.\n  grid     k in {0.5, 1, 2} mV x r in {50, 200, 800} Hz: mean rate in the first and third second,\n           the share of silent neurons, and the neurons over 100 Hz by superclass\n  where    at the lowest background that wakes the network (1 mV x 200 Hz): the types over 100 Hz,\n           and the rates of the circuits that ran away before (Kenyon cells, APL, MBONs, the\n           central complex)\n\n    python experiments/rest_probe.py            (writes experiments/rest_probe.json)\n",
+ "grid": [
+  {
+   "kick_mv": 0.5,
+   "rate_hz": 50.0,
+   "mean_drive_mv": 0.5,
+   "mean_hz_first_second": 0.0,
+   "mean_hz_third_second": 0.0,
+   "silent": 1.0,
+   "over_100hz": 0,
+   "over_100hz_by_superclass": {}
+  },
+  {
+   "kick_mv": 0.5,
+   "rate_hz": 200.0,
+   "mean_drive_mv": 2.0,
+   "mean_hz_first_second": 0.0,
+   "mean_hz_third_second": 0.0,
+   "silent": 0.999,
+   "over_100hz": 0,
+   "over_100hz_by_superclass": {}
+  },
+  {
+   "kick_mv": 0.5,
+   "rate_hz": 800.0,
+   "mean_drive_mv": 8.0,
+   "mean_hz_first_second": 17.34,
+   "mean_hz_third_second": 17.46,
+   "silent": 0.496,
+   "over_100hz": 6585,
+   "over_100hz_by_superclass": {
+    "cb_intrinsic": 5154,
+    "ol_intrinsic": 533,
+    "vnc_intrinsic": 411,
+    "visual_projection": 224,
+    "ascending_neuron": 116
+   }
+  },
+  {
+   "kick_mv": 1.0,
+   "rate_hz": 50.0,
+   "mean_drive_mv": 1.0,
+   "mean_hz_first_second": 0.0,
+   "mean_hz_third_second": 0.0,
+   "silent": 1.0,
+   "over_100hz": 0,
+   "over_100hz_by_superclass": {}
+  },
+  {
+   "kick_mv": 1.0,
+   "rate_hz": 200.0,
+   "mean_drive_mv": 4.0,
+   "mean_hz_first_second": 9.33,
+   "mean_hz_third_second": 9.52,
+   "silent": 0.442,
+   "over_100hz": 2786,
+   "over_100hz_by_superclass": {
+    "cb_intrinsic": 2399,
+    "visual_projection": 204,
+    "ol_intrinsic": 44,
+    "vnc_intrinsic": 42,
+    "descending_neuron": 32
+   }
+  },
+  {
+   "kick_mv": 1.0,
+   "rate_hz": 800.0,
+   "mean_drive_mv": 16.0,
+   "mean_hz_first_second": 33.79,
+   "mean_hz_third_second": 33.53,
+   "silent": 0.477,
+   "over_100hz": 17403,
+   "over_100hz_by_superclass": {
+    "cb_intrinsic": 9952,
+    "vnc_intrinsic": 3029,
+    "ol_intrinsic": 3012,
+    "ascending_neuron": 500,
+    "descending_neuron": 276
+   }
+  },
+  {
+   "kick_mv": 2.0,
+   "rate_hz": 50.0,
+   "mean_drive_mv": 2.0,
+   "mean_hz_first_second": 7.25,
+   "mean_hz_third_second": 7.48,
+   "silent": 0.471,
+   "over_100hz": 2185,
+   "over_100hz_by_superclass": {
+    "cb_intrinsic": 1869,
+    "visual_projection": 204,
+    "vnc_intrinsic": 34,
+    "vnc_motor": 30,
+    "ascending_neuron": 16
+   }
+  },
+  {
+   "kick_mv": 2.0,
+   "rate_hz": 200.0,
+   "mean_drive_mv": 8.0,
+   "mean_hz_first_second": 18.94,
+   "mean_hz_third_second": 18.81,
+   "silent": 0.415,
+   "over_100hz": 6766,
+   "over_100hz_by_superclass": {
+    "cb_intrinsic": 5266,
+    "vnc_intrinsic": 530,
+    "ol_intrinsic": 482,
+    "visual_projection": 202,
+    "ascending_neuron": 131
+   }
+  },
+  {
+   "kick_mv": 2.0,
+   "rate_hz": 800.0,
+   "mean_drive_mv": 32.0,
+   "mean_hz_first_second": 61.82,
+   "mean_hz_third_second": 61.31,
+   "silent": 0.423,
+   "over_100hz": 57434,
+   "over_100hz_by_superclass": {
+    "cb_intrinsic": 16477,
+    "ol_intrinsic": 12855,
+    "vnc_sensory": 6370,
+    "ol_sensory": 6098,
+    "vnc_intrinsic": 6097
+   }
+  }
+ ],
+ "where": {
+  "background": "1 mV x 200 Hz",
+  "types_over_100hz": [
+   [
+    "KCg-m",
+    175
+   ],
+   [
+    "KCab-c",
+    97
+   ],
+   [
+    "LPLC2",
+    93
+   ],
+   [
+    "KCab-m",
+    93
+   ],
+   [
+    "",
+    82
+   ],
+   [
+    "PFNp_b",
+    48
+   ],
+   [
+    "KCab-s",
+    47
+   ],
+   [
+    "PAM08",
+    43
+   ],
+   [
+    "PAM01",
+    41
+   ],
+   [
+    "PAM04",
+    32
+   ],
+   [
+    "aMe5",
+    31
+   ],
+   [
+    "lLN1_bc",
+    30
+   ],
+   [
+    "PFNm_b",
+    26
+   ],
+   [
+    "LC10a",
+    26
+   ],
+   [
+    "PAM12",
+    22
+   ],
+   [
+    "PFNv",
+    20
+   ],
+   [
+    "PFNm_a",
+    20
+   ],
+   [
+    "FR1",
+    18
+   ],
+   [
+    "MeVP5",
+    17
+   ],
+   [
+    "MeTu3c",
+    16
+   ],
+   [
+    "PAM10",
+    15
+   ],
+   [
+    "PAM07",
+    14
+   ],
+   [
+    "LHPV2b3",
+    13
+   ],
+   [
+    "lLN2P_b",
+    12
+   ],
+   [
+    "VM5d_adPN",
+    12
+   ]
+  ],
+  "groups": {
+   "Kenyon cells": {
+    "n": 4064,
+    "mean_hz": 41.8,
+    "over_100hz": 418,
+    "silent": 0.361
+   },
+   "APL": {
+    "n": 2,
+    "mean_hz": 178.8,
+    "over_100hz": 2,
+    "silent": 0.0
+   },
+   "MBONs": {
+    "n": 97,
+    "mean_hz": 90.7,
+    "over_100hz": 49,
+    "silent": 0.155
+   },
+   "PAM dopamine neurons": {
+    "n": 316,
+    "mean_hz": 117.5,
+    "over_100hz": 197,
+    "silent": 0.025
+   },
+   "PFN (central complex)": {
+    "n": 456,
+    "mean_hz": 60.5,
+    "over_100hz": 123,
+    "silent": 0.127
+   },
+   "EPG": {
+    "n": 46,
+    "mean_hz": 13.2,
+    "over_100hz": 0,
+    "silent": 0.239
+   },
+   "Delta7": {
+    "n": 42,
+    "mean_hz": 15.9,
+    "over_100hz": 0,
+    "silent": 0.167
+   },
+   "TuBu": {
+    "n": 156,
+    "mean_hz": 23.2,
+    "over_100hz": 14,
+    "silent": 0.385
+   },
+   "descending neurons": {
+    "n": 1314,
+    "mean_hz": 14.2,
+    "over_100hz": 33,
+    "silent": 0.425
+   }
+  },
+  "median_hz_of_active": 4.5,
+  "share_of_spikes_from_over_100hz": 0.243
+ }
+}
