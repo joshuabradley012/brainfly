@@ -61,7 +61,10 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   excited by increments and decrements alike (Keleş et al. 2020). With the best of the 8 flyvis
   models whose T2 responds to both (the second best of all 50), looming raises LC4 by 9.4–9.7 Hz on
   the loomed side, with peaks of 26 Hz and nothing on the other side. That passes eyepath_native.py's
-  pre-registered test on a fresh seed ([`experiments/eyepath_native_t2.py`](experiments/eyepath_native_t2.py)). An earlier port of
+  pre-registered test on a fresh seed ([`experiments/eyepath_native_t2.py`](experiments/eyepath_native_t2.py)).
+  Rung 3 still fails, though: that model gets 29 of the 32 known contrast polarities right, one short,
+  and one of the 16 T4/T5 motion directions wrong. None of flyvis's pretrained models with a
+  two-way T2 gets past 29, so the next step is training one that does. An earlier port of
   flyvis's parameters onto MaleCNS's own wiring ran at the wrong operating point and is kept for
   comparison (`FlyvisOpticLobe`); an earlier giant fiber result came from a one-dimensional eye whose
   "azimuth" tracked elevation.
@@ -87,6 +90,12 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   a different state from the one a fresh start reaches, so the fitted rates didn't carry over. Rewired
   networks have no resting state at all: calibrated the same way, they swing between silence and
   runaway ([`experiments/rest_calibration.py`](experiments/rest_calibration.py)).
+  A survey of the literature and a pilot judged on rates alone (FC was never computed) found what was
+  missing: short-term depression, measured at the fly's cholinergic synapses. With it, every cell type
+  lands within a factor of 2 of its target rate when started fresh, no neuron fires over 100 Hz,
+  none bursts, and the measured MBONs and PPL101 fire within a few percent of their literature rates.
+  Rewired networks now rest too, so they finally make a fair null. Attempt 2, pre-registered with
+  this change, is running ([`experiments/rest_calibration2.py`](experiments/rest_calibration2.py)).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/optomotor-dark.svg">
@@ -107,7 +116,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 | 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **passed** on the sixth attempt (pre-registered, fresh seeds, null gated on scrambled wiring): stable, MN9 follows the sugar rate, bitter and Ir94e suppress it, and rewiring abolishes the route. It survives weight shuffles, so the route rests on which neurons connect |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | in progress: rung 1's pass uses consensus transmitters with the monoamines out of fast excitation; false positives not yet measured |
 | 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: flyvis on its own terms gets all 16 T4/T5 directions right, drives LPLC2 and the giant fiber, and carries a rotating drum to the steering neuron DNa02 with the right sign. With a flyvis model whose T2 responds to decrements, looming drives LC4 too, at peaks of 26 Hz, but that model gets 29 of 32 contrast polarities right, one short, and T5a's direction wrong. None of flyvis's 8 models with such a T2 gets more than 29, so the next step is training one that does |
-| 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | in progress: attempt 1 (per-type biases fitted to resting rates, FC held out) failed. It rests at 2.1 Hz, but its FC is further from the flies' than independent firing, and its bump doesn't move |
+| 4. Central brain | per-type gains fitted to whole-brain resting-state imaging | held-out functional connectivity; a head-direction bump; a mean rate of 4 Hz or less | in progress: attempt 1 (per-type biases fitted to resting rates, FC held out) failed. It rests at 2.1 Hz, but its FC is further from the flies' than independent firing, and its bump doesn't move. Attempt 2 adds short-term depression at cholinergic synapses, a reset below rest and measured thresholds, and calibrates from fresh starts; it is running |
 | 5. Nerve cord | Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons, strong descending drive | DNg100 and DNb08 produce 7–15 Hz leg rhythms | not started |
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | not started |
 | 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | started: NeuroMechFly walks under a walking controller that the brain steers through DNa02; no motor neurons or muscles yet |
@@ -355,10 +364,14 @@ Three models share the package:
 * **`brainfly.hybrid.HybridBrain`** is brainfly's own model, under construction: Shiu's kernel with
   each cell type free to differ, as the report's biophysics calls for. A type can be graded instead of
   spiking, with no rate ceiling, and can have its own membrane time constant, threshold, reset,
-  refractory period, resting drive and synaptic scale. Chosen edges can act through a slow current.
-  Its state carries over between calls, so it can be stepped in a loop with a body. With nothing
-  changed, it is Shiu's model exactly. On rung 1's network it simulates one fly faster than real
-  time on one core of an Apple M4 Pro (0.84 s per simulated second), and 8 flies in 0.88 s.
+  refractory period, resting drive, synaptic scale, background activity, short-term depression and
+  spike-frequency adaptation. Chosen edges can act through a slow current. Parameters can also go to
+  named sets of neurons (every cholinergic neuron, say), and each neuron can carry its own bias,
+  which `set_bias` changes mid-run for calibration. Its state carries over between calls, so it can
+  be stepped in a loop with a body. With nothing changed, it is Shiu's model exactly. On rung 1's
+  network, silent at rest, it simulates one fly faster than real time on one core of an Apple M4 Pro
+  (0.84 s per simulated second), and 8 flies in 0.88 s. At rest, with background in every neuron,
+  8 flies take about 5–8 s per simulated second on 8 cores.
   `set_release` lets an optic lobe simulated elsewhere drive it: `FlyvisNative` sets the release
   of its 69,917 neurons every 2 ms, in about 1 ms.
 
@@ -373,6 +386,11 @@ counts. `[flyvis]` adds flyvis and PyTorch for `brainfly.optic`, which fetches f
 models (3.4 MB) on first use. `[body]` adds FlyGym and MuJoCo for `brainfly.body` (Python 3.12+). `FlyBrain` alone needs none of these: the first `FlyBrain()` fetches a
 prebuilt copy of its brain files (~260 MB). Add `[gpu]` for CuPy on an NVIDIA GPU (CUDA 12). Set
 `FLY_DATA=/some/path` to keep the data somewhere other than `~/fly-data`.
+
+Runs of hours go to throwaway Hetzner Cloud boxes. `scripts/remote/image.sh` bakes a snapshot with
+every dependency and the data. `JOBS=jobs.txt SERVER_TYPES="cpx62 cpx32" scripts/remote/run.sh`
+spreads a file of commands over the boxes, one queue for all, brings back what the jobs changed under
+`experiments/`, and deletes the boxes. Rung 4's attempts ran that way, five conditions at once.
 
 The inherited model, looming on the left:
 
@@ -447,7 +465,7 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | Path | What it is |
 |---|---|
 | [`reports/`](reports/) | the research report: what each layer of the fly needs, which models have been validated, why the inherited model fails, and the nine-rung plan |
-| [`research_notes/`](research_notes/) | the sourced notes behind the report: senses, neuron biophysics, the nerve cord, muscles and body models, datasets, and this project's experiments |
+| [`research_notes/`](research_notes/) | the sourced notes behind the report: senses, neuron biophysics, the nerve cord, muscles and body models, datasets, and this project's experiments; for rung 4, the resting-state imaging and measured resting rates, and the adaptation, thresholds and synaptic depression of fly central neurons |
 | `brainfly/brain.py` | `FlyBrain`, the inherited model, on CPU (numba) or NVIDIA GPU (CuPy), one fly or a batch |
 | `brainfly/shiu.py` | `ShiuBrain`, rung 1, and the raw signed synapse counts it runs on |
 | `brainfly/hybrid.py` | `HybridBrain`, brainfly's own per-type model, built on Shiu's kernel |
