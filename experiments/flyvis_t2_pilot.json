@@ -1,0 +1,145 @@
+{
+ "question": "Exploratory, not pre-registered: how strongly must a T2 constraint be weighted to fine-tune flyvis's best model,\nand how fast does it train here?\n\nflyvis_screen.py found no pretrained flyvis model with a T2 that answers light decrements (as a real T2 does;\nKeles et al. 2020) that also gets 30 of the 32 known contrast polarities right. Its best model, flow/0000/000,\ngets 30 but its T2 answers only increments. The plan is to fine-tune 000 on its own training task (Sintel flow,\nbrainfly.vistrain on Apple's GPU) plus a penalty on T2's flash responses, and then test the result on rung 3's\ncriteria, which the penalty doesn't touch: T2 is not among flyvis's 32 known polarities. This pilot only\nchooses the penalty's weight and the learning rate. It records T2's flash peaks, the flow loss, flyvis's\nvalidation error and the time per iteration. It measures none of rung 3's tests, so they stay held out.\nPenalty: w * [relu(0.5 * max(on, off) - min(on, off)) + relu(0.1 - on) + relu(0.1 - off)], with on and off the\ncentral T2's peak change in the 0.5 s after a full-field (radius 6) flash to light or dark from grey (dt 0.01).\nThe screen's T2 criterion, both above 0.02 and the smaller at least a third of the larger, measured at dt 0.005\nover 1 s, holds with a margin once the penalty is 0. Each setting runs 300 iterations from 000 (seed 0).\n\n    python experiments/flyvis_t2_pilot.py            (writes experiments/flyvis_t2_pilot.json)\n",
+ "start": {
+  "t2_on": 2.896,
+  "t2_off": 0.004,
+  "T2": false,
+  "val_epe": 5.1348
+ },
+ "runs": [
+  {
+   "weight": 100.0,
+   "lr": 5e-06,
+   "trace": [
+    {
+     "iteration": 50,
+     "flow_loss": 1267.37,
+     "penalty": 166.1079,
+     "seconds": 48,
+     "t2_on": 2.828,
+     "t2_off": 0.008,
+     "T2": false
+    },
+    {
+     "iteration": 100,
+     "flow_loss": 1306.87,
+     "penalty": 160.7099,
+     "seconds": 96,
+     "t2_on": 2.767,
+     "t2_off": 0.01,
+     "T2": false
+    },
+    {
+     "iteration": 150,
+     "flow_loss": 1274.69,
+     "penalty": 156.4165,
+     "seconds": 143,
+     "t2_on": 2.71,
+     "t2_off": 0.01,
+     "T2": false
+    },
+    {
+     "iteration": 200,
+     "flow_loss": 1204.66,
+     "penalty": 152.5947,
+     "seconds": 190,
+     "t2_on": 2.634,
+     "t2_off": 0.007,
+     "T2": false
+    },
+    {
+     "iteration": 250,
+     "flow_loss": 1185.27,
+     "penalty": 148.5855,
+     "seconds": 237,
+     "t2_on": 2.538,
+     "t2_off": 0.002,
+     "T2": false
+    },
+    {
+     "iteration": 300,
+     "flow_loss": 1266.82,
+     "penalty": 147.0969,
+     "seconds": 287,
+     "t2_on": 2.463,
+     "t2_off": -0.01,
+     "T2": false
+    }
+   ],
+   "end": {
+    "t2_on": 2.463,
+    "t2_off": -0.01,
+    "T2": false,
+    "val_epe": 5.3413
+   },
+   "seconds_per_iteration": 0.961
+  },
+  {
+   "weight": 1000.0,
+   "lr": 5e-06,
+   "trace": [
+    {
+     "iteration": 50,
+     "flow_loss": 1267.25,
+     "penalty": 1661.377,
+     "seconds": 49,
+     "t2_on": 2.834,
+     "t2_off": 0.008,
+     "T2": false
+    },
+    {
+     "iteration": 100,
+     "flow_loss": 1308.82,
+     "penalty": 1613.6334,
+     "seconds": 97,
+     "t2_on": 2.801,
+     "t2_off": 0.005,
+     "T2": false
+    },
+    {
+     "iteration": 150,
+     "flow_loss": 1280.76,
+     "penalty": 1543.6912,
+     "seconds": 144,
+     "t2_on": 2.64,
+     "t2_off": -0.011,
+     "T2": false
+    },
+    {
+     "iteration": 200,
+     "flow_loss": 1217.94,
+     "penalty": 1455.7617,
+     "seconds": 202,
+     "t2_on": 2.437,
+     "t2_off": -0.026,
+     "T2": false
+    },
+    {
+     "iteration": 250,
+     "flow_loss": 1200.65,
+     "penalty": 1364.2593,
+     "seconds": 250,
+     "t2_on": 2.239,
+     "t2_off": -0.039,
+     "T2": false
+    },
+    {
+     "iteration": 300,
+     "flow_loss": 1287.89,
+     "penalty": 1300.2129,
+     "seconds": 302,
+     "t2_on": 2.245,
+     "t2_off": -0.047,
+     "T2": false
+    }
+   ],
+   "end": {
+    "t2_on": 2.245,
+    "t2_off": -0.047,
+    "T2": false,
+    "val_epe": 5.6394
+   },
+   "seconds_per_iteration": 1.011
+  }
+ ]
+}

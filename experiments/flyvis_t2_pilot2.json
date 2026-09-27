@@ -1,0 +1,176 @@
+{
+ "question": "Exploratory, not pre-registered: can fine-tuning give flyvis's best model a T2 that answers light decrements,\nif the penalty asks for T2's mean OFF response instead of its peak?\n\nflyvis_t2_pilot.py penalized T2's flash peaks. While T2's OFF response is negative throughout (in flow/0000/000\nit falls by about 2 in its own units), the OFF peak sits at the flash's onset, before the network responds. So that\nterm carried no gradient, and the fine-tune only lowered T2's ON response. Here the OFF term is the mean change\nover the first 0.25 s of the dark flash, which has a gradient through every pathway that moves T2 then:\n    w * [relu(1 - off_mean) + relu(0.5 * max(on, off) - min(on, off)) + relu(0.1 - on)]\nwith on and off the central T2's peaks in the 0.5 s after a full-field (radius 6) flash from grey (dt 0.01).\nThe penalty is 0 only when the dark flash raises T2 by at least 1 on average over its first 0.25 s and the\nsmaller peak is at least half the larger. As in the first pilot, this records T2's flash responses, the flow loss,\nflyvis's validation error and the time per iteration, and none of rung 3's tests, which stay held out.\nSettings, each from 000 (seed 0) at learning rate 5e-6: no penalty for 300 iterations (how much fine-tuning alone\nmoves the validation error), then weights 100 and 1000 for 1000 iterations.\n\n    python experiments/flyvis_t2_pilot2.py            (writes experiments/flyvis_t2_pilot2.json)\n",
+ "start": {
+  "t2_on": 2.896,
+  "t2_off": 0.004,
+  "t2_off_mean": -2.164,
+  "T2": false,
+  "val_epe": 5.1348
+ },
+ "runs": [
+  {
+   "weight": 0.0,
+   "lr": 5e-06,
+   "iters": 300,
+   "trace": [
+    {
+     "iteration": 50,
+     "flow_loss": 1267.05,
+     "penalty": 0.0,
+     "seconds": 26,
+     "t2_on": 2.926,
+     "t2_off": -0.007,
+     "t2_off_mean": -2.172,
+     "T2": false
+    },
+    {
+     "iteration": 100,
+     "flow_loss": 1304.02,
+     "penalty": 0.0,
+     "seconds": 55,
+     "t2_on": 2.916,
+     "t2_off": -0.002,
+     "t2_off_mean": -2.173,
+     "T2": false
+    },
+    {
+     "iteration": 150,
+     "flow_loss": 1268.77,
+     "penalty": 0.0,
+     "seconds": 84,
+     "t2_on": 2.925,
+     "t2_off": 0.002,
+     "t2_off_mean": -2.174,
+     "T2": false
+    },
+    {
+     "iteration": 200,
+     "flow_loss": 1194.6,
+     "penalty": 0.0,
+     "seconds": 107,
+     "t2_on": 2.925,
+     "t2_off": -0.004,
+     "t2_off_mean": -2.161,
+     "T2": false
+    },
+    {
+     "iteration": 250,
+     "flow_loss": 1174.54,
+     "penalty": 0.0,
+     "seconds": 130,
+     "t2_on": 2.921,
+     "t2_off": -0.0,
+     "t2_off_mean": -2.162,
+     "T2": false
+    },
+    {
+     "iteration": 300,
+     "flow_loss": 1250.69,
+     "penalty": 0.0,
+     "seconds": 152,
+     "t2_on": 2.911,
+     "t2_off": 0.002,
+     "t2_off_mean": -2.158,
+     "T2": false
+    }
+   ],
+   "end": {
+    "t2_on": 2.911,
+    "t2_off": 0.002,
+    "t2_off_mean": -2.158,
+    "T2": false,
+    "val_epe": 5.1417
+   },
+   "seconds_per_iteration": 0.511
+  },
+  {
+   "weight": 100.0,
+   "lr": 5e-06,
+   "iters": 1000,
+   "trace": [
+    {
+     "iteration": 50,
+     "flow_loss": 1267.73,
+     "penalty": 461.0173,
+     "seconds": 42,
+     "t2_on": 2.629,
+     "t2_off": 0.001,
+     "t2_off_mean": -2.143,
+     "T2": false
+    },
+    {
+     "iteration": 100,
+     "flow_loss": 1306.84,
+     "penalty": 446.5014,
+     "seconds": 86,
+     "t2_on": 2.389,
+     "t2_off": 0.0,
+     "t2_off_mean": -2.115,
+     "T2": false
+    },
+    {
+     "iteration": 150,
+     "flow_loss": 1276.48,
+     "penalty": 430.9009,
+     "seconds": 130,
+     "t2_on": 2.218,
+     "t2_off": 0.003,
+     "t2_off_mean": -2.089,
+     "T2": false
+    },
+    {
+     "iteration": 200,
+     "flow_loss": 1204.87,
+     "penalty": 420.041,
+     "seconds": 178,
+     "t2_on": 2.062,
+     "t2_off": 0.0,
+     "t2_off_mean": -2.069,
+     "T2": false
+    },
+    {
+     "iteration": 250,
+     "flow_loss": 1186.47,
+     "penalty": 409.5985,
+     "seconds": 225,
+     "t2_on": 1.857,
+     "t2_off": -0.007,
+     "t2_off_mean": -2.075,
+     "T2": false
+    },
+    {
+     "iteration": 300,
+     "flow_loss": 1268.57,
+     "penalty": 402.1981,
+     "seconds": 273,
+     "t2_on": 1.698,
+     "t2_off": -0.023,
+     "t2_off_mean": -2.103,
+     "T2": false
+    },
+    {
+     "iteration": 350,
+     "flow_loss": 1244.65,
+     "penalty": 398.6164,
+     "seconds": 323,
+     "t2_on": 1.593,
+     "t2_off": -0.028,
+     "t2_off_mean": -2.082,
+     "T2": false
+    },
+    {
+     "iteration": 400,
+     "flow_loss": 1251.1,
+     "penalty": 391.2793,
+     "seconds": 372,
+     "t2_on": 1.503,
+     "t2_off": -0.031,
+     "t2_off_mean": -2.037,
+     "T2": false
+    }
+   ],
+   "stopped_at": 400,
+   "note": "stopped by hand: T2's ON peak kept falling and its mean OFF response stayed near -2.1, the first pilot's failure; the weight-1000 setting was cancelled"
+  }
+ ]
+}

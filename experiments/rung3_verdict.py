@@ -36,7 +36,7 @@ OUT = Path(__file__).with_suffix(".json")
 MODEL = "flow/0000/001"
 
 
-def polarity(models: list[str]) -> dict:
+def polarity(models: list[str], ensemble: str = "flow/0000") -> dict:
     os.environ.setdefault("FLYVIS_ROOT_DIR", str(DATA / "flyvis"))
     import flyvis
     from flyvis.analysis.flash_responses import flash_response_index
@@ -45,7 +45,7 @@ def polarity(models: list[str]) -> dict:
     from flyvis.utils.groundtruth_utils import polarity as known
 
     known = {k: v for k, v in known.items() if v != 0}
-    ens = EnsembleView(flyvis.results_dir / "flow/0000")
+    ens = EnsembleView(flyvis.results_dir / ensemble)
     fri = flash_response_index(flash_responses(ens, radius=(6,), dt=0.005, batch_size=4), radius=6)
     fri = fri.squeeze("sample") if "sample" in fri.dims else fri                  # (network_id, neuron)
     names = list(fri["network_name"].values)

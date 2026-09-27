@@ -1,0 +1,221 @@
+{
+ "question": "Exploratory, not pre-registered: does fine-tuning flyvis's model 006 give it a T2 that answers light decrements,\nand at what cost to its flow task?\n\nflyvis_t2_pilot.py and flyvis_t2_pilot2.py fine-tuned flow/0000/000, whose T2 falls when the field darkens. In\nboth, T2's ON response shrank and its OFF response didn't rise: in 000 the dark flash removes T2's drive from\nON cells (Mi1, Tm3) and its OFF input (Tm2) rests below threshold, so no small change turns the fall into a\nrise. flyvis_screen.py lists model 006 (seventh of 50 by validation loss) as the only one of flyvis's 50 with all\n32 known contrast polarities right, and its T2 already rises to the dark flash, by 0.95 against 4.94 to the\nlight one. The screen's T2 criterion needs the smaller at least a third of the larger. So 006 is the natural\nstart: the fix is smaller, and T2's OFF peak comes while the network is responding, where it has a gradient.\nTwo penalties, each for 500 iterations from 006 at weight 1000 and learning rate 5e-6 (seed 0):\n  symmetric   relu(0.5 * max(on, off) - min(on, off)) + relu(0.1 - on) + relu(0.1 - off)   (flyvis_t2_pilot.py's)\n  raise only  relu(0.5 * [on] - off) + relu(0.5 * [off] - on) + relu(0.1 - on) + relu(0.1 - off), [x] held\n              fixed in the gradient, so each response can only be pushed up towards half the other, not down\nwith on and off the central T2's peaks in the 0.5 s after a full-field (radius 6) flash from grey (dt 0.01).\nRecorded, as in the earlier pilots: T2's flash peaks (as the screen measures them), the flow loss, flyvis's\nvalidation error and the time per iteration, and none of rung 3's tests, which stay held out for the model\nthis chooses.\n\n    python experiments/flyvis_t2_pilot3.py            (writes experiments/flyvis_t2_pilot3.json)\n",
+ "start": {
+  "t2_on": 5.176,
+  "t2_off": 1.188,
+  "T2": false,
+  "val_epe": 5.2709
+ },
+ "runs": [
+  {
+   "penalty": "symmetric",
+   "weight": 1000.0,
+   "lr": 5e-06,
+   "iters": 500,
+   "trace": [
+    {
+     "iteration": 50,
+     "flow_loss": 1275.64,
+     "penalty": 1177.3807,
+     "seconds": 48,
+     "t2_on": 4.261,
+     "t2_off": 1.603,
+     "T2": true
+    },
+    {
+     "iteration": 100,
+     "flow_loss": 1385.39,
+     "penalty": 173.0128,
+     "seconds": 97,
+     "t2_on": 4.774,
+     "t2_off": 5.096,
+     "T2": true
+    },
+    {
+     "iteration": 150,
+     "flow_loss": 1355.34,
+     "penalty": 0.0,
+     "seconds": 146,
+     "t2_on": 4.727,
+     "t2_off": 5.039,
+     "T2": true
+    },
+    {
+     "iteration": 200,
+     "flow_loss": 1263.09,
+     "penalty": 0.0,
+     "seconds": 193,
+     "t2_on": 4.653,
+     "t2_off": 4.843,
+     "T2": true
+    },
+    {
+     "iteration": 250,
+     "flow_loss": 1231.45,
+     "penalty": 0.0,
+     "seconds": 241,
+     "t2_on": 4.631,
+     "t2_off": 4.669,
+     "T2": true
+    },
+    {
+     "iteration": 300,
+     "flow_loss": 1300.86,
+     "penalty": 0.0,
+     "seconds": 288,
+     "t2_on": 4.619,
+     "t2_off": 4.497,
+     "T2": true
+    },
+    {
+     "iteration": 350,
+     "flow_loss": 1274.06,
+     "penalty": 0.0,
+     "seconds": 337,
+     "t2_on": 4.611,
+     "t2_off": 4.365,
+     "T2": true
+    },
+    {
+     "iteration": 400,
+     "flow_loss": 1269.89,
+     "penalty": 0.0,
+     "seconds": 385,
+     "t2_on": 4.623,
+     "t2_off": 4.238,
+     "T2": true
+    },
+    {
+     "iteration": 450,
+     "flow_loss": 1247.35,
+     "penalty": 0.0,
+     "seconds": 433,
+     "t2_on": 4.628,
+     "t2_off": 4.097,
+     "T2": true
+    },
+    {
+     "iteration": 500,
+     "flow_loss": 1231.98,
+     "penalty": 0.0,
+     "seconds": 483,
+     "t2_on": 4.639,
+     "t2_off": 3.977,
+     "T2": true
+    }
+   ],
+   "end": {
+    "t2_on": 4.639,
+    "t2_off": 3.977,
+    "T2": true,
+    "val_epe": 5.5006
+   },
+   "seconds_per_iteration": 0.969
+  },
+  {
+   "penalty": "raise only",
+   "weight": 1000.0,
+   "lr": 5e-06,
+   "iters": 500,
+   "trace": [
+    {
+     "iteration": 50,
+     "flow_loss": 1298.15,
+     "penalty": 1822.6729,
+     "seconds": 48,
+     "t2_on": 5.109,
+     "t2_off": 1.641,
+     "T2": false
+    },
+    {
+     "iteration": 100,
+     "flow_loss": 1432.82,
+     "penalty": 2397.8971,
+     "seconds": 97,
+     "t2_on": 10.519,
+     "t2_off": 6.08,
+     "T2": true
+    },
+    {
+     "iteration": 150,
+     "flow_loss": 1398.17,
+     "penalty": 203.3977,
+     "seconds": 145,
+     "t2_on": 26.238,
+     "t2_off": 37.734,
+     "T2": true
+    },
+    {
+     "iteration": 200,
+     "flow_loss": 1309.32,
+     "penalty": 0.0,
+     "seconds": 194,
+     "t2_on": 26.472,
+     "t2_off": 38.138,
+     "T2": true
+    },
+    {
+     "iteration": 250,
+     "flow_loss": 1282.41,
+     "penalty": 0.0,
+     "seconds": 243,
+     "t2_on": 26.479,
+     "t2_off": 38.199,
+     "T2": true
+    },
+    {
+     "iteration": 300,
+     "flow_loss": 1358.83,
+     "penalty": 0.0,
+     "seconds": 291,
+     "t2_on": 26.446,
+     "t2_off": 38.165,
+     "T2": true
+    },
+    {
+     "iteration": 350,
+     "flow_loss": 1330.84,
+     "penalty": 0.0,
+     "seconds": 341,
+     "t2_on": 26.463,
+     "t2_off": 38.124,
+     "T2": true
+    },
+    {
+     "iteration": 400,
+     "flow_loss": 1325.86,
+     "penalty": 0.0,
+     "seconds": 401,
+     "t2_on": 26.275,
+     "t2_off": 37.95,
+     "T2": true
+    },
+    {
+     "iteration": 450,
+     "flow_loss": 1304.9,
+     "penalty": 0.0,
+     "seconds": 450,
+     "t2_on": 26.125,
+     "t2_off": 37.775,
+     "T2": true
+    },
+    {
+     "iteration": 500,
+     "flow_loss": 1288.53,
+     "penalty": 0.0,
+     "seconds": 500,
+     "t2_on": 25.946,
+     "t2_off": 37.492,
+     "T2": true
+    }
+   ],
+   "end": {
+    "t2_on": 25.946,
+    "t2_off": 37.492,
+    "T2": true,
+    "val_epe": 5.8109
+   },
+   "seconds_per_iteration": 1.003
+  }
+ ]
+}
