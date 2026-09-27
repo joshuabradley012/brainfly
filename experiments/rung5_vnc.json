@@ -1,0 +1,1775 @@
+{
+ "criteria": "Rung 5 (pre-registered): does brainfly's nerve cord, built by Pugliese et al.'s recipe from MaleCNS, turn DNg100\nand DNb08 into leg rhythms at walking frequencies, and does scrambled wiring abolish them?\n\nRung 5 (README; the report's plan): the recipe is Pugliese et al.'s (\"raw counts, excitability scaled by size, graded\npremotor neurons, strong descending drive\"), and the test is \"DNg100 and DNb08 produce 7-15 Hz leg rhythms\". Driving\nDNg100 (BDN2) makes decapitated flies walk, stepping at about 7-15 Hz, and DNb08 makes them move their front and\nmiddle legs rhythmically (Pugliese et al. 2025/2026, bioRxiv; Sapkal et al. 2024). vnc_rhythm.py (exploratory)\nreran Pugliese et al.'s model on their own male CNS files and reproduced their DNg100 rhythm. vnc_own.py found the\nsame rhythm on brainfly's own copy of the network (16 of 16 replicates on each side, 12-13 Hz), and none when sizes\ncome from brainfly's synapse-count proxy instead of neuron volumes.\nModel: the front legs' neuromere network Pugliese et al. selected (4,310 neurons; 4,309 in brainfly's MaleCNS), with\nbrainfly's synapse counts among them (brainfly.shiu.counts, signed by brainfly's consensus transmitters:\nacetylcholine excitatory, GABA and glutamate inhibitory; connections under 5 synapses dropped;\nvnc_own.own_network), their neuron volumes, and their rate model and parameter distributions (vnc_rhythm.py), drawn\nafresh for each replicate from seeds no earlier run used.\nDrives: DNg100, each side alone, at 400 (their male CNS value), 32 replicates. DNb08, each of the four alone, by their\nDN screen's rule, 16 replicates: each replicate's drive starts at 128; in 1-s runs it halves (or bisects down) while\nmore than 1,500 neurons are active or more than 100 pass 100 Hz, and doubles (or bisects up) while fewer than 5 are\nactive, at most 10 times; then the test run at that drive.\nScore (theirs, vnc_rhythm.py): the rhythmicity of the active leg motor neurons' rates after 0.23 s of a 2-s drive; a\nreplicate is rhythmic above 0.5; its frequency is that of the autocorrelation's most prominent peak.\nTests:\n  DNG100  each DNg100 is rhythmic in at least 24 of its 32 replicates, and those replicates' median frequency is\n          7-15 Hz\n  DNB08   at least one DNb08 neuron is rhythmic in at least 8 of its 16 replicates, at a median frequency of 7-15 Hz\n          (a single DNb08 drove rhythms in their male CNS network)\n  NULL    in each of 2 degree-preserving rewirings of the network (brainfly.nulls), each DNg100 is rhythmic in at\n          most 3 of 32 replicates\nPass: all three.\nReported: each condition's scores and frequencies, the DNb08 drives the rule settles on, and the motor modules (their\ntable's annotation: coxa swing, tibia flexion...) that the rhythmic replicates' active motor neurons belong to.\n\n    python experiments/rung5_vnc.py            (writes experiments/rung5_vnc.json)\n",
+ "dng100": {
+  "DNg100_L": {
+   "rhythmic": 30,
+   "of": 32,
+   "score_mean": 0.833,
+   "freq_hz_median": 13.7,
+   "freq_hz": [
+    13.9,
+    13.3,
+    14.7,
+    14.5,
+    11.8,
+    14.7,
+    13.9,
+    13.7,
+    12.8,
+    13.0,
+    10.9,
+    12.7,
+    14.5,
+    13.9,
+    10.9,
+    13.9,
+    11.5,
+    13.0,
+    11.9,
+    17.2,
+    13.9,
+    13.9,
+    13.7,
+    14.1,
+    14.1,
+    11.6,
+    13.0,
+    12.3,
+    13.7,
+    11.0
+   ],
+   "motor_modules": {
+    "coxa swing": 60,
+    "coxa stance": 30,
+    "femur/tr flex": 28,
+    "femur/tr extend": 6,
+    "femur reductor": 3,
+    "tarsus control": 1
+   },
+   "drive": [
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0
+   ],
+   "replicates": [
+    {
+     "score": 0.9168025500007189,
+     "active_mn": 4,
+     "freq_hz": 13.888888888888888
+    },
+    {
+     "score": 0.42838545195211836,
+     "active_mn": 7,
+     "freq_hz": 15.384615384615383
+    },
+    {
+     "score": 0.5994744876961872,
+     "active_mn": 5,
+     "freq_hz": 13.333333333333334
+    },
+    {
+     "score": 0.5999359292105657,
+     "active_mn": 5,
+     "freq_hz": 14.705882352941176
+    },
+    {
+     "score": 0.7489958646324433,
+     "active_mn": 4,
+     "freq_hz": 14.492753623188404
+    },
+    {
+     "score": 0.9997540681958139,
+     "active_mn": 4,
+     "freq_hz": 11.76470588235294
+    },
+    {
+     "score": 0.5997681520075456,
+     "active_mn": 5,
+     "freq_hz": 14.705882352941176
+    },
+    {
+     "score": 0.9993924527506501,
+     "active_mn": 3,
+     "freq_hz": 13.888888888888888
+    },
+    {
+     "score": 0.8039260552427189,
+     "active_mn": 4,
+     "freq_hz": 13.698630136986303
+    },
+    {
+     "score": 0.999209838421812,
+     "active_mn": 4,
+     "freq_hz": 12.820512820512821
+    },
+    {
+     "score": 0.9647430246737636,
+     "active_mn": 4,
+     "freq_hz": 12.987012987012987
+    },
+    {
+     "score": 0.9996622746784757,
+     "active_mn": 4,
+     "freq_hz": 10.869565217391305
+    },
+    {
+     "score": 0.9999739596196531,
+     "active_mn": 4,
+     "freq_hz": 12.658227848101266
+    },
+    {
+     "score": 0.6656742741787885,
+     "active_mn": 6,
+     "freq_hz": 14.492753623188404
+    },
+    {
+     "score": 0.9899437801700209,
+     "active_mn": 4,
+     "freq_hz": 13.888888888888888
+    },
+    {
+     "score": 0.9979215680922314,
+     "active_mn": 4,
+     "freq_hz": 10.869565217391305
+    },
+    {
+     "score": 0.7713746742155689,
+     "active_mn": 6,
+     "freq_hz": 13.888888888888888
+    },
+    {
+     "score": 0.9437681520608182,
+     "active_mn": 4,
+     "freq_hz": 11.494252873563218
+    },
+    {
+     "score": 0.7999660024943452,
+     "active_mn": 5,
+     "freq_hz": 12.987012987012987
+    },
+    {
+     "score": 0.9998184230869178,
+     "active_mn": 4,
+     "freq_hz": 11.904761904761903
+    },
+    {
+     "score": 0.7499510250245797,
+     "active_mn": 4,
+     "freq_hz": 17.241379310344826
+    },
+    {
+     "score": 0.9996973976346033,
+     "active_mn": 3,
+     "freq_hz": 13.888888888888888
+    },
+    {
+     "score": 0.5643943175523332,
+     "active_mn": 5,
+     "freq_hz": 13.888888888888888
+    },
+    {
+     "score": 0.6660519882741972,
+     "active_mn": 6,
+     "freq_hz": 13.698630136986303
+    },
+    {
+     "score": 0.4992351584073616,
+     "active_mn": 6,
+     "freq_hz": 14.492753623188404
+    },
+    {
+     "score": 0.999489502291727,
+     "active_mn": 4,
+     "freq_hz": 14.08450704225352
+    },
+    {
+     "score": 0.9919430974071145,
+     "active_mn": 4,
+     "freq_hz": 14.08450704225352
+    },
+    {
+     "score": 0.9347844350406287,
+     "active_mn": 4,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.9998405330771716,
+     "active_mn": 3,
+     "freq_hz": 12.987012987012987
+    },
+    {
+     "score": 0.7498941608725699,
+     "active_mn": 4,
+     "freq_hz": 12.345679012345679
+    },
+    {
+     "score": 0.9524786816086329,
+     "active_mn": 4,
+     "freq_hz": 13.698630136986303
+    },
+    {
+     "score": 0.7310891862417761,
+     "active_mn": 4,
+     "freq_hz": 10.989010989010989
+    }
+   ]
+  },
+  "DNg100_R": {
+   "rhythmic": 31,
+   "of": 32,
+   "score_mean": 0.904,
+   "freq_hz_median": 11.6,
+   "freq_hz": [
+    11.8,
+    11.4,
+    14.1,
+    10.9,
+    10.8,
+    11.6,
+    12.2,
+    10.5,
+    10.9,
+    11.6,
+    12.0,
+    11.5,
+    11.6,
+    11.5,
+    11.6,
+    12.2,
+    12.3,
+    11.6,
+    11.9,
+    11.8,
+    11.8,
+    11.6,
+    11.6,
+    10.5,
+    11.2,
+    11.4,
+    11.2,
+    10.1,
+    14.3,
+    11.8,
+    11.8
+   ],
+   "motor_modules": {
+    "femur/tr flex": 122,
+    "coxa swing": 74,
+    "coxa stance": 71,
+    "femur/tr extend": 5
+   },
+   "drive": [
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0,
+    400.0
+   ],
+   "replicates": [
+    {
+     "score": 0.8693811105111795,
+     "active_mn": 8,
+     "freq_hz": 11.76470588235294
+    },
+    {
+     "score": 0.9995095546916507,
+     "active_mn": 8,
+     "freq_hz": 11.363636363636365
+    },
+    {
+     "score": 0.9998400460197456,
+     "active_mn": 8,
+     "freq_hz": 14.08450704225352
+    },
+    {
+     "score": 0.9942086437497489,
+     "active_mn": 7,
+     "freq_hz": 10.869565217391305
+    },
+    {
+     "score": 0.9758701873046337,
+     "active_mn": 8,
+     "freq_hz": 10.75268817204301
+    },
+    {
+     "score": 0.9734834023484898,
+     "active_mn": 9,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.8845038446770889,
+     "active_mn": 9,
+     "freq_hz": 12.195121951219512
+    },
+    {
+     "score": 0.8625564160522462,
+     "active_mn": 9,
+     "freq_hz": 10.526315789473685
+    },
+    {
+     "score": 0.7716093484145884,
+     "active_mn": 11,
+     "freq_hz": 10.869565217391305
+    },
+    {
+     "score": 0.8709179930206717,
+     "active_mn": 10,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.92128621156424,
+     "active_mn": 14,
+     "freq_hz": 12.048192771084336
+    },
+    {
+     "score": 0.7324584838136394,
+     "active_mn": 14,
+     "freq_hz": 11.494252873563218
+    },
+    {
+     "score": 0.9994205898103108,
+     "active_mn": 8,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.9955769804643688,
+     "active_mn": 7,
+     "freq_hz": 11.494252873563218
+    },
+    {
+     "score": 0.9987941050748859,
+     "active_mn": 8,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.9985726882924124,
+     "active_mn": 7,
+     "freq_hz": 12.195121951219512
+    },
+    {
+     "score": 0.9713840833052468,
+     "active_mn": 9,
+     "freq_hz": 12.345679012345679
+    },
+    {
+     "score": 0.8832097311059345,
+     "active_mn": 9,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.8887587866560342,
+     "active_mn": 9,
+     "freq_hz": 11.904761904761903
+    },
+    {
+     "score": 0.9994819376915276,
+     "active_mn": 7,
+     "freq_hz": 11.76470588235294
+    },
+    {
+     "score": 0.9962971968355413,
+     "active_mn": 9,
+     "freq_hz": 11.76470588235294
+    },
+    {
+     "score": 0.7989743775405008,
+     "active_mn": 10,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.8880058033213916,
+     "active_mn": 9,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.9492890145210654,
+     "active_mn": 8,
+     "freq_hz": 10.526315789473685
+    },
+    {
+     "score": 0.9991818551656728,
+     "active_mn": 8,
+     "freq_hz": 11.235955056179776
+    },
+    {
+     "score": 0.9833163412232314,
+     "active_mn": 8,
+     "freq_hz": 11.363636363636365
+    },
+    {
+     "score": 0.10469597780725837,
+     "active_mn": 66,
+     "freq_hz": 0.9832841691248769
+    },
+    {
+     "score": 0.997269788862119,
+     "active_mn": 7,
+     "freq_hz": 11.235955056179776
+    },
+    {
+     "score": 0.9636977170329097,
+     "active_mn": 9,
+     "freq_hz": 10.1010101010101
+    },
+    {
+     "score": 0.8326251936744593,
+     "active_mn": 6,
+     "freq_hz": 14.285714285714285
+    },
+    {
+     "score": 0.9536991148386762,
+     "active_mn": 9,
+     "freq_hz": 11.76470588235294
+    },
+    {
+     "score": 0.8679335164186494,
+     "active_mn": 10,
+     "freq_hz": 11.76470588235294
+    }
+   ]
+  }
+ },
+ "dnb08": {
+  "DNb08(VES082)_R": {
+   "rhythmic": 0,
+   "of": 16,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "motor_modules": {},
+   "drive": [
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0
+   ],
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_R": {
+   "rhythmic": 0,
+   "of": 16,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "motor_modules": {},
+   "drive": [
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0
+   ],
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 3,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_L": {
+   "rhythmic": 1,
+   "of": 16,
+   "score_mean": 0.062,
+   "freq_hz_median": 13.0,
+   "freq_hz": [
+    13.0
+   ],
+   "motor_modules": {
+    "femur/tr flex": 3,
+    "coxa swing": 2,
+    "tibia extend": 2
+   },
+   "drive": [
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0
+   ],
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.9992692495418153,
+     "active_mn": 7,
+     "freq_hz": 12.987012987012987
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES082)_L": {
+   "rhythmic": 10,
+   "of": 16,
+   "score_mean": 0.529,
+   "freq_hz_median": 18.2,
+   "freq_hz": [
+    17.5,
+    17.9,
+    16.9,
+    18.5,
+    21.3,
+    16.1,
+    19.2,
+    14.9,
+    21.3,
+    20.4
+   ],
+   "motor_modules": {
+    "coxa swing": 20,
+    "tibia extend": 20,
+    "femur/tr flex": 15,
+    "femur/tr extend": 4,
+    "coxa stance": 3,
+    "tibia flex": 2
+   },
+   "drive": [
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0,
+    128.0
+   ],
+   "replicates": [
+    {
+     "score": 0.9991525223075588,
+     "active_mn": 5,
+     "freq_hz": 17.543859649122805
+    },
+    {
+     "score": 0.8392172572998914,
+     "active_mn": 7,
+     "freq_hz": 17.857142857142858
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.8248169856046857,
+     "active_mn": 10,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.9173095476088183,
+     "active_mn": 4,
+     "freq_hz": 18.51851851851852
+    },
+    {
+     "score": 0.6986356815794776,
+     "active_mn": 5,
+     "freq_hz": 21.27659574468085
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.7461385083571116,
+     "active_mn": 8,
+     "freq_hz": 16.129032258064516
+    },
+    {
+     "score": 0.9690920219217705,
+     "active_mn": 4,
+     "freq_hz": 19.23076923076923
+    },
+    {
+     "score": 0.8492427948583642,
+     "active_mn": 9,
+     "freq_hz": 14.925373134328357
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 4,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.639976551144545,
+     "active_mn": 6,
+     "freq_hz": 21.27659574468085
+    },
+    {
+     "score": 0.9849984318291968,
+     "active_mn": 6,
+     "freq_hz": 20.408163265306122
+    }
+   ]
+  }
+ },
+ "nulls": [
+  {
+   "rewiring": 1,
+   "DNg100_L": {
+    "rhythmic": 0,
+    "of": 32,
+    "score_mean": 0.143,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "motor_modules": {},
+    "drive": [
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0
+    ],
+    "replicates": [
+     {
+      "score": 0.15737210777834176,
+      "active_mn": 100,
+      "freq_hz": 1.1161604081958063
+     },
+     {
+      "score": 0.04267481733918159,
+      "active_mn": 100,
+      "freq_hz": 1.1368936190553707
+     },
+     {
+      "score": 0.17548779013103769,
+      "active_mn": 100,
+      "freq_hz": 0.8223684210526316
+     },
+     {
+      "score": 0.15944483335339912,
+      "active_mn": 103,
+      "freq_hz": 1.0352366255144032
+     },
+     {
+      "score": 0.15677328890216397,
+      "active_mn": 100,
+      "freq_hz": 1.1737089201877935
+     },
+     {
+      "score": 0.17565235208452593,
+      "active_mn": 102,
+      "freq_hz": 1.0204081632653061
+     },
+     {
+      "score": 0.17262036439011563,
+      "active_mn": 105,
+      "freq_hz": 0.8839084141206615
+     },
+     {
+      "score": 0.13409519436077705,
+      "active_mn": 101,
+      "freq_hz": 1.7094017094017095
+     },
+     {
+      "score": 0.08845329776546804,
+      "active_mn": 103,
+      "freq_hz": 1.6411084207694377
+     },
+     {
+      "score": 0.19186364804328218,
+      "active_mn": 102,
+      "freq_hz": 1.1278434362689032
+     },
+     {
+      "score": 0.17901881050144666,
+      "active_mn": 101,
+      "freq_hz": 1.4771048744460855
+     },
+     {
+      "score": 0.17106199477295658,
+      "active_mn": 103,
+      "freq_hz": 1.1764543242645433
+     },
+     {
+      "score": 0.11869786039903034,
+      "active_mn": 101,
+      "freq_hz": 1.1550809557027786
+     },
+     {
+      "score": 0.19239760731532246,
+      "active_mn": 103,
+      "freq_hz": 1.0582010582010581
+     },
+     {
+      "score": 0.14854139237617636,
+      "active_mn": 105,
+      "freq_hz": 1.589825119236884
+     },
+     {
+      "score": 0.16821147438846512,
+      "active_mn": 103,
+      "freq_hz": 1.404494382022472
+     },
+     {
+      "score": 0.1014841919467559,
+      "active_mn": 100,
+      "freq_hz": 1.160092807424594
+     },
+     {
+      "score": 0.22028124208316635,
+      "active_mn": 101,
+      "freq_hz": 1.2531328320802004
+     },
+     {
+      "score": 0.08810588964347744,
+      "active_mn": 104,
+      "freq_hz": 1.3183967183480498
+     },
+     {
+      "score": 0.10128218633428322,
+      "active_mn": 101,
+      "freq_hz": 0.8041922766499038
+     },
+     {
+      "score": 0.16599185970019512,
+      "active_mn": 101,
+      "freq_hz": 1.0515247108307044
+     },
+     {
+      "score": 0.10238500607949207,
+      "active_mn": 98,
+      "freq_hz": 1.153588231537266
+     },
+     {
+      "score": 0.20016690886872845,
+      "active_mn": 105,
+      "freq_hz": 0.9578807587479411
+     },
+     {
+      "score": 0.14694245501281097,
+      "active_mn": 103,
+      "freq_hz": 2.262443438914027
+     },
+     {
+      "score": 0.078993457266912,
+      "active_mn": 102,
+      "freq_hz": 1.068661044654643
+     },
+     {
+      "score": 0.15006766330366078,
+      "active_mn": 101,
+      "freq_hz": 1.1702946485555181
+     },
+     {
+      "score": 0.10318585324828289,
+      "active_mn": 103,
+      "freq_hz": 1.4975731692280099
+     },
+     {
+      "score": 0.1676508866761777,
+      "active_mn": 105,
+      "freq_hz": 0.9746672024486376
+     },
+     {
+      "score": 0.17434295388512122,
+      "active_mn": 102,
+      "freq_hz": 1.0141987829614605
+     },
+     {
+      "score": 0.1694191858384367,
+      "active_mn": 105,
+      "freq_hz": 1.4662756598240467
+     },
+     {
+      "score": 0.10931259218953278,
+      "active_mn": 99,
+      "freq_hz": 0.9980288432327767
+     },
+     {
+      "score": 0.07460925773552551,
+      "active_mn": 102,
+      "freq_hz": 1.2834718980303705
+     }
+    ]
+   },
+   "DNg100_R": {
+    "rhythmic": 0,
+    "of": 32,
+    "score_mean": 0.126,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "motor_modules": {},
+    "drive": [
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0
+    ],
+    "replicates": [
+     {
+      "score": 0.10602506239413581,
+      "active_mn": 108,
+      "freq_hz": 1.2937390061473524
+     },
+     {
+      "score": 0.13185214915315716,
+      "active_mn": 106,
+      "freq_hz": 1.3458950201884252
+     },
+     {
+      "score": 0.1265812525948291,
+      "active_mn": 106,
+      "freq_hz": 1.2953563488401358
+     },
+     {
+      "score": 0.0935233957086699,
+      "active_mn": 106,
+      "freq_hz": 1.4492753623188404
+     },
+     {
+      "score": 0.08424784150890464,
+      "active_mn": 106,
+      "freq_hz": 1.9455252918287937
+     },
+     {
+      "score": 0.13500379561939158,
+      "active_mn": 108,
+      "freq_hz": 1.081081081081081
+     },
+     {
+      "score": 0.07238345657969633,
+      "active_mn": 107,
+      "freq_hz": 1.2594458438287153
+     },
+     {
+      "score": 0.08813732484327487,
+      "active_mn": 106,
+      "freq_hz": 0.8431703204047218
+     },
+     {
+      "score": 0.1143527298043953,
+      "active_mn": 105,
+      "freq_hz": 0.9718172983479106
+     },
+     {
+      "score": 0.07871850386252276,
+      "active_mn": 106,
+      "freq_hz": 1.21654501216545
+     },
+     {
+      "score": 0.07535017726876765,
+      "active_mn": 107,
+      "freq_hz": 1.1750881316098707
+     },
+     {
+      "score": 0.11850209709815786,
+      "active_mn": 107,
+      "freq_hz": 1.6181229773462784
+     },
+     {
+      "score": 0.06264360422999132,
+      "active_mn": 104,
+      "freq_hz": 1.0319917440660475
+     },
+     {
+      "score": 0.12583917903179503,
+      "active_mn": 102,
+      "freq_hz": 1.2453319437724097
+     },
+     {
+      "score": 0.19761612622926034,
+      "active_mn": 108,
+      "freq_hz": 1.179245283018868
+     },
+     {
+      "score": 0.1208116595175566,
+      "active_mn": 108,
+      "freq_hz": 1.6313908338722511
+     },
+     {
+      "score": 0.13459314034283862,
+      "active_mn": 108,
+      "freq_hz": 0.9505703422053231
+     },
+     {
+      "score": 0.13034446898086785,
+      "active_mn": 108,
+      "freq_hz": 1.7406453567641265
+     },
+     {
+      "score": 0.17616293204377045,
+      "active_mn": 106,
+      "freq_hz": 1.0235414534288638
+     },
+     {
+      "score": 0.06549648815596913,
+      "active_mn": 107,
+      "freq_hz": 1.1299292850491984
+     },
+     {
+      "score": 0.05836168272157342,
+      "active_mn": 108,
+      "freq_hz": 0.9699321047526674
+     },
+     {
+      "score": 0.17577774455113074,
+      "active_mn": 109,
+      "freq_hz": 1.0543035816309971
+     },
+     {
+      "score": 0.12334538287759517,
+      "active_mn": 106,
+      "freq_hz": 1.607717041800643
+     },
+     {
+      "score": 0.18109548979552856,
+      "active_mn": 109,
+      "freq_hz": 1.1444305251070048
+     },
+     {
+      "score": 0.16967209227410118,
+      "active_mn": 110,
+      "freq_hz": 0.9174311926605504
+     },
+     {
+      "score": 0.16871080247097192,
+      "active_mn": 108,
+      "freq_hz": 1.3368983957219251
+     },
+     {
+      "score": 0.19816436891789818,
+      "active_mn": 106,
+      "freq_hz": 1.4727540500736376
+     },
+     {
+      "score": 0.08746112219271539,
+      "active_mn": 107,
+      "freq_hz": 1.0638297872340425
+     },
+     {
+      "score": 0.1209694466321601,
+      "active_mn": 108,
+      "freq_hz": 1.2359080527157915
+     },
+     {
+      "score": 0.16289926886297168,
+      "active_mn": 108,
+      "freq_hz": 2.528449047436389
+     },
+     {
+      "score": 0.18153960190717663,
+      "active_mn": 104,
+      "freq_hz": 1.473936202566843
+     },
+     {
+      "score": 0.15743531317169487,
+      "active_mn": 105,
+      "freq_hz": 1.92144412861309
+     }
+    ]
+   }
+  },
+  {
+   "rewiring": 2,
+   "DNg100_L": {
+    "rhythmic": 0,
+    "of": 32,
+    "score_mean": 0.098,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "motor_modules": {},
+    "drive": [
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0
+    ],
+    "replicates": [
+     {
+      "score": 0.10983522771011675,
+      "active_mn": 104,
+      "freq_hz": 1.0319917440660475
+     },
+     {
+      "score": 0.17851167029472326,
+      "active_mn": 106,
+      "freq_hz": 1.212985194077631
+     },
+     {
+      "score": 0.052332182705947784,
+      "active_mn": 105,
+      "freq_hz": 2.260236188296829
+     },
+     {
+      "score": 0.13187983250694976,
+      "active_mn": 104,
+      "freq_hz": 0.8460236886632826
+     },
+     {
+      "score": 0.15499368733808713,
+      "active_mn": 102,
+      "freq_hz": 1.7905117304967266
+     },
+     {
+      "score": 0.12035450166303772,
+      "active_mn": 103,
+      "freq_hz": 0.7952649639458802
+     },
+     {
+      "score": 0.0731946512635455,
+      "active_mn": 101,
+      "freq_hz": 1.8050541516245486
+     },
+     {
+      "score": 0.13893194145995075,
+      "active_mn": 104,
+      "freq_hz": 1.075268817204301
+     },
+     {
+      "score": 0.09066425015825888,
+      "active_mn": 104,
+      "freq_hz": 1.3220070041032022
+     },
+     {
+      "score": 0.050294704909854014,
+      "active_mn": 102,
+      "freq_hz": 0.9872447587341436
+     },
+     {
+      "score": 0.06460148625823614,
+      "active_mn": 105,
+      "freq_hz": 1.7794495738186606
+     },
+     {
+      "score": 0.018177170012940655,
+      "active_mn": 108,
+      "freq_hz": 1.8283063265415262
+     },
+     {
+      "score": 0.1264299445559503,
+      "active_mn": 105,
+      "freq_hz": 1.560157330062114
+     },
+     {
+      "score": 0.06108260164523617,
+      "active_mn": 104,
+      "freq_hz": 1.0718113612004287
+     },
+     {
+      "score": 0.031252380094977,
+      "active_mn": 103,
+      "freq_hz": 1.5432098765432098
+     },
+     {
+      "score": 0.12152546937582416,
+      "active_mn": 104,
+      "freq_hz": 0.9944691304326336
+     },
+     {
+      "score": 0.10368805610066197,
+      "active_mn": 105,
+      "freq_hz": 0.9009367307035179
+     },
+     {
+      "score": 0.08431227885625672,
+      "active_mn": 106,
+      "freq_hz": 1.243781094527363
+     },
+     {
+      "score": 0.1047433078069263,
+      "active_mn": 104,
+      "freq_hz": 1.7574692442882247
+     },
+     {
+      "score": 0.109337272818346,
+      "active_mn": 105,
+      "freq_hz": 1.4367816091954022
+     },
+     {
+      "score": 0.07559908591796,
+      "active_mn": 104,
+      "freq_hz": 2.8091882550679808
+     },
+     {
+      "score": 0.05362972498427574,
+      "active_mn": 103,
+      "freq_hz": 1.0845464185867155
+     },
+     {
+      "score": 0.10068395079040679,
+      "active_mn": 104,
+      "freq_hz": 1.2195121951219512
+     },
+     {
+      "score": 0.03236566093792991,
+      "active_mn": 102,
+      "freq_hz": 1.7035775127768313
+     },
+     {
+      "score": 0.10468532996077909,
+      "active_mn": 104,
+      "freq_hz": 1.3071895424836601
+     },
+     {
+      "score": 0.05646951680255442,
+      "active_mn": 104,
+      "freq_hz": 1.6820964949013661
+     },
+     {
+      "score": 0.11150909944442078,
+      "active_mn": 104,
+      "freq_hz": 1.4285714285714284
+     },
+     {
+      "score": 0.08708680142025003,
+      "active_mn": 104,
+      "freq_hz": 1.215066828675577
+     },
+     {
+      "score": 0.19451991557006662,
+      "active_mn": 107,
+      "freq_hz": 0.9950248756218905
+     },
+     {
+      "score": 0.13626154466766177,
+      "active_mn": 102,
+      "freq_hz": 1.1086488127501988
+     },
+     {
+      "score": 0.128101885345524,
+      "active_mn": 105,
+      "freq_hz": 1.4114895448170344
+     },
+     {
+      "score": 0.13497814829996965,
+      "active_mn": 104,
+      "freq_hz": 0.9858685696358309
+     }
+    ]
+   },
+   "DNg100_R": {
+    "rhythmic": 0,
+    "of": 32,
+    "score_mean": 0.129,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "motor_modules": {},
+    "drive": [
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0,
+     400.0
+    ],
+    "replicates": [
+     {
+      "score": 0.1856062529168103,
+      "active_mn": 102,
+      "freq_hz": 0.9866992743111602
+     },
+     {
+      "score": 0.10751859094329543,
+      "active_mn": 105,
+      "freq_hz": 1.349527665317139
+     },
+     {
+      "score": 0.04609192670654343,
+      "active_mn": 104,
+      "freq_hz": 1.392757660167131
+     },
+     {
+      "score": 0.10584120353072538,
+      "active_mn": 102,
+      "freq_hz": 1.1299435028248588
+     },
+     {
+      "score": 0.10687487787944643,
+      "active_mn": 103,
+      "freq_hz": 1.4513788098693758
+     },
+     {
+      "score": 0.13811164212857863,
+      "active_mn": 102,
+      "freq_hz": 1.0822510822510822
+     },
+     {
+      "score": 0.13107596154491014,
+      "active_mn": 102,
+      "freq_hz": 1.36986301369863
+     },
+     {
+      "score": 0.1421865770063951,
+      "active_mn": 107,
+      "freq_hz": 1.1520737327188941
+     },
+     {
+      "score": 0.1104883637207031,
+      "active_mn": 108,
+      "freq_hz": 1.015228426395939
+     },
+     {
+      "score": 0.17059983889263672,
+      "active_mn": 101,
+      "freq_hz": 1.0101010101010102
+     },
+     {
+      "score": 0.12592358071744475,
+      "active_mn": 102,
+      "freq_hz": 2.032520325203252
+     },
+     {
+      "score": 0.036434670869754014,
+      "active_mn": 106,
+      "freq_hz": 1.5455950540958268
+     },
+     {
+      "score": 0.2296645693963903,
+      "active_mn": 105,
+      "freq_hz": 1.0718113612004287
+     },
+     {
+      "score": 0.17341106681416463,
+      "active_mn": 104,
+      "freq_hz": 1.1547359508237163
+     },
+     {
+      "score": 0.14037816078783905,
+      "active_mn": 104,
+      "freq_hz": 1.4641288433382136
+     },
+     {
+      "score": 0.03188153078546213,
+      "active_mn": 102,
+      "freq_hz": 2.1008403361344534
+     },
+     {
+      "score": 0.1669099217457931,
+      "active_mn": 106,
+      "freq_hz": 0.9596928982725528
+     },
+     {
+      "score": 0.051106093125844326,
+      "active_mn": 103,
+      "freq_hz": 2.0242914979757085
+     },
+     {
+      "score": 0.13346452994129795,
+      "active_mn": 104,
+      "freq_hz": 1.8940005380683345
+     },
+     {
+      "score": 0.06366467122180502,
+      "active_mn": 105,
+      "freq_hz": 1.9589559397999985
+     },
+     {
+      "score": 0.1892386711423519,
+      "active_mn": 100,
+      "freq_hz": 1.1557956515939711
+     },
+     {
+      "score": 0.21560191106923526,
+      "active_mn": 104,
+      "freq_hz": 1.7035775127768313
+     },
+     {
+      "score": 0.11891546361977631,
+      "active_mn": 104,
+      "freq_hz": 0.9216589861751152
+     },
+     {
+      "score": 0.15094231897458005,
+      "active_mn": 106,
+      "freq_hz": 1.4546754857029203
+     },
+     {
+      "score": 0.1772181085527616,
+      "active_mn": 106,
+      "freq_hz": 1.1869473826577477
+     },
+     {
+      "score": 0.15676514467663338,
+      "active_mn": 104,
+      "freq_hz": 1.3071895424836601
+     },
+     {
+      "score": 0.1511408149933167,
+      "active_mn": 103,
+      "freq_hz": 1.17096018735363
+     },
+     {
+      "score": 0.04510110457689319,
+      "active_mn": 105,
+      "freq_hz": 1.7841340981289666
+     },
+     {
+      "score": 0.15821474236552124,
+      "active_mn": 102,
+      "freq_hz": 1.1099120939766633
+     },
+     {
+      "score": 0.21961453484529841,
+      "active_mn": 105,
+      "freq_hz": 1.7543859649122806
+     },
+     {
+      "score": 0.10584344798894135,
+      "active_mn": 104,
+      "freq_hz": 2.2831050228310503
+     },
+     {
+      "score": 0.05298177426651873,
+      "active_mn": 106,
+      "freq_hz": 1.212121212121212
+     }
+    ]
+   }
+  }
+ ],
+ "DNG100": true,
+ "DNB08": false,
+ "NULL": true,
+ "pass": false,
+ "seconds": 1174
+}
