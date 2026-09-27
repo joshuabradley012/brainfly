@@ -1,0 +1,141 @@
+{
+ "question": "Exploratory, not pre-registered: does a stronger synapse bring taste back to the resting brain while it\nstill rests and escapes?\n\nShiu et al. (2024) fitted their one synaptic weight so that sugar at 100 Hz drives MN9 to about 80% of its\nmaximum, and rung 1 refitted it for MaleCNS (1.5556 mV). The resting brain keeps that weight and adds a\nbias per cell type calibrated to resting rates, so a stronger synapse can rest the same, the biases\nabsorbing it, while passing more of a signal on. taste_trace.py found the resting brain's gain too low\nat every step of rung 1's route: sugar's rise falls about 3-fold per synapse (25 to 7.5 Hz at the\nfirst, 17 to 1.2 at the second, 13 to 0 at the third), and MN9's premotor inputs barely move. Here\nescape_at_rest2.py's model (which passed) with every synapse's weight multiplied by m, recalibrated\nfrom escape_at_rest2.py's eyes-open biases in 20 fresh-start rounds (k = 2 mV for 8 rounds, then 1 for\n8, then 0.5 for 4), then measured:\n  rest      10 s at grey, 8 flies: the brain's own mean rate, neurons over 100 Hz, neurons whose 1-s\n            Fano factor passes 10 (bursting, as depression_rules.py counts it)\n  ignition  the left looming loop, 32 flies, as ignition.py counts it\n  taste     escape_at_rest.py's measures (MN9 L's rise under sugar at 100 and 10 Hz, and with bitter)\n  looming   eyes_at_rest.py's tests at gain 1 on seed 1, and the giant fiber's rise\nfor m = 1 (escape_at_rest2.py's weight, recalibrated the same way), 1.5, 2 and 3. flyvis's release\nreaches the brain through the same weight, so at m = 3 a loom at gain 1 lands as hard as one at gain\n3 did.\n\n    python experiments/taste_wsyn.py --m 1.5        (writes experiments/taste_wsyn/1.5.json; also 1, 2, 3)\n    python experiments/taste_wsyn.py --report       (writes experiments/taste_wsyn.json)\n",
+ "conditions": [
+  {
+   "m": 1.0,
+   "w_syn_mv": 1.5556,
+   "calibration": {
+    "round": 20,
+    "mean_hz_own": 1.65,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9998
+   },
+   "rest": {
+    "mean_hz_own": 1.661,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 27
+   },
+   "ignited_flies": 0,
+   "flies": 32,
+   "taste": {
+    "sugar": 1.75,
+    "sugar 10 Hz": 0.88,
+    "sugar+bitter": -3.62,
+    "SUGAR": false
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 27.0,
+    "fastR DNp01": 26.5
+   },
+   "seconds": 1381
+  },
+  {
+   "m": 1.5,
+   "w_syn_mv": 2.3334,
+   "calibration": {
+    "round": 20,
+    "mean_hz_own": 1.625,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9985
+   },
+   "rest": {
+    "mean_hz_own": 1.663,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 78
+   },
+   "ignited_flies": 0,
+   "flies": 32,
+   "taste": {
+    "sugar": 2.75,
+    "sugar 10 Hz": 2.88,
+    "sugar+bitter": -3.12,
+    "SUGAR": false
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 33.75,
+    "fastR DNp01": 32.0
+   },
+   "seconds": 1395
+  },
+  {
+   "m": 2.0,
+   "w_syn_mv": 3.1112,
+   "calibration": {
+    "round": 20,
+    "mean_hz_own": 1.667,
+    "over_100hz": 16,
+    "groups_within_2x": 0.9887
+   },
+   "rest": {
+    "mean_hz_own": 1.669,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 93
+   },
+   "ignited_flies": 2,
+   "flies": 32,
+   "taste": {
+    "sugar": -1.75,
+    "sugar 10 Hz": 0.38,
+    "sugar+bitter": 1.0,
+    "SUGAR": false
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 42.75,
+    "fastR DNp01": 40.25
+   },
+   "seconds": 1415
+  },
+  {
+   "m": 3.0,
+   "w_syn_mv": 4.6668,
+   "calibration": {
+    "round": 20,
+    "mean_hz_own": 2.262,
+    "over_100hz": 33,
+    "groups_within_2x": 0.9172
+   },
+   "rest": {
+    "mean_hz_own": 2.224,
+    "over_100hz": 33,
+    "bursting_fano_over_10": 456
+   },
+   "ignited_flies": 25,
+   "flies": 32,
+   "taste": {
+    "sugar": 1.88,
+    "sugar 10 Hz": 1.38,
+    "sugar+bitter": -1.62,
+    "SUGAR": false
+   },
+   "looming": {
+    "REST": false,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 53.0,
+    "fastR DNp01": 51.0
+   },
+   "seconds": 1484
+  }
+ ]
+}

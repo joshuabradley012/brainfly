@@ -1,0 +1,34 @@
+{
+ "m": 1.5,
+ "w_syn_mv": 2.3334,
+ "calibration": {
+  "round": 20,
+  "mean_hz_own": 1.625,
+  "over_100hz": 0,
+  "groups_within_2x": 0.9985
+ },
+ "rest": {
+  "mean_hz_own": 1.663,
+  "over_100hz": 0,
+  "bursting_fano_over_10": 78
+ },
+ "ignited_flies": 0,
+ "flies": 32,
+ "taste": {
+  "sugar": 2.75,
+  "sugar 10 Hz": 2.88,
+  "sugar+bitter": -3.12,
+  "SUGAR": false
+ },
+ "looming": {
+  "REST": true,
+  "RELAY": true,
+  "SIDE": true,
+  "ESCAPE": true
+ },
+ "giant_fiber_rise_hz": {
+  "fastL DNp01": 33.75,
+  "fastR DNp01": 32.0
+ },
+ "seconds": 1395
+}
