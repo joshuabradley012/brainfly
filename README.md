@@ -36,6 +36,30 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (September 2026)
 
+* **Looming now reaches the escape neuron through the eyes, LC4 included.** brainfly tiles flyvis's
+  fitted optic lobe onto the male eye's 1,771 columns (`FlyvisNative`, `brainfly/optic.py`). All 16
+  T4/T5 motion detector types, in both eyes, prefer their biologically correct direction, with the
+  lattice orientation taken from dendrite anatomy alone. A looming disk (`brainfly/eye2d.py`) drives
+  LPLC2 and the giant fiber, the neuron that fires the escape jump, on the loomed side only; the giant
+  fiber first fires about 80 ms before contact. The other looming detector, LC4, stayed silent. In
+  flyvis's best model its main input, T2, answers only light turning on, while a real T2 answers
+  darkening too (Keleş et al. 2020), and a looming disk is darkening. With the best flyvis model
+  whose T2 does that, LC4 on the loomed side rises by 9.4–9.7 Hz, with peaks of 26 Hz, and the other
+  side's doesn't move. That passed its pre-registered test on a fresh seed
+  ([`experiments/eyepath_native_t2.py`](experiments/eyepath_native_t2.py)). Rung 3 isn't passed yet:
+  that model gets 29 of the 32 known contrast polarities right, one short of the bar, and one of the
+  16 motion directions wrong. No pretrained flyvis model gets both, so the next step is training one.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/looming-dark.svg">
+  <img src="assets/looming-light.svg" width="100%" alt="Left: a dark disk grows in the view of the fly's left eye, and bar charts of T2's response to a flash: in flyvis's model 000, T2 answers light turning on but not off; in model 001 it answers both, more strongly to off. Right: over the last second before and after contact, LC4 on the loomed side rises to a peak of 29 spikes a second with model 001 and stays flat with model 000; LPLC2 and the giant fiber respond with both models, more strongly with 001; the other side stays near zero.">
+</picture>
+
+A dark disk looms at the fly's left eye. With flyvis's model 001 (red), whose T2 answers darkening,
+LC4 on that side climbs to 29 Hz; with model 000 (dashed) it doesn't move. LPLC2 and the giant fiber
+respond to both, more strongly with 001. Each line is the mean of 6 flies at the same gain and seed
+(the two experiments' sweeps). `python assets/looming.py` redraws it from the saved results.
+
 * **The brain now steers a body, and the body turns with a rotating drum: the project's first
   pre-registered passes.** Seen through `FlyvisNative`, a drum turning counterclockwise sweeps
   front-to-back across the left eye. The left HS cells fire 29 Hz, against 10 Hz when it turns the
@@ -46,28 +70,15 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   DNa02 sets the drive to each side of its body (`brainfly/body.py`), and all 8 flies turn with the
   drum, at about 0.4 times its speed. The link from DNa02 to the legs is an assumption: the nerve cord
   isn't simulated, and a walking controller stands in for it.
-* **The model brainfly inherited fails in three places, each traced to a modelling choice**
-  ([below](#where-it-started)). Light dies at the first synapse after the eye, commands from the
-  brain never reach the motor neurons, and scrambled wiring signals as well as the real wiring.
-* **flyvis, run on its own terms, carries looming to the escape neuron.** brainfly now tiles flyvis's
-  fitted network onto the male eye's 1,771 columns (`FlyvisNative`, `brainfly/optic.py`). On flyvis's
-  own lattice the tiler rebuilds flyvis exactly. On the male eye, all 16 T4/T5 motion detector types,
-  in both eyes, prefer their biologically correct direction, with the lattice orientation taken from
-  dendrite anatomy alone. A looming disk (`brainfly/eye2d.py`) then drives the same side's LPLC2 at
-  peaks of 28–46 Hz, and the giant fiber, the neuron that fires the escape jump, spikes in every
-  fly on the loomed side, first about 80 ms before contact, and never on the other side
-  ([details](#where-it-started)). LC4, the other looming detector, barely responded in flyvis's
-  best model, where T2, its largest input, responds only to light increments, while a real T2 is
-  excited by increments and decrements alike (Keleş et al. 2020). With the best of the 8 flyvis
-  models whose T2 responds to both (the second best of all 50), looming raises LC4 by 9.4–9.7 Hz on
-  the loomed side, with peaks of 26 Hz and nothing on the other side. That passes eyepath_native.py's
-  pre-registered test on a fresh seed ([`experiments/eyepath_native_t2.py`](experiments/eyepath_native_t2.py)).
-  Rung 3 still fails, though: that model gets 29 of the 32 known contrast polarities right, one short,
-  and one of the 16 T4/T5 motion directions wrong. None of flyvis's pretrained models with a
-  two-way T2 gets past 29, so the next step is training one that does. An earlier port of
-  flyvis's parameters onto MaleCNS's own wiring ran at the wrong operating point and is kept for
-  comparison (`FlyvisOpticLobe`); an earlier giant fiber result came from a one-dimensional eye whose
-  "azimuth" tracked elevation.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/optomotor-dark.svg">
+  <img src="assets/optomotor-light.svg" width="100%" alt="Left, bar charts: under a drum turning counterclockwise the left HS cells fire about 29 spikes a second and the right about 10, and the reverse for a clockwise drum; the steering neuron DNa02 follows, about 3.3 against 0.8 spikes a second, on the side the drum sweeps front-to-back. Right, the heading of 8 walking flies over 3 s with the brain steering the body: under a counterclockwise drum every fly turns left, under a clockwise drum every fly turns right, each slower than the drum itself, and with the drum still the headings stay near zero.">
+</picture>
+
+The optomotor pathway, open loop (left; `experiments/optomotor.py`) and closed loop (right;
+`experiments/closed_loop.py`). `python assets/optomotor.py` redraws it from the saved results.
+
 * **Rung 1 passes, on the sixth attempt.** Shiu et al.'s whole-brain recipe, the best-validated model
   of the fly brain, runs away on MaleCNS as it stands. A test against Brian2, an idea borrowed from
   doomfly, found brainfly's implementation of it three steps out of line, and the first three
@@ -96,20 +107,22 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   none bursts, and the measured MBONs and PPL101 fire within a few percent of their literature rates.
   Rewired networks now rest too, so they finally make a fair null. Attempt 2, pre-registered with
   this change, is running ([`experiments/rest_calibration2.py`](experiments/rest_calibration2.py)).
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/optomotor-dark.svg">
-  <img src="assets/optomotor-light.svg" width="100%" alt="Left, bar charts: under a drum turning counterclockwise the left HS cells fire about 29 spikes a second and the right about 10, and the reverse for a clockwise drum; the steering neuron DNa02 follows, about 3.3 against 0.8 spikes a second, on the side the drum sweeps front-to-back. Right, the heading of 8 walking flies over 3 s with the brain steering the body: under a counterclockwise drum every fly turns left, under a clockwise drum every fly turns right, each slower than the drum itself, and with the drum still the headings stay near zero.">
-</picture>
-
-The optomotor pathway, open loop (left; `experiments/optomotor.py`) and closed loop (right;
-`experiments/closed_loop.py`). `python assets/optomotor.py` redraws it from the saved results.
+* **The model brainfly inherited fails in three places, each traced to a modelling choice**
+  ([below](#where-it-started)). Light dies at the first synapse after the eye, commands from the
+  brain never reach the motor neurons, and scrambled wiring signals as well as the real wiring.
 
 ## The ladder
 
 Each rung adds the kind of model neuron and the data the biology calls for. A rung passes only if it
 meets a benchmark from real flies, fixed in advance, and the effect goes away under scrambled wiring.
 From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nine-rungs-to-an-embodied-fly-each-gated-by-real-fly-data-and-a-null-control):
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/ladder-dark.svg">
+  <img src="assets/ladder-light.svg" width="100%" alt="A ladder of nine rungs, from 1 at the bottom to 9 at the top. Rung 1, validated baseline, passed. Rungs 2 (signs and modulators), 3 (eye and optic lobe) and 4 (central brain at rest) are in progress, with what is done marked in red. Rung 7, body and muscles, is started. Rungs 5, 6, 8 and 9 are not started.">
+</picture>
+
+`python assets/ladder.py` redraws it from the experiments' saved verdicts.
 
 | Rung | What it adds | Passes when | Status |
 |---|---|---|---|
@@ -481,7 +494,7 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `experiments/rest_*.py` | rung 4: probes of the resting state, its functional connectivity against Turner et al.'s flies, and the pre-registered attempts |
 | `experiments/` (the rest) | the experiments on the inherited model, listed [above](#where-it-started) |
 | `scripts/remote/` | experiments on throwaway Hetzner Cloud boxes: `image.sh` bakes a snapshot with every dependency and the data, and `run.sh` runs a file of commands across boxes from one queue, brings back what they changed under `experiments/` and deletes the boxes |
-| `assets/` | the logo and the looming figure, and the scripts that draw them from the data |
+| `assets/` | the logo and the figures (looming through the eyes, the optomotor loop, the ladder, the inherited model's loom), and the scripts that draw each from the saved results |
 | `tests/` | `python -m pytest`: both 0.1 ms kernels against Brian2, `FlyBrain`'s spikes against hashes recorded from the code behind every result, and the build against the release (`pip install "brainfly[test]"`) |
 
 <details>
