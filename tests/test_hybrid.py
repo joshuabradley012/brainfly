@@ -324,3 +324,50 @@ def test_a_subthreshold_spikelet_only_adds_to_other_input():
             before = float(brain.u[0, 1])
     assert before is not None and abs(before - 3.0) < 1e-5
     assert float(brain.u[0, 1]) < before and fired == 0
+
+
+
+def fast_pair(size: float, types: dict | None = None) -> HybridBrain:
+    labels = {"cell_type": np.array(["c0", "c1"]), "side": np.array(["L", "L"]), "superclass": np.array(["test", "test"])}
+    fast = sparse.csr_matrix((np.array([size], np.float32), ([1], [0])), shape=(2, 2))          # c0 -> c1
+    return HybridBrain(matrix=sparse.csr_matrix((2, 2), dtype=np.float32), labels=labels, w_syn=1.0, w_poi=20.0,
+                       fast=fast, fast_delay=3e-4, types=types)
+
+
+def test_a_fast_synapse_fires_its_target_after_its_delay():
+    """A fast synapse over threshold makes its target fire 3 steps (0.3 ms) after each presynaptic spike, plus the
+    step the target takes to fire, and only in the synapse's direction."""
+    run = kicked(fast_pair(10.0))
+    pre, post = np.flatnonzero(run[:, 0]), np.flatnonzero(run[:, 1])
+    assert len(pre) == len(KICKS)
+    np.testing.assert_array_equal(post, pre + 4)
+
+
+def test_a_fast_synapse_depresses_with_its_neuron():
+    """With c0 depressing (half its strength left after a spike, recovering with 20 ms), the second of two spikes
+    10 ms apart raises c1 by 1 - 0.5 exp(-10/20) of the first's 5 mV, and the first by exactly 5 mV."""
+    brain = fast_pair(5.0, types={"c0": {"depression": 0.5, "recovery": 0.02}})
+    u = []
+    for t in range(140):
+        brain.advance(1, drive=[([0], 1 / DT)] if t in (10, 110) else ())
+        u.append(float(brain.u[0, 1]))
+    u = np.array(u)
+    assert abs(u[14] - 5.0) < 1e-5 and u[13] == 0.0                   # c0 fires at step 11 (kicked at 10); 3 steps on
+    decay = u[113] / u[112]                                         # c1's own decay per step, with nothing arriving
+    second = u[114] - u[113] * decay
+    assert second == pytest.approx(5.0 * (1 - 0.5 * np.exp(-100 / 200)), rel=1e-4)
+
+
+def test_recorded_spikes_match_the_counts_step_by_step():
+    """advance(record=...) returns the listed neurons' spikes step by step, summing to their counts, and the
+    same run as without recording."""
+    gap = sparse.csr_matrix((np.array([10.0], np.float32), ([1], [0])), shape=(2, 2))
+    a, b = two_cells(gap), two_cells(gap)
+    drive = [([0], 200.0)]
+    plain = a.advance(500, drive=drive)
+    counts, spikes = b.advance(500, drive=drive, record=[1, 0])
+    np.testing.assert_array_equal(plain, counts)
+    np.testing.assert_array_equal(spikes.sum(1), counts[:, [1, 0]])
+    pre, post = np.flatnonzero(spikes[0, :, 1]), np.flatnonzero(spikes[0, :, 0])
+    assert len(post) > 3 and post[0] == pre[0] + 1
+    assert set(post) <= set(pre + 1)                # c1 fires one step after c0, unless still refractory

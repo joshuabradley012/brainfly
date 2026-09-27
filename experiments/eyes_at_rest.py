@@ -59,7 +59,8 @@ ROUNDS = [1.0] * 8 + [0.5] * 4
 SETTLE, SCENE, LATE, BIN = 1.0, 2.0, 0.5, 0.02
 TRACE = ["LC4", "LPLC2", "DNp01"]
 SUBNETWORK = None      # (M, types, superclass) -> (M, slow, tau_slow), for later models; None here
-GAP = None             # (types, side) -> electrical synapses (sparse, mV, rows postsynaptic), for later models
+SYNAPSES = None        # (M, types, side) -> (M, gap, fast): curated electrical and fast synapses (sparse, mV, rows
+                       # postsynaptic, as HybridBrain takes them), with the chemical edges they replace out of M
 
 
 class Setup:
@@ -78,9 +79,11 @@ class Setup:
         saved = np.load(start)
         assert np.array_equal(saved["groups"], self.names)
         self.bias = saved["bias"].copy()
-        gap = None if GAP is None else GAP(self.types, np.asarray(labels["side"]).astype(str))
+        gap = fast = None
+        if SYNAPSES is not None:
+            M, gap, fast = SYNAPSES(M, self.types, np.asarray(labels["side"]).astype(str))
         self.brain = HybridBrain(trials=TRIALS, w_syn=W_SYN, matrix=M, slow=slow, tau_slow=tau_slow, scale=scale, labels=labels,
-                                 seed=seed, types=spec, sets=sets, bias=self.bias[self.gid], gap=gap)
+                                 seed=seed, types=spec, sets=sets, bias=self.bias[self.gid], gap=gap, fast=fast)
         self.ol = FlyvisNative(self.brain, model=MODEL, dt=OPTIC_DT)
         self.silent = np.zeros(len(self.ol.neurons), np.float32)
         self.brain.set_release(self.ol.neurons, self.silent)

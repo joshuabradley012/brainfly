@@ -177,12 +177,12 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 
 
 @numba.njit(parallel=True, cache=True)
-def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw,
+def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
-             silenced, counts, timeline, bin_start, bin_steps):
+             silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
@@ -208,14 +208,20 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw,
     the fraction left[b, i] of its full strength, recovered toward 1 (time constant recover, in
     steps) since its last spike, and leaves depress times that. A spike of neuron i also raises each of
     its electrical partners gidx[gptr[i]:gptr[i + 1]] by gw mV at once (no delay, no depression), so they
-    can fire on the next step. counts[b, i] gains each spike, and
-    timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0."""
+    can fire on the next step. Its fast synapses fptr[i]:fptr[i + 1] raise their targets ftargets[fcomp[e]] by
+    fw[e] mV times the spike's strength (its depression) after fpend.shape[1] steps, through the ring buffer
+    fpend[b, slot, target]; like other input, a jump that arrives during the target's refractory period is
+    lost. counts[b, i] gains each spike, and
+    timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0; a recorded neuron's spike
+    (rec_pos[i] >= 0) also sets rec_out[b, k, rec_pos[i]]."""
     trials, n = u.shape
     slow = len(sw) > 0
     ng = len(g_list)
     cap = touched.shape[2]
     tonic_on = len(tonic) > 0
     adapt_on = ad.shape[1] > 0
+    fdelay, nf = fpend.shape[1], fpend.shape[2]
+    recording = len(rec_pos) > 0
     for b in numba.prange(trials):
         fired = np.empty(n, np.int64)
         # this trial's state in arrays of its own while it runs, which the compiler optimises better
@@ -288,6 +294,11 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw,
                     if srow[i] != 0.0:
                         sb[i] += srow[i]
                         srow[i] = 0.0
+            frow = fpend[b, t % fdelay]
+            for q in range(nf):                # fast synapses' jumps, due now
+                if frow[q] != 0.0:
+                    ub[ftargets[q]] += frow[q]
+                    frow[q] = 0.0
             for q in range(len(drive_idx)):
                 if _uniform(rng, b) < drive_p[q]:
                     ub[drive_idx[q]] += w_poi
@@ -320,6 +331,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw,
                         rs[rn] = sb[i]
                     rn += 1
                 counts[b, i] += 1
+                if recording and rec_pos[i] >= 0:
+                    rec_out[b, k, rec_pos[i]] = 1
                 strength = np.float32(1.0)
                 if depress[cls[i]] < 1.0:
                     strength = np.float32(1.0 - (1.0 - left[b, i]) * np.exp(-(t - last[b, i]) / recover[cls[i]]))
@@ -340,6 +353,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw,
                             srow[sidx[e]] += sw[e] * strength
                     for e in range(gptr[i], gptr[i + 1]):       # electrical synapses: at once, undepressed
                         ub[gidx[e]] += gw[e]
+                    for e in range(fptr[i], fptr[i + 1]):       # fast synapses: fdelay steps from now, depressing
+                        frow[fcomp[e]] += fw[e] * strength
             if bin_steps > 0:
                 timeline[b, (bin_start + k) // bin_steps] += spikes
         u[b, :] = ub
@@ -402,7 +417,10 @@ class HybridBrain:
     also in matrix), with tau_slow its time constant, s. gap: electrical synapses, in mV, rows
     postsynaptic: each spike of a presynaptic neuron raises the postsynaptic one's membrane by that
     much at once, with no synaptic delay and no depression (give one direction only for a rectifying
-    junction). w_poi: mV per Poisson event (default
+    junction). fast: synapses fast and strong enough to act as jumps of the membrane, in mV, rows
+    postsynaptic (a fly's PSI onto its flight motor neurons, say): each spike raises the target by that much
+    times the spike's strength under its neuron's depression, fast_delay s later, and the target can fire on
+    the step after. w_poi: mV per Poisson event (default
     Shiu's, 250 x w_syn, which pushes any neuron over threshold). scale: a multiplier per neuron on
     every synapse onto it (e.g. 1 / size), on top of its type's. bias: mV per neuron added to its
     type's bias, for calibrating groups that types can't name (set_bias changes it). sets: {name:
@@ -413,7 +431,7 @@ class HybridBrain:
     def __init__(self, data: Path | str | None = None, trials: int = 1, dt: float = 1e-4, w_syn: float = W_SYN,
                  types: dict[str, dict] | None = None, matrix: sparse.spmatrix | None = None,
                  slow: sparse.spmatrix | None = None, tau_slow: float = 0.1, w_poi: float | None = None,
-                 gap: sparse.spmatrix | None = None,
+                 gap: sparse.spmatrix | None = None, fast: sparse.spmatrix | None = None, fast_delay: float = 3e-4,
                  scale: np.ndarray | None = None, bias: np.ndarray | None = None, seed: int = 0,
                  labels: dict[str, np.ndarray] | None = None, sets: dict[str, np.ndarray] | None = None):
         if labels is None:
@@ -437,6 +455,11 @@ class HybridBrain:
         self.ptr, self.idx, self._counts = C.indptr, C.indices, C.data.astype(np.float32)
         G = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if gap is None else sparse.csc_matrix(gap, dtype=np.float32)
         self.gptr, self.gidx, self.gap_mv = G.indptr, G.indices, G.data.astype(np.float32)
+        F = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if fast is None else sparse.csc_matrix(fast, dtype=np.float32)
+        self.fptr, self.fast_mv = F.indptr, F.data.astype(np.float32)
+        self.ftargets = np.unique(F.indices).astype(np.int64)            # the fast synapses' targets, compactly
+        self.fcomp = np.searchsorted(self.ftargets, F.indices).astype(np.int64)
+        self.fdelay = max(1, int(round(fast_delay / self.dt)))
         S = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if slow is None else slow.tocsc()
         self.sptr, self.sidx, self._slow_counts = S.indptr, S.indices, S.data.astype(np.float32)
         self.w_syn = w_syn
@@ -538,6 +561,7 @@ class HybridBrain:
         adapting = any(p["adaptation"] != 0 for p in self.params)
         self.ad = np.zeros(shape if adapting else (self.trials, 0), np.float32)
         self.pending = np.zeros((self.trials, self.delay, self.n), np.float32)
+        self.fpending = np.zeros((self.trials, self.fdelay, len(self.ftargets)), np.float32)
         slow_n = self.n if len(self.slow_weights) else 0
         self.pending_slow = np.zeros((self.trials, self.delay, slow_n), np.float32)
         cap = max(64, self.n // 8)             # targets remembered per slot before falling back to a full scan
@@ -554,15 +578,20 @@ class HybridBrain:
         self.last = np.full(shape if depressing else (self.trials, 0), -(1 << 40), np.int64)
         self.t = 0
 
-    def advance(self, steps: int, drive=(), silence=()) -> np.ndarray:
-        """Run `steps` steps and return each trial's spike count per neuron, (trials, n). drive:
+    def advance(self, steps: int, drive=(), silence=(), record=None):
+        """Run `steps` steps and return each trial's spike count per neuron, (trials, n). record: neuron
+        indices whose spikes to return step by step as well: then (counts, spikes), spikes (trials, steps,
+        len(record)) of 0 and 1. drive:
         (neuron indices, rate in Hz) pairs of Poisson input, each event pushing its neuron w_poi mV.
         A neuron given drive has no refractory period from then until reset(), as in Shiu's code,
         where that is a fixed property of the drive's targets. silence: neuron indices whose spikes
         and release go nowhere during these steps."""
-        return self._step(steps, drive, silence)
+        if record is None:
+            return self._step(steps, drive, silence)
+        spikes = np.zeros((self.trials, int(steps), len(record)), np.int8)
+        return self._step(steps, drive, silence, record=np.asarray(record, np.int64), spikes=spikes), spikes
 
-    def _step(self, steps, drive=(), silence=(), timeline=None, bin_start=0, bin_steps=0) -> np.ndarray:
+    def _step(self, steps, drive=(), silence=(), timeline=None, bin_start=0, bin_steps=0, record=None, spikes=None) -> np.ndarray:
         """advance(), also adding each step's spikes to timeline[:, (bin_start + k) // bin_steps]."""
         idx = [np.asarray(i, np.int64) for i, _ in drive]
         drive_idx = np.concatenate(idx) if idx else np.empty(0, np.int64)
@@ -572,9 +601,13 @@ class HybridBrain:
         silenced[np.asarray(silence, np.int64)] = True
         k = self._kernel_tables()
         counts = np.zeros((self.trials, self.n), np.int32)
+        rec_pos = np.full(self.n if record is not None else 0, -1, np.int64)
+        if record is not None:
+            rec_pos[record] = np.arange(len(record))
         external_on = bool(self.external_input.any())      # else only graded neurons' targets can get release
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights,
-                 self.sptr, self.sidx, self.slow_weights, self.gptr, self.gidx, self.gap_mv, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
+                 self.sptr, self.sidx, self.slow_weights, self.gptr, self.gidx, self.gap_mv,
+                 self.fptr, self.fcomp, self.fast_mv, self.ftargets, self.fpending, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  k["a_xx"], k["a_ss"], k["theta"],
                  k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["uniform"],
                  bool(len(self.graded) or external_on), k["g_list"], k["g_gain"], k["g_at"], k["g_max"],
@@ -583,7 +616,8 @@ class HybridBrain:
                  self.rng, self.left, self.last,
                  drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self._internal_neurons(), self.external_input,
                  k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,
-                 np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps))
+                 np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps),
+                 rec_pos, np.zeros((self.trials, 0, 0), np.int8) if spikes is None else spikes)
         self.t += int(steps)
         return counts
 
