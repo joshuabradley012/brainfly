@@ -1,14 +1,15 @@
-"""The resting-brain-sees figure in the README, from saved results and one short run.
+"""The resting-brain-escapes figure in the README, from saved results and one short run.
 
     python assets/sees.py       # writes assets/sees-light.svg and assets/sees-dark.svg (~2 min)
 
-eyes_at_rest.py's model: rung 4's resting brain (rest_calibration2.py) with flyvis's eyes (model 001),
-recalibrated with the eyes open (experiments/eyes_at_rest/intact.npz). One fly settles for 1 s on a
+escape_at_rest2.py's model: rung 4's resting brain with short-term depression set by synapse class and
+no synapses between visual projection neurons of the same type, given flyvis's eyes (model 001) and
+recalibrated with the eyes open (experiments/escape_at_rest2/intact.npz). One fly settles for 1 s on a
 grey screen, then a dark disk looms at its left eye (eyepath_native.py's fast loom, contact at 1.8 s),
 at gain 1. Left: the brain seen from the front, every neuron that fires in a FRAME lit, with the left
 eye's looming detectors (LC4, LPLC2) marked by how fast they fire and the left giant fiber flashing
 when it spikes. Right: the disk, and LC4, LPLC2 and the giant fiber on the loomed side, mean of the 8
-flies of eyes_at_rest.py's run at gain 1 (experiments/eyes_at_rest.json).
+flies of escape_at_rest2.py's confirmation run (gain 1, seed 2; experiments/escape_at_rest2.json).
 """
 from __future__ import annotations
 
@@ -41,12 +42,17 @@ TX0, TX1 = 790, 1090
 
 
 def simulate() -> dict:
+    import escape_at_rest as escape
+    import escape_at_rest2 as escape2
     import eyes_at_rest as eyes
+    import rest_calibration as attempt1
+    import rest_calibration2 as attempt2
     from eyepath_fast import scenes
 
+    attempt2.model, attempt1.network = escape.model, escape2.network
     eyes.TRIALS = 1
     s = eyes.Setup(None, seed=31)
-    s.bias = np.load(ROOT / "experiments" / "eyes_at_rest" / "intact.npz")["bias"]
+    s.bias = np.load(ROOT / "experiments" / "escape_at_rest2" / "intact.npz")["bias"]
     b, ol = s.brain, s.ol
     b.set_bias(s.bias[s.gid])
     b.reset(8)
@@ -86,7 +92,7 @@ def figure(theme: str, run: dict, pos: np.ndarray, traces: dict) -> str:
     to_map = lambda i: ((pos[i, 0] - x0) * s, (pos[i, 1] - y0) * s)
     px, py = to_map(np.flatnonzero(known))
     nf = len(run["frames"])
-    out = [text(MAP_X + 8, MAP_Y - 34, "The resting brain sees a looming disk", "lab"),
+    out = [text(MAP_X + 8, MAP_Y - 34, "The resting brain sees a looming disk, and its escape neuron fires", "lab"),
            text(MAP_X + 8, MAP_Y - 14, "one fly: every neuron firing in each 80 ms lit; the left eye's looming detectors ringed", "note"),
            f'<g transform="translate({MAP_X} {MAP_Y})">', layer(px, py, MAP_W, map_h, np.ones(len(px)), c["ink"], c["cloud"], 0.7)]
     for f in range(nf):
@@ -183,8 +189,8 @@ def figure(theme: str, run: dict, pos: np.ndarray, traces: dict) -> str:
     @keyframes head {{ 0% {{ opacity: 1; transform: translateX(0); }} {pct(play):.2f}% {{ opacity: 1; transform: translateX({TX1 - TX0}px); }}
                        {pct(play) + 0.01:.2f}%, 100% {{ opacity: 0; }} }}
     """
-    title = ("The simulated fly brain at rest, with flyvis's eyes: a dark disk looms at the left eye and the left looming "
-             "detectors LC4 and LPLC2 light up over the resting activity")
+    title = ("The simulated fly brain at rest, with flyvis's eyes: a dark disk looms at the left eye, the left looming "
+             "detectors LC4 and LPLC2 light up over the resting activity, and the left giant fiber fires")
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")
@@ -193,8 +199,8 @@ def figure(theme: str, run: dict, pos: np.ndarray, traces: dict) -> str:
 def main() -> None:
     pos = np.load(Path.home() / "fly-data" / "brain.npz")["positions"]
     run = simulate()
-    d = json.loads((ROOT / "experiments" / "eyes_at_rest.json").read_text())
-    traces = next(v for v in d["sweep"] if v["gain"] == 1.0)["trace_hz"]["fastL"]
+    d = json.loads((ROOT / "experiments" / "escape_at_rest2.json").read_text())
+    traces = d["confirm"]["trace_hz"]["fastL"]
     for theme in THEMES:
         path = OUT / f"sees-{theme}.svg"
         path.write_text(figure(theme, run, pos, traces))

@@ -1,0 +1,48 @@
+{
+ "question": "Exploratory, not pre-registered: does hunger's gain on sugar neurons' output bring taste back to the\nresting brain?\n\nSugar no longer moves MN9 in the resting brain (taste_at_rest.py; escape_at_rest.py's model, +1.9 Hz),\nand none of the depression rules tried brings it back (depression_rules.py, depression_classes.py).\nReal flies are tested for proboscis extension starved, and research_notes/Rung 4 resting state\ndata/short_term_plasticity.md (section 4.3, from the taste sub-agent's summary, unchecked) reports\nhunger acting mainly as a gain on sugar GRNs' output: presynaptic calcium 1.3-3 times higher with\nstarvation, through dNPF, dopamine and DopEcR on the GRNs (Inagaki et al. 2012), with spike rates\nunchanged. Shiu et al. 2024 also chose their one weight so that sugar at 100 Hz gives MN9 about 80%\nof its maximum, which puts rung 1's route at the edge of its amplification by construction.\nHere every synapse from a sugar GRN (shiu_baseline.py's SETS, both sides) is multiplied by a gain g\nin escape_at_rest.py's model, with escape_at_rest.py's calibrated biases unchanged (GRNs are silent\nat rest, so the resting brain is the same). Measured as escape_at_rest.py measures taste (MN9 L's\nrise over its rest under 1 s of sugar at 100 Hz, at 10 Hz, and sugar with bitter; 8 flies), for\ng = 1, 1.5, 2, 3, and 5 and 10 beyond what hunger does, to see how far the route is from working.\n\n    python experiments/taste_hunger.py            (writes experiments/taste_hunger.json)\n",
+ "gains": [
+  {
+   "gain": 1.0,
+   "sugar": 1.88,
+   "sugar 10 Hz": -0.88,
+   "sugar+bitter": -1.38,
+   "SUGAR": false
+  },
+  {
+   "gain": 1.5,
+   "sugar": 0.88,
+   "sugar 10 Hz": -0.5,
+   "sugar+bitter": -0.88,
+   "SUGAR": false
+  },
+  {
+   "gain": 2.0,
+   "sugar": 0.38,
+   "sugar 10 Hz": -0.12,
+   "sugar+bitter": -2.0,
+   "SUGAR": false
+  },
+  {
+   "gain": 3.0,
+   "sugar": 0.62,
+   "sugar 10 Hz": -0.62,
+   "sugar+bitter": -1.25,
+   "SUGAR": false
+  },
+  {
+   "gain": 5.0,
+   "sugar": -1.75,
+   "sugar 10 Hz": 0.25,
+   "sugar+bitter": -1.62,
+   "SUGAR": false
+  },
+  {
+   "gain": 10.0,
+   "sugar": -2.62,
+   "sugar 10 Hz": 1.38,
+   "sugar+bitter": -2.12,
+   "SUGAR": false
+  }
+ ],
+ "seconds": 315
+}
