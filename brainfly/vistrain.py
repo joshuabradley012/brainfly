@@ -10,6 +10,7 @@ tensors. The validation error matches flyvis's published values on either device
     sintel(view)                  flyvis's training task (MultiTaskSintel flow, its train/validation split)
     flash_responses(net, "T2")    the central cell's response to a full-field ON and OFF flash, differentiably
     flash_peaks(net, "T2")        their peaks, as flyvis_screen.py measures them
+    central_flash_responses(net)  every type's central cell's flash responses at once
     validation_epe(net, dec, t)   flyvis's validation endpoint error
     fine_tune(...)                flyvis's training step (Adam on its flow loss) plus a penalty on the flash peaks
     local(net, "T2")              masks for fine_tune freeing only one cell type's own parameters and its inputs
@@ -113,6 +114,21 @@ def flash_responses(net, cell: str = "T2", dt: float = 0.01, t_pre: float = 0.1,
     gradients."""
     x = torch.from_numpy(_flashes(dt, t_pre, t_flash, radius)).to(dev)
     j, pre = central(net, cell), int(round(t_pre / dt))
+    with on(dev):
+        state = net.steady_state(t_pre=0.5, dt=dt, batch_size=2, value=0.5)
+        net.stimulus.zero(2, x.shape[1])
+        net.stimulus.add_input(x)
+        a = net(net.stimulus(), dt, state=state)[:, :, j]
+    return a[:, pre:] - a[:, :pre].mean(1, keepdim=True)
+
+
+def central_flash_responses(net, dt: float = 0.01, t_pre: float = 0.1, t_flash: float = 0.5, radius: int = 6,
+                            dev: torch.device = DEVICE) -> torch.Tensor:
+    """flash_responses for the central cell of every type at once: (2, frames, types), rows ON and OFF, types in
+    flyvis's order (node_params keys), with gradients."""
+    x = torch.from_numpy(_flashes(dt, t_pre, t_flash, radius)).to(dev)
+    j = torch.as_tensor(np.asarray(net.connectome.central_cells_index[:]), device=dev)
+    pre = int(round(t_pre / dt))
     with on(dev):
         state = net.steady_state(t_pre=0.5, dt=dt, batch_size=2, value=0.5)
         net.stimulus.zero(2, x.shape[1])

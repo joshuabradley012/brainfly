@@ -1,0 +1,305 @@
+{
+ "question": "Exploratory, not pre-registered: can T2 gain a response to darkening while every other cell of flyvis model 000\nkeeps its flash responses?\n\nrung3_t2_local.py (pre-registered, failed) changed only T2's own parameters and inputs in 000. T2 answered darkening\nand LC4 began to answer looms, but T5a and T5b flipped polarity and LPLC2 lost its looming response: T2's new\nactivity spread through its outputs (onto Lawf2, which feeds back to the lamina, Mi1, Tm5c, TmY15, TmY5a), and a\ndiagnostic found the loom's drive onto LPLC2 through T5 gone and through T4 reversed. Here T2's outputs within\nflyvis are freed too, and the penalty adds a term keeping every other type's central cell as 000 had it:\n    pilot 5's T2 penalty + d * mean over types other than T2 of ((response - 000's response) / (s + 0.1))^2\nwith the responses each type's central cell's change through the 0.5 s after a full-field light and dark flash from\ngrey (dt 0.01), and s the spread of 000's response of that type. d = 100 and 1000, weight 1000, learning rate 1e-4,\n500 iterations, seed 0; free: T2's resting potential and time constant, the synapses onto T2 except its own, the\nsynapses from T2, and the flow decoder. Keeping other cells' flash responses keeps their polarity nearly by\nconstruction, so a rung 3 test built on this would check polarity as preservation, not prediction. Recorded: T2's\nflash responses, the other types' largest deviation, the flow loss, flyvis's validation error, and none of rung 3's\ntests.\n\n    python experiments/flyvis_t2_pilot7.py            (writes experiments/flyvis_t2_pilot7.json)\n",
+ "runs": [
+  {
+   "distill": 100.0,
+   "start_measures": {
+    "t2_on": 2.896,
+    "t2_off": 0.004,
+    "t2_off_mean": -2.164,
+    "T2": false,
+    "val_epe": 5.1348
+   },
+   "trace": [
+    {
+     "iteration": 50,
+     "flow_loss": 1271.07,
+     "penalty": 4253.1415,
+     "seconds": 61,
+     "t2_on": 2.393,
+     "t2_off": -0.007,
+     "t2_off_mean": -1.633,
+     "T2": false,
+     "deviation_mean": 0.0149,
+     "deviation_max": 0.2175,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 100,
+     "flow_loss": 1310.0,
+     "penalty": 3653.9426,
+     "seconds": 118,
+     "t2_on": 2.237,
+     "t2_off": -0.021,
+     "t2_off_mean": -1.312,
+     "T2": false,
+     "deviation_mean": 0.0392,
+     "deviation_max": 0.6158,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 150,
+     "flow_loss": 1288.67,
+     "penalty": 3352.5568,
+     "seconds": 175,
+     "t2_on": 2.29,
+     "t2_off": -0.027,
+     "t2_off_mean": -1.136,
+     "T2": false,
+     "deviation_mean": 0.0709,
+     "deviation_max": 0.9617,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 200,
+     "flow_loss": 1225.93,
+     "penalty": 3380.7468,
+     "seconds": 233,
+     "t2_on": 2.237,
+     "t2_off": -0.054,
+     "t2_off_mean": -1.3,
+     "T2": false,
+     "deviation_mean": 0.1,
+     "deviation_max": 1.2197,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 250,
+     "flow_loss": 1210.77,
+     "penalty": 3503.3753,
+     "seconds": 292,
+     "t2_on": 2.101,
+     "t2_off": -0.109,
+     "t2_off_mean": -1.649,
+     "T2": false,
+     "deviation_mean": 0.1709,
+     "deviation_max": 1.5261,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 300,
+     "flow_loss": 1302.58,
+     "penalty": 4346.3886,
+     "seconds": 351,
+     "t2_on": 2.845,
+     "t2_off": -0.508,
+     "t2_off_mean": -3.337,
+     "T2": false,
+     "deviation_mean": 0.965,
+     "deviation_max": 17.6745,
+     "worst_type": "TmY5a"
+    },
+    {
+     "iteration": 350,
+     "flow_loss": 1286.29,
+     "penalty": 4400.7627,
+     "seconds": 408,
+     "t2_on": 2.801,
+     "t2_off": -1.599,
+     "t2_off_mean": -0.969,
+     "T2": false,
+     "deviation_mean": 1.8173,
+     "deviation_max": 11.7664,
+     "worst_type": "TmY5a"
+    },
+    {
+     "iteration": 400,
+     "flow_loss": 1283.05,
+     "penalty": 2945.2939,
+     "seconds": 466,
+     "t2_on": 2.523,
+     "t2_off": -1.126,
+     "t2_off_mean": -0.271,
+     "T2": false,
+     "deviation_mean": 1.4748,
+     "deviation_max": 9.2494,
+     "worst_type": "TmY5a"
+    },
+    {
+     "iteration": 450,
+     "flow_loss": 1259.77,
+     "penalty": 2499.5381,
+     "seconds": 525,
+     "t2_on": 2.339,
+     "t2_off": -0.895,
+     "t2_off_mean": 0.077,
+     "T2": false,
+     "deviation_mean": 1.3867,
+     "deviation_max": 9.2303,
+     "worst_type": "TmY5a"
+    },
+    {
+     "iteration": 500,
+     "flow_loss": 1246.22,
+     "penalty": 2211.5826,
+     "seconds": 583,
+     "t2_on": 2.181,
+     "t2_off": -0.744,
+     "t2_off_mean": 0.327,
+     "T2": false,
+     "deviation_mean": 1.3752,
+     "deviation_max": 9.1135,
+     "worst_type": "TmY5a"
+    }
+   ],
+   "end": {
+    "t2_on": 2.181,
+    "t2_off": -0.744,
+    "t2_off_mean": 0.327,
+    "T2": false,
+    "val_epe": 5.7962
+   },
+   "seconds_per_iteration": 1.174
+  },
+  {
+   "distill": 1000.0,
+   "start_measures": {
+    "t2_on": 2.896,
+    "t2_off": 0.004,
+    "t2_off_mean": -2.164,
+    "T2": false,
+    "val_epe": 5.1348
+   },
+   "trace": [
+    {
+     "iteration": 50,
+     "flow_loss": 1271.03,
+     "penalty": 4262.3472,
+     "seconds": 56,
+     "t2_on": 2.399,
+     "t2_off": -0.008,
+     "t2_off_mean": -1.64,
+     "T2": false,
+     "deviation_mean": 0.0149,
+     "deviation_max": 0.2096,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 100,
+     "flow_loss": 1310.26,
+     "penalty": 3691.9986,
+     "seconds": 113,
+     "t2_on": 2.254,
+     "t2_off": -0.021,
+     "t2_off_mean": -1.324,
+     "T2": false,
+     "deviation_mean": 0.0392,
+     "deviation_max": 0.589,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 150,
+     "flow_loss": 1289.15,
+     "penalty": 3418.3068,
+     "seconds": 169,
+     "t2_on": 2.295,
+     "t2_off": -0.027,
+     "t2_off_mean": -1.145,
+     "T2": false,
+     "deviation_mean": 0.0695,
+     "deviation_max": 0.9187,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 200,
+     "flow_loss": 1225.72,
+     "penalty": 3433.0955,
+     "seconds": 227,
+     "t2_on": 2.212,
+     "t2_off": -0.054,
+     "t2_off_mean": -1.272,
+     "T2": false,
+     "deviation_mean": 0.0982,
+     "deviation_max": 1.1934,
+     "worst_type": "Mi15"
+    },
+    {
+     "iteration": 250,
+     "flow_loss": 1211.17,
+     "penalty": 3637.7727,
+     "seconds": 286,
+     "t2_on": 2.2,
+     "t2_off": -0.116,
+     "t2_off_mean": -1.755,
+     "T2": false,
+     "deviation_mean": 0.1756,
+     "deviation_max": 1.3704,
+     "worst_type": "TmY4"
+    },
+    {
+     "iteration": 300,
+     "flow_loss": 1305.8,
+     "penalty": 5515.6644,
+     "seconds": 344,
+     "t2_on": 4.378,
+     "t2_off": -2.166,
+     "t2_off_mean": -3.584,
+     "T2": false,
+     "deviation_mean": 3.2096,
+     "deviation_max": 52.6404,
+     "worst_type": "TmY5a"
+    },
+    {
+     "iteration": 350,
+     "flow_loss": 1287.45,
+     "penalty": 6920.1828,
+     "seconds": 403,
+     "t2_on": 3.151,
+     "t2_off": -0.741,
+     "t2_off_mean": -0.947,
+     "T2": false,
+     "deviation_mean": 0.8582,
+     "deviation_max": 7.6029,
+     "worst_type": "TmY5a"
+    },
+    {
+     "iteration": 400,
+     "flow_loss": 1282.66,
+     "penalty": 3987.3324,
+     "seconds": 460,
+     "t2_on": 3.044,
+     "t2_off": -0.212,
+     "t2_off_mean": -0.366,
+     "T2": false,
+     "deviation_mean": 0.8109,
+     "deviation_max": 7.8193,
+     "worst_type": "TmY5a"
+    },
+    {
+     "iteration": 450,
+     "flow_loss": 1259.58,
+     "penalty": 3542.7035,
+     "seconds": 519,
+     "t2_on": 2.908,
+     "t2_off": -0.048,
+     "t2_off_mean": -0.108,
+     "T2": false,
+     "deviation_mean": 0.7652,
+     "deviation_max": 7.0822,
+     "worst_type": "TmY5a"
+    },
+    {
+     "iteration": 500,
+     "flow_loss": 1245.99,
+     "penalty": 3249.7962,
+     "seconds": 580,
+     "t2_on": 2.781,
+     "t2_off": 0.069,
+     "t2_off_mean": 0.092,
+     "T2": false,
+     "deviation_mean": 0.756,
+     "deviation_max": 6.3383,
+     "worst_type": "TmY5a"
+    }
+   ],
+   "end": {
+    "t2_on": 2.781,
+    "t2_off": 0.069,
+    "t2_off_mean": 0.092,
+    "T2": false,
+    "val_epe": 5.8096
+   },
+   "seconds_per_iteration": 1.167
+  }
+ ]
+}
