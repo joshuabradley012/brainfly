@@ -203,8 +203,7 @@ def render(directions: np.ndarray, placed: np.ndarray, objects: list, sigma: flo
     """Contrast seen along each of `directions` (unit vectors; only rows where `placed` is true are
     drawn, the rest stay 0) through a Gaussian blur of width sigma (radians), for dark Disks (the
     darkest one wins where they overlap) and Edges and Gratings (added), clipped to [-1, 1]."""
-    from scipy.special import ndtr
-    from scipy.stats import chi2, ncx2
+    from scipy.special import chdtr, chndtr, ndtr      # what scipy.stats' ncx2 and chi2 cdfs call, without their per-call checks
 
     cover = np.zeros(len(directions))
     edges = np.zeros(len(directions))
@@ -229,6 +228,6 @@ def render(directions: np.ndarray, placed: np.ndarray, objects: list, sigma: flo
         x = (obj.radius / sigma) ** 2
         nc = (delta / sigma) ** 2
         # share of a Gaussian blur centred delta from the disk's centre that falls inside it
-        frac = np.where(nc > 1e-12, ncx2.cdf(x, 2, np.maximum(nc, 1e-12)), chi2.cdf(x, 2))
+        frac = np.where(nc > 1e-12, chndtr(x, 2, np.maximum(nc, 1e-12)), chdtr(2, x))
         cover[placed] = np.maximum(cover[placed], obj.darkness * frac)
     return np.clip(edges - cover, -1.0, 1.0).astype(np.float32)

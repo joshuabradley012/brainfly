@@ -107,12 +107,81 @@ def _poisson(rng, b, lam):
     return k
 
 
+@numba.njit(cache=True)
+def _integrate_uniform(n, ub, xb, adb, tonic, A, B, C, TH, VA, AA, a_xx, external, tonic_on, adapt_on, fired):
+    """One step of every neuron's membrane when all share one class's scalars; see _integrate_all."""
+    m = 0
+    for i in range(n):
+        ui = A * ub[i] + B * xb[i] + C
+        if tonic_on:
+            ui += tonic[i]
+        if adapt_on:
+            ui -= VA * adb[i]
+            adb[i] = AA * adb[i]
+        xb[i] = a_xx * xb[i]
+        ub[i] = ui
+        if ui > TH and not external[i]:
+            fired[m] = i
+            m += 1
+    return m
+
+
+@numba.njit(cache=True)
+def _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs, a_xx, a_ss, theta, graded,
+                   external, tonic_on, adapt_on, slow, fired):
+    """One step of every neuron's membrane (the non-uniform case), listing in fired the ones over
+    threshold; returns how many. In its own function so the compiler optimises its loop alone."""
+    m = 0
+    for i in range(n):
+        c = cls[i]
+        ui = a_vv[c] * ub[i] + a_vx[c] * xb[i] + a_bias[c]
+        if tonic_on:
+            ui += tonic[i]
+        if adapt_on:
+            ui -= a_va[c] * adb[i]
+            adb[i] = a_aa[c] * adb[i]
+        xb[i] = a_xx * xb[i]
+        if slow:
+            ui += a_vs[c] * sb[i]
+            sb[i] = a_ss * sb[i]
+        ub[i] = ui
+        if ui > theta[c] and not graded[c] and not external[i]:
+            fired[m] = i
+            m += 1
+    return m
+
+
+@numba.njit(cache=True)
+def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs, a_xx, a_ss, theta,
+                      graded, tonic_on, adapt_on, slow, fired):
+    """_integrate_all for only the neurons listed (none of them external)."""
+    m = 0
+    for q in range(len(listed)):
+        i = listed[q]
+        c = cls[i]
+        ui = a_vv[c] * ub[i] + a_vx[c] * xb[i] + a_bias[c]
+        if tonic_on:
+            ui += tonic[i]
+        if adapt_on:
+            ui -= a_va[c] * adb[i]
+            adb[i] = a_aa[c] * adb[i]
+        xb[i] = a_xx * xb[i]
+        if slow:
+            ui += a_vs[c] * sb[i]
+            sb[i] = a_ss * sb[i]
+        ub[i] = ui
+        if ui > theta[c] and not graded[c]:
+            fired[m] = i
+            m += 1
+    return m
+
+
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
-             drive_idx, drive_p, w_poi, driven, external, E, noise_lambda, noise_kick, members, member_start,
+             drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
@@ -128,6 +197,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     neuron is spiking and in class 0, and there is no slow current, so the parameters are scalars.
     external neurons never fire; their release is set from outside (HybridBrain.set_release), and
     E[i], the same for every trial, is what it adds to neuron i each second, like graded input R.
+    internal lists the neurons that aren't external; in the non-uniform case only they are integrated,
+    which gives the same spikes (external neurons never fire, and nothing reads their state).
     g_targets lists the only neurons R or E can reach: the targets of graded and external neurons.
 
     Per-neuron parameters come from a small table indexed by cls, and tonic[i], when given, adds
@@ -159,6 +230,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                     rs[rn] = sb[i]
                 rn += 1
         A, B, C, TH = a_vv[0], a_vx[0], a_bias[0], theta[0]
+        skip_external = len(internal) < n
         VA, AA = a_va[0], a_aa[0]
         for k in range(steps):
             t = t0 + k
@@ -173,35 +245,13 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
             rn = kept
             m = 0
             if uniform:
-                for i in range(n):
-                    ui = A * ub[i] + B * xb[i] + C
-                    if tonic_on:
-                        ui += tonic[i]
-                    if adapt_on:
-                        ui -= VA * adb[i]
-                        adb[i] = AA * adb[i]
-                    xb[i] = a_xx * xb[i]
-                    ub[i] = ui
-                    if ui > TH and not external[i]:
-                        fired[m] = i
-                        m += 1
+                m = _integrate_uniform(n, ub, xb, adb, tonic, A, B, C, TH, VA, AA, a_xx, external, tonic_on, adapt_on, fired)
+            elif skip_external:                # external neurons never fire and nothing reads their state: skipped
+                m = _integrate_listed(internal, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs,
+                                      a_xx, a_ss, theta, graded, tonic_on, adapt_on, slow, fired)
             else:
-                for i in range(n):
-                    c = cls[i]
-                    ui = a_vv[c] * ub[i] + a_vx[c] * xb[i] + a_bias[c]
-                    if tonic_on:
-                        ui += tonic[i]
-                    if adapt_on:
-                        ui -= a_va[c] * adb[i]
-                        adb[i] = a_aa[c] * adb[i]
-                    xb[i] = a_xx * xb[i]
-                    if slow:
-                        ui += a_vs[c] * sb[i]
-                        sb[i] = a_ss * sb[i]
-                    ub[i] = ui
-                    if ui > theta[c] and not graded[c] and not external[i]:
-                        fired[m] = i
-                        m += 1
+                m = _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs,
+                                   a_xx, a_ss, theta, graded, external, tonic_on, adapt_on, slow, fired)
             for q in range(ng):
                 i = g_list[q]
                 r = 0.0 if silenced[i] else min(max(g_gain[q] * (ub[i] - g_at[q]), 0.0), g_max[q])
@@ -510,23 +560,47 @@ class HybridBrain:
         self.driven[drive_idx] = True
         silenced = np.zeros(self.n, np.bool_)
         silenced[np.asarray(silence, np.int64)] = True
-        k = self._coefficients()
-        g = [self.params[c] for c in self.cls[self.graded]]
+        k = self._kernel_tables()
         counts = np.zeros((self.trials, self.n), np.int32)
+        external_on = bool(self.external_input.any())      # else only graded neurons' targets can get release
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights,
                  self.sptr, self.sidx, self.slow_weights, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
-                 np.float32(np.exp(-self.dt / TAU)), np.float32(np.exp(-self.dt / self.tau_slow)), k["theta"],
-                 k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], self._uniform(),
-                 bool(len(self.graded) or self.external.any()), self.graded.astype(np.int64),
-                 np.array([p["gain"] for p in g], np.float32), np.array([p["release_at"] for p in g], np.float32),
-                 np.array([p["max_release"] for p in g], np.float32), self._graded_targets(), self.u, self.x, self.s, self.ad, self.until,
+                 k["a_xx"], k["a_ss"], k["theta"],
+                 k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["uniform"],
+                 bool(len(self.graded) or external_on), k["g_list"], k["g_gain"], k["g_at"], k["g_max"],
+                 self._graded_targets() if external_on else self._graded_only_targets(), self.u, self.x, self.s, self.ad, self.until,
                  self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.release,
                  self.rng, self.left, self.last,
-                 drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self.external_input,
+                 drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self._internal_neurons(), self.external_input,
                  k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps))
         self.t += int(steps)
         return counts
+
+    def _kernel_tables(self) -> dict:
+        """The coefficient tables and graded-neuron arrays the kernel reads. They depend only on the types,
+        dt and tau_slow, none of which changes after construction, so they are made once."""
+        if getattr(self, "_tables_cache", None) is None:
+            k = self._coefficients()
+            g = [self.params[c] for c in self.cls[self.graded]]
+            k.update(g_list=self.graded.astype(np.int64), g_gain=np.array([p["gain"] for p in g], np.float32),
+                     g_at=np.array([p["release_at"] for p in g], np.float32), g_max=np.array([p["max_release"] for p in g], np.float32),
+                     uniform=self._uniform(), a_xx=np.float32(np.exp(-self.dt / TAU)), a_ss=np.float32(np.exp(-self.dt / self.tau_slow)))
+            self._tables_cache = k
+        return self._tables_cache
+
+    def _internal_neurons(self) -> np.ndarray:
+        """The neurons that aren't external, for the kernel to integrate."""
+        if getattr(self, "_internal", None) is None:
+            self._internal = np.flatnonzero(~self.external).astype(np.int64)
+        return self._internal
+
+    def _graded_only_targets(self) -> np.ndarray:
+        """The neurons graded release can reach (all the kernel visits while no external release arrives)."""
+        if getattr(self, "_gr_targets", None) is None:
+            parts = [self.idx[self.ptr[g]:self.ptr[g + 1]] for g in self.graded]
+            self._gr_targets = np.unique(np.concatenate(parts)).astype(np.int64) if parts else np.empty(0, np.int64)
+        return self._gr_targets
 
     def _graded_targets(self) -> np.ndarray:
         """The neurons graded or external release can reach, which are all the kernel visits for it."""
@@ -550,6 +624,7 @@ class HybridBrain:
             self.external[neurons] = True
             self._external_matrix = None
             self._g_targets = None
+            self._internal = None
         if self.graded_input.shape[1] == 0:
             self.graded_input = np.zeros((self.trials, self.n), np.float32)
         if self._external_matrix is None:
