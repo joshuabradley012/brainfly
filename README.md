@@ -440,7 +440,9 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/body.py` | NeuroMechFly (FlyGym 2.1) walking in a virtual-reality arena, and `Loop`, which steps eyes, optic lobe, brain and body together (`pip install "brainfly[body]"`) |
 | `brainfly/eyes.py` | the original 1-D eye, kept so the early eye experiments still run |
 | `experiments/shiu_*.py` | rung 1: the pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
+| `experiments/rest_*.py` | rung 4: probes of the resting state, its functional connectivity against Turner et al.'s flies, and the pre-registered attempts |
 | `experiments/` (the rest) | the experiments on the inherited model, listed [above](#where-it-started) |
+| `scripts/remote/` | experiments on throwaway Hetzner Cloud boxes: `image.sh` bakes a snapshot with every dependency and the data, and `run.sh` runs a file of commands across boxes from one queue, brings back what they changed under `experiments/` and deletes the boxes |
 | `assets/` | the logo and the looming figure, and the scripts that draw them from the data |
 | `tests/` | `python -m pytest`: both 0.1 ms kernels against Brian2, `FlyBrain`'s spikes against hashes recorded from the code behind every result, and the build against the release (`pip install "brainfly[test]"`) |
 

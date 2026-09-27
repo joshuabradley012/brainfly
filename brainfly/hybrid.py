@@ -106,7 +106,7 @@ def _poisson(rng, b, lam):
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
-             g_list, g_gain, g_at, g_max,
+             g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
              drive_idx, drive_p, w_poi, driven, external, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps):
@@ -124,6 +124,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     neuron is spiking and in class 0, and there is no slow current, so the parameters are scalars.
     external neurons never fire; their release is set from outside (HybridBrain.set_release), and
     E[i], the same for every trial, is what it adds to neuron i each second, like graded input R.
+    g_targets lists the only neurons R or E can reach: the targets of graded and external neurons.
 
     Per-neuron parameters come from a small table indexed by cls, and tonic[i], when given, adds
     each step's share of neuron i's own bias on top of its class's. A depressing neuron's spike carries
@@ -210,7 +211,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                         row[j] = 0.0
             nt[slot] = 0
             if graded_in:
-                for i in range(n):
+                for q in range(len(g_targets)):
+                    i = g_targets[q]
                     g = Rb[i] + E[i]
                     if g != 0.0:
                         xb[i] += g * dt
@@ -493,7 +495,7 @@ class HybridBrain:
                  k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], self._uniform(),
                  bool(len(self.graded) or self.external.any()), self.graded.astype(np.int64),
                  np.array([p["gain"] for p in g], np.float32), np.array([p["release_at"] for p in g], np.float32),
-                 np.array([p["max_release"] for p in g], np.float32), self.u, self.x, self.s, self.until,
+                 np.array([p["max_release"] for p in g], np.float32), self._graded_targets(), self.u, self.x, self.s, self.until,
                  self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.release,
                  self.rng, self.left, self.last,
                  drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self.external_input,
@@ -501,6 +503,15 @@ class HybridBrain:
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps))
         self.t += int(steps)
         return counts
+
+    def _graded_targets(self) -> np.ndarray:
+        """The neurons graded or external release can reach, which are all the kernel visits for it."""
+        if getattr(self, "_g_targets", None) is None:
+            parts = [self.idx[self.ptr[g]:self.ptr[g + 1]] for g in self.graded]
+            if self.external.any():
+                parts.append(np.flatnonzero(np.diff(self._external_matrix[1].indptr)))
+            self._g_targets = np.unique(np.concatenate(parts)).astype(np.int64) if parts else np.empty(0, np.int64)
+        return self._g_targets
 
     def set_release(self, neurons, hz) -> None:
         """Make these neurons' output external. From now until reset() they never spike, and each
@@ -514,6 +525,7 @@ class HybridBrain:
         if not self.external[neurons].all():
             self.external[neurons] = True
             self._external_matrix = None
+            self._g_targets = None
         if self.graded_input.shape[1] == 0:
             self.graded_input = np.zeros((self.trials, self.n), np.float32)
         if self._external_matrix is None:
