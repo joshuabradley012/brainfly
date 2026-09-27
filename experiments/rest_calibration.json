@@ -1,0 +1,222 @@
+{
+ "criteria": "Rung 4, attempt 1 (pre-registered): with each cell type's excitability calibrated to measured\nresting rates, does the rung-1 brain rest like a fly, with real flies' functional connectivity and a\nhead-direction bump?\n\nrest_fc.py found the uncalibrated brain's resting FC further from real flies' (Pearson r 0.248 over\nthe 2,145 region pairs) than what shared neurites alone give under independent firing (0.377): its\nhot circuits add the wrong correlations. Rung 4 asks for per-type properties throughout. This attempt\nfits resting rates only, which FC never sees, so all 20 flies of Turner et al. 2021 are held out.\n\nModel: rung 1's network (shiu_sensory.py's, w_syn = 1.5556 mV), APL graded (Amin et al. 2020), Poisson\nbackground of 1 mV kicks at 200 Hz for every neuron (as in rest_fc.py), and one tonic bias per group,\na group being a neuron's MaleCNS type, or its superclass when it has none.\nTargets, from research_notes/Rung 4 resting state data (Hz):\n  0     Kenyon cells (Gruntman & Turner 2013: most at zero) and sensory neurons (no stimulus, so no\n        sensory drive at rest)\n  0.1   descending neurons (Ache et al. 2019: DNp07 and DNp10 under 0.02 Hz; DNa02 near 0 standing)\n  3     uniglomerular antennal-lobe projection neurons (Kazama & Wilson 2009: 1-5)\n  37.2, 21.5, 16.5, 15.5, 13.4, 10.9   MBON11, 12, 13, 14, 17, 18, and 20.1 PPL101 (Huang et al. 2024)\n  3.9   PEN_a (Turner-Evans et al. 2017)\n  2     every other group (unmeasured; the research report's energy budget allows a mean of 4 Hz or less)\nGraded neurons (APL) aren't calibrated.\nCalibration: 8 trials run on, without reset, through 40 rounds. Each round runs 2 s (rounds 1-20) or\n4 s (21-40), then moves each group's bias by k ln((target + 0.5) / (rate + 0.5)) mV, with k = 2 (1 from\nround 21), at most k mV a round, kept within -30 and +20 mV. The biases after round 40 are final.\nTests, on 8 fresh runs of 300 s after 2 s to settle (\"flies\"), imaged as the data were (rest_fc.py):\n  FC    the model's r with the data's mean FC beats by at least 0.05 both\n        (a) the independent null: the FC its neurons would give firing independently at their own\n            rates, through shared neurites alone (brainfly.imaging.measurement_only, variance = rate)\n        (b) each of 2 degree-preserving rewirings of the network (brainfly.nulls), calibrated and run\n            the same way\n  RATE  the mean rate is 4 Hz or less, with at most 0.1% of neurons over 100 Hz\n  BUMP  the head-direction bump. EPG spikes in 1-s windows, summed per protocerebral-bridge glomerulus\n        (L1-L8 and R1-R8; each side's 8 span the full circle), give a population vector whose length\n        over the total, the bump strength, is 0 for flat activity and about 0.7 for the ~100 deg bump\n        of real flies (Seelig & Jayaraman 2015). On each side, the mean over runs and windows is at\n        least 0.3 and above the 99th percentile of 1,000 shuffles of the EPGs' glomerulus labels\n        within the side; and the runs' mean bump positions differ (their resultant length is under\n        0.6), as an attractor's bump would and one fixed by differences between neurons wouldn't.\nPass: FC, RATE and BUMP all hold.\nReported, not gating: calibration quality (the share of groups whose (rate + 0.5) / (target + 0.5) is\nwithin a factor of 2); r against rest_fc.py's structural predictor (0.65) and ceiling (0.921) and the\nequal-variance measurement-only null (0.377); the largest FC errors; the same fit with every default\ntarget at 1 Hz or 4 Hz instead of 2 (sensitivity).\n\n    python experiments/rest_calibration.py --condition intact      (also rewired-1, rewired-2,\n                                                                     default-1hz, default-4hz)\n    python experiments/rest_calibration.py --report                (writes experiments/rest_calibration.json)\nEach condition writes experiments/rest_calibration/<condition>.json (and its biases, <condition>.npz);\nscripts/remote/run.sh runs them side by side.\n",
+ "FC": false,
+ "RATE": true,
+ "BUMP": false,
+ "pass": false,
+ "r": 0.198,
+ "rivals": {
+  "independent": 0.406,
+  "rewired-1": 0.356,
+  "rewired-2": 0.336
+ },
+ "for_scale": {
+  "structure_r": 0.65,
+  "ceiling_r": 0.921,
+  "measurement_only_equal_variance_r": 0.377,
+  "uncalibrated_r": 0.248
+ },
+ "conditions": {
+  "intact": {
+   "r": 0.198,
+   "r_independent": 0.406,
+   "mean_hz": 2.081,
+   "over_100hz": 0.00031,
+   "groups_within_2x": 0.5993,
+   "bump": {
+    "L": {
+     "strength": 0.168,
+     "shuffle_p99": 0.153,
+     "run_positions_deg": [
+      158.5,
+      163.8,
+      161.9,
+      166.8,
+      155.8,
+      158.8,
+      155.1,
+      159.6
+     ],
+     "resultant": 0.998
+    },
+    "R": {
+     "strength": 0.199,
+     "shuffle_p99": 0.142,
+     "run_positions_deg": [
+      -140.4,
+      -141.7,
+      -138.5,
+      -142.3,
+      -136.1,
+      -137.7,
+      -133.2,
+      -138.6
+     ],
+     "resultant": 0.999
+    }
+   },
+   "seconds": 4607
+  },
+  "rewired-1": {
+   "r": 0.356,
+   "r_independent": 0.325,
+   "mean_hz": 0.022,
+   "over_100hz": 0.0,
+   "groups_within_2x": 0.0811,
+   "bump": {
+    "L": {
+     "strength": 1.0,
+     "shuffle_p99": 1.0,
+     "run_positions_deg": [
+      0.0,
+      0.0,
+      45.0,
+      0.0,
+      45.0,
+      0.0,
+      -45.0,
+      45.0
+     ],
+     "resultant": 0.872
+    },
+    "R": {
+     "strength": 1.0,
+     "shuffle_p99": 1.0,
+     "run_positions_deg": [
+      0.0,
+      180.0,
+      0.0,
+      0.0,
+      0.0,
+      -45.0,
+      0.0,
+      0.0
+     ],
+     "resultant": 0.719
+    }
+   },
+   "seconds": 7024
+  },
+  "rewired-2": {
+   "r": 0.336,
+   "r_independent": 0.319,
+   "mean_hz": 0.04,
+   "over_100hz": 0.0,
+   "groups_within_2x": 0.0885,
+   "bump": {
+    "L": {
+     "strength": 0.964,
+     "shuffle_p99": 0.982,
+     "run_positions_deg": [
+      -91.8,
+      -46.9,
+      -79.4,
+      8.1,
+      166.6,
+      -98.0,
+      -74.9,
+      1.1
+     ],
+     "resultant": 0.589
+    },
+    "R": {
+     "strength": 0.985,
+     "shuffle_p99": 0.987,
+     "run_positions_deg": [
+      -140.9,
+      -129.0,
+      -158.5,
+      -134.0,
+      -152.0,
+      -143.1,
+      -160.1,
+      -148.7
+     ],
+     "resultant": 0.984
+    }
+   },
+   "seconds": 6630
+  },
+  "default-1hz": {
+   "r": 0.246,
+   "r_independent": 0.406,
+   "mean_hz": 1.101,
+   "over_100hz": 0.00019,
+   "groups_within_2x": 0.7103,
+   "bump": {
+    "L": {
+     "strength": 0.36,
+     "shuffle_p99": 0.26,
+     "run_positions_deg": [
+      158.1,
+      156.4,
+      158.2,
+      156.2,
+      159.0,
+      161.2,
+      157.5,
+      159.3
+     ],
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.346,
+     "shuffle_p99": 0.237,
+     "run_positions_deg": [
+      -169.5,
+      -169.1,
+      -171.0,
+      -168.5,
+      -171.8,
+      -172.9,
+      -170.7,
+      -171.9
+     ],
+     "resultant": 1.0
+    }
+   },
+   "seconds": 4079
+  },
+  "default-4hz": {
+   "r": 0.259,
+   "r_independent": 0.39,
+   "mean_hz": 4.003,
+   "over_100hz": 0.00031,
+   "groups_within_2x": 0.6422,
+   "bump": {
+    "L": {
+     "strength": 0.521,
+     "shuffle_p99": 0.359,
+     "run_positions_deg": [
+      132.8,
+      132.8,
+      132.6,
+      131.6,
+      132.0,
+      132.3,
+      133.0,
+      132.1
+     ],
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.527,
+     "shuffle_p99": 0.323,
+     "run_positions_deg": [
+      -145.9,
+      -145.3,
+      -145.6,
+      -144.7,
+      -145.1,
+      -145.6,
+      -147.4,
+      -145.9
+     ],
+     "resultant": 1.0
+    }
+   },
+   "seconds": 4855
+  }
+ },
+ "missing": []
+}
