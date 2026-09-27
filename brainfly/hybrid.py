@@ -177,7 +177,7 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 
 
 @numba.njit(parallel=True, cache=True)
-def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
+def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
@@ -206,7 +206,9 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     adaptation current: it pulls v down like the slow current (a_va), decays by a_aa a step, keeps
     decaying through the refractory period and grows by adapt[cls] with each spike. A depressing neuron's spike carries
     the fraction left[b, i] of its full strength, recovered toward 1 (time constant recover, in
-    steps) since its last spike, and leaves depress times that. counts[b, i] gains each spike, and
+    steps) since its last spike, and leaves depress times that. A spike of neuron i also raises each of
+    its electrical partners gidx[gptr[i]:gptr[i + 1]] by gw mV at once (no delay, no depression), so they
+    can fire on the next step. counts[b, i] gains each spike, and
     timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0."""
     trials, n = u.shape
     slow = len(sw) > 0
@@ -336,6 +338,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                     if slow:
                         for e in range(sptr[i], sptr[i + 1]):
                             srow[sidx[e]] += sw[e] * strength
+                    for e in range(gptr[i], gptr[i + 1]):       # electrical synapses: at once, undepressed
+                        ub[gidx[e]] += gw[e]
             if bin_steps > 0:
                 timeline[b, (bin_start + k) // bin_steps] += spikes
         u[b, :] = ub
@@ -395,7 +399,10 @@ class HybridBrain:
     types: {cell type or superclass: {parameter: value}} (see the module docstring), applied in order,
     so list broad classes first; "all" means every neuron. matrix: signed synapse counts, rows = postsynaptic (default
     shiu.counts). slow: signed counts of the edges that act through the slow current instead (not
-    also in matrix), with tau_slow its time constant, s. w_poi: mV per Poisson event (default
+    also in matrix), with tau_slow its time constant, s. gap: electrical synapses, in mV, rows
+    postsynaptic: each spike of a presynaptic neuron raises the postsynaptic one's membrane by that
+    much at once, with no synaptic delay and no depression (give one direction only for a rectifying
+    junction). w_poi: mV per Poisson event (default
     Shiu's, 250 x w_syn, which pushes any neuron over threshold). scale: a multiplier per neuron on
     every synapse onto it (e.g. 1 / size), on top of its type's. bias: mV per neuron added to its
     type's bias, for calibrating groups that types can't name (set_bias changes it). sets: {name:
@@ -406,6 +413,7 @@ class HybridBrain:
     def __init__(self, data: Path | str | None = None, trials: int = 1, dt: float = 1e-4, w_syn: float = W_SYN,
                  types: dict[str, dict] | None = None, matrix: sparse.spmatrix | None = None,
                  slow: sparse.spmatrix | None = None, tau_slow: float = 0.1, w_poi: float | None = None,
+                 gap: sparse.spmatrix | None = None,
                  scale: np.ndarray | None = None, bias: np.ndarray | None = None, seed: int = 0,
                  labels: dict[str, np.ndarray] | None = None, sets: dict[str, np.ndarray] | None = None):
         if labels is None:
@@ -427,6 +435,8 @@ class HybridBrain:
             self.scale = (self.scale * np.asarray(scale, np.float32)).astype(np.float32)
         C = (counts(data) if matrix is None else matrix).tocsc()
         self.ptr, self.idx, self._counts = C.indptr, C.indices, C.data.astype(np.float32)
+        G = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if gap is None else sparse.csc_matrix(gap, dtype=np.float32)
+        self.gptr, self.gidx, self.gap_mv = G.indptr, G.indices, G.data.astype(np.float32)
         S = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if slow is None else slow.tocsc()
         self.sptr, self.sidx, self._slow_counts = S.indptr, S.indices, S.data.astype(np.float32)
         self.w_syn = w_syn
@@ -564,7 +574,7 @@ class HybridBrain:
         counts = np.zeros((self.trials, self.n), np.int32)
         external_on = bool(self.external_input.any())      # else only graded neurons' targets can get release
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights,
-                 self.sptr, self.sidx, self.slow_weights, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
+                 self.sptr, self.sidx, self.slow_weights, self.gptr, self.gidx, self.gap_mv, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  k["a_xx"], k["a_ss"], k["theta"],
                  k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["uniform"],
                  bool(len(self.graded) or external_on), k["g_list"], k["g_gain"], k["g_at"], k["g_max"],

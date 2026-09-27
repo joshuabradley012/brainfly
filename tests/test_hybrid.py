@@ -285,3 +285,42 @@ def test_a_named_set_takes_parameters_like_a_type():
     params = [brain.params[c] for c in brain.cls]
     assert [p["bias"] for p in params] == [0.0, 3.0, 0.0, 3.0]
     assert [p["threshold"] for p in params] == [7.0, 10.0, 7.0, 7.0]
+
+
+def two_cells(gap) -> HybridBrain:
+    labels = {"cell_type": np.array(["c0", "c1"]), "side": np.array(["L", "L"]), "superclass": np.array(["test", "test"])}
+    return HybridBrain(matrix=sparse.csr_matrix((2, 2), dtype=np.float32), labels=labels, w_syn=1.0, gap=gap, w_poi=20.0)
+
+
+KICKS = {10, 60, 110, 160}                  # steps at which c0 gets a sure 20 mV kick, far apart
+
+
+def kicked(brain: HybridBrain, steps: int = 200) -> np.ndarray:
+    return np.array([brain.advance(1, drive=[([0], 1 / DT)] if t in KICKS else ())[0] for t in range(steps)])
+
+
+def test_an_electrical_synapse_fires_its_partner_on_the_next_step():
+    """A spikelet over threshold makes the partner fire one step after each presynaptic spike, and
+    only in the junction's direction; without the junction the partner stays silent."""
+    gap = sparse.csr_matrix((np.array([10.0], np.float32), ([1], [0])), shape=(2, 2))     # c0 -> c1, 10 mV
+    run = kicked(two_cells(gap))
+    pre, post = np.flatnonzero(run[:, 0]), np.flatnonzero(run[:, 1])
+    assert len(pre) == len(KICKS)
+    np.testing.assert_array_equal(post, pre + 1)
+    assert kicked(two_cells(None))[:, 1].sum() == 0
+    assert kicked(two_cells(gap.T.tocsr()))[:, 1].sum() == 0
+
+
+def test_a_subthreshold_spikelet_only_adds_to_other_input():
+    """A 3 mV spikelet can't fire a resting partner (threshold 7 mV above rest): it raises its
+    membrane by 3 mV at once, which then decays."""
+    gap = sparse.csr_matrix((np.array([3.0], np.float32), ([1], [0])), shape=(2, 2))
+    brain = two_cells(gap)
+    before, fired = None, 0
+    for t in range(40):
+        c = brain.advance(1, drive=[([0], 1 / DT)] if t == 10 else ())[0]
+        fired += int(c[1])
+        if c[0]:
+            before = float(brain.u[0, 1])
+    assert before is not None and abs(before - 3.0) < 1e-5
+    assert float(brain.u[0, 1]) < before and fired == 0
