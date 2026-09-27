@@ -1,0 +1,286 @@
+{
+ "question": "Exploratory, not pre-registered: depression by synapse class in the resting brain, and taste.\n\ndepression_rules.py found no uniform depression rule that keeps the resting brain calm and lets\nsugar reach MN9. research_notes/Rung 4 resting state data/short_term_plasticity.md assigns depression by\npresynaptic class instead (escape_at_rest.py's model), with unmeasured central cholinergic neurons as\nthe knob: 0.9 of the strength left per spike, recovering in 0.2 s first, 0.5 s if loops persist. And\nif the subesophageal interneurons still block taste, it suggests exempting the neurons that take most\nof their input from gustatory receptor neurons. Measured as in depression_rules.py (eyes_at_rest.py's\nsetup and eyes-open biases, 12 fresh-start rounds, 8 flies): rest, taste and looming at gain 1, for\n  class rule, central recovery 0.2 s\n  class rule, central recovery 0.5 s                (escape_at_rest.py's model)\n  the same, plus neurons taking at least 20% of their input synapses from GRNs left undepressed\n  the same as escape_at_rest.py's model, but visual projection neurons depressed mildly and fast\n      (0.95 / 0.3 s, the notes' \"if any\"), since escape_at_rest.py found the left LPLC2, LC4 and giant\n      fiber running at rest (28, 8 and 28 Hz) with them undepressed\nAlso reported: each fly's resting LPLC2 L, LC4 L and giant fiber L rates (blank scene, gain 1).\n\n    python experiments/depression_classes.py            (writes experiments/depression_classes.json)\n",
+ "rules": [
+  {
+   "rule": "class rule, central recovery 0.2 s",
+   "resting_per_fly_hz": {
+    "LPLC2 L": [
+     0.1,
+     0.1,
+     0.1,
+     0.2,
+     0.5,
+     0.2,
+     93.3,
+     0.3
+    ],
+    "LC4 L": [
+     1.5,
+     0.6,
+     0.5,
+     0.4,
+     0.1,
+     0.5,
+     21.7,
+     0.1
+    ],
+    "DNp01 L": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     100.0,
+     0.0
+    ]
+   },
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 2.13,
+    "over_100hz": 36,
+    "groups_within_2x": 0.9015
+   },
+   "rest": {
+    "mean_hz_own": 1.922,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 881,
+    "cx_median_fano": {
+     "FR1": 7.5,
+     "LNO1": 1.7,
+     "PFNv": 3.8
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": 5.75,
+    "sugar 10 Hz": 0.0,
+    "sugar+bitter": -5.0
+   },
+   "looming": {
+    "REST": false,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 55.0,
+    "fastR DNp01": 48.25
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 28.01,
+    "fastR LC4": 23.1
+   }
+  },
+  {
+   "rule": "class rule, central recovery 0.5 s",
+   "resting_per_fly_hz": {
+    "LPLC2 L": [
+     0.3,
+     0.2,
+     0.3,
+     0.4,
+     0.2,
+     0.1,
+     0.2,
+     0.2
+    ],
+    "LC4 L": [
+     0.5,
+     0.4,
+     0.5,
+     0.8,
+     0.5,
+     0.3,
+     0.4,
+     0.1
+    ],
+    "DNp01 L": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 1.979,
+    "over_100hz": 7,
+    "groups_within_2x": 0.9498
+   },
+   "rest": {
+    "mean_hz_own": 1.803,
+    "over_100hz": 3,
+    "bursting_fano_over_10": 546,
+    "cx_median_fano": {
+     "FR1": 5.3,
+     "LNO1": 1.5,
+     "PFNv": 2.9
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": 0.62,
+    "sugar 10 Hz": 1.62,
+    "sugar+bitter": -6.88
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 66.0,
+    "fastR DNp01": 48.25
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 29.51,
+    "fastR LC4": 22.65
+   }
+  },
+  {
+   "rule": "class rule, 0.5 s, GRN-input neurons undepressed",
+   "resting_per_fly_hz": {
+    "LPLC2 L": [
+     0.2,
+     0.1,
+     0.1,
+     0.1,
+     0.1,
+     0.2,
+     0.3,
+     0.2
+    ],
+    "LC4 L": [
+     0.4,
+     0.4,
+     0.6,
+     1.4,
+     0.7,
+     0.5,
+     0.5,
+     0.2
+    ],
+    "DNp01 L": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 2.04,
+    "over_100hz": 34,
+    "groups_within_2x": 0.9358
+   },
+   "rest": {
+    "mean_hz_own": 1.769,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 564,
+    "cx_median_fano": {
+     "FR1": 5.6,
+     "LNO1": 1.5,
+     "PFNv": 2.9
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": 1.75,
+    "sugar 10 Hz": 0.25,
+    "sugar+bitter": -3.38
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 63.0,
+    "fastR DNp01": 47.0
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 29.25,
+    "fastR LC4": 22.48
+   }
+  },
+  {
+   "rule": "class rule, 0.5 s, VPNs 0.95 / 0.3 s",
+   "resting_per_fly_hz": {
+    "LPLC2 L": [
+     0.6,
+     0.4,
+     1.0,
+     0.3,
+     0.8,
+     0.4,
+     0.4,
+     0.3
+    ],
+    "LC4 L": [
+     0.7,
+     1.8,
+     0.6,
+     0.6,
+     0.9,
+     0.6,
+     0.6,
+     0.9
+    ],
+    "DNp01 L": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "calibration": {
+    "round": 10,
+    "mean_hz_own": 1.696,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9968
+   },
+   "rest": {
+    "mean_hz_own": 1.635,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 65,
+    "cx_median_fano": {
+     "FR1": 5.2,
+     "LNO1": 1.6,
+     "PFNv": 3.3
+    }
+   },
+   "taste_rise_hz": {
+    "sugar": 3.38,
+    "sugar 10 Hz": -1.25,
+    "sugar+bitter": -5.12
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 43.0,
+    "fastR DNp01": 30.5
+   },
+   "lc4_rise_hz": {
+    "fastL LC4": 24.89,
+    "fastR LC4": 20.36
+   }
+  }
+ ],
+ "seconds": 840
+}
