@@ -4,7 +4,7 @@ saved verdicts wherever one exists (the rest of each line is the README's rung t
     python assets/ladder.py     # writes assets/ladder-light.svg and assets/ladder-dark.svg
 
 A rung is "passed" only when its pre-registered test passed; "in progress" rungs list what is done
-(filled marks) and what is still open (hollow marks). The rungs light up from the bottom, as climbed.
+(filled marks) and what is still open (hollow marks).
 """
 from __future__ import annotations
 
@@ -71,8 +71,7 @@ def figure(theme: str, rows: list[dict]) -> str:
         done = state == "passed"
         partial = state in ("in progress", "started")
         col = c["red"] if (done or partial) else c["rule"]
-        cls = f"rung r{k}"
-        out.append(f'<g class="{cls}">')
+        out.append("<g>")
         if k % 2 == 0:
             out.append(f'<rect x="{RAIL_X + RAIL_W + 16}" y="{y - ROW / 2 + 3:.1f}" width="{W - RAIL_X - RAIL_W - 30}" height="{ROW - 6}" rx="8" fill="{c["wash"]}"/>')
         out.append(f'<path d="M{RAIL_X} {y:.1f}H{RAIL_X + RAIL_W}" stroke="{col}" stroke-width="{7 if done else 5}" stroke-linecap="round"'
@@ -97,20 +96,12 @@ def figure(theme: str, rows: list[dict]) -> str:
             out.append(dot + f'<text x="{mx + 15:.1f}" y="{y + 19:.1f}" class="mark">{label}</text>')
             mx += 15 + 6.45 * len(label) + 24
         out.append("</g>")
-    # climb: each rung fades up in turn from the bottom, then all hold
-    n, loop = len(rows), 6.0
-    keyframes = []
-    for k in range(n):
-        a = 100 * (0.25 + k * 0.28) / loop
-        keyframes.append(f".r{k} {{ animation: climb{k} {loop}s ease-out infinite; }} "
-                         f"@keyframes climb{k} {{ 0%, {a:.1f}% {{ opacity: 0.18; }} {a + 4:.1f}%, 94% {{ opacity: 1; }} 100% {{ opacity: 0.18; }} }}")
     style = f"""
     text {{ font-family: {FONT}; }}
     .num {{ font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }}
     .name {{ font-size: 17px; font-weight: 600; fill: {c["ink"]}; }}
     .mark {{ font-size: 13.5px; fill: {c["muted"]}; }}
     .pill {{ font-size: 12.5px; font-weight: 600; }}
-    @media (prefers-reduced-motion: no-preference) {{ {" ".join(keyframes)} }}
     """
     title = "brainfly's ladder of nine rungs, from a validated baseline to state and learning, and where each stands"
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
