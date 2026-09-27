@@ -336,6 +336,8 @@ Three models share the package:
   Its state carries over between calls, so it can be stepped in a loop with a body. With nothing
   changed, it is Shiu's model exactly. On rung 1's network it simulates one fly faster than real
   time on one core of an Apple M4 Pro (0.84 s per simulated second), and 8 flies in 0.88 s.
+  `set_release` lets an optic lobe simulated elsewhere drive it: `FlyvisNative` sets the release
+  of its 69,917 neurons every 2 ms, in about 1 ms.
 
 ```sh
 pip install "brainfly[build] @ git+https://github.com/joshuabradley012/brainfly"

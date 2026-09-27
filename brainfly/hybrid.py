@@ -31,9 +31,12 @@ brainfly.shiu, and lets each cell type differ:
 A spike adds w_syn x (signed synapse count) to a fast current in each target (tau 5 ms, as in
 Shiu), or to a slow current (tau_slow) along the edges given as slow, t_dly later. As in Brian2,
 input that reaches a refractory neuron is lost, and a spike resets the fast current but not the
-slow one. With no types and no slow edges HybridBrain is Shiu's model: tests/test_hybrid.py checks it
-against Brian2 spike for spike. Its state persists between calls to advance(), so it can run inside
-a loop with a body, and advancing in pieces gives the same spikes as advancing in one go.
+slow one. Neurons can also take their output from outside: set_release gives each a release in
+Hz, held until the next call, and they never spike. That is how an optic lobe simulated elsewhere
+(brainfly.optic.FlyvisNative) drives the brain. With no types and no slow edges HybridBrain is
+Shiu's model: tests/test_hybrid.py checks it against Brian2 spike for spike. Its state persists
+between calls to advance(), so it can run inside a loop with a body, and advancing in pieces gives
+the same spikes as advancing in one go.
 
     brain = HybridBrain(types={"APL": {"unit": "graded"}})
     rates = brain.run(1.0, drive=[(brain.cells(["LB3b", "LB3c"], side="L"), 100.0)]).rates
@@ -78,10 +81,10 @@ def _uniform(rng, b):
 
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
-             cls, a_vv, a_vx, a_vs, a_bias, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform,
+             cls, a_vv, a_vx, a_vs, a_bias, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max,
              u, x, s, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
-             drive_idx, drive_p, w_poi, driven, silenced, counts, timeline, bin_start, bin_steps):
+             drive_idx, drive_p, w_poi, driven, external, E, silenced, counts, timeline, bin_start, bin_steps):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
@@ -94,6 +97,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     through the list of targets that received some, touched[b, slot, :n_touched[b, slot]], unless
     that list overflowed (n_touched > its capacity), when the whole row is scanned. uniform: every
     neuron is spiking and in class 0, and there is no slow current, so the parameters are scalars.
+    external neurons never fire; their release is set from outside (HybridBrain.set_release), and
+    E[i], the same for every trial, is what it adds to neuron i each second, like graded input R.
 
     Per-neuron parameters come from a small table indexed by cls. A depressing neuron's spike carries
     the fraction left[b, i] of its full strength, recovered toward 1 (time constant recover, in
@@ -135,7 +140,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                     ui = A * ub[i] + B * xb[i] + C
                     xb[i] = a_xx * xb[i]
                     ub[i] = ui
-                    if ui > TH:
+                    if ui > TH and not external[i]:
                         fired[m] = i
                         m += 1
             else:
@@ -147,7 +152,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                         ui += a_vs[c] * sb[i]
                         sb[i] = a_ss * sb[i]
                     ub[i] = ui
-                    if ui > theta[c] and not graded[c]:
+                    if ui > theta[c] and not graded[c] and not external[i]:
                         fired[m] = i
                         m += 1
             for q in range(ng):
@@ -173,10 +178,11 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                         xb[j] += row[j]
                         row[j] = 0.0
             nt[slot] = 0
-            if ng:
+            if graded_in:
                 for i in range(n):
-                    if Rb[i] != 0.0:
-                        xb[i] += Rb[i] * dt
+                    g = Rb[i] + E[i]
+                    if g != 0.0:
+                        xb[i] += g * dt
             if slow:
                 for i in range(n):
                     if srow[i] != 0.0:
@@ -231,6 +237,16 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
         s[b, :] = sb
         until[b, :] = untilb
         R[b, :] = Rb
+
+
+@numba.njit(parallel=True, cache=True)
+def _row_sums(indptr, indices, data, x, out):
+    """out = M @ x for a CSR matrix, rows in parallel, each summed in order in double precision."""
+    for r in numba.prange(len(indptr) - 1):
+        total = 0.0
+        for e in range(indptr[r], indptr[r + 1]):
+            total += data[e] * x[indices[e]]
+        out[r] = total
 
 
 def consensus_transmitters(data: Path | str | None = None) -> np.ndarray:
@@ -303,6 +319,10 @@ class HybridBrain:
         self.w_syn = w_syn
         self.tau_slow = float(tau_slow)
         self.delay = int(round(T_DLY / self.dt))
+        self.external = np.zeros(self.n, np.bool_)       # neurons whose release is set by set_release
+        self._external_release = np.zeros(self.n, np.float32)
+        self._external_matrix = None                     # rows: every neuron; columns: the external ones
+        self.external_input = np.zeros(self.n, np.float32)
         self.reset(seed)
 
     @property
@@ -312,7 +332,10 @@ class HybridBrain:
 
     @w_syn.setter
     def w_syn(self, value: float) -> None:
+        if getattr(self, "graded_input", None) is not None and (self.graded_input.any() or self.external_input.any()):
+            raise ValueError("set w_syn before any graded or external release, or after reset()")
         self._w_syn = float(value)
+        self._external_matrix = None
         self.weights = (self._counts * np.float32(value) * self.scale[self.idx]).astype(np.float32)
         self.slow_weights = (self._slow_counts * np.float32(value) * self.scale[self.sidx]).astype(np.float32)
         self.w_poi = F_POI * self._w_syn if self._fixed_poi is None else self._fixed_poi
@@ -378,7 +401,9 @@ class HybridBrain:
         cap = max(64, self.n // 8)             # targets remembered per slot before falling back to a full scan
         self.touched = np.zeros((self.trials, self.delay, cap), np.int32)
         self.n_touched = np.zeros((self.trials, self.delay), np.int64)
-        self.graded_input = np.zeros(shape if len(self.graded) else (self.trials, 0), np.float32)
+        self.graded_input = np.zeros(shape if len(self.graded) or self.external.any() else (self.trials, 0), np.float32)
+        self._external_release[:] = 0.0
+        self.external_input = np.zeros(self.n, np.float32)
         self.release = np.zeros((self.trials, len(self.graded)), np.float32)
         self.rng = np.random.SeedSequence(seed).generate_state(self.trials, dtype=np.uint64)
         self.driven = np.zeros(self.n, np.bool_)
@@ -409,15 +434,42 @@ class HybridBrain:
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights,
                  self.sptr, self.sidx, self.slow_weights, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"],
                  np.float32(np.exp(-self.dt / TAU)), np.float32(np.exp(-self.dt / self.tau_slow)), k["theta"],
-                 k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], self._uniform(), self.graded.astype(np.int64),
+                 k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], self._uniform(),
+                 bool(len(self.graded) or self.external.any()), self.graded.astype(np.int64),
                  np.array([p["gain"] for p in g], np.float32), np.array([p["release_at"] for p in g], np.float32),
                  np.array([p["max_release"] for p in g], np.float32), self.u, self.x, self.s, self.until,
                  self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.release,
                  self.rng, self.left, self.last,
-                 drive_idx, drive_p, np.float32(self.w_poi), self.driven, silenced, counts,
+                 drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self.external_input,
+                 silenced, counts,
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps))
         self.t += int(steps)
         return counts
+
+    def set_release(self, neurons, hz) -> None:
+        """Make these neurons' output external. From now until reset() they never spike, and each
+        passes on `hz` (one value per neuron, or one for all) as a change of its release from rest.
+        Every Hz acts on its targets like one spike per second, and a negative change takes input
+        away. It holds until the next call. This is for an optic lobe simulated elsewhere, like
+        brainfly.optic.FlyvisNative. Input to an external neuron can't matter, so external release
+        reaches only the other neurons, which also saves most of the work."""
+        neurons = np.asarray(neurons, np.int64)
+        hz = np.broadcast_to(np.asarray(hz, np.float32), neurons.shape)
+        if not self.external[neurons].all():
+            self.external[neurons] = True
+            self._external_matrix = None
+        if self.graded_input.shape[1] == 0:
+            self.graded_input = np.zeros((self.trials, self.n), np.float32)
+        if self._external_matrix is None:
+            sources = np.flatnonzero(self.external)
+            col = np.repeat(np.arange(self.n), np.diff(self.ptr))
+            keep = self.external[col] & ~self.external[self.idx]
+            M = sparse.csr_matrix((self.weights[keep], (self.idx[keep], np.searchsorted(sources, col[keep]))),
+                                  shape=(self.n, len(sources)), dtype=np.float32)
+            self._external_matrix = (sources, M)
+        self._external_release[neurons] = hz
+        sources, M = self._external_matrix
+        _row_sums(M.indptr, M.indices, M.data, self._external_release[sources], self.external_input)
 
     def run(self, seconds: float, drive=(), silence=(), tail: float = 0.0, seed: int = 0, bin: float = 0.01) -> Result:
         """From rest, drive neurons for `seconds`, then run `tail` seconds without the drive; the same
