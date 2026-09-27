@@ -37,7 +37,7 @@ from pathlib import Path
 import numpy as np
 
 from brainfly import FlyBrain
-from brainfly.optic import GRADED as OPTIC, FlyvisNative
+from brainfly.optic import GRADED as OPTIC, MODEL, FlyvisNative
 from eyepath import GRADED, SCENES as SCENES_1D
 from eyepath_fast import DT, REFRACTORY, WINDOWS, measure, scenes
 from eyepath_filled import N0, measure as measure_1d
@@ -100,17 +100,17 @@ def run_config(brain, ol, seed, rest_pop, rest_ref_hz, own, sc) -> dict:
     return v
 
 
-def build(batch: int):
+def build(batch: int, model: str = MODEL):
     brain = FlyBrain(batch=batch, graded=OPTIC, dt=DT, refractory=REFRACTORY)
     brain.graded_gain, brain.graded_release = 0.15, 0.3
-    ol = FlyvisNative(brain)
+    ol = FlyvisNative(brain, model=model)
     own = np.flatnonzero(~np.isin(brain.graded, ol.neurons))     # rows of brain.graded that FlyBrain itself runs
     return brain, ol, own
 
 
-def main() -> None:
+def main(model: str = MODEL, out: Path = OUT, criteria: str = __doc__) -> None:
     t0 = time.perf_counter()
-    results = {"criteria": __doc__, "sweep": [], "confirm": None}
+    results = {"criteria": criteria, "model": model, "sweep": [], "confirm": None}
     ref = FlyBrain(batch=6, dt=DT, refractory=REFRACTORY)
     optic = np.zeros(N0, bool)
     optic[ref.cells(GRADED["optic"])] = True
@@ -120,7 +120,7 @@ def main() -> None:
     print(f"REST reference (all-spiking, 2 ms, refractory 4 ms): {rest_ref_hz:.2f} Hz", flush=True)
     del ref
 
-    brain, ol, own = build(6)
+    brain, ol, own = build(6, model)
     results["flyvis_native"] = {"cells": len(ol.cell_type), "driven": len(ol.neurons)}
     sc = scenes()
     fmt = lambda d: " ".join(f"{k}:{x['delta']:+.1f}(t{x['t'] if isinstance(x['t'], str) else round(x['t'])})" for k, x in d.items())
@@ -133,11 +133,11 @@ def main() -> None:
               f"bounds {v['graded_at_bounds']} | RELAY {v['RELAY']} {fmt(v['relay'])} | SIDE {v['SIDE']} | "
               f"ESCAPE {v['ESCAPE']} {fmt(v['escape'])} | SPEED {fmt(v['speed'])} | slow FULL {fmt(v['slow_full'])} "
               f"({time.perf_counter() - t1:.0f} s)", flush=True)
-        OUT.write_text(json.dumps(results, indent=1))
+        out.write_text(json.dumps(results, indent=1))
     passing = [r for r in results["sweep"] if r["pass"]]
     if passing:
         pick = min(passing, key=lambda r: r["gain"])
-        brain, ol, own = build(8)
+        brain, ol, own = build(8, model)
         ol.gain = pick["gain"]
         v = run_config(brain, ol, 2, rest_pop, rest_ref_hz, own, sc)
         results["confirm"] = {"gain": pick["gain"], **v}
@@ -146,7 +146,7 @@ def main() -> None:
     else:
         print("no gain passed the sweep; nothing to confirm", flush=True)
     results["seconds"] = round(time.perf_counter() - t0)
-    OUT.write_text(json.dumps(results, indent=1))
+    out.write_text(json.dumps(results, indent=1))
 
 
 if __name__ == "__main__":
