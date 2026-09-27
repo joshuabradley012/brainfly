@@ -1,11 +1,23 @@
 {
- "question": "Exploratory, not pre-registered: how much of the flies' resting FC does the measurement explain\nbefore any dynamics, and what does that say about rung 4's tests?\n\nrest_calibration2.py's resting brain matched the flies' FC (Turner et al. 2021) at r = 0.38, below\nits own neurons firing independently (0.40) and below calibrated rewirings (0.50). Every FC in rung 4\ngoes through one forward model (brainfly.imaging): a region's signal is its neurons' activity, each\nweighted by its synapses in the region. This asks how much that choice matters, with no dynamics at\nall: the FC that independently firing neurons (equal variance) give under other weightings of the\nsame synapse table, from a neuron's raw synapse count to a mere presence in the region (5 or more\nsynapses). A weighting closer to a mere presence is closer to how much of a neuron a voxel sees.\nAlso reported: how much of each model's FC its measurement-only FC explains, and each FC's mean\n(the flies' regions co-fluctuate far more strongly than any model's).\n\n    python experiments/rest_measurement.py            (writes experiments/rest_measurement.json)\n",
+ "question": "Exploratory, not pre-registered: how much of the flies' resting FC does the measurement explain\nbefore any dynamics, and what does that say about rung 4's tests?\n\nrest_calibration2.py's resting brain matched the flies' FC (Turner et al. 2021) at r = 0.38, below\nits own neurons firing independently (0.40) and below calibrated rewirings (0.50). Every FC in rung 4\ngoes through one forward model (brainfly.imaging): a region's signal is its neurons' activity, each\nweighted by its synapses in the region. This asks how much that choice matters, with no dynamics at\nall: the FC that independently firing neurons (equal variance) give under other weightings of the\nsame synapse table, from a neuron's raw synapse count to a mere presence in the region (5 or more\nsynapses). A weighting closer to a mere presence is closer to how much of a neuron a voxel sees.\nAlso reported: how much of each model's FC its measurement-only FC explains, and each FC's mean\n(the flies' regions co-fluctuate far more strongly than any model's). And since that suggests a\nsignal shared across the brain: independent firing plus one slow signal that every neuron carries\nequally, scaled so its FC's mean matches the flies' (mean z 0.29), under each weighting. No network,\nno wiring beyond which regions each neuron reaches. Finally, what that best null leaves (the flies'\nFC minus it, under presence weighting) against how strongly two regions are wired together (log of\nthe synapses between neurons, split by each neuron's share of its synapses in each region), raw and\nwith the number of shared neurons partialled out; and against attempt 2's network-made FC (its FC\nminus its own measurement-only FC).\n\n    python experiments/rest_measurement.py            (writes experiments/rest_measurement.json)\n",
  "independent_firing_r_by_weighting": {
   "synapses (brainfly.imaging)": 0.377,
   "sqrt(synapses)": 0.495,
   "log(1 + synapses)": 0.533,
   "present (5 or more synapses)": 0.558,
   "share of the neuron's own synapses": 0.336
+ },
+ "what_the_best_null_leaves": {
+  "r_with_wiring": -0.168,
+  "r_with_wiring_given_shared_neurons": 0.127,
+  "r_with_attempt2_network_made_fc": -0.018
+ },
+ "independent_firing_plus_a_shared_signal_r_by_weighting": {
+  "synapses (brainfly.imaging)": 0.525,
+  "sqrt(synapses)": 0.669,
+  "log(1 + synapses)": 0.679,
+  "present (5 or more synapses)": 0.69,
+  "share of the neuron's own synapses": 0.621
  },
  "models": {
   "uncalibrated (rest_fc.py)": {
