@@ -12,6 +12,7 @@ tensors. The validation error matches flyvis's published values on either device
     flash_peaks(net, "T2")        their peaks, as flyvis_screen.py measures them
     validation_epe(net, dec, t)   flyvis's validation endpoint error
     fine_tune(...)                flyvis's training step (Adam on its flow loss) plus a penalty on the flash peaks
+    local(net, "T2")              masks for fine_tune freeing only one cell type's own parameters and its inputs
     save(net, dec, name)          a model directory flyvis (and brainfly.optic) loads like a pretrained one
 """
 from __future__ import annotations
@@ -144,14 +145,30 @@ def validation_epe(net, dec, task, dev: torch.device = DEVICE) -> float:
     return float(np.mean(out))
 
 
+def local(net, cell: str) -> dict[str, torch.Tensor]:
+    """Masks for fine_tune that free only `cell`'s own parameters (resting potential and time constant) and the
+    strengths of the synapses onto it."""
+    to_cell = torch.tensor([t == cell for _, t in net.edge_params["syn_strength"].keys])
+    own = torch.tensor([c == cell for c in net.node_params["bias"].keys])
+    assert list(net.node_params["time_const"].keys) == list(net.node_params["bias"].keys)
+    return {"nodes_bias": own, "nodes_time_const": own, "edges_syn_strength": to_cell}
+
+
 def fine_tune(net, dec, task, penalty: Callable | None, iters: int, lr: float = 5e-6, seed: int = 0,
-              every: int = 100, log: Callable[[dict], None] = print, dev: torch.device = DEVICE) -> list[dict]:
+              every: int = 100, log: Callable[[dict], None] = print, dev: torch.device = DEVICE,
+              masks: dict[str, torch.Tensor] | None = None, train_decoder: bool = True) -> list[dict]:
     """flyvis's training step for `iters` iterations: Adam on network and decoder, flyvis's flow loss on augmented
     Sintel batches, each epoch starting from grey's steady state. `penalty(net)` (a scalar tensor) is added to
-    each iteration's loss. Logs the mean losses every `every` iterations."""
+    each iteration's loss. masks: {network parameter name: boolean mask}; given, only the masked entries of those
+    parameters train and every other network parameter is frozen (see local). train_decoder: False freezes the
+    flow decoder. Logs the mean losses every `every` iterations."""
     torch.manual_seed(seed)
     np.random.seed(seed)
-    params = list(net.parameters()) + [p for d in dec.values() for p in d.parameters()]
+    named = dict(net.named_parameters())
+    free = {n: m.to(dev) for n, m in (masks or {}).items()}
+    params = [p for n, p in named.items() if masks is None or n in free]
+    if train_decoder:
+        params += [p for d in dec.values() for p in d.parameters()]
     opt = torch.optim.Adam(params, lr=lr)
     net.train()
     for d in dec.values():
@@ -172,6 +189,9 @@ def fine_tune(net, dec, task, penalty: Callable | None, iters: int, lr: float = 
                     loss = task.loss(dec["flow"](net(net.stimulus(), dt, state=state)), data["flow"].to(dev), "flow")
                     extra = penalty(net) if penalty is not None else torch.zeros((), device=dev)
                     (loss + extra).backward()
+                    for n, m in free.items():             # frozen entries get no gradient, so Adam leaves them
+                        if named[n].grad is not None:
+                            named[n].grad.mul_(m.to(named[n].grad.dtype))
                     opt.step()
                     net.clamp()
                 flow.append(float(loss))

@@ -53,3 +53,12 @@ def test_a_saved_model_loads_back_unchanged():
             assert torch.equal(v.cpu(), back.state_dict()[k].cpu()), k
     finally:
         shutil.rmtree(flyvis.results_dir / "flow" / "test_vistrain", ignore_errors=True)
+
+
+def test_local_masks_free_only_one_cell_and_its_inputs():
+    _, net, _ = vt.load("flow/0000/000", CPU)
+    m = vt.local(net, "T2")
+    keys = net.edge_params["syn_strength"].keys
+    assert int(m["nodes_bias"].sum()) == 1 and int(m["nodes_time_const"].sum()) == 1
+    assert all(keys[i][1] == "T2" for i in torch.nonzero(m["edges_syn_strength"]).flatten().tolist())
+    assert int(m["edges_syn_strength"].sum()) == sum(t == "T2" for _, t in keys) > 10
