@@ -1,12 +1,13 @@
 """The resting-brain figure in the README (rung 4), made from saved results and one short run.
 
-    python assets/rest.py       # writes assets/rest-light.svg and assets/rest-dark.svg (~1 min)
+    python assets/rest.py       # writes assets/rest-light.svg and assets/rest-dark.svg (~2 min)
 
-Left: the brain at rest, attempt 2's model (experiments/rest_calibration2.py) with its calibrated
-biases (experiments/rest_calibration2/intact.npz). One fly settles for 2 s, then 1 s is recorded in
-FRAME bins; each frame lights the neurons that fired in it, over every neuron with a known position,
-seen from the front. Right, from the attempts' saved results: the measured types' resting rates
-against their targets in attempts 1 and 2, and the flies' functional connectivity against the model's.
+Left: the current brain at rest, taste_escape.py's (the resting brain that escapes and tastes, with flyvis's
+eyes silent at a grey screen) with its calibrated biases (experiments/taste_escape/intact.npz). One fly
+settles for 2 s, then 1 s is recorded in FRAME bins; each frame lights the neurons that fired in it, over
+every neuron with a known position, seen from the front. Right, from saved results: the measured types'
+resting rates against their targets in attempt 1 and in the current brain (experiments/rest_current.json),
+and the flies' functional connectivity against the current brain's.
 """
 from __future__ import annotations
 
@@ -37,22 +38,23 @@ MEASURED = ["MBON11", "MBON12", "MBON13", "MBON14", "MBON17", "MBON18", "PPL101"
 
 
 def simulate() -> dict:
+    import escape_at_rest2 as escape2
+    import eyes_at_rest as eyes
     import rest_calibration as attempt1
-    import rest_calibration2 as attempt2
-    from brainfly.hybrid import HybridBrain
-    from shiu_rewiring import W_SYN
+    import taste_escape as te
 
-    M, scale, labels, types, superclass = attempt1.network()
-    key = np.where(types != "", types, np.char.add("superclass:", superclass))
-    names, gid = np.unique(key, return_inverse=True)
-    saved = np.load(ROOT / "experiments" / "rest_calibration2" / "intact.npz")
-    assert np.array_equal(saved["groups"], names)
-    spec, sets = attempt2.model(types, superclass)
-    brain = HybridBrain(trials=1, w_syn=W_SYN, matrix=M, scale=scale, labels=labels, seed=2026, types=spec, sets=sets,
-                        bias=saved["bias"][gid])
+    attempt1.network = escape2.network
+    eyes.TRIALS = 1
+    s, _ = te.build(None, seed=2026)
+    s.bias = np.load(ROOT / "experiments" / "taste_escape" / "intact.npz")["bias"]
+    brain = s.brain
+    brain.set_bias(s.bias[s.gid])
+    brain.reset(2026)
+    brain.set_release(s.ol.neurons, s.silent)
     brain.advance(int(round(SETTLE / brain.dt)))
     frames = np.stack([brain.advance(int(round(FRAME / brain.dt)))[0] for _ in range(FRAMES)])
-    return {"frames": frames, "mean_hz": float(frames.sum() / (brain.n * FRAMES * FRAME))}
+    own = ~s.fixed
+    return {"frames": frames, "mean_hz": float(frames[:, own].sum() / (own.sum() * FRAMES * FRAME))}
 
 
 def layer(px, py, w, h, weight, color, alpha, blur=0.6, levels=24) -> str:
@@ -126,7 +128,7 @@ def right_panels(c: dict, results: dict) -> list[str]:
     for v in (0.1, 1, 10, 100):
         out.append(f'<path d="M{lx(v):.1f} {y0 - 12}V{y0 + row * len(MEASURED) - 10}" stroke="{c["rule"]}"/>')
         out.append(text(lx(v), y0 + row * len(MEASURED) + 6, f"{v:g} Hz" if v >= 1 else "≤0.1", "tick", "middle"))
-    a1, a2 = results.get("attempt1", {}), results.get("attempt2", {})
+    a1, a2 = results.get("attempt1", {}), results.get("now", {})
     for k, t in enumerate(MEASURED):
         y = y0 + k * row
         target = a1[t]["target_hz"]
@@ -139,7 +141,7 @@ def right_panels(c: dict, results: dict) -> list[str]:
             out.append(f'<circle cx="{lx(a2[t]["hz"]):.1f}" cy="{y}" r="5.5" fill="{c["red"]}"/>')
         out.append(f'<circle cx="{lx(target):.1f}" cy="{y}" r="8" fill="none" stroke="{c["ink"]}" stroke-width="1.6"/>')
     ly = y0 + row * len(MEASURED) + 30
-    for k, (kind, name) in enumerate((("ring", "measured in flies"), ("a1", "attempt 1"), ("a2", "attempt 2"))):
+    for k, (kind, name) in enumerate((("ring", "measured in flies"), ("a1", "attempt 1"), ("a2", "now"))):
         x = 650 + k * 150
         if kind == "ring":
             out.append(f'<circle cx="{x + 6}" cy="{ly - 4}" r="6" fill="none" stroke="{c["ink"]}" stroke-width="1.6"/>')
@@ -152,7 +154,7 @@ def right_panels(c: dict, results: dict) -> list[str]:
         order = results["order"]
         cell, fy = 2.9, 392
         for j, (name, m, sub_) in enumerate((("Real flies (Turner et al.)", results["data_fc"], "20 flies"),
-                                             ("Model, attempt 2", results["model_fc"], results["model_note"]))):
+                                             ("The brain now", results["model_fc"], results["model_note"]))):
             fx = 650 + j * 228
             out.append(text(fx, fy - 26, name, "val"))
             out.append(text(fx, fy - 10, sub_, "note"))
@@ -178,10 +180,10 @@ def load_results() -> dict:
 
     exp = ROOT / "experiments"
     out = {"attempt1": json.loads((exp / "rest_calibration" / "intact.json").read_text())["measured_types"]}
-    a2 = exp / "rest_calibration2" / "intact.json"
-    if a2.exists():
-        d = json.loads(a2.read_text())
-        out["attempt2"] = d["measured_types"]
+    now = exp / "rest_current.json"
+    if now.exists():
+        d = json.loads(now.read_text())
+        out["now"] = d["measured_types"]
         data_fc, _ = imaging.connectivity(imaging.rest_signals(imaging.turner()))
         regions = imaging.REGIONS
         side = lambda r: 0 if r.endswith("_L") else (2 if r.endswith("_R") else 1)
@@ -190,12 +192,9 @@ def load_results() -> dict:
         out["cuts"] = [sides.index(1), sides.index(2)]
         out["data_fc"], out["model_fc"] = data_fc, d["fc"]
         out["model_note"] = f"r = {d['r']} with the flies"
-        report = exp / "rest_calibration2.json"
-        rivals = json.loads(report.read_text())["rivals"] if report.exists() else {"independent": d["r_independent"]}
-        rew = [v for k, v in rivals.items() if k.startswith("rewired")]
-        out["fc_lines"] = [f"left, middle, right regions in each; r with the flies: model {d['r']:.2f},",
-                           f"its neurons firing independently {rivals['independent']:.2f}, rewired networks "
-                           + " and ".join(f"{v:.2f}" for v in rew)]
+        earlier = ", ".join(f"{k} {v:.2f}" for k, v in d.get("r_earlier", {}).items())
+        out["fc_lines"] = [f"left, middle, right regions in each; r with the flies: now {d['r']:.2f},",
+                           f"its neurons firing independently {d['r_independent']:.2f}; {earlier}"]
     return out
 
 
