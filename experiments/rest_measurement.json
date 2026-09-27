@@ -1,0 +1,41 @@
+{
+ "question": "Exploratory, not pre-registered: how much of the flies' resting FC does the measurement explain\nbefore any dynamics, and what does that say about rung 4's tests?\n\nrest_calibration2.py's resting brain matched the flies' FC (Turner et al. 2021) at r = 0.38, below\nits own neurons firing independently (0.40) and below calibrated rewirings (0.50). Every FC in rung 4\ngoes through one forward model (brainfly.imaging): a region's signal is its neurons' activity, each\nweighted by its synapses in the region. This asks how much that choice matters, with no dynamics at\nall: the FC that independently firing neurons (equal variance) give under other weightings of the\nsame synapse table, from a neuron's raw synapse count to a mere presence in the region (5 or more\nsynapses). A weighting closer to a mere presence is closer to how much of a neuron a voxel sees.\nAlso reported: how much of each model's FC its measurement-only FC explains, and each FC's mean\n(the flies' regions co-fluctuate far more strongly than any model's).\n\n    python experiments/rest_measurement.py            (writes experiments/rest_measurement.json)\n",
+ "independent_firing_r_by_weighting": {
+  "synapses (brainfly.imaging)": 0.377,
+  "sqrt(synapses)": 0.495,
+  "log(1 + synapses)": 0.533,
+  "present (5 or more synapses)": 0.558,
+  "share of the neuron's own synapses": 0.336
+ },
+ "models": {
+  "uncalibrated (rest_fc.py)": {
+   "r": 0.248,
+   "r_with_its_measurement_only_fc": 0.453,
+   "mean_z": 0.141
+  },
+  "attempt 1": {
+   "r": 0.198,
+   "r_with_its_measurement_only_fc": 0.283,
+   "mean_z": 0.291
+  },
+  "attempt 2": {
+   "r": 0.384,
+   "r_with_its_measurement_only_fc": 0.628,
+   "mean_z": 0.12
+  },
+  "attempt 2, rewired 1": {
+   "r": 0.498,
+   "r_with_its_measurement_only_fc": 0.63,
+   "mean_z": 0.132
+  },
+  "attempt 2, rewired 2": {
+   "r": 0.492,
+   "r_with_its_measurement_only_fc": 0.645,
+   "mean_z": 0.131
+  }
+ },
+ "mean_z": {
+  "flies": 0.286,
+  "independent firing": 0.042
+ }
+}
