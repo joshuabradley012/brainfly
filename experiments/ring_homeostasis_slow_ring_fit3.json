@@ -1,0 +1,994 @@
+{
+ "question": "Exploratory, not pre-registered: does each ring neuron's own homeostasis free ring_fit2.py's bump from\nits favored place?\n\nring_fit2.py's ring has a fly-like bump (112 deg wide, strength 0.67, EPGs at 1.9 Hz), but\nring_heldout.py found it spending about 40% of its time near wedges 1-2, so over 300-s runs each run's\nmean position lands there and rung 4's resultant fails (0.58-0.93). Evening out each wedge's EPG output\nmade that worse, so the pull comes from the ring's wiring beyond EPG counts. Renart, Song & Wang (2003)\nremoved such pulls in a bump attractor by homeostasis in each neuron: a neuron that fires more than its\nset point, because the bump sits on it too often, lowers its own excitability. ring_calibrated.py\ncouldn't do this for ring_er.py's bistable ring, but ring_fit2.py's forms a bump in every run. Here every\nneuron of the ring's six types (EPG, EPGt, PEN_a, PEN_b, PEG, Delta7) gets its own bias on top of the\nfitted ones, moved each round by k ln((target + 0.5) / (rate + 0.5)) mV, at most k, the target being\nits type's mean rate in ring_fit2.py's run (so each type's mean stays put and only the spread\nchanges); ER and ExR keep theirs. 30 rounds of 16 fresh runs of 20 s (1 s settle), k = 1 mV for 15\nrounds and 0.5 after, on seeds 100 onward. Then rung 4's BUMP and the position entropy on ring_heldout.py's\nunseen seeds (2 to 5, 8 runs of 300 s).\n\n    python experiments/ring_homeostasis.py            (writes experiments/ring_homeostasis.json)\n    python experiments/ring_homeostasis.py --slow     (writes experiments/ring_homeostasis_slow.json)\n    python experiments/ring_homeostasis.py --slow --fit ring_fit3   (ring_fit3.py's best instead of ring_fit2.py's;\n                                                    writes experiments/ring_homeostasis_slow_ring_fit3.json)\n--slow: that first run overshot (the bump moved from wedges 1-2 to 11-12), because each round's steps\nwere large next to how long the bump stays in one place. Renart et al.'s homeostasis is slow next to\nthe bump's dwell time, so --slow takes 80 rounds of 16 runs of 40 s, steps of at most 0.2 mV, and\nmoves each neuron by its rate averaged over rounds (each round's rate given a weight of 0.3).\n",
+ "log": [
+  {
+   "round": 1,
+   "position_entropy": 0.944,
+   "epg_hz": 2.21,
+   "epg_rate_cv": 0.29,
+   "extra_bias_sd_mv": 0.07
+  },
+  {
+   "round": 2,
+   "position_entropy": 0.874,
+   "epg_hz": 2.36,
+   "epg_rate_cv": 0.636,
+   "extra_bias_sd_mv": 0.13
+  },
+  {
+   "round": 3,
+   "position_entropy": 0.864,
+   "epg_hz": 2.39,
+   "epg_rate_cv": 0.603,
+   "extra_bias_sd_mv": 0.19
+  },
+  {
+   "round": 4,
+   "position_entropy": 0.911,
+   "epg_hz": 2.31,
+   "epg_rate_cv": 0.193,
+   "extra_bias_sd_mv": 0.24
+  },
+  {
+   "round": 5,
+   "position_entropy": 0.793,
+   "epg_hz": 2.29,
+   "epg_rate_cv": 0.677,
+   "extra_bias_sd_mv": 0.29
+  },
+  {
+   "round": 6,
+   "position_entropy": 0.747,
+   "epg_hz": 2.5,
+   "epg_rate_cv": 0.797,
+   "extra_bias_sd_mv": 0.34
+  },
+  {
+   "round": 7,
+   "position_entropy": 0.817,
+   "epg_hz": 2.42,
+   "epg_rate_cv": 0.7,
+   "extra_bias_sd_mv": 0.38
+  },
+  {
+   "round": 8,
+   "position_entropy": 0.848,
+   "epg_hz": 2.46,
+   "epg_rate_cv": 0.306,
+   "extra_bias_sd_mv": 0.42
+  },
+  {
+   "round": 9,
+   "position_entropy": 0.875,
+   "epg_hz": 2.52,
+   "epg_rate_cv": 0.447,
+   "extra_bias_sd_mv": 0.45
+  },
+  {
+   "round": 10,
+   "position_entropy": 0.853,
+   "epg_hz": 2.51,
+   "epg_rate_cv": 0.363,
+   "extra_bias_sd_mv": 0.48
+  },
+  {
+   "round": 11,
+   "position_entropy": 0.878,
+   "epg_hz": 2.46,
+   "epg_rate_cv": 0.398,
+   "extra_bias_sd_mv": 0.52
+  },
+  {
+   "round": 12,
+   "position_entropy": 0.845,
+   "epg_hz": 2.49,
+   "epg_rate_cv": 0.422,
+   "extra_bias_sd_mv": 0.54
+  },
+  {
+   "round": 13,
+   "position_entropy": 0.938,
+   "epg_hz": 2.54,
+   "epg_rate_cv": 0.203,
+   "extra_bias_sd_mv": 0.57
+  },
+  {
+   "round": 14,
+   "position_entropy": 0.925,
+   "epg_hz": 2.61,
+   "epg_rate_cv": 0.326,
+   "extra_bias_sd_mv": 0.59
+  },
+  {
+   "round": 15,
+   "position_entropy": 0.892,
+   "epg_hz": 2.61,
+   "epg_rate_cv": 0.202,
+   "extra_bias_sd_mv": 0.61
+  },
+  {
+   "round": 16,
+   "position_entropy": 0.91,
+   "epg_hz": 2.6,
+   "epg_rate_cv": 0.327,
+   "extra_bias_sd_mv": 0.62
+  },
+  {
+   "round": 17,
+   "position_entropy": 0.897,
+   "epg_hz": 2.61,
+   "epg_rate_cv": 0.383,
+   "extra_bias_sd_mv": 0.64
+  },
+  {
+   "round": 18,
+   "position_entropy": 0.907,
+   "epg_hz": 2.65,
+   "epg_rate_cv": 0.277,
+   "extra_bias_sd_mv": 0.65
+  },
+  {
+   "round": 19,
+   "position_entropy": 0.825,
+   "epg_hz": 2.57,
+   "epg_rate_cv": 0.589,
+   "extra_bias_sd_mv": 0.66
+  },
+  {
+   "round": 20,
+   "position_entropy": 0.853,
+   "epg_hz": 2.68,
+   "epg_rate_cv": 0.358,
+   "extra_bias_sd_mv": 0.67
+  },
+  {
+   "round": 21,
+   "position_entropy": 0.771,
+   "epg_hz": 2.71,
+   "epg_rate_cv": 0.604,
+   "extra_bias_sd_mv": 0.68
+  },
+  {
+   "round": 22,
+   "position_entropy": 0.881,
+   "epg_hz": 2.75,
+   "epg_rate_cv": 0.47,
+   "extra_bias_sd_mv": 0.69
+  },
+  {
+   "round": 23,
+   "position_entropy": 0.8,
+   "epg_hz": 2.77,
+   "epg_rate_cv": 0.701,
+   "extra_bias_sd_mv": 0.7
+  },
+  {
+   "round": 24,
+   "position_entropy": 0.897,
+   "epg_hz": 2.69,
+   "epg_rate_cv": 0.279,
+   "extra_bias_sd_mv": 0.7
+  },
+  {
+   "round": 25,
+   "position_entropy": 0.901,
+   "epg_hz": 2.64,
+   "epg_rate_cv": 0.441,
+   "extra_bias_sd_mv": 0.71
+  },
+  {
+   "round": 26,
+   "position_entropy": 0.885,
+   "epg_hz": 2.68,
+   "epg_rate_cv": 0.34,
+   "extra_bias_sd_mv": 0.72
+  },
+  {
+   "round": 27,
+   "position_entropy": 0.899,
+   "epg_hz": 2.72,
+   "epg_rate_cv": 0.448,
+   "extra_bias_sd_mv": 0.73
+  },
+  {
+   "round": 28,
+   "position_entropy": 0.909,
+   "epg_hz": 2.71,
+   "epg_rate_cv": 0.191,
+   "extra_bias_sd_mv": 0.73
+  },
+  {
+   "round": 29,
+   "position_entropy": 0.848,
+   "epg_hz": 2.78,
+   "epg_rate_cv": 0.381,
+   "extra_bias_sd_mv": 0.74
+  },
+  {
+   "round": 30,
+   "position_entropy": 0.906,
+   "epg_hz": 2.82,
+   "epg_rate_cv": 0.441,
+   "extra_bias_sd_mv": 0.74
+  },
+  {
+   "round": 31,
+   "position_entropy": 0.886,
+   "epg_hz": 2.75,
+   "epg_rate_cv": 0.381,
+   "extra_bias_sd_mv": 0.74
+  },
+  {
+   "round": 32,
+   "position_entropy": 0.901,
+   "epg_hz": 2.75,
+   "epg_rate_cv": 0.306,
+   "extra_bias_sd_mv": 0.75
+  },
+  {
+   "round": 33,
+   "position_entropy": 0.946,
+   "epg_hz": 2.78,
+   "epg_rate_cv": 0.21,
+   "extra_bias_sd_mv": 0.75
+  },
+  {
+   "round": 34,
+   "position_entropy": 0.941,
+   "epg_hz": 2.79,
+   "epg_rate_cv": 0.217,
+   "extra_bias_sd_mv": 0.76
+  },
+  {
+   "round": 35,
+   "position_entropy": 0.875,
+   "epg_hz": 2.74,
+   "epg_rate_cv": 0.416,
+   "extra_bias_sd_mv": 0.76
+  },
+  {
+   "round": 36,
+   "position_entropy": 0.888,
+   "epg_hz": 2.81,
+   "epg_rate_cv": 0.299,
+   "extra_bias_sd_mv": 0.77
+  },
+  {
+   "round": 37,
+   "position_entropy": 0.795,
+   "epg_hz": 2.85,
+   "epg_rate_cv": 0.718,
+   "extra_bias_sd_mv": 0.77
+  },
+  {
+   "round": 38,
+   "position_entropy": 0.891,
+   "epg_hz": 2.77,
+   "epg_rate_cv": 0.077,
+   "extra_bias_sd_mv": 0.77
+  },
+  {
+   "round": 39,
+   "position_entropy": 0.825,
+   "epg_hz": 2.74,
+   "epg_rate_cv": 0.644,
+   "extra_bias_sd_mv": 0.78
+  },
+  {
+   "round": 40,
+   "position_entropy": 0.834,
+   "epg_hz": 2.76,
+   "epg_rate_cv": 0.434,
+   "extra_bias_sd_mv": 0.79
+  },
+  {
+   "round": 41,
+   "position_entropy": 0.732,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.781,
+   "extra_bias_sd_mv": 0.79
+  },
+  {
+   "round": 42,
+   "position_entropy": 0.856,
+   "epg_hz": 2.96,
+   "epg_rate_cv": 0.61,
+   "extra_bias_sd_mv": 0.79
+  },
+  {
+   "round": 43,
+   "position_entropy": 0.723,
+   "epg_hz": 2.91,
+   "epg_rate_cv": 0.911,
+   "extra_bias_sd_mv": 0.79
+  },
+  {
+   "round": 44,
+   "position_entropy": 0.891,
+   "epg_hz": 2.79,
+   "epg_rate_cv": 0.424,
+   "extra_bias_sd_mv": 0.79
+  },
+  {
+   "round": 45,
+   "position_entropy": 0.948,
+   "epg_hz": 2.81,
+   "epg_rate_cv": 0.202,
+   "extra_bias_sd_mv": 0.8
+  },
+  {
+   "round": 46,
+   "position_entropy": 0.848,
+   "epg_hz": 2.79,
+   "epg_rate_cv": 0.571,
+   "extra_bias_sd_mv": 0.8
+  },
+  {
+   "round": 47,
+   "position_entropy": 0.759,
+   "epg_hz": 2.9,
+   "epg_rate_cv": 0.661,
+   "extra_bias_sd_mv": 0.81
+  },
+  {
+   "round": 48,
+   "position_entropy": 0.905,
+   "epg_hz": 2.9,
+   "epg_rate_cv": 0.32,
+   "extra_bias_sd_mv": 0.81
+  },
+  {
+   "round": 49,
+   "position_entropy": 0.859,
+   "epg_hz": 2.81,
+   "epg_rate_cv": 0.501,
+   "extra_bias_sd_mv": 0.82
+  },
+  {
+   "round": 50,
+   "position_entropy": 0.781,
+   "epg_hz": 2.95,
+   "epg_rate_cv": 0.781,
+   "extra_bias_sd_mv": 0.82
+  },
+  {
+   "round": 51,
+   "position_entropy": 0.829,
+   "epg_hz": 2.94,
+   "epg_rate_cv": 0.547,
+   "extra_bias_sd_mv": 0.82
+  },
+  {
+   "round": 52,
+   "position_entropy": 0.824,
+   "epg_hz": 2.79,
+   "epg_rate_cv": 0.623,
+   "extra_bias_sd_mv": 0.82
+  },
+  {
+   "round": 53,
+   "position_entropy": 0.85,
+   "epg_hz": 2.86,
+   "epg_rate_cv": 0.515,
+   "extra_bias_sd_mv": 0.83
+  },
+  {
+   "round": 54,
+   "position_entropy": 0.899,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.349,
+   "extra_bias_sd_mv": 0.83
+  },
+  {
+   "round": 55,
+   "position_entropy": 0.849,
+   "epg_hz": 2.94,
+   "epg_rate_cv": 0.427,
+   "extra_bias_sd_mv": 0.83
+  },
+  {
+   "round": 56,
+   "position_entropy": 0.865,
+   "epg_hz": 2.91,
+   "epg_rate_cv": 0.483,
+   "extra_bias_sd_mv": 0.83
+  },
+  {
+   "round": 57,
+   "position_entropy": 0.905,
+   "epg_hz": 2.81,
+   "epg_rate_cv": 0.284,
+   "extra_bias_sd_mv": 0.84
+  },
+  {
+   "round": 58,
+   "position_entropy": 0.95,
+   "epg_hz": 2.89,
+   "epg_rate_cv": 0.251,
+   "extra_bias_sd_mv": 0.84
+  },
+  {
+   "round": 59,
+   "position_entropy": 0.839,
+   "epg_hz": 2.91,
+   "epg_rate_cv": 0.55,
+   "extra_bias_sd_mv": 0.84
+  },
+  {
+   "round": 60,
+   "position_entropy": 0.903,
+   "epg_hz": 2.82,
+   "epg_rate_cv": 0.316,
+   "extra_bias_sd_mv": 0.84
+  },
+  {
+   "round": 61,
+   "position_entropy": 0.93,
+   "epg_hz": 2.92,
+   "epg_rate_cv": 0.123,
+   "extra_bias_sd_mv": 0.84
+  },
+  {
+   "round": 62,
+   "position_entropy": 0.894,
+   "epg_hz": 2.93,
+   "epg_rate_cv": 0.28,
+   "extra_bias_sd_mv": 0.84
+  },
+  {
+   "round": 63,
+   "position_entropy": 0.936,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.206,
+   "extra_bias_sd_mv": 0.85
+  },
+  {
+   "round": 64,
+   "position_entropy": 0.76,
+   "epg_hz": 2.78,
+   "epg_rate_cv": 0.67,
+   "extra_bias_sd_mv": 0.85
+  },
+  {
+   "round": 65,
+   "position_entropy": 0.924,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.12,
+   "extra_bias_sd_mv": 0.85
+  },
+  {
+   "round": 66,
+   "position_entropy": 0.851,
+   "epg_hz": 2.97,
+   "epg_rate_cv": 0.618,
+   "extra_bias_sd_mv": 0.85
+  },
+  {
+   "round": 67,
+   "position_entropy": 0.863,
+   "epg_hz": 2.97,
+   "epg_rate_cv": 0.486,
+   "extra_bias_sd_mv": 0.85
+  },
+  {
+   "round": 68,
+   "position_entropy": 0.886,
+   "epg_hz": 2.83,
+   "epg_rate_cv": 0.439,
+   "extra_bias_sd_mv": 0.86
+  },
+  {
+   "round": 69,
+   "position_entropy": 0.898,
+   "epg_hz": 2.87,
+   "epg_rate_cv": 0.336,
+   "extra_bias_sd_mv": 0.86
+  },
+  {
+   "round": 70,
+   "position_entropy": 0.917,
+   "epg_hz": 2.87,
+   "epg_rate_cv": 0.354,
+   "extra_bias_sd_mv": 0.86
+  },
+  {
+   "round": 71,
+   "position_entropy": 0.801,
+   "epg_hz": 2.94,
+   "epg_rate_cv": 0.594,
+   "extra_bias_sd_mv": 0.86
+  },
+  {
+   "round": 72,
+   "position_entropy": 0.949,
+   "epg_hz": 2.96,
+   "epg_rate_cv": 0.256,
+   "extra_bias_sd_mv": 0.87
+  },
+  {
+   "round": 73,
+   "position_entropy": 0.67,
+   "epg_hz": 3.02,
+   "epg_rate_cv": 0.949,
+   "extra_bias_sd_mv": 0.86
+  },
+  {
+   "round": 74,
+   "position_entropy": 0.899,
+   "epg_hz": 2.85,
+   "epg_rate_cv": 0.394,
+   "extra_bias_sd_mv": 0.86
+  },
+  {
+   "round": 75,
+   "position_entropy": 0.93,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.242,
+   "extra_bias_sd_mv": 0.87
+  },
+  {
+   "round": 76,
+   "position_entropy": 0.82,
+   "epg_hz": 2.89,
+   "epg_rate_cv": 0.471,
+   "extra_bias_sd_mv": 0.87
+  },
+  {
+   "round": 77,
+   "position_entropy": 0.793,
+   "epg_hz": 2.93,
+   "epg_rate_cv": 0.55,
+   "extra_bias_sd_mv": 0.87
+  },
+  {
+   "round": 78,
+   "position_entropy": 0.917,
+   "epg_hz": 2.89,
+   "epg_rate_cv": 0.179,
+   "extra_bias_sd_mv": 0.88
+  },
+  {
+   "round": 79,
+   "position_entropy": 0.77,
+   "epg_hz": 3.02,
+   "epg_rate_cv": 0.767,
+   "extra_bias_sd_mv": 0.88
+  },
+  {
+   "round": 80,
+   "position_entropy": 0.903,
+   "epg_hz": 2.9,
+   "epg_rate_cv": 0.43,
+   "extra_bias_sd_mv": 0.88
+  }
+ ],
+ "extra_bias_mv": {
+  "EPG": [
+   1.99,
+   1.32,
+   1.7,
+   0.66,
+   1.25,
+   0.48,
+   1.92,
+   1.17,
+   1.28,
+   0.61,
+   0.89,
+   0.35,
+   0.95,
+   1.09,
+   0.84,
+   1.33,
+   0.7,
+   1.98,
+   1.06,
+   0.96,
+   0.83,
+   1.18,
+   1.21,
+   1.17,
+   1.67,
+   0.65,
+   1.0,
+   1.82,
+   0.8,
+   1.07,
+   0.76,
+   1.33,
+   1.23,
+   0.78,
+   0.38,
+   1.3,
+   0.71,
+   0.72,
+   2.24,
+   1.29,
+   1.75,
+   1.33,
+   0.34,
+   1.32,
+   1.14,
+   1.64
+  ],
+  "EPGt": [
+   -2.22,
+   -2.12,
+   -2.65,
+   -2.41
+  ],
+  "PEN_a(PEN1)": [
+   0.03,
+   0.92,
+   0.25,
+   0.86,
+   0.38,
+   -0.38,
+   0.4,
+   -0.37,
+   0.74,
+   -0.03,
+   0.79,
+   0.16,
+   1.46,
+   0.2,
+   0.06,
+   -0.45,
+   0.61,
+   0.83,
+   -0.07,
+   0.26
+  ],
+  "PEN_b(PEN2)": [
+   0.52,
+   0.9,
+   0.82,
+   0.1,
+   -0.26,
+   -0.28,
+   0.02,
+   -0.08,
+   1.62,
+   -0.27,
+   0.41,
+   0.12,
+   1.1,
+   0.86,
+   -0.52,
+   1.34,
+   0.0,
+   0.46,
+   1.7,
+   0.35,
+   0.2,
+   0.8
+  ],
+  "PEG": [
+   1.35,
+   -0.37,
+   -0.77,
+   1.55,
+   0.42,
+   0.63,
+   0.53,
+   1.44,
+   1.59,
+   -0.09,
+   0.56,
+   0.77,
+   0.72,
+   1.0,
+   -0.4,
+   -1.55,
+   0.99,
+   1.31
+  ],
+  "Delta7": [
+   -0.12,
+   0.29,
+   0.21,
+   -0.33,
+   -0.08,
+   -0.14,
+   -0.87,
+   -0.84,
+   -0.2,
+   -1.03,
+   -0.56,
+   -0.06,
+   -0.13,
+   0.05,
+   -0.27,
+   -0.31,
+   0.28,
+   -0.66,
+   -0.45,
+   -0.36,
+   -0.65,
+   -0.28,
+   -0.63,
+   -0.31,
+   -0.67,
+   -0.5,
+   0.36,
+   -0.18,
+   -0.63,
+   1.19,
+   -0.14,
+   -0.4,
+   -0.38,
+   -0.81,
+   -0.11,
+   0.12,
+   -0.2,
+   -0.56,
+   0.13,
+   -0.4,
+   -0.58,
+   -0.34
+  ]
+ },
+ "heldout": [
+  {
+   "seed": 2,
+   "BUMP": true,
+   "position_entropy": 0.954,
+   "position_histogram": [
+    0.054,
+    0.115,
+    0.071,
+    0.048,
+    0.064,
+    0.046,
+    0.052,
+    0.056,
+    0.065,
+    0.048,
+    0.018,
+    0.029,
+    0.153,
+    0.098,
+    0.056,
+    0.029
+   ],
+   "bump": {
+    "L": {
+     "strength": 0.772,
+     "shuffle_p99": 0.414,
+     "run_positions_deg": [
+      -74.2,
+      -125.8,
+      99.1,
+      -138.6,
+      71.3,
+      -162.0,
+      -48.3,
+      66.9
+     ],
+     "resultant": 0.127
+    },
+    "R": {
+     "strength": 0.762,
+     "shuffle_p99": 0.404,
+     "run_positions_deg": [
+      48.4,
+      122.5,
+      -113.8,
+      165.6,
+      -95.4,
+      157.5,
+      -4.1,
+      -87.0
+     ],
+     "resultant": 0.179
+    }
+   },
+   "epg_hz": 2.93,
+   "group_hz": {
+    "EPG": 2.93,
+    "PEN_a": 4.48,
+    "PEN_b": 13.44,
+    "PEG": 0.89,
+    "Delta7": 0.68,
+    "ER": 2.15,
+    "ExR": 9.76
+   }
+  },
+  {
+   "seed": 3,
+   "BUMP": true,
+   "position_entropy": 0.93,
+   "position_histogram": [
+    0.035,
+    0.134,
+    0.082,
+    0.038,
+    0.063,
+    0.099,
+    0.109,
+    0.093,
+    0.057,
+    0.033,
+    0.012,
+    0.035,
+    0.113,
+    0.066,
+    0.025,
+    0.007
+   ],
+   "bump": {
+    "L": {
+     "strength": 0.775,
+     "shuffle_p99": 0.404,
+     "run_positions_deg": [
+      -103.8,
+      -82.5,
+      -148.7,
+      -121.0,
+      -61.3,
+      106.4,
+      -71.4,
+      107.8
+     ],
+     "resultant": 0.436
+    },
+    "R": {
+     "strength": 0.762,
+     "shuffle_p99": 0.421,
+     "run_positions_deg": [
+      132.2,
+      65.0,
+      -117.9,
+      106.8,
+      27.1,
+      -121.7,
+      40.4,
+      -118.6
+     ],
+     "resultant": 0.144
+    }
+   },
+   "epg_hz": 2.94,
+   "group_hz": {
+    "EPG": 2.94,
+    "PEN_a": 4.42,
+    "PEN_b": 13.44,
+    "PEG": 0.88,
+    "Delta7": 0.68,
+    "ER": 2.14,
+    "ExR": 9.85
+   }
+  },
+  {
+   "seed": 4,
+   "BUMP": true,
+   "position_entropy": 0.95,
+   "position_histogram": [
+    0.051,
+    0.147,
+    0.062,
+    0.041,
+    0.056,
+    0.059,
+    0.086,
+    0.063,
+    0.077,
+    0.03,
+    0.015,
+    0.022,
+    0.085,
+    0.111,
+    0.068,
+    0.025
+   ],
+   "bump": {
+    "L": {
+     "strength": 0.768,
+     "shuffle_p99": 0.414,
+     "run_positions_deg": [
+      -17.4,
+      -103.6,
+      -24.1,
+      14.7,
+      -166.2,
+      115.1,
+      -119.8,
+      -12.3
+     ],
+     "resultant": 0.312
+    },
+    "R": {
+     "strength": 0.761,
+     "shuffle_p99": 0.417,
+     "run_positions_deg": [
+      -81.0,
+      90.6,
+      -62.8,
+      -58.1,
+      -174.6,
+      -128.1,
+      -171.7,
+      -38.9
+     ],
+     "resultant": 0.431
+    }
+   },
+   "epg_hz": 2.92,
+   "group_hz": {
+    "EPG": 2.93,
+    "PEN_a": 4.43,
+    "PEN_b": 13.41,
+    "PEG": 0.89,
+    "Delta7": 0.68,
+    "ER": 2.15,
+    "ExR": 9.81
+   }
+  },
+  {
+   "seed": 5,
+   "BUMP": true,
+   "position_entropy": 0.953,
+   "position_histogram": [
+    0.063,
+    0.09,
+    0.08,
+    0.042,
+    0.048,
+    0.054,
+    0.098,
+    0.107,
+    0.108,
+    0.052,
+    0.011,
+    0.019,
+    0.087,
+    0.081,
+    0.028,
+    0.033
+   ],
+   "bump": {
+    "L": {
+     "strength": 0.771,
+     "shuffle_p99": 0.415,
+     "run_positions_deg": [
+      -78.8,
+      112.0,
+      62.3,
+      -169.6,
+      -134.4,
+      -16.2,
+      -13.5,
+      -119.5
+     ],
+     "resultant": 0.181
+    },
+    "R": {
+     "strength": 0.766,
+     "shuffle_p99": 0.425,
+     "run_positions_deg": [
+      58.3,
+      -123.1,
+      -89.5,
+      150.4,
+      117.4,
+      -31.4,
+      -54.8,
+      103.8
+     ],
+     "resultant": 0.019
+    }
+   },
+   "epg_hz": 2.94,
+   "group_hz": {
+    "EPG": 2.92,
+    "PEN_a": 4.46,
+    "PEN_b": 13.52,
+    "PEG": 0.87,
+    "Delta7": 0.68,
+    "ER": 2.15,
+    "ExR": 9.88
+   }
+  }
+ ],
+ "seconds": 90
+}

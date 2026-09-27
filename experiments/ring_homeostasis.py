@@ -17,6 +17,8 @@ unseen seeds (2 to 5, 8 runs of 300 s).
 
     python experiments/ring_homeostasis.py            (writes experiments/ring_homeostasis.json)
     python experiments/ring_homeostasis.py --slow     (writes experiments/ring_homeostasis_slow.json)
+    python experiments/ring_homeostasis.py --slow --fit ring_fit3   (ring_fit3.py's best instead of ring_fit2.py's;
+                                                    writes experiments/ring_homeostasis_slow_ring_fit3.json)
 --slow: that first run overshot (the bump moved from wedges 1-2 to 11-12), because each round's steps
 were large next to how long the bump stays in one place. Renart et al.'s homeostasis is slow next to
 the bump's dwell time, so --slow takes 80 rounds of 16 runs of 40 s, steps of at most 0.2 mV, and
@@ -50,15 +52,17 @@ def entropy_of(w: np.ndarray, wedge: np.ndarray) -> tuple[float, np.ndarray]:
 
 def main() -> None:
     global ROUNDS, SECONDS, OUT
-    slow = argparse.ArgumentParser()
-    slow.add_argument("--slow", action="store_true")
-    slow = slow.parse_args().slow
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--slow", action="store_true")
+    ap.add_argument("--fit", default="ring_fit2")
+    args = ap.parse_args()
+    slow, fit_name = args.slow, args.fit
     ema = 1.0
     if slow:
         ROUNDS, SECONDS, ema = [0.2] * 80, 40, 0.3
-        OUT = OUT.with_name("ring_homeostasis_slow.json")
+        OUT = OUT.with_name("ring_homeostasis_slow.json" if fit_name == "ring_fit2" else f"ring_homeostasis_slow_{fit_name}.json")
     t0 = time.perf_counter()
-    fit2 = json.loads(ring_fit.OUT.with_name("ring_fit2.json").read_text())["best"]
+    fit2 = json.loads(ring_fit.OUT.with_name(f"{fit_name}.json").read_text())["best"]
     p = fit2["params"]
     r = ring_fit.Ring(p, RUNS, seed=100)
     b = r.brain

@@ -9,10 +9,13 @@ and Noorman et al. 2024). Here, 8 runs of 120 s (seed 21, unseen by both fits), 
 angle in 0.5-s windows, unwrapped, and D from the mean squared displacement over lags of 0.5-20 s
 (slope / 2), with and without the slow homeostasis's biases.
 
-    python experiments/ring_drift.py            (writes experiments/ring_drift.json)
+    python experiments/ring_drift.py                    (writes experiments/ring_drift.json)
+    python experiments/ring_drift.py --fit ring_fit3    (ring_fit3.py's best and its slow homeostasis; writes
+                                                         experiments/ring_drift_ring_fit3.json)
 """
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -24,10 +27,14 @@ OUT = Path(__file__).with_suffix(".json")
 
 
 def main() -> None:
-    p = json.loads(ring_fit.OUT.with_name("ring_fit2.json").read_text())["best"]["params"]
-    extra_by_type = json.loads(ring_fit.OUT.with_name("ring_homeostasis_slow.json").read_text())["extra_bias_mv"]
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fit", default="ring_fit2")
+    fit_name = ap.parse_args().fit
+    suffix = "" if fit_name == "ring_fit2" else f"_{fit_name}"
+    p = json.loads(ring_fit.OUT.with_name(f"{fit_name}.json").read_text())["best"]["params"]
+    extra_by_type = json.loads(ring_fit.OUT.with_name(f"ring_homeostasis_slow{suffix}.json").read_text())["extra_bias_mv"]
     out = {"question": __doc__, "conditions": []}
-    for label, homeostasis in (("ring_fit2.py's best", False), ("with ring_homeostasis.py --slow", True)):
+    for label, homeostasis in ((f"{fit_name}.py's best", False), ("with ring_homeostasis.py --slow", True)):
         r = ring_fit.Ring(p, 8, seed=21)
         b = r.brain
         types = np.asarray(b.mcns_type)
@@ -46,7 +53,7 @@ def main() -> None:
                                          "rms_displacement_10s_deg": round(float(np.degrees(np.sqrt(msd[19]))), 1),
                                          "msd_rad2": np.round(msd, 3).tolist()})
         print(json.dumps({k: v for k, v in row.items() if k != "msd_rad2"}), flush=True)
-    OUT.write_text(json.dumps(out, indent=1))
+    OUT.with_name(f"ring_drift{suffix}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":
