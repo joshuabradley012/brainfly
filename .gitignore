@@ -17,3 +17,6 @@ recordings*/
 # Local env
 .env
 .env.*
+
+# Results pulled from Hetzner boxes (scripts/remote/run.sh)
+remote-out/

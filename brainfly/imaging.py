@@ -204,6 +204,20 @@ def image(activity: np.ndarray, dt: float, rise: float = 0.2, decay: float = 1.0
     return np.add.reduceat(calcium[:, :edges[-1]], edges[:-1], axis=1) / np.diff(edges)
 
 
+def measurement_only(weights: sparse.spmatrix, variance: np.ndarray | None = None) -> np.ndarray:
+    """The FC (Fisher z, diagonal NaN) that neurons firing independently of each other would still
+    show, only because a neuron with synapses in two regions adds to both regions' signals. It is
+    the null a model's FC has to beat. variance: each neuron's activity variance (default equal)."""
+    Wn = sparse.csr_matrix(weights, dtype=np.float64)
+    Wn = Wn @ sparse.diags(1 / np.maximum(Wn.sum(0).A1, 1))
+    v = np.ones(Wn.shape[0]) if variance is None else np.asarray(variance, float)
+    cov = (Wn.T @ sparse.diags(v) @ Wn).toarray()
+    sd = np.sqrt(np.diag(cov))
+    corr = cov / np.outer(sd, sd)
+    np.fill_diagonal(corr, np.nan)
+    return np.arctanh(np.clip(corr, -1 + 1e-9, 1 - 1e-9))
+
+
 def _regions() -> list[str]:
     """The 67 non-optic regions every Turner fly has, with IVLP_L read as WED_L and the two IBs
     merged."""

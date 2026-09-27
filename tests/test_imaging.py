@@ -57,3 +57,13 @@ def test_imaging_keeps_shared_fluctuations_and_not_independent_ones():
     assert frames.shape == (3, 720)
     fc, _ = imaging.connectivity({"model": frames}, trims={})     # the first 100 frames go, as in the data:
     assert fc[0, 1] > 1.5 and abs(fc[0, 2]) < 0.2 and abs(fc[1, 2]) < 0.2   # the one-way high-pass's transient
+
+
+def test_measurement_only_fc_comes_from_shared_neurons():
+    """Regions sharing no neuron have zero FC under independent firing; regions sharing neurons
+    don't."""
+    from scipy import sparse
+
+    W = sparse.csr_matrix(np.array([[4.0, 4.0, 0.0], [2.0, 0.0, 0.0], [0.0, 3.0, 0.0], [0.0, 0.0, 5.0]]))
+    z = imaging.measurement_only(W)
+    assert z[0, 2] == pytest.approx(0.0, abs=1e-9) and z[0, 1] > 0.3 and np.isnan(z[0, 0])

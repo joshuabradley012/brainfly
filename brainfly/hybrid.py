@@ -105,7 +105,7 @@ def _poisson(rng, b, lam):
 
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
-             cls, a_vv, a_vx, a_vs, a_bias, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
+             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max,
              u, x, s, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
              drive_idx, drive_p, w_poi, driven, external, E, noise_lambda, noise_kick, members, member_start,
@@ -125,7 +125,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     external neurons never fire; their release is set from outside (HybridBrain.set_release), and
     E[i], the same for every trial, is what it adds to neuron i each second, like graded input R.
 
-    Per-neuron parameters come from a small table indexed by cls. A depressing neuron's spike carries
+    Per-neuron parameters come from a small table indexed by cls, and tonic[i], when given, adds
+    each step's share of neuron i's own bias on top of its class's. A depressing neuron's spike carries
     the fraction left[b, i] of its full strength, recovered toward 1 (time constant recover, in
     steps) since its last spike, and leaves depress times that. counts[b, i] gains each spike, and
     timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0."""
@@ -133,6 +134,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
     slow = len(sw) > 0
     ng = len(g_list)
     cap = touched.shape[2]
+    tonic_on = len(tonic) > 0
     for b in numba.prange(trials):
         fired = np.empty(n, np.int64)
         # this trial's state in arrays of its own while it runs, which the compiler optimises better
@@ -163,6 +165,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
             if uniform:
                 for i in range(n):
                     ui = A * ub[i] + B * xb[i] + C
+                    if tonic_on:
+                        ui += tonic[i]
                     xb[i] = a_xx * xb[i]
                     ub[i] = ui
                     if ui > TH and not external[i]:
@@ -172,6 +176,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
                 for i in range(n):
                     c = cls[i]
                     ui = a_vv[c] * ub[i] + a_vx[c] * xb[i] + a_bias[c]
+                    if tonic_on:
+                        ui += tonic[i]
                     xb[i] = a_xx * xb[i]
                     if slow:
                         ui += a_vs[c] * sb[i]
@@ -321,13 +327,16 @@ class HybridBrain:
     shiu.counts). slow: signed counts of the edges that act through the slow current instead (not
     also in matrix), with tau_slow its time constant, s. w_poi: mV per Poisson event (default
     Shiu's, 250 x w_syn, which pushes any neuron over threshold). scale: a multiplier per neuron on
-    every synapse onto it (e.g. 1 / size), on top of its type's. labels: {"cell_type", "side",
+    every synapse onto it (e.g. 1 / size), on top of its type's. bias: mV per neuron added to its
+    type's bias, for calibrating groups that types can't name (set_bias changes it). labels:
+    {"cell_type", "side",
     "superclass"} arrays for a network of your own, given as matrix, instead of MaleCNS."""
 
     def __init__(self, data: Path | str | None = None, trials: int = 1, dt: float = 1e-4, w_syn: float = W_SYN,
                  types: dict[str, dict] | None = None, matrix: sparse.spmatrix | None = None,
                  slow: sparse.spmatrix | None = None, tau_slow: float = 0.1, w_poi: float | None = None,
-                 scale: np.ndarray | None = None, seed: int = 0, labels: dict[str, np.ndarray] | None = None):
+                 scale: np.ndarray | None = None, bias: np.ndarray | None = None, seed: int = 0,
+                 labels: dict[str, np.ndarray] | None = None):
         if labels is None:
             data = ensure_data(data)
             meta = np.load(data / "brain.npz")
@@ -341,6 +350,7 @@ class HybridBrain:
         self._fixed_poi = None if w_poi is None else float(w_poi)
         self.types = dict(types or {})
         self._tables()
+        self.set_bias(bias)
         if scale is not None:
             self.scale = (self.scale * np.asarray(scale, np.float32)).astype(np.float32)
         C = (counts(data) if matrix is None else matrix).tocsc()
@@ -425,6 +435,17 @@ class HybridBrain:
         """Whether every neuron is spiking with the same parameters and there is no slow current."""
         return len(self.params) == 1 and self.params[0]["unit"] == "spiking" and not len(self.slow_weights)
 
+    def set_bias(self, bias: np.ndarray | None) -> None:
+        """Each neuron's bias on top of its type's, in mV (None for none), from the next step on;
+        the state is kept, so this can move a running network, as calibration does."""
+        self.bias = None if bias is None else np.asarray(bias, np.float64).copy()
+        self._tonic = np.empty(0, np.float32)
+        if self.bias is not None:
+            if self.bias.shape != (self.n,):
+                raise ValueError(f"bias needs one value per neuron ({self.n}), not shape {self.bias.shape}")
+            tau = np.array([p["tau_m"] for p in self.params])[self.cls]
+            self._tonic = ((1 - np.exp(-self.dt / tau)) * self.bias).astype(np.float32)   # each step's share
+
     def reset(self, seed: int = 0) -> None:
         """Every trial back to rest, with fresh Poisson streams from `seed`."""
         shape = (self.trials, self.n)
@@ -467,7 +488,7 @@ class HybridBrain:
         g = [self.params[c] for c in self.cls[self.graded]]
         counts = np.zeros((self.trials, self.n), np.int32)
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights,
-                 self.sptr, self.sidx, self.slow_weights, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"],
+                 self.sptr, self.sidx, self.slow_weights, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic,
                  np.float32(np.exp(-self.dt / TAU)), np.float32(np.exp(-self.dt / self.tau_slow)), k["theta"],
                  k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], self._uniform(),
                  bool(len(self.graded) or self.external.any()), self.graded.astype(np.int64),

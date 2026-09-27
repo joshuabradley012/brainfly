@@ -219,3 +219,28 @@ def test_background_is_the_same_in_pieces():
     parts = sum(pieces.advance(k) for k in (13, 987, 2000))
     assert once.sum() > 20
     np.testing.assert_array_equal(once, parts)
+
+
+def test_a_per_neuron_bias_adds_to_the_type_bias():
+    """Each neuron settles at its type's bias plus its own."""
+    extra = np.array([0.0, 1.5, -2.0])
+    brain = small([], 3, types={"c0": {"bias": 3.0}}, bias=extra)
+    brain.advance(6000)
+    np.testing.assert_allclose(brain.u[0], [3.0, 1.5, -2.0], atol=1e-3)
+
+
+def test_a_bias_given_per_neuron_acts_as_the_same_type_bias():
+    """On an active circuit with background, the same bias per neuron or per type: identical spikes.
+    And set_bias between advances moves a neuron where it would have gone from the start."""
+    edges, slow, types, n = random_circuit()
+    noisy = {"all": {"noise_rate": 30.0, "noise_kick": 4.0}}
+    by_type = small(edges, n, slow, types={"all": {**noisy["all"], "bias": 5.0}}, trials=2)
+    by_neuron = small(edges, n, slow, types=noisy, trials=2, bias=np.full(n, 5.0))
+    expected = by_type.advance(3000)
+    assert expected.sum() > 20
+    np.testing.assert_array_equal(by_neuron.advance(3000), expected)
+    later = small([], 2)
+    later.advance(100)
+    later.set_bias(np.array([4.0, -1.0]))
+    later.advance(6000)
+    np.testing.assert_allclose(later.u[0], [4.0, -1.0], atol=1e-3)
