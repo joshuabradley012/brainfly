@@ -23,6 +23,10 @@ brainfly.shiu, and lets each cell type differ:
     gain, release_at, max_release    a graded unit's release: Hz per mV, mV above rest, Hz
                   (defaults 6 Hz/mV from the threshold up with no ceiling, which roughly follows
                   a Shiu neuron's firing rate between 60 and 130 Hz; nothing measured sets them)
+    noise_rate, noise_kick  background: each neuron of the type gets independent Poisson kicks at
+                  noise_rate Hz, each adding noise_kick mV (default none, so the network is
+                  silent at rest, as in Shiu's model); a stand-in for the spontaneous activity the
+                  model doesn't generate
     depression, recovery    short-term depression of the type's outgoing synapses: the fraction
                   of their strength each spike leaves, recovering toward full with time constant
                   recovery, s (default 1: none; olfactory receptor neurons onto projection neurons:
@@ -55,7 +59,7 @@ from .shiu import F_POI, T_DLY, T_MBR, T_RFC, TAU, V0, V_RST, V_TH, W_SYN, Resul
 UNIT = {"spiking": False, "graded": True}
 DEFAULTS = {"unit": "spiking", "tau_m": T_MBR, "threshold": V_TH - V0, "reset": V_RST - V0, "refractory": T_RFC,
             "bias": 0.0, "scale": 1.0, "gain": 6.0, "release_at": V_TH - V0, "max_release": np.inf,
-            "depression": 1.0, "recovery": 1.0}
+            "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0}
 MONOAMINES = ("dopamine", "octopamine", "serotonin")
 
 
@@ -79,12 +83,33 @@ def _uniform(rng, b):
     return np.float64(z >> np.uint64(11)) * (1.0 / 9007199254740992.0)
 
 
+@numba.njit(inline="always", cache=True)
+def _poisson(rng, b, lam):
+    """A Poisson(lam) count from trial b's stream, by inversion (in pieces of at most 500, whose
+    sum is Poisson with the whole mean)."""
+    k = 0
+    while lam > 0.0:
+        part = min(lam, 500.0)
+        lam -= part
+        u = _uniform(rng, b)
+        p = np.exp(-part)
+        total = p
+        i = 0
+        while u > total and p > 0.0:
+            i += 1
+            p *= part / i
+            total += p
+        k += i
+    return k
+
+
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
              cls, a_vv, a_vx, a_vs, a_bias, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max,
              u, x, s, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
-             drive_idx, drive_p, w_poi, driven, external, E, silenced, counts, timeline, bin_start, bin_steps):
+             drive_idx, drive_p, w_poi, driven, external, E, noise_lambda, noise_kick, members, member_start,
+             silenced, counts, timeline, bin_start, bin_steps):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
@@ -191,6 +216,12 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw,
             for q in range(len(drive_idx)):
                 if _uniform(rng, b) < drive_p[q]:
                     ub[drive_idx[q]] += w_poi
+            for c in range(len(noise_lambda)):  # background: a Poisson number of kicks per class, spread uniformly
+                if noise_lambda[c] > 0.0:
+                    size = member_start[c + 1] - member_start[c]
+                    for _ in range(_poisson(rng, b, noise_lambda[c])):
+                        j = members[member_start[c] + min(int(_uniform(rng, b) * size), size - 1)]
+                        ub[j] += noise_kick[c]
             for q in range(rn):                # the refractory neurons back to their frozen state
                 j = rlist[q]
                 ub[j] = reset[cls[j]]
@@ -286,7 +317,7 @@ class HybridBrain:
     """MaleCNS with per-type units. data: the folder with brain.npz (as ShiuBrain). trials: independent
     copies, each with its own Poisson input, run in parallel. dt: step, s. w_syn: mV per synapse.
     types: {cell type or superclass: {parameter: value}} (see the module docstring), applied in order,
-    so list broad classes first. matrix: signed synapse counts, rows = postsynaptic (default
+    so list broad classes first; "all" means every neuron. matrix: signed synapse counts, rows = postsynaptic (default
     shiu.counts). slow: signed counts of the edges that act through the slow current instead (not
     also in matrix), with tau_slow its time constant, s. w_poi: mV per Poisson event (default
     Shiu's, 250 x w_syn, which pushes any neuron over threshold). scale: a multiplier per neuron on
@@ -359,7 +390,7 @@ class HybridBrain:
                 raise ValueError(f"unknown parameters for {key!r}: {sorted(unknown)}; known: {list(DEFAULTS)}")
             if "unit" in given and given["unit"] not in UNIT:
                 raise ValueError(f"unit must be one of {list(UNIT)}, not {given['unit']!r}")
-            rows = self.cells([key])
+            rows = np.arange(self.n) if key == "all" else self.cells([key])
             if not len(rows):
                 raise ValueError(f"no neurons of type or superclass {key!r}")
             for name, value in given.items():
@@ -372,6 +403,8 @@ class HybridBrain:
         self.params = [{k: (("spiking", "graded")[int(v)] if k == "unit" else float(v)) for k, v in zip(keys, row)}
                        for row in combos]
         self.graded = np.flatnonzero(np.array([p["unit"] == "graded" for p in self.params])[self.cls])
+        self._members = np.argsort(self.cls, kind="stable").astype(np.int64)   # neurons grouped by class
+        self._member_start = np.concatenate([[0], np.cumsum(np.bincount(self.cls, minlength=len(self.params)))]).astype(np.int64)
 
     def _coefficients(self):
         dt, table = self.dt, self.params
@@ -384,7 +417,9 @@ class HybridBrain:
             theta=f32(lambda p: p["threshold"]), reset=f32(lambda p: p["reset"]),
             rfc=np.array([int(round(p["refractory"] / dt)) for p in table], np.int64),
             graded=np.array([UNIT[p["unit"]] for p in table], np.bool_),
-            depress=f32(lambda p: p["depression"]), recover=np.array([p["recovery"] / dt for p in table]))
+            depress=f32(lambda p: p["depression"]), recover=np.array([p["recovery"] / dt for p in table]),
+            noise_lambda=np.array([p["noise_rate"] * dt for p in table]) * np.bincount(self.cls, minlength=len(table)),
+            noise_kick=f32(lambda p: p["noise_kick"]))
 
     def _uniform(self) -> bool:
         """Whether every neuron is spiking with the same parameters and there is no slow current."""
@@ -441,7 +476,7 @@ class HybridBrain:
                  self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.release,
                  self.rng, self.left, self.last,
                  drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self.external_input,
-                 silenced, counts,
+                 k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps))
         self.t += int(steps)
         return counts

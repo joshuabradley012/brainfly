@@ -195,3 +195,27 @@ def test_input_to_external_neurons_changes_nothing():
             expected = total
     assert total[0, 2:4].sum() > 0
     np.testing.assert_array_equal(total[:, [0, 2, 3]], expected[:, [0, 2, 3]])
+
+
+def test_background_kicks_are_independent_poisson_events():
+    """2,000 unconnected neurons, each kick large enough to make a spike: over 2 s at 20 Hz, spikes
+    match a Poisson count in total and in each neuron's variance."""
+    brain = small([], 2000, types={"all": {"noise_rate": 20.0, "noise_kick": 50.0, "refractory": 0.0}}, trials=2)
+    spikes = brain.advance(20000)
+    expected = 2000 * 20 * 2.0
+    for trial in spikes:
+        assert abs(trial.sum() - expected) < 0.012 * expected    # a kick landing as its neuron fires is lost (~0.2%)
+        assert 0.85 < trial.var() / trial.mean() < 1.15
+    assert not np.array_equal(spikes[0], spikes[1])
+
+
+def test_background_is_the_same_in_pieces():
+    edges, slow, types, n = random_circuit()
+    types = dict(types, all={"noise_rate": 30.0, "noise_kick": 4.0})
+    types = {"all": types.pop("all"), **types}                  # broad first, so the others still apply
+    whole = small(edges, n, slow, types=types, trials=2)
+    pieces = small(edges, n, slow, types=types, trials=2)
+    once = whole.advance(3000)
+    parts = sum(pieces.advance(k) for k in (13, 987, 2000))
+    assert once.sum() > 20
+    np.testing.assert_array_equal(once, parts)
