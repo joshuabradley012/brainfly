@@ -29,7 +29,22 @@ rounds (k = 2 mV for 8, then 1 for 8, then 0.5 for 4). Measured, 8 flies unless 
             at 50 Hz for 1 s (flies extend to MN9's own activation, so the path below the cluster must work)
   looming   eyes_at_rest.py's tests at gain 1 on seed 1, and the giant fiber's rise
 
-    python experiments/taste_route.py --condition both     (also rank1, rank2; writes experiments/taste_route/<condition>.json)
+Second round (after the first three): with both, sugar raised MN9 by 20.5 Hz, but MN9 rested at 11 Hz in
+bouts of about 50 Hz lasting seconds, 262 neurons burst (gnathal descending types now at 2 Hz, such as
+DNg12, and the nerve-cord neurons they drive), and water alone raised MN9 13 Hz. Awake flies rarely extend
+the proboscis at rest, and MN9 fires only while the rostrum moves (Gordon & Scott 2009), so the notes'
+fourth, uncertain change, a quiet proboscis motor module, is tried too, again by rule:
+  route        rank 1, and only the descending neurons of rung 1's own taste route (those sugar at 100 Hz
+               raises by more than 5 Hz in the silent brain: 42 neurons of 26 gnathal types) at 2 Hz; DSOG1
+               at 17 Hz; other descending neurons keep 0.1 Hz
+  quiet        both, and MN9 with every neuron making at least 100 synapses onto it (16 neurons: its
+               excitatory and inhibitory premotor inputs) at 0.2 Hz
+  route_quiet  route and the quiet module together
+Also measured for these: MN9's spontaneous bouts, the share of fly-seconds at rest in which MN9 L fires
+more than 20 spikes.
+
+    python experiments/taste_route.py --condition both     (also rank1, rank2, route, quiet, route_quiet;
+                                                            writes experiments/taste_route/<condition>.json)
     python experiments/taste_route.py --report             (writes experiments/taste_route.json)
 """
 from __future__ import annotations
@@ -47,12 +62,15 @@ import eyes_at_rest as eyes
 import ignition
 import rest_calibration as attempt1
 import rest_calibration2 as attempt2
+
+FULL_NETWORK = attempt1.network
 from brainfly.hybrid import consensus_transmitters
 from shiu_baseline import SETS
 
 OUT = Path(__file__).with_suffix(".json")
 HERE = Path(__file__).with_suffix("")
-CONDITIONS = {"rank1": (True, False), "rank2": (False, True), "both": (True, True)}
+CONDITIONS = {"rank1": (True, None, False), "rank2": (False, "gnathal", False), "both": (True, "gnathal", False),
+              "route": (True, "route", False), "quiet": (True, "gnathal", True), "route_quiet": (True, "route", True)}
 ROUNDS = [2.0] * 8 + [1.0] * 8 + [0.5] * 4
 FULL_TARGETS = attempt1.targets
 DSOG1 = ["DNg70", "DNg98"]
@@ -78,6 +96,39 @@ def gnathal_targets(types, superclass, default):
     return t
 
 
+def route_descending() -> np.ndarray:
+    """The descending neurons sugar at 100 Hz raises by more than 5 Hz in rung 1's silent brain."""
+    from brainfly.hybrid import HybridBrain
+    from shiu_rewiring import W_SYN
+    M, scale, labels, types, superclass = FULL_NETWORK()
+    b = HybridBrain(trials=8, w_syn=W_SYN, matrix=M, scale=scale, labels=labels, seed=1)
+    rates = b.run(1.0, drive=[(b.cells(SETS["sugar"], "L"), 100.0)], seed=3).rates
+    return np.char.startswith(superclass, "descending_neuron") & (rates > 5)
+
+
+def mn9_module(types) -> np.ndarray:
+    """MN9 and every neuron making at least 100 synapses onto it."""
+    M = abs(FULL_NETWORK()[0].tocsr())
+    mn9 = types == "MN9"
+    return mn9 | (np.asarray(M[np.flatnonzero(mn9)].sum(0)).ravel() >= 100)
+
+
+def targets_for(dn: str | None, quiet: bool):
+    route = route_descending() if dn == "route" else None
+    def targets(types, superclass, default):
+        t = FULL_TARGETS(types, superclass, default)
+        if dn == "gnathal":
+            t[np.char.startswith(superclass, "descending_neuron") & np.char.startswith(types, "DNg")] = default
+        elif dn == "route":
+            t[route] = default
+        if dn is not None:
+            t[np.isin(types, DSOG1)] = 17.0
+        if quiet:
+            t[mn9_module(types)] = 0.2
+        return t
+    return targets
+
+
 def rise(s: eyes.Setup, cells, drive, seed: int) -> np.ndarray:
     b = s.brain
     b.reset(seed)
@@ -89,10 +140,13 @@ def rise(s: eyes.Setup, cells, drive, seed: int) -> np.ndarray:
 
 def condition(name: str) -> dict:
     t0 = time.perf_counter()
-    undepress, retarget = CONDITIONS[name]
-    attempt2.model, attempt1.network = route_model(undepress), escape2.network
-    if retarget:
+    undepress, dn, quiet = CONDITIONS[name]
+    retarget = dn is not None
+    if name in ("rank2", "both"):                    # the first round's rule, kept as it ran
         attempt1.targets = gnathal_targets
+    elif dn is not None or quiet:
+        attempt1.targets = targets_for(dn, quiet)
+    attempt2.model, attempt1.network = route_model(undepress), escape2.network
     eyes.ROUNDS = ROUNDS
     s = eyes.Setup(None, seed=5)
     s.bias = np.load(escape2.HERE / "intact.npz")["bias"]
@@ -107,7 +161,8 @@ def condition(name: str) -> dict:
     mn9 = b.cells(["MN9"], "L")
     rest = {"mean_hz_own": round(float(mean[own].mean()), 3), "over_100hz": int((mean[own] > 100).sum()),
             "bursting_fano_over_10": int(np.nansum(fano[own] > 10)), "mn9_L_hz": round(float(mean[mn9].mean()), 2),
-            "dsog1_hz": round(float(mean[b.cells(DSOG1)].mean()), 2)}
+            "dsog1_hz": round(float(mean[b.cells(DSOG1)].mean()), 2),
+            "mn9_L_bout_share": round(float((c[:, :, mn9].sum(2) > 20).mean()), 3)}
     hot = np.zeros(len(ignition.SEEDS) * eyes.TRIALS, bool)
     for k, seed in enumerate(ignition.SEEDS):
         rates = s.run(lambda t: [], 1.0, seed, window=(eyes.SCENE - eyes.LATE, eyes.SCENE))["rates"]
@@ -122,7 +177,7 @@ def condition(name: str) -> dict:
              "premotor 50 Hz": rise(s, mn9, [(b.cells(PREMOTOR, "L"), 50.0)], 7)}
     v = eyes.loom_tests(s, 1.0, seed=1)
     stat = lambda x: {"mean": round(float(x.mean()), 2), "sem": round(float(x.std(ddof=1) / np.sqrt(len(x))), 2)}
-    out = {"condition": name, "undepressed_sez_taste": undepress, "gnathal_dn_targets": retarget,
+    out = {"condition": name, "undepressed_sez_taste": undepress, "descending_targets": dn, "quiet_module": quiet,
            "calibration": log[-1], "rest": rest, "ignited_flies": int(hot.sum()), "flies": len(hot),
            "mn9_rise_hz": {k: stat(x) for k, x in taste.items()},
            "looming": {k: v[k] for k in ("REST", "RELAY", "SIDE", "ESCAPE")},
