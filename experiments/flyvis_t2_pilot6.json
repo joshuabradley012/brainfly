@@ -1,0 +1,121 @@
+{
+ "question": "Exploratory, not pre-registered: flyvis_t2_pilot5.py's fine-tune of model 000's T2, with the flow decoder trained.\n\nflyvis_t2_pilot5.py gave model 000's T2 a response to darkening by fine-tuning only T2's own parameters and its\ninputs (not its synapse onto itself), with a capped penalty on its flash responses. With the flow decoder frozen,\nflyvis's validation error rose from 5.13 to 6.34: T2 is one of the decoder's 34 input types, so the frozen readout\nmisreads it, and the flow loss pulls T2 back against the penalty. The decoder only reads the network (it feeds\nnothing back), so training it changes no cell's response. Everything else is pilot 5's: model 000, the same\nparameters free, the same penalty, weight 1000, learning rate 1e-4, 500 iterations, seed 0. Recorded: T2's flash\nresponses, the flow loss, flyvis's validation error and the time per iteration, and none of rung 3's tests.\n\n    python experiments/flyvis_t2_pilot6.py            (writes experiments/flyvis_t2_pilot6.json)\n",
+ "start": "flow/0000/000",
+ "start_measures": {
+  "t2_on": 2.896,
+  "t2_off": 0.004,
+  "t2_off_mean": -2.164,
+  "T2": false,
+  "val_epe": 5.1348
+ },
+ "trace": [
+  {
+   "iteration": 50,
+   "flow_loss": 1269.95,
+   "penalty": 4235.4505,
+   "seconds": 39,
+   "t2_on": 2.379,
+   "t2_off": -0.006,
+   "t2_off_mean": -1.547,
+   "T2": false
+  },
+  {
+   "iteration": 100,
+   "flow_loss": 1307.87,
+   "penalty": 3436.6721,
+   "seconds": 78,
+   "t2_on": 2.05,
+   "t2_off": -0.017,
+   "t2_off_mean": -1.04,
+   "T2": false
+  },
+  {
+   "iteration": 150,
+   "flow_loss": 1281.58,
+   "penalty": 2813.165,
+   "seconds": 118,
+   "t2_on": 1.88,
+   "t2_off": -0.007,
+   "t2_off_mean": -0.577,
+   "T2": false
+  },
+  {
+   "iteration": 200,
+   "flow_loss": 1208.99,
+   "penalty": 2336.0786,
+   "seconds": 160,
+   "t2_on": 1.763,
+   "t2_off": 0.002,
+   "t2_off_mean": -0.215,
+   "T2": false
+  },
+  {
+   "iteration": 250,
+   "flow_loss": 1193.26,
+   "penalty": 1392.5826,
+   "seconds": 199,
+   "t2_on": 1.679,
+   "t2_off": 0.973,
+   "t2_off_mean": 0.221,
+   "T2": true
+  },
+  {
+   "iteration": 300,
+   "flow_loss": 1284.93,
+   "penalty": 865.6488,
+   "seconds": 239,
+   "t2_on": 2.084,
+   "t2_off": 1.054,
+   "t2_off_mean": 0.02,
+   "T2": true
+  },
+  {
+   "iteration": 350,
+   "flow_loss": 1266.47,
+   "penalty": 1040.5926,
+   "seconds": 279,
+   "t2_on": 2.188,
+   "t2_off": 1.088,
+   "t2_off_mean": -0.102,
+   "T2": true
+  },
+  {
+   "iteration": 400,
+   "flow_loss": 1270.32,
+   "penalty": 1142.6771,
+   "seconds": 320,
+   "t2_on": 2.112,
+   "t2_off": 1.052,
+   "t2_off_mean": -0.162,
+   "T2": true
+  },
+  {
+   "iteration": 450,
+   "flow_loss": 1248.2,
+   "penalty": 1169.0841,
+   "seconds": 361,
+   "t2_on": 2.009,
+   "t2_off": 0.986,
+   "t2_off_mean": -0.176,
+   "T2": true
+  },
+  {
+   "iteration": 500,
+   "flow_loss": 1236.87,
+   "penalty": 1181.5197,
+   "seconds": 400,
+   "t2_on": 1.867,
+   "t2_off": 0.896,
+   "t2_off_mean": -0.185,
+   "T2": true
+  }
+ ],
+ "end": {
+  "t2_on": 1.867,
+  "t2_off": 0.896,
+  "t2_off_mean": -0.185,
+  "T2": true,
+  "val_epe": 5.6983
+ },
+ "seconds_per_iteration": 0.807
+}

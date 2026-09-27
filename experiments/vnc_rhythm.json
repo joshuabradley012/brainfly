@@ -1,0 +1,629 @@
+{
+ "question": "Exploratory, not pre-registered: does Pugliese et al.'s nerve cord model, rerun in brainfly, give leg rhythms\nwhen DNg100 or DNb08 is driven?\n\nRung 5 (README): \"Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons,\nstrong descending drive\"; its test: \"DNg100 and DNb08 produce 7-15 Hz leg rhythms\". Pugliese et al. (bioRxiv\n2025, v2 2026; github.com/smpuglie/Pugliese_2026) simulated nerve cord connectomes as rate networks and found leg\nrhythms, from a three-neuron oscillator repeated in each leg, when DNg100 (BDN2) or DNb08 is driven. Driving\nDNg100 makes decapitated flies walk, and DNb08 makes them flail rhythmically. This reruns their male CNS case,\nbefore brainfly builds its own: their network of the front legs' neuromere (4,310 neurons: 1,236 descending,\n2,378 intrinsic, 328 ascending, 232 sensory, 130 leg motor neurons), with synapses in the nerve cord only and\nconnections under 5 synapses dropped (their W_20260210_vncRoisOnly and its table, in ~/fly-data/pugliese).\nTheir model, reimplemented:\n    tau_i dr_i/dt = max(rmax_i tanh((a_i / rmax_i) (I_i + 0.03 sum_j w_ij r_j - theta_i)), 0) - r_i\nw the synapse counts, signed by transmitter; tau ~ N(20, 2) ms, a ~ N(1, 0.1) / size, theta ~ N(7.5, 0.6) x size and\nrmax ~ N(200, 10) Hz (normals truncated at 0; size = volume / median), drawn afresh for each of 16 replicates. A\nstep of 400 onto one descending neuron from 0.02 s to 2 s (their male CNS value for DNg100). Fourth-order\nRunge-Kutta at 0.1 ms (0.05 ms gives the same rates within 0.01 Hz), rates kept every 1 ms.\nTheir score: for each active leg motor neuron (peak rate over 0.01 Hz), the autocorrelation of its rate after\n0.23 s, scaled to [-1, 1]; its highest peak away from lag 0 with prominence at least 0.05 gives min(height,\nprominence), divided by the same for a sine at that peak's frequency; averaged over active motor neurons. The\nfrequency is that of the most prominent peak. They count a score over 0.5 as rhythmic.\nConditions: each DNg100 and each DNb08 alone, and DNg100 in a degree-preserving rewiring of the network.\n\n    python experiments/vnc_rhythm.py            (writes experiments/vnc_rhythm.json)\n",
+ "conditions": {
+  "DNg100_L": {
+   "score_mean": 0.791,
+   "rhythmic_replicates": 14,
+   "freq_hz_median": 13.3,
+   "active_mn_median": 4,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.7497676216238591,
+     "active_mn": 4,
+     "freq_hz": 14.285714285714285
+    },
+    {
+     "score": 0.47646689376978185,
+     "active_mn": 8,
+     "freq_hz": 15.625
+    },
+    {
+     "score": 0.9997770725590825,
+     "active_mn": 3,
+     "freq_hz": 12.987012987012987
+    },
+    {
+     "score": 0.7992320479398518,
+     "active_mn": 5,
+     "freq_hz": 11.299795709908071
+    },
+    {
+     "score": 0.7496880709533925,
+     "active_mn": 4,
+     "freq_hz": 11.76470588235294
+    },
+    {
+     "score": 0.9997322475222158,
+     "active_mn": 4,
+     "freq_hz": 12.048192771084336
+    },
+    {
+     "score": 0.9993756213346076,
+     "active_mn": 3,
+     "freq_hz": 14.285714285714285
+    },
+    {
+     "score": 0.5332429019669536,
+     "active_mn": 4,
+     "freq_hz": 15.15151515151515
+    },
+    {
+     "score": 0.9713473007708641,
+     "active_mn": 4,
+     "freq_hz": 13.157894736842106
+    },
+    {
+     "score": 0.9996181350737209,
+     "active_mn": 3,
+     "freq_hz": 9.70873786407767
+    },
+    {
+     "score": 0.9990485970292075,
+     "active_mn": 3,
+     "freq_hz": 9.900990099009901
+    },
+    {
+     "score": 0.3745274760422006,
+     "active_mn": 8,
+     "freq_hz": 15.873015873015873
+    },
+    {
+     "score": 0.5998486501710051,
+     "active_mn": 5,
+     "freq_hz": 13.513513513513514
+    },
+    {
+     "score": 0.5999098705963976,
+     "active_mn": 5,
+     "freq_hz": 15.15151515151515
+    },
+    {
+     "score": 0.9991695418208527,
+     "active_mn": 3,
+     "freq_hz": 16.129032258064516
+    },
+    {
+     "score": 0.7985481493076734,
+     "active_mn": 5,
+     "freq_hz": 11.76470588235294
+    }
+   ]
+  },
+  "DNg100_R": {
+   "score_mean": 0.94,
+   "rhythmic_replicates": 16,
+   "freq_hz_median": 11.6,
+   "active_mn_median": 8,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.9728080222079915,
+     "active_mn": 9,
+     "freq_hz": 12.345679012345679
+    },
+    {
+     "score": 0.9995322872848618,
+     "active_mn": 8,
+     "freq_hz": 12.5
+    },
+    {
+     "score": 0.8939999855039169,
+     "active_mn": 11,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.8873679670278407,
+     "active_mn": 9,
+     "freq_hz": 10.204081632653061
+    },
+    {
+     "score": 0.926281434577908,
+     "active_mn": 10,
+     "freq_hz": 11.428944618599791
+    },
+    {
+     "score": 0.7684451419180899,
+     "active_mn": 11,
+     "freq_hz": 11.494252873563218
+    },
+    {
+     "score": 0.9846686510630467,
+     "active_mn": 8,
+     "freq_hz": 12.048192771084336
+    },
+    {
+     "score": 0.9996635879571835,
+     "active_mn": 7,
+     "freq_hz": 12.048192771084336
+    },
+    {
+     "score": 0.9823090715449772,
+     "active_mn": 9,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.9999282897664733,
+     "active_mn": 8,
+     "freq_hz": 14.08450704225352
+    },
+    {
+     "score": 0.9993761209346621,
+     "active_mn": 7,
+     "freq_hz": 11.235955056179776
+    },
+    {
+     "score": 0.8688138760038877,
+     "active_mn": 8,
+     "freq_hz": 11.627906976744185
+    },
+    {
+     "score": 0.9712525567021075,
+     "active_mn": 8,
+     "freq_hz": 11.11111111111111
+    },
+    {
+     "score": 0.9608352568409447,
+     "active_mn": 7,
+     "freq_hz": 10.989010989010989
+    },
+    {
+     "score": 0.8538734426176094,
+     "active_mn": 14,
+     "freq_hz": 11.235955056179776
+    },
+    {
+     "score": 0.964522637046786,
+     "active_mn": 8,
+     "freq_hz": 11.235955056179776
+    }
+   ]
+  },
+  "DNb08(VES082)_R": {
+   "score_mean": 0.255,
+   "rhythmic_replicates": 4,
+   "freq_hz_median": 16.8,
+   "active_mn_median": 14,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.3337730016204163,
+     "active_mn": 13,
+     "freq_hz": 17.543859649122805
+    },
+    {
+     "score": 0.0,
+     "active_mn": 14,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 12,
+     "freq_hz": null
+    },
+    {
+     "score": 0.68981589045401,
+     "active_mn": 15,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.24546133660352587,
+     "active_mn": 14,
+     "freq_hz": 19.23076923076923
+    },
+    {
+     "score": 0.12316946718222473,
+     "active_mn": 15,
+     "freq_hz": 16.666666666666668
+    },
+    {
+     "score": 0.0,
+     "active_mn": 11,
+     "freq_hz": null
+    },
+    {
+     "score": 0.050381804123301996,
+     "active_mn": 15,
+     "freq_hz": 18.181818181818183
+    },
+    {
+     "score": 0.6710997946718815,
+     "active_mn": 15,
+     "freq_hz": 16.129032258064516
+    },
+    {
+     "score": 0.7660819474640171,
+     "active_mn": 15,
+     "freq_hz": 14.925373134328357
+    },
+    {
+     "score": 0.0,
+     "active_mn": 14,
+     "freq_hz": null
+    },
+    {
+     "score": 0.16513146957773497,
+     "active_mn": 15,
+     "freq_hz": 15.625
+    },
+    {
+     "score": 0.4198035153324738,
+     "active_mn": 14,
+     "freq_hz": 19.23076923076923
+    },
+    {
+     "score": 0.0,
+     "active_mn": 15,
+     "freq_hz": null
+    },
+    {
+     "score": 0.6152686821121036,
+     "active_mn": 15,
+     "freq_hz": 11.494252873563218
+    },
+    {
+     "score": 0.0,
+     "active_mn": 12,
+     "freq_hz": null
+    }
+   ]
+  },
+  "DNb08(VES083)_R": {
+   "score_mean": 0.193,
+   "rhythmic_replicates": 1,
+   "freq_hz_median": 17.4,
+   "active_mn_median": 6,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    },
+    {
+     "score": 0.34916474773095524,
+     "active_mn": 6,
+     "freq_hz": 18.51851851851852
+    },
+    {
+     "score": 0.40358807969570737,
+     "active_mn": 8,
+     "freq_hz": 16.666666666666668
+    },
+    {
+     "score": 0.24527881573489516,
+     "active_mn": 7,
+     "freq_hz": 17.70050125313283
+    },
+    {
+     "score": 0.26095794365746944,
+     "active_mn": 9,
+     "freq_hz": 17.543859649122805
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 5,
+     "freq_hz": null
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    },
+    {
+     "score": 0.7920988914650516,
+     "active_mn": 5,
+     "freq_hz": 13.698630136986303
+    },
+    {
+     "score": 0.0,
+     "active_mn": 6,
+     "freq_hz": null
+    },
+    {
+     "score": 0.23057088012030186,
+     "active_mn": 5,
+     "freq_hz": 19.419306184012065
+    },
+    {
+     "score": 0.41826962390709216,
+     "active_mn": 7,
+     "freq_hz": 15.873015873015873
+    },
+    {
+     "score": 0.12526132545306243,
+     "active_mn": 6,
+     "freq_hz": 17.392619479733817
+    },
+    {
+     "score": 0.26730381812249776,
+     "active_mn": 6,
+     "freq_hz": 16.129032258064516
+    }
+   ]
+  },
+  "DNb08(VES083)_L": {
+   "score_mean": 0.445,
+   "rhythmic_replicates": 10,
+   "freq_hz_median": 18.2,
+   "active_mn_median": 23,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.15842493330012777,
+     "active_mn": 23,
+     "freq_hz": 17.857142857142858
+    },
+    {
+     "score": 0.6181581375715427,
+     "active_mn": 23,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.6164798443917948,
+     "active_mn": 19,
+     "freq_hz": 18.867924528301888
+    },
+    {
+     "score": 0.6027798542358549,
+     "active_mn": 25,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.5967226118937201,
+     "active_mn": 18,
+     "freq_hz": 19.23076923076923
+    },
+    {
+     "score": 0.10810704104722209,
+     "active_mn": 19,
+     "freq_hz": 19.23076923076923
+    },
+    {
+     "score": 0.4619952384388872,
+     "active_mn": 22,
+     "freq_hz": 21.73913043478261
+    },
+    {
+     "score": 0.5790443105220497,
+     "active_mn": 17,
+     "freq_hz": 17.543859649122805
+    },
+    {
+     "score": 0.0,
+     "active_mn": 25,
+     "freq_hz": null
+    },
+    {
+     "score": 0.56700899062899,
+     "active_mn": 26,
+     "freq_hz": 18.181818181818183
+    },
+    {
+     "score": 0.05253912655470836,
+     "active_mn": 24,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.5400016665192335,
+     "active_mn": 20,
+     "freq_hz": 19.04934687953556
+    },
+    {
+     "score": 0.47061649244257225,
+     "active_mn": 26,
+     "freq_hz": 18.867924528301888
+    },
+    {
+     "score": 0.6707270852631613,
+     "active_mn": 23,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.5249905666653698,
+     "active_mn": 26,
+     "freq_hz": 18.51851851851852
+    },
+    {
+     "score": 0.5559878293298668,
+     "active_mn": 26,
+     "freq_hz": 16.39344262295082
+    }
+   ]
+  },
+  "DNb08(VES082)_L": {
+   "score_mean": 0.506,
+   "rhythmic_replicates": 9,
+   "freq_hz_median": 15.7,
+   "active_mn_median": 24,
+   "mn_peak_hz_median": 0.0,
+   "replicates": [
+    {
+     "score": 0.13532345003290802,
+     "active_mn": 24,
+     "freq_hz": 17.543859649122805
+    },
+    {
+     "score": 0.8675652451492151,
+     "active_mn": 23,
+     "freq_hz": 12.987012987012987
+    },
+    {
+     "score": 0.5329732446181937,
+     "active_mn": 28,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.32209833029286106,
+     "active_mn": 24,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.7778684300433764,
+     "active_mn": 21,
+     "freq_hz": 11.235955056179776
+    },
+    {
+     "score": 0.49689469853999474,
+     "active_mn": 24,
+     "freq_hz": 16.94915254237288
+    },
+    {
+     "score": 0.6469317714550243,
+     "active_mn": 24,
+     "freq_hz": 12.987012987012987
+    },
+    {
+     "score": 0.0780699432903925,
+     "active_mn": 22,
+     "freq_hz": 15.038444142921755
+    },
+    {
+     "score": 0.02121946085992278,
+     "active_mn": 30,
+     "freq_hz": 16.39344262295082
+    },
+    {
+     "score": 0.8140674111582517,
+     "active_mn": 22,
+     "freq_hz": 10.75268817204301
+    },
+    {
+     "score": 0.18571141551357026,
+     "active_mn": 27,
+     "freq_hz": 16.39344262295082
+    },
+    {
+     "score": 0.5280252788666894,
+     "active_mn": 27,
+     "freq_hz": 16.39344262295082
+    },
+    {
+     "score": 0.775127350501884,
+     "active_mn": 21,
+     "freq_hz": 13.698630136986303
+    },
+    {
+     "score": 0.4829623216103386,
+     "active_mn": 23,
+     "freq_hz": 19.23076923076923
+    },
+    {
+     "score": 0.6633446266959837,
+     "active_mn": 26,
+     "freq_hz": 11.11111111111111
+    },
+    {
+     "score": 0.7648269764509243,
+     "active_mn": 18,
+     "freq_hz": 13.333333333333334
+    }
+   ]
+  },
+  "DNg100_L, rewired": {
+   "score_mean": 0.169,
+   "rhythmic_replicates": 0,
+   "freq_hz_median": 1.3,
+   "active_mn_median": 96,
+   "mn_peak_hz_median": 64.3,
+   "replicates": [
+    {
+     "score": 0.18005064806917162,
+     "active_mn": 98,
+     "freq_hz": 1.3736263736263736
+    },
+    {
+     "score": 0.1590099022068399,
+     "active_mn": 100,
+     "freq_hz": 0.9416195856873822
+    },
+    {
+     "score": 0.14297235111841902,
+     "active_mn": 92,
+     "freq_hz": 1.1415525114155252
+    },
+    {
+     "score": 0.21056001497600066,
+     "active_mn": 96,
+     "freq_hz": 1.1520737327188941
+    },
+    {
+     "score": 0.05915456357101278,
+     "active_mn": 92,
+     "freq_hz": 1.7699115044247786
+    },
+    {
+     "score": 0.19813951916349828,
+     "active_mn": 98,
+     "freq_hz": 1.310615989515072
+    },
+    {
+     "score": 0.18412770797184377,
+     "active_mn": 101,
+     "freq_hz": 1.0587639197469279
+    },
+    {
+     "score": 0.19200281064806374,
+     "active_mn": 95,
+     "freq_hz": 1.4826456817532367
+    },
+    {
+     "score": 0.1103368956400416,
+     "active_mn": 94,
+     "freq_hz": 1.4144271570014144
+    },
+    {
+     "score": 0.10155662405850652,
+     "active_mn": 95,
+     "freq_hz": 1.3812154696132597
+    },
+    {
+     "score": 0.24499589272955985,
+     "active_mn": 98,
+     "freq_hz": 1.0911337790730897
+    },
+    {
+     "score": 0.2142197326344906,
+     "active_mn": 97,
+     "freq_hz": 1.3192612137203166
+    },
+    {
+     "score": 0.17732278601902274,
+     "active_mn": 96,
+     "freq_hz": 0.8795074758135444
+    },
+    {
+     "score": 0.14352097268035643,
+     "active_mn": 93,
+     "freq_hz": 1.5847860538827259
+    },
+    {
+     "score": 0.20769648701867027,
+     "active_mn": 93,
+     "freq_hz": 1.3071895424836601
+    },
+    {
+     "score": 0.17593570803742337,
+     "active_mn": 101,
+     "freq_hz": 1.146788990825688
+    }
+   ]
+  }
+ },
+ "seconds": 484
+}

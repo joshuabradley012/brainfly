@@ -1,0 +1,86 @@
+{
+ "question": "Exploratory, not pre-registered: can a fine-tune that changes only T2 give it a response to light decrements?\n\nrung3_t2.py (pre-registered) fine-tuned all of flyvis model 006's parameters with a penalty on T2's flash\nresponses. T2 then answered both flashes and 31 of 32 polarities stayed right, but only 6 of the 16 T4/T5\nsubtypes kept their preferred direction: the fine-tune reached far beyond T2. Here only T2's own parameters (its\nresting potential and time constant) and the strengths of the synapses onto T2 may change\n(brainfly.vistrain.local), and the flow decoder is frozen. The rest of the network changes only through T2's\noutputs (onto Lawf2, Mi1, T2, Tm5c, TmY15 and TmY5a in flyvis's connectome). With 26 free parameters the learning\nrate can be higher than flyvis's 5e-6. The start is 000, flyvis's best model by validation error, whose T4/T5\nall prefer their right direction on the male eye (flyvis_native.py) and which gets 30 of 32 polarities; its T2\nfalls when the field darkens. (006 was dropped: its own direction selectivity, reported by rung3_t2.py, is 12 of\n16.) Penalties:\n  peak   flyvis_t2_pilot3.py's symmetric penalty on the peaks\n  mean   flyvis_t2_pilot2.py's, which asks for T2's mean change over the dark flash's first 0.25 s to be at\n         least 1 (its peak carries no gradient while the response is negative throughout)\neach at weight 1000 for 500 iterations, learning rate 1e-4, seed 0. As in the other pilots this records T2's\nflash responses, the flow loss, flyvis's validation error and the time per iteration, and none of rung 3's\ntests.\n\n    python experiments/flyvis_t2_pilot4.py            (writes experiments/flyvis_t2_pilot4.json)\n",
+ "runs": [
+  {
+   "start": "flow/0000/000",
+   "penalty": "mean",
+   "weight": 1000.0,
+   "lr": 0.0001,
+   "iters": 500,
+   "trace": [
+    {
+     "penalty": 3876.0318,
+     "iteration": 50,
+     "flow_loss": 1268.17,
+     "seconds": 39,
+     "t2_on": 1.901,
+     "t2_off": -0.002,
+     "t2_off_mean": -1.255,
+     "T2": false
+    },
+    {
+     "penalty": 2922.7789,
+     "iteration": 100,
+     "flow_loss": 1306.34,
+     "seconds": 77,
+     "t2_on": 1.534,
+     "t2_off": -0.003,
+     "t2_off_mean": -0.83,
+     "T2": false
+    },
+    {
+     "penalty": 2516.0598,
+     "iteration": 150,
+     "flow_loss": 1275.9,
+     "seconds": 118,
+     "t2_on": 1.671,
+     "t2_off": -0.017,
+     "t2_off_mean": -0.638,
+     "T2": false
+    },
+    {
+     "penalty": 2588.6449,
+     "iteration": 200,
+     "flow_loss": 1303.52,
+     "seconds": 157,
+     "t2_on": 30.85,
+     "t2_off": 13.8,
+     "t2_off_mean": 4.513,
+     "T2": true
+    },
+    {
+     "penalty": 0.0,
+     "iteration": 250,
+     "flow_loss": 1626.8,
+     "seconds": 199,
+     "t2_on": 455.129,
+     "t2_off": 445.133,
+     "t2_off_mean": 21.016,
+     "T2": true
+    },
+    {
+     "penalty": 0.0,
+     "iteration": 300,
+     "flow_loss": 1707.95,
+     "seconds": 241,
+     "t2_on": 302.825,
+     "t2_off": 290.332,
+     "t2_off_mean": 17.528,
+     "T2": true
+    },
+    {
+     "penalty": 0.0,
+     "iteration": 350,
+     "flow_loss": 1671.53,
+     "seconds": 288,
+     "t2_on": 177.149,
+     "t2_off": 160.438,
+     "t2_off_mean": 13.504,
+     "T2": true
+    }
+   ],
+   "stopped_at": 350,
+   "note": "stopped by hand: from iteration 200 T2's responses ran away (ON peak 31, then 455) as the fit strengthened T2's synapse onto itself; the peak-penalty setting was cancelled"
+  }
+ ]
+}

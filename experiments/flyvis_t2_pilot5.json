@@ -1,0 +1,121 @@
+{
+ "question": "Exploratory, not pre-registered: can a fine-tune of T2's own parameters and its inputs, but not its synapse onto\nitself, give flyvis model 000's T2 a response to light decrements without T2 running away?\n\nflyvis_t2_pilot4.py freed T2's resting potential and time constant and the strengths of every synapse onto T2\n(brainfly.vistrain.local) in model 000, with the flow decoder frozen. T2's mean OFF response rose from -2.16 to\n-0.64 in 150 iterations, and then T2 ran away (flash peaks in the hundreds): among its inputs is its own synapse\nonto itself, which the fit strengthened until the loop amplified everything. Here that synapse stays as flyvis\nfitted it, and the penalty also caps T2's responses:\n    w * [relu(1 - off_mean) + relu(0.5 * max(on, off) - min(on, off)) + relu(0.1 - on) + relu(on - 5) + relu(off - 5)]\nwith on and off the central T2's peaks in the 0.5 s after a full-field (radius 6) flash from grey and off_mean its\nmean change over the dark flash's first 0.25 s (dt 0.01). 000's T2 peaks at 2.9 to the light flash, and model\n001's, which answers darkening, at 2.8 to the dark one, so 5 bounds a T2 of the right size. Weight 1000, learning\nrate 1e-4, 500 iterations, seed 0. As in the other pilots this records T2's flash responses, the flow loss,\nflyvis's validation error and the time per iteration, and none of rung 3's tests.\n\n    python experiments/flyvis_t2_pilot5.py            (writes experiments/flyvis_t2_pilot5.json)\n",
+ "start": "flow/0000/000",
+ "start_measures": {
+  "t2_on": 2.896,
+  "t2_off": 0.004,
+  "t2_off_mean": -2.164,
+  "T2": false,
+  "val_epe": 5.1348
+ },
+ "trace": [
+  {
+   "iteration": 50,
+   "flow_loss": 1267.0,
+   "penalty": 4235.3201,
+   "seconds": 38,
+   "t2_on": 2.379,
+   "t2_off": -0.006,
+   "t2_off_mean": -1.547,
+   "T2": false
+  },
+  {
+   "iteration": 100,
+   "flow_loss": 1307.08,
+   "penalty": 3436.691,
+   "seconds": 79,
+   "t2_on": 2.048,
+   "t2_off": -0.017,
+   "t2_off_mean": -1.04,
+   "T2": false
+  },
+  {
+   "iteration": 150,
+   "flow_loss": 1284.22,
+   "penalty": 2810.9841,
+   "seconds": 119,
+   "t2_on": 1.871,
+   "t2_off": -0.008,
+   "t2_off_mean": -0.576,
+   "T2": false
+  },
+  {
+   "iteration": 200,
+   "flow_loss": 1222.53,
+   "penalty": 2324.8426,
+   "seconds": 158,
+   "t2_on": 1.744,
+   "t2_off": 0.0,
+   "t2_off_mean": -0.207,
+   "T2": false
+  },
+  {
+   "iteration": 250,
+   "flow_loss": 1221.11,
+   "penalty": 1363.116,
+   "seconds": 199,
+   "t2_on": 1.656,
+   "t2_off": 0.977,
+   "t2_off_mean": 0.237,
+   "T2": true
+  },
+  {
+   "iteration": 300,
+   "flow_loss": 1332.95,
+   "penalty": 841.166,
+   "seconds": 240,
+   "t2_on": 2.048,
+   "t2_off": 1.081,
+   "t2_off_mean": 0.053,
+   "T2": true
+  },
+  {
+   "iteration": 350,
+   "flow_loss": 1338.57,
+   "penalty": 1023.0242,
+   "seconds": 281,
+   "t2_on": 2.195,
+   "t2_off": 1.094,
+   "t2_off_mean": -0.085,
+   "T2": true
+  },
+  {
+   "iteration": 400,
+   "flow_loss": 1360.32,
+   "penalty": 1131.5435,
+   "seconds": 319,
+   "t2_on": 2.129,
+   "t2_off": 1.069,
+   "t2_off_mean": -0.153,
+   "T2": true
+  },
+  {
+   "iteration": 450,
+   "flow_loss": 1357.71,
+   "penalty": 1164.7605,
+   "seconds": 358,
+   "t2_on": 2.037,
+   "t2_off": 1.003,
+   "t2_off_mean": -0.172,
+   "T2": true
+  },
+  {
+   "iteration": 500,
+   "flow_loss": 1352.03,
+   "penalty": 1178.2681,
+   "seconds": 399,
+   "t2_on": 1.901,
+   "t2_off": 0.917,
+   "t2_off_mean": -0.185,
+   "T2": true
+  }
+ ],
+ "end": {
+  "t2_on": 1.901,
+  "t2_off": 0.917,
+  "t2_off_mean": -0.185,
+  "T2": true,
+  "val_epe": 6.34
+ },
+ "seconds_per_iteration": 0.804
+}
