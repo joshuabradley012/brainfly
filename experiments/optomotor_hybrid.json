@@ -1,0 +1,392 @@
+{
+ "criteria": "Does the brain that passed rung 1 carry the optomotor signal? flyvis driving HybridBrain, open loop.\n\noptomotor.py showed a rotating drum reaching the steering neuron DNa02 through FlyvisNative and\nFlyBrain, the inherited model, and closed_loop.py turned the body with it. FlyBrain isn't validated.\nThis asks whether the same signal survives in HybridBrain as it passed rung 1 (shiu_rewiring.py),\nwith no change made for vision.\n\nSetup: HybridBrain with shiu_sensory.py's network exactly, at w_syn = 1.5556 mV. FlyvisNative (model\n0000/000) is stepped every 2 ms and sets the release of its 69,917 MaleCNS neurons through\nset_release, in Hz: 50 x its output per 20 ms, times the gain G. Every other neuron, including the\noptic lobe types flyvis doesn't model, the HS cells and the descending neurons, is a spiking Shiu\nneuron. The network has no noise and no Poisson drive, so one run per scene says everything (there\nare no flies to average over). The fly doesn't move.\nScenes as in optomotor.py, 2 s each, rates from 0.5 to 2 s:\n  blank   grey\n  static  a vertical sine grating, period 30 deg, contrast 1\n  ccw     the grating rotating counterclockwise at 40 deg/s, then 0.5 s of grey\n  cw      clockwise at 40 deg/s, then 0.5 s of grey\nKnob: G in {1, 3, 10, 30, 100}.\nPass criteria, fixed before the first run, all at one G:\n  STABLE  under ccw and under cw: at most 20 neurons that flyvis doesn't drive pass 100 Hz, and in\n          the last 0.25 s of the grey after the drum, those neurons fire under 1% as much as\n          during it\n  HS      (HS left - HS right) is at least 3 Hz higher under ccw than under cw, HS being the mean\n          rate of HSN, HSE and HSS on that side\n  STEER   (DNa02 left - DNa02 right) is at least 2 Hz higher under ccw than under cw\nThe lowest passing G is the result. It must then pass HS and STEER on a held-out drum (period 20 deg,\n60 deg/s), and NULL: in 10 degree-preserving rewirings of the network (brainfly.nulls; flyvis\nunchanged, and the rewiring moves flyvis's outputs too), STEER holds in at most 1.\nReported: every rate above for each G; DNa01's signal; H2's and each descending type's direction\nsignal ((left - right) under ccw minus under cw), ranked, at the passing G.\n\n    python experiments/optomotor_hybrid.py            (writes experiments/optomotor_hybrid.json)\n",
+ "cells": {
+  "HS L": [
+   26,
+   163,
+   386
+  ],
+  "HS R": [
+   10,
+   11,
+   17
+  ],
+  "DNa02 L": [
+   131957
+  ],
+  "DNa02 R": [
+   332
+  ],
+  "DNa01 L": [
+   406
+  ],
+  "DNa01 R": [
+   704
+  ]
+ },
+ "gains": {
+  "1.0": {
+   "signals": {
+    "blank": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "static": {
+     "HS": {
+      "L": 45.111111111111114,
+      "R": 43.11111111111111
+     },
+     "DNa02": {
+      "L": 2.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "ccw": {
+     "HS": {
+      "L": 106.0,
+      "R": 7.111111111111111
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 26.666666666666668
+     }
+    },
+    "cw": {
+     "HS": {
+      "L": 1.1111111111111112,
+      "R": 104.8888888888889
+     },
+     "DNa02": {
+      "L": 5.333333333333333,
+      "R": 0.6666666666666666
+     },
+     "DNa01": {
+      "L": 6.0,
+      "R": 19.333333333333332
+     }
+    }
+   },
+   "verdict": {
+    "HS_signal_hz": 202.67,
+    "STEER_signal_hz": -4.67,
+    "DNa01_signal_hz": -13.33,
+    "HS": true,
+    "STEER": false,
+    "STABLE": false,
+    "ccw_over_100hz": 624,
+    "ccw_tail_fraction": 0.72558,
+    "cw_over_100hz": 614,
+    "cw_tail_fraction": 0.70538
+   }
+  },
+  "3.0": {
+   "signals": {
+    "blank": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "static": {
+     "HS": {
+      "L": 89.55555555555556,
+      "R": 87.33333333333333
+     },
+     "DNa02": {
+      "L": 11.333333333333334,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 11.333333333333334,
+      "R": 5.333333333333333
+     }
+    },
+    "ccw": {
+     "HS": {
+      "L": 168.88888888888889,
+      "R": 62.888888888888886
+     },
+     "DNa02": {
+      "L": 37.333333333333336,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 4.0,
+      "R": 61.333333333333336
+     }
+    },
+    "cw": {
+     "HS": {
+      "L": 66.0,
+      "R": 170.0
+     },
+     "DNa02": {
+      "L": 2.6666666666666665,
+      "R": 46.666666666666664
+     },
+     "DNa01": {
+      "L": 58.0,
+      "R": 29.333333333333332
+     }
+    }
+   },
+   "verdict": {
+    "HS_signal_hz": 210.0,
+    "STEER_signal_hz": 81.33,
+    "DNa01_signal_hz": -86.0,
+    "HS": true,
+    "STEER": true,
+    "STABLE": false,
+    "ccw_over_100hz": 1198,
+    "ccw_tail_fraction": 0.41028,
+    "cw_over_100hz": 1216,
+    "cw_tail_fraction": 0.39523
+   }
+  },
+  "10.0": {
+   "signals": {
+    "blank": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "static": {
+     "HS": {
+      "L": 184.0,
+      "R": 178.66666666666666
+     },
+     "DNa02": {
+      "L": 13.333333333333334,
+      "R": 9.333333333333334
+     },
+     "DNa01": {
+      "L": 59.333333333333336,
+      "R": 60.666666666666664
+     }
+    },
+    "ccw": {
+     "HS": {
+      "L": 255.55555555555554,
+      "R": 184.66666666666666
+     },
+     "DNa02": {
+      "L": 72.66666666666667,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 44.666666666666664,
+      "R": 72.0
+     }
+    },
+    "cw": {
+     "HS": {
+      "L": 180.0,
+      "R": 256.6666666666667
+     },
+     "DNa02": {
+      "L": 10.0,
+      "R": 88.0
+     },
+     "DNa01": {
+      "L": 85.33333333333333,
+      "R": 44.0
+     }
+    }
+   },
+   "verdict": {
+    "HS_signal_hz": 147.56,
+    "STEER_signal_hz": 150.67,
+    "DNa01_signal_hz": -68.67,
+    "HS": true,
+    "STEER": true,
+    "STABLE": false,
+    "ccw_over_100hz": 3448,
+    "ccw_tail_fraction": 0.27688,
+    "cw_over_100hz": 3466,
+    "cw_tail_fraction": 0.28274
+   }
+  },
+  "30.0": {
+   "signals": {
+    "blank": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "static": {
+     "HS": {
+      "L": 270.44444444444446,
+      "R": 264.4444444444444
+     },
+     "DNa02": {
+      "L": 71.33333333333333,
+      "R": 67.33333333333333
+     },
+     "DNa01": {
+      "L": 90.0,
+      "R": 86.66666666666667
+     }
+    },
+    "ccw": {
+     "HS": {
+      "L": 322.0,
+      "R": 267.11111111111114
+     },
+     "DNa02": {
+      "L": 72.0,
+      "R": 70.66666666666667
+     },
+     "DNa01": {
+      "L": 80.0,
+      "R": 87.33333333333333
+     }
+    },
+    "cw": {
+     "HS": {
+      "L": 266.22222222222223,
+      "R": 322.0
+     },
+     "DNa02": {
+      "L": 84.66666666666667,
+      "R": 92.0
+     },
+     "DNa01": {
+      "L": 104.0,
+      "R": 80.66666666666667
+     }
+    }
+   },
+   "verdict": {
+    "HS_signal_hz": 110.67,
+    "STEER_signal_hz": 8.67,
+    "DNa01_signal_hz": -30.67,
+    "HS": true,
+    "STEER": true,
+    "STABLE": false,
+    "ccw_over_100hz": 9357,
+    "ccw_tail_fraction": 0.25894,
+    "cw_over_100hz": 9295,
+    "cw_tail_fraction": 0.24964
+   }
+  },
+  "100.0": {
+   "signals": {
+    "blank": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "static": {
+     "HS": {
+      "L": 339.77777777777777,
+      "R": 330.6666666666667
+     },
+     "DNa02": {
+      "L": 112.0,
+      "R": 111.33333333333333
+     },
+     "DNa01": {
+      "L": 112.0,
+      "R": 103.33333333333333
+     }
+    },
+    "ccw": {
+     "HS": {
+      "L": 372.0,
+      "R": 334.8888888888889
+     },
+     "DNa02": {
+      "L": 109.33333333333333,
+      "R": 124.66666666666667
+     },
+     "DNa01": {
+      "L": 73.33333333333333,
+      "R": 93.33333333333333
+     }
+    },
+    "cw": {
+     "HS": {
+      "L": 334.88888888888886,
+      "R": 371.1111111111111
+     },
+     "DNa02": {
+      "L": 126.0,
+      "R": 118.66666666666667
+     },
+     "DNa01": {
+      "L": 103.33333333333333,
+      "R": 79.33333333333333
+     }
+    }
+   },
+   "verdict": {
+    "HS_signal_hz": 73.33,
+    "STEER_signal_hz": -22.67,
+    "DNa01_signal_hz": -44.0,
+    "HS": true,
+    "STEER": false,
+    "STABLE": false,
+    "ccw_over_100hz": 19927,
+    "ccw_tail_fraction": 0.29174,
+    "cw_over_100hz": 20008,
+    "cw_tail_fraction": 0.28796
+   }
+  }
+ },
+ "passing_gain": null,
+ "pass": false,
+ "seconds": 330
+}

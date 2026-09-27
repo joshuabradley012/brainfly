@@ -158,3 +158,40 @@ def test_delivery_is_the_same_whether_or_not_the_target_lists_overflow():
     np.testing.assert_array_equal(listed.advance(3000, drive), scanned.advance(3000, drive))
     np.testing.assert_array_equal(listed.x, scanned.x)
     assert listed.advance(1000, drive).sum() > 50
+
+
+def test_external_release_reaches_targets_and_the_neuron_never_fires():
+    """A neuron whose release is set from outside never fires, however hard it is driven. Its
+    target settles where release x weight x dt per step puts it, a negative release takes input
+    away, and reset() clears the release."""
+    brain = small([(0, 1, 10.0), (2, 0, 500.0)], 3, w_poi=100.0)
+    brain.set_release([0], 65.0)
+    counts = brain.advance(8000, drive=[([2], 1 / DT)])     # neuron 2 hammers neuron 0
+    assert counts[0, 0] == 0 and counts[0, 2] > 1000
+    x = 10.0 * 65.0 * DT / (1 - np.exp(-DT / TAU))
+    assert brain.x[0, 1] == pytest.approx(x, rel=1e-3)
+    brain.set_release([0], -65.0)
+    brain.advance(8000)
+    assert brain.x[0, 1] == pytest.approx(-x, rel=1e-3)
+    brain.reset()
+    brain.advance(100)
+    assert brain.x[0, 1] == 0 and brain.external[0]
+
+
+def test_input_to_external_neurons_changes_nothing():
+    """External release skips targets that are external themselves, since their input can't
+    matter: with or without a synapse between two external neurons, every spike is the same."""
+    base = [(1, 2, 40.0), (2, 3, 60.0), (3, 2, -20.0), (4, 3, 50.0)]
+    for edges in (base, base + [(1, 4, 300.0), (0, 4, 80.0)]):
+        brain = small(edges, 5, w_poi=30.0)
+        for k in range(30):
+            brain.set_release([1, 4], [20.0 + 5 * k, 90.0 - 3 * k])
+            spikes = brain.advance(100, drive=[([0], 200.0)])
+            if k == 0:
+                total = spikes
+            else:
+                total = total + spikes
+        if edges is base:
+            expected = total
+    assert total[0, 2:4].sum() > 0
+    np.testing.assert_array_equal(total[:, [0, 2, 3]], expected[:, [0, 2, 3]])

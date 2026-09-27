@@ -352,7 +352,8 @@ def _matvec(indptr, indices, data, x):
 
 
 class FlyvisNative:
-    """flyvis's fitted network on its own terms, driving a FlyBrain. Its cells and synapses are tiled
+    """flyvis's fitted network on its own terms, driving a FlyBrain (set_graded) or a HybridBrain
+    (set_release, whose release is in Hz: 50 x this class's output). Its cells and synapses are tiled
     onto the male fly's eye: one cell of each of flyvis's 65 types per MaleCNS optic lobe column
     (Lawf1/2 on flyvis's sparse sub-lattice), wired by flyvis's spatial filters and oriented by
     to_mcns, one copy per eye. Each column looks in its measured direction (brainfly.eye2d). A
@@ -362,7 +363,10 @@ class FlyvisNative:
     as graded release (FlyBrain.set_graded), per 20 ms. Deterministic: one simulation serves every
     fly in a batch."""
 
-    def __init__(self, brain, model: str = MODEL, gain: float = 1.0, data: Path | str | None = None):
+    def __init__(self, brain, model: str = MODEL, gain: float = 1.0, data: Path | str | None = None,
+                 dt: float | None = None):
+        """dt: the optic lobe's step, s (default the brain's; a HybridBrain's 0.1 ms is needlessly
+        fine for flyvis, so step it every 2 ms and hold its output in between)."""
         import pyarrow.feather as feather
 
         from .eye2d import ACCEPTANCE_DEG, column_directions
@@ -391,8 +395,8 @@ class FlyvisNative:
         self.column_keys = keys                                    # (side, hex1, hex2) per column
         self.directions = np.array([dirs[k] for k in keys])
         self.sigma = np.radians(ACCEPTANCE_DEG) / (2 * np.sqrt(2 * np.log(2)))
-        self.dt = brain.dt
-        self.tau = np.array([max(f["tau"][t], brain.dt) for t in self.cell_type])
+        self.dt = brain.dt if dt is None else float(dt)
+        self.tau = np.array([max(f["tau"][t], self.dt) for t in self.cell_type])
         self.bias = np.array([f["bias"][t] for t in self.cell_type])
         self._input = np.flatnonzero(np.isin(self.cell_type, R16 + ["R7", "R8"]))
         self.gain = float(gain)
@@ -450,7 +454,7 @@ class FlyvisNative:
             types.append(t)
         self.neurons = np.array(neurons)
         self.types = np.array(types)
-        missing = np.setdiff1d(self.neurons, brain.graded)
+        missing = [] if hasattr(brain, "set_release") else np.setdiff1d(self.neurons, brain.graded)
         if len(missing):
             raise ValueError(f"{len(missing)} flyvis-type neurons aren't graded in this FlyBrain; build it with graded=GRADED")
         self.readout = sparse.csr_matrix((weights, (rows, cells)), shape=(len(neurons), len(self.cell_type)))

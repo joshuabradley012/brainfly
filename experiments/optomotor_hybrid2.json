@@ -1,0 +1,230 @@
+{
+ "criteria": "Is there a gain at which vision reaches DNa02 in the rung-1 brain without igniting it? (second attempt)\n\noptomotor_hybrid.py failed at every gain from 1 to 100. The drum's signal reached HS and, at gains 3\nand 10, DNa02 with the right sign, but the network ran away. Two checks afterwards (not\npre-registered, both on its gain 1) shaped this attempt, and are disclosed here:\n  - flyvis's own output takes about a second to settle after the drum stops (8% of its drum-time\n    level in the 0.25-0.5 s window the first attempt measured), so stability is now measured\n    1.0-1.25 s after the drum, when flyvis's output is below 0.1% of that level;\n  - at gain 1 the brain's own neurons still fired at 75% of their drum-time level then, in the\n    central complex, the anterior visual pathway and the nerve cord, so the gains here are lower.\nA full-field drum drives much of the optic lobe, and visual neurons can fire above 100 Hz, so the\ncount of neurons over 100 Hz now leaves out the visual system (superclasses ol_intrinsic,\nvisual_projection, visual_centrifugal, ol_sensory).\n\nSetup, scenes, HS, STEER, the held-out drum and NULL: exactly optomotor_hybrid.py's, with the grey after\nthe moving drums lasting 1.25 s.\nKnob: G in {0.03, 0.1, 0.3}.\nPass, fixed before the first run, all at one G:\n  STABLE  under ccw and under cw: at most 20 neurons outside the visual system pass 100 Hz, and\n          1.0-1.25 s after the drum the neurons flyvis doesn't drive fire under 1% as much as\n          during it\n  HS, STEER as in optomotor_hybrid.py\nthen, at the lowest passing G, HS and STEER on the held-out drum, and NULL.\n\n    python experiments/optomotor_hybrid2.py            (writes experiments/optomotor_hybrid2.json)\n",
+ "gains": {
+  "0.03": {
+   "signals": {
+    "blank": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "static": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "ccw": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "cw": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    }
+   },
+   "verdict": {
+    "HS_signal_hz": 0.0,
+    "STEER_signal_hz": 0.0,
+    "DNa01_signal_hz": 0.0,
+    "HS": false,
+    "STEER": false,
+    "STABLE": true,
+    "ccw_over_100hz_outside_vision": 0,
+    "ccw_over_100hz_all": 0,
+    "ccw_tail_fraction": 0.0,
+    "cw_over_100hz_outside_vision": 0,
+    "cw_over_100hz_all": 0,
+    "cw_tail_fraction": 0.0
+   }
+  },
+  "0.1": {
+   "signals": {
+    "blank": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "static": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "ccw": {
+     "HS": {
+      "L": 7.333333333333333,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "cw": {
+     "HS": {
+      "L": 0.0,
+      "R": 4.222222222222222
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    }
+   },
+   "verdict": {
+    "HS_signal_hz": 11.56,
+    "STEER_signal_hz": 0.0,
+    "DNa01_signal_hz": 0.0,
+    "HS": true,
+    "STEER": false,
+    "STABLE": true,
+    "ccw_over_100hz_outside_vision": 0,
+    "ccw_over_100hz_all": 0,
+    "ccw_tail_fraction": 0.0,
+    "cw_over_100hz_outside_vision": 0,
+    "cw_over_100hz_all": 0,
+    "cw_tail_fraction": 0.0
+   }
+  },
+  "0.3": {
+   "signals": {
+    "blank": {
+     "HS": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "static": {
+     "HS": {
+      "L": 26.888888888888886,
+      "R": 24.0
+     },
+     "DNa02": {
+      "L": 10.666666666666666,
+      "R": 0.0
+     },
+     "DNa01": {
+      "L": 0.0,
+      "R": 0.0
+     }
+    },
+    "ccw": {
+     "HS": {
+      "L": 58.888888888888886,
+      "R": 0.0
+     },
+     "DNa02": {
+      "L": 14.666666666666666,
+      "R": 2.0
+     },
+     "DNa01": {
+      "L": 3.3333333333333335,
+      "R": 6.0
+     }
+    },
+    "cw": {
+     "HS": {
+      "L": 0.0,
+      "R": 58.44444444444445
+     },
+     "DNa02": {
+      "L": 20.0,
+      "R": 4.0
+     },
+     "DNa01": {
+      "L": 22.0,
+      "R": 0.0
+     }
+    }
+   },
+   "verdict": {
+    "HS_signal_hz": 117.33,
+    "STEER_signal_hz": -3.33,
+    "DNa01_signal_hz": -24.67,
+    "HS": true,
+    "STEER": false,
+    "STABLE": false,
+    "ccw_over_100hz_outside_vision": 238,
+    "ccw_over_100hz_all": 299,
+    "ccw_tail_fraction": 1.03758,
+    "cw_over_100hz_outside_vision": 229,
+    "cw_over_100hz_all": 326,
+    "cw_tail_fraction": 0.8144
+   }
+  }
+ },
+ "passing_gain": null,
+ "pass": false,
+ "seconds": 154
+}
