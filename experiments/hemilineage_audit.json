@@ -1,0 +1,208 @@
+{
+ "question": "Exploratory, not pre-registered: which neurons' fast transmitters conflict with their hemilineage's?\n\nThe report's rung 2 adds an audit of transmitter conflicts by hemilineage. Neurons born from one hemilineage\nuse one fast transmitter (acetylcholine, GABA or glutamate), a rule found across the nerve cord's\nhemilineages (Lacin et al. 2019, eLife 8:e43701) and used to check transmitter predictions (Eckstein et al.\n2024). MaleCNS gives each neuron a consensus transmitter (brainfly's sign rule reads it) and many a\nhemilineage (itoleeHl in the brain, trumanHl in the nerve cord). Here, for every hemilineage with at least 10\nneurons whose consensus is a fast transmitter: its majority transmitter and the share holding it. Then the neurons\nthat disagree with a clear majority (at least 90%). A disagreement flips the sign when it pits acetylcholine\nagainst GABA or glutamate, and changes nothing in brainfly's model between GABA and glutamate, which are both\ninhibitory there. Counted by kind, by superclass, and among rung 1's taste route (the neurons sugar at 100 Hz\nraises by more than 5 Hz in its silent brain).\n\n    python experiments/hemilineage_audit.py            (writes experiments/hemilineage_audit.json)\n",
+ "neurons_with_fast_consensus": 155091,
+ "with_hemilineage": 51364,
+ "hemilineages_scored": 226,
+ "clear_hemilineages": 193,
+ "mixed_hemilineages": {
+  "09B": {
+   "neurons": 223,
+   "majority": "glutamate",
+   "share": 0.516,
+   "counts": {
+    "acetylcholine": 108,
+    "glutamate": 115
+   }
+  },
+  "14B": {
+   "neurons": 39,
+   "majority": "glutamate",
+   "share": 0.538,
+   "counts": {
+    "gaba": 18,
+    "glutamate": 21
+   }
+  },
+  "27X": {
+   "neurons": 32,
+   "majority": "gaba",
+   "share": 0.375,
+   "counts": {
+    "acetylcholine": 8,
+    "gaba": 12,
+    "glutamate": 12
+   }
+  },
+  "ALl1_dorsal": {
+   "neurons": 212,
+   "majority": "gaba",
+   "share": 0.533,
+   "counts": {
+    "gaba": 113,
+    "acetylcholine": 99
+   }
+  },
+  "ALv2": {
+   "neurons": 139,
+   "majority": "glutamate",
+   "share": 0.727,
+   "counts": {
+    "acetylcholine": 38,
+    "glutamate": 101
+   }
+  },
+  "CLp1": {
+   "neurons": 145,
+   "majority": "acetylcholine",
+   "share": 0.676,
+   "counts": {
+    "acetylcholine": 98,
+    "glutamate": 47
+   }
+  },
+  "DL1_dorsal": {
+   "neurons": 340,
+   "majority": "acetylcholine",
+   "share": 0.626,
+   "counts": {
+    "acetylcholine": 213,
+    "glutamate": 127
+   }
+  },
+  "DL1_ventral": {
+   "neurons": 380,
+   "majority": "acetylcholine",
+   "share": 0.705,
+   "counts": {
+    "acetylcholine": 268,
+    "gaba": 112
+   }
+  },
+  "LALv1_ventral": {
+   "neurons": 189,
+   "majority": "acetylcholine",
+   "share": 0.646,
+   "counts": {
+    "acetylcholine": 122,
+    "gaba": 67
+   }
+  },
+  "LB3": {
+   "neurons": 390,
+   "majority": "glutamate",
+   "share": 0.518,
+   "counts": {
+    "gaba": 184,
+    "glutamate": 202,
+    "acetylcholine": 4
+   }
+  },
+  "LHl3": {
+   "neurons": 28,
+   "majority": "gaba",
+   "share": 0.571,
+   "counts": {
+    "gaba": 16,
+    "acetylcholine": 10,
+    "glutamate": 2
+   }
+  },
+  "MX12__prim": {
+   "neurons": 44,
+   "majority": "acetylcholine",
+   "share": 0.545,
+   "counts": {
+    "acetylcholine": 24,
+    "gaba": 4,
+    "glutamate": 16
+   }
+  },
+  "SLPav3": {
+   "neurons": 77,
+   "majority": "gaba",
+   "share": 0.636,
+   "counts": {
+    "gaba": 49,
+    "glutamate": 28
+   }
+  },
+  "SLPpl2": {
+   "neurons": 83,
+   "majority": "acetylcholine",
+   "share": 0.578,
+   "counts": {
+    "glutamate": 31,
+    "acetylcholine": 48,
+    "gaba": 4
+   }
+  },
+  "TBD": {
+   "neurons": 1189,
+   "majority": "acetylcholine",
+   "share": 0.522,
+   "counts": {
+    "acetylcholine": 621,
+    "gaba": 487,
+    "glutamate": 81
+   }
+  },
+  "VPNp&v1_posterior": {
+   "neurons": 360,
+   "majority": "gaba",
+   "share": 0.619,
+   "counts": {
+    "gaba": 223,
+    "acetylcholine": 127,
+    "glutamate": 10
+   }
+  },
+  "primary": {
+   "neurons": 36,
+   "majority": "gaba",
+   "share": 0.556,
+   "counts": {
+    "gaba": 20,
+    "glutamate": 6,
+    "acetylcholine": 10
+   }
+  },
+  "putative_primary": {
+   "neurons": 3549,
+   "majority": "acetylcholine",
+   "share": 0.502,
+   "counts": {
+    "acetylcholine": 1782,
+    "gaba": 896,
+    "glutamate": 871
+   }
+  }
+ },
+ "conflicts": 348,
+ "sign_flips": 260,
+ "conflict_kinds": {
+  "glutamate in a acetylcholine hemilineage": 128,
+  "acetylcholine in a gaba hemilineage": 68,
+  "glutamate in a gaba hemilineage": 52,
+  "acetylcholine in a glutamate hemilineage": 41,
+  "gaba in a glutamate hemilineage": 36,
+  "gaba in a acetylcholine hemilineage": 23
+ },
+ "sign_flips_by_superclass": {
+  "cb_intrinsic": 126,
+  "vnc_intrinsic": 90,
+  "descending_neuron": 22,
+  "ascending_neuron": 18,
+  "visual_projection": 4
+ },
+ "on_rung1_sugar_route": {
+  "route_neurons": 343,
+  "conflicts": 5,
+  "sign_flips": 4,
+  "sign_flip_types": [
+   "GNG501",
+   "IN02A015",
+   "IN07B009",
+   "VP1m+_lvPN"
+  ]
+ }
+}
