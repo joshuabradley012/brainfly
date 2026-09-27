@@ -11,6 +11,9 @@ k mV at r Hz (HybridBrain's noise_rate and noise_kick), for 3 s.
   where    at the lowest background that wakes the network (1 mV x 200 Hz): the types over 100 Hz,
            and the rates of the circuits that ran away before (Kenyon cells, APL, MBONs, the
            central complex)
+  mushroom body  the same background with the mushroom body's measured properties added: APL
+           graded (Amin et al. 2020), then also Kenyon cells resting at -61 mV (Gu & O'Dowd 2006),
+           16 mV below Shiu's threshold rather than 7
 
     python experiments/rest_probe.py            (writes experiments/rest_probe.json)
 """
@@ -72,6 +75,24 @@ def main() -> None:
                     "median_hz_of_active": round(float(np.median(rate[rate > 0])), 2),
                     "share_of_spikes_from_over_100hz": round(float(rate[hot].sum() / rate.sum()), 3)}
     print(json.dumps(out["where"]["groups"]), flush=True)
+    kc_types = sorted({t for t in ty if t.startswith("KC")})
+    out["mushroom_body"] = {}
+    for name, extra in (("graded APL", {"APL": {"unit": "graded"}}),
+                        ("graded APL, Kenyon cells at -61 mV", {"APL": {"unit": "graded"}, **{t: {"threshold": 16.0} for t in kc_types}})):
+        brain = HybridBrain(trials=1, w_syn=W_SYN, matrix=M, scale=scale, labels=labels,
+                            types={"all": {"noise_rate": 200.0, "noise_kick": 1.0}, **extra})
+        brain.advance(10000)
+        rate = brain.advance(20000)[0] / 2.0
+        hot = rate > 100
+        apl = np.flatnonzero(ty == "APL")
+        release = [float(brain.release[0, q]) for q, g in enumerate(brain.graded) if g in apl]
+        out["mushroom_body"][name] = {
+            "mean_hz": round(float(rate.mean()), 2), "over_100hz": int(hot.sum()),
+            "kenyon_cells_hz": round(float(rate[groups["Kenyon cells"]].mean()), 1),
+            "kenyon_cells_over_100hz": int((rate[groups["Kenyon cells"]] > 100).sum()),
+            "mbons_hz": round(float(rate[groups["MBONs"]].mean()), 1), "pfn_hz": round(float(rate[groups["PFN (central complex)"]].mean()), 1),
+            "apl_release_hz": [round(r, 1) for r in release], "types_over_100hz": collections.Counter(ty[hot]).most_common(12)}
+        print(name, json.dumps({k: v for k, v in out["mushroom_body"][name].items() if k != "types_over_100hz"}), flush=True)
     OUT.write_text(json.dumps(out, indent=1))
 
 

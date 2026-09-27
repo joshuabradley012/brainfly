@@ -1,5 +1,5 @@
 {
- "question": "Exploratory, not pre-registered: can background activity alone give the rung-1 brain a resting state?\n\nThe vision probes (optomotor_hybrid.py, optomotor_hybrid2.py) found that a brain silent at rest, as\nShiu's is, has no gain at which a visual signal reaches DNa02 without igniting recurrent circuits.\nFlyBrain, whose neurons idle near threshold, does. A realistic brain idles at a low mean rate (the\nresearch report's energy budget: 4 Hz or less). This asks what uniform background does to rung 1's\nnetwork (shiu_sensory.py's, w_syn = 1.5556 mV), with no stimulus: every neuron gets Poisson kicks of\nk mV at r Hz (HybridBrain's noise_rate and noise_kick), for 3 s.\n  grid     k in {0.5, 1, 2} mV x r in {50, 200, 800} Hz: mean rate in the first and third second,\n           the share of silent neurons, and the neurons over 100 Hz by superclass\n  where    at the lowest background that wakes the network (1 mV x 200 Hz): the types over 100 Hz,\n           and the rates of the circuits that ran away before (Kenyon cells, APL, MBONs, the\n           central complex)\n\n    python experiments/rest_probe.py            (writes experiments/rest_probe.json)\n",
+ "question": "Exploratory, not pre-registered: can background activity alone give the rung-1 brain a resting state?\n\nThe vision probes (optomotor_hybrid.py, optomotor_hybrid2.py) found that a brain silent at rest, as\nShiu's is, has no gain at which a visual signal reaches DNa02 without igniting recurrent circuits.\nFlyBrain, whose neurons idle near threshold, does. A realistic brain idles at a low mean rate (the\nresearch report's energy budget: 4 Hz or less). This asks what uniform background does to rung 1's\nnetwork (shiu_sensory.py's, w_syn = 1.5556 mV), with no stimulus: every neuron gets Poisson kicks of\nk mV at r Hz (HybridBrain's noise_rate and noise_kick), for 3 s.\n  grid     k in {0.5, 1, 2} mV x r in {50, 200, 800} Hz: mean rate in the first and third second,\n           the share of silent neurons, and the neurons over 100 Hz by superclass\n  where    at the lowest background that wakes the network (1 mV x 200 Hz): the types over 100 Hz,\n           and the rates of the circuits that ran away before (Kenyon cells, APL, MBONs, the\n           central complex)\n  mushroom body  the same background with the mushroom body's measured properties added: APL\n           graded (Amin et al. 2020), then also Kenyon cells resting at -61 mV (Gu & O'Dowd 2006),\n           16 mV below Shiu's threshold rather than 7\n\n    python experiments/rest_probe.py            (writes experiments/rest_probe.json)\n",
  "grid": [
   {
    "kick_mv": 0.5,
@@ -290,5 +290,131 @@
   },
   "median_hz_of_active": 4.5,
   "share_of_spikes_from_over_100hz": 0.243
+ },
+ "mushroom_body": {
+  "graded APL": {
+   "mean_hz": 8.62,
+   "over_100hz": 2236,
+   "kenyon_cells_hz": 14.8,
+   "kenyon_cells_over_100hz": 76,
+   "mbons_hz": 43.9,
+   "pfn_hz": 59.3,
+   "apl_release_hz": [
+    274.4,
+    259.5
+   ],
+   "types_over_100hz": [
+    [
+     "LPLC2",
+     93
+    ],
+    [
+     "",
+     78
+    ],
+    [
+     "PFNp_b",
+     49
+    ],
+    [
+     "lLN1_bc",
+     30
+    ],
+    [
+     "aMe5",
+     30
+    ],
+    [
+     "PFNm_b",
+     26
+    ],
+    [
+     "LC10a",
+     26
+    ],
+    [
+     "KCg-m",
+     26
+    ],
+    [
+     "KCab-m",
+     24
+    ],
+    [
+     "KCab-c",
+     21
+    ],
+    [
+     "PFNv",
+     20
+    ],
+    [
+     "PFNm_a",
+     20
+    ]
+   ]
+  },
+  "graded APL, Kenyon cells at -61 mV": {
+   "mean_hz": 8.51,
+   "over_100hz": 2107,
+   "kenyon_cells_hz": 12.2,
+   "kenyon_cells_over_100hz": 3,
+   "mbons_hz": 39.8,
+   "pfn_hz": 60.9,
+   "apl_release_hz": [
+    222.9,
+    220.7
+   ],
+   "types_over_100hz": [
+    [
+     "LPLC2",
+     93
+    ],
+    [
+     "",
+     74
+    ],
+    [
+     "PFNp_b",
+     51
+    ],
+    [
+     "aMe5",
+     32
+    ],
+    [
+     "lLN1_bc",
+     30
+    ],
+    [
+     "LC10a",
+     27
+    ],
+    [
+     "PFNm_b",
+     26
+    ],
+    [
+     "MeTu3c",
+     23
+    ],
+    [
+     "PFNv",
+     20
+    ],
+    [
+     "PFNm_a",
+     20
+    ],
+    [
+     "FR1",
+     18
+    ],
+    [
+     "PAM04",
+     17
+    ]
+   ]
+  }
  }
 }
