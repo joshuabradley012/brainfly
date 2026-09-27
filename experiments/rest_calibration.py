@@ -79,6 +79,7 @@ MEASURED = {"MBON11": 37.2, "MBON12": 21.5, "MBON13": 16.5, "MBON14": 15.5, "MBO
 CONDITIONS = {"intact": (None, 2.0), "rewired-1": (1, 2.0), "rewired-2": (2, 2.0),     # (rewiring seed,
               "default-1hz": (None, 1.0), "default-4hz": (None, 4.0)}                  #  default target)
 MARGIN, MAX_MEAN, MAX_HOT, MIN_BUMP, MAX_RESULTANT = 0.05, 4.0, 0.001, 0.3, 0.6
+MIN_ENTROPY, DRIFT_RANGE = 0.9, (0.003, 0.04)      # added to rung 4's bump on 27 Sep 2026; see bump_motion
 
 
 def network():
@@ -180,6 +181,30 @@ def bump(windows: np.ndarray, side: np.ndarray, glom: np.ndarray, rng: np.random
                   "run_positions_deg": np.round(np.degrees(position), 1).tolist(),
                   "resultant": round(float(np.abs(np.exp(1j * position).mean())), 3)}
     return out
+
+
+def bump_motion(windows: np.ndarray, side: np.ndarray, glom: np.ndarray, window_s: float = 1.0) -> dict:
+    """Where the bump sits and how it moves, added to rung 4's BUMP after ring_heldout.py found a bump pinned
+    in two places passing the resultant clause. Over the ellipsoid body's 16 wedges (an EPG's wedge from its
+    bridge glomerulus: R_k to 2k mod 16, L_k to (19 - 2k) mod 16; research_notes/Rung 4 resting state
+    data/head_direction_models.md): the entropy of the bump's position over every window of every run, over
+    its maximum (1 when every wedge is visited equally; flies show no preferred positions, Noorman et al.
+    2024), and its diffusion coefficient D in rad^2/s, half the slope of the mean squared displacement over
+    lags of 1-20 windows (flies in darkness: about 0.003-0.04, derived in the same notes). BUMP then also
+    needs entropy >= MIN_ENTROPY and D within DRIFT_RANGE."""
+    wedge = np.where(side == "R", (2 * glom) % 16, (19 - 2 * glom) % 16)
+    prof = np.stack([windows[..., wedge == k].mean(-1) for k in range(16)], -1)          # runs x windows x 16
+    z = prof @ np.exp(2j * np.pi * np.arange(16) / 16)
+    seen = prof.sum(-1) > 0
+    hist = np.bincount(np.round(np.angle(z[seen]) / (2 * np.pi / 16)).astype(int) % 16, minlength=16) / max(int(seen.sum()), 1)
+    entropy = float(-(hist[hist > 0] * np.log(hist[hist > 0])).sum() / np.log(16))
+    theta = np.unwrap(np.angle(z), axis=1)
+    lags = np.arange(1, min(21, windows.shape[1]))
+    msd = np.array([np.mean((theta[:, k:] - theta[:, :-k]) ** 2) for k in lags])
+    drift = float(np.polyfit(lags * window_s, msd, 1)[0] / 2)
+    return {"position_entropy": round(entropy, 3), "position_histogram": np.round(hist, 3).tolist(),
+            "drift_D_rad2_per_s": round(drift, 4),
+            "MOVES_LIKE_A_FLY": bool(entropy >= MIN_ENTROPY and DRIFT_RANGE[0] <= drift <= DRIFT_RANGE[1])}
 
 
 def attempt1_model(types: np.ndarray, superclass: np.ndarray) -> tuple[dict, dict | None]:

@@ -36,8 +36,8 @@ def verdict(name: str, *keys: str):
 def rungs() -> list[dict]:
     """Each rung: its name, status, and marks (done, text)."""
     rung4 = [(bool(verdict("rest_calibration2", "RATE")), "rests at the measured rates, nothing runs away"),
-             (bool(verdict("rest_calibration2", "FC")), "FC closer to flies' than scrambled wiring"),
-             (bool(verdict("rest_calibration2", "BUMP")), "a moving head-direction bump")]
+             (bool(verdict("taste_escape", "pass")), "taste and escape still pass at rest"),
+             (bool(verdict("rest_calibration2", "BUMP")), "a head-direction bump that moves like a fly's")]
     return [
         {"name": "Validated baseline", "status": "passed" if verdict("shiu_rewiring", "pass") else "in progress",
          "marks": [(True, "sugar drives the proboscis motor neuron; bitter suppresses it; rewiring abolishes it")]},
@@ -54,7 +54,8 @@ def rungs() -> list[dict]:
         {"name": "Body and muscles", "status": "started",
          "marks": [(True, "NeuroMechFly walks, steered by DNa02"), (False, "motor neurons and muscles")]},
         {"name": "Flight, neck and song", "status": "not started", "marks": [(False, "saccades, head pose, song pulses")]},
-        {"name": "State and learning", "status": "not started", "marks": [(False, "dopamine learning in the mushroom body")]},
+        {"name": "State and learning", "status": "not started",
+         "marks": [(False, "dopamine learning in the mushroom body"), (False, "final hurdle: resting FC, once arousal sets the brain-wide state")]},
     ]
 
 
