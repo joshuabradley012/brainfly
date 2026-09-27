@@ -1,0 +1,222 @@
+{
+ "criteria": "Rung 4, attempt 2 (pre-registered): attempt 1 with the per-type properties fly neurons are measured\nto have that stop recurrent loops from running away, and a calibration that fits the state the tests\nsee. Does the brain now rest like a fly?\n\nAttempt 1 (rest_calibration.py) failed on FC (r 0.20, below its independent-firing null's 0.41) and the\nbump, for two reasons. Its calibration ran without restarting and settled in a different state from\nthe one a fresh start reaches, so the fitted rates didn't carry over. And a few central-complex\nneurons switched between silence and bursts (1-s Fano factors of 24-128), dominating their regions'\nslow signals. research_notes/Rung 4 resting state data/adaptation.md surveyed the intrinsic\nproperties behind this. Fly central neurons barely adapt, but spikes leave afterhyperpolarisations\nof 1.5-8 mV, and projection and lateral-horn neurons sit about 10 mV below threshold. Cholinergic\nsynapses depress: ORN to PN, each spike leaves 0.78 of the synapse's strength, which recovers with\na 0.89 s time constant (Nagel, Hong & Wilson 2015).\nAn exploratory pilot, judged on rates and bursting only (FC and the bump were never computed),\ncalibrated from a fresh start every round, adding these properties one at a time. Fresh starts alone,\nor with the reset and thresholds, left bursting central-complex neurons and hot neurons, and 57-72%\nof groups within a factor of 2. With depression added, every group was within a factor of 2, with no\nneuron over 100 Hz and none with a 1-s Fano factor over 10.\n\nModel: attempt 1's (rung 1's network, APL graded, the same background, one bias per group), plus\n  reset       5 mV below rest for every neuron (Shiu: at rest)\n  threshold   10 mV above rest for uniglomerular projection neurons and lateral-horn types (LH*),\n              16 mV for Kenyon cells (Gu & O'Dowd 2006); 7 elsewhere, as in Shiu's model\n  depression  every cholinergic neuron's output (MaleCNS consensus transmitter): 0.78 per spike,\n              recovering with 0.89 s (ORN to PN values, assumed for every cholinergic synapse)\nCalibration: attempt 1's targets and update rule, but each round starts fresh (a reset with a new\nseed, 1 s to settle, 2 s measured), 30 rounds, k = 2 mV for rounds 1-15, 1 for 16-25, 0.5 for 26-30.\nTests, conditions and pass rule: exactly attempt 1's (FC against Turner et al.'s 20 flies, beating the\nindependent-firing null and 2 calibrated degree-preserving rewirings by 0.05 in r; RATE; BUMP), and\nthe same sensitivity conditions. Attempt 1's FC errors were seen, so FC is held out from the fit\nbut not from the whole project's history. This attempt's changes come from the literature and a\nrate pilot, not from FC.\n\n    python experiments/rest_calibration2.py --condition intact      (also rewired-1, rewired-2,\n                                                                      default-1hz, default-4hz)\n    python experiments/rest_calibration2.py --report               (writes experiments/rest_calibration2.json)\n",
+ "FC": false,
+ "RATE": true,
+ "BUMP": false,
+ "pass": false,
+ "r": 0.384,
+ "rivals": {
+  "independent": 0.4,
+  "rewired-1": 0.498,
+  "rewired-2": 0.492
+ },
+ "for_scale": {
+  "structure_r": 0.65,
+  "ceiling_r": 0.921,
+  "measurement_only_equal_variance_r": 0.377,
+  "uncalibrated_r": 0.248
+ },
+ "conditions": {
+  "intact": {
+   "r": 0.384,
+   "r_independent": 0.4,
+   "mean_hz": 1.702,
+   "over_100hz": 0.0,
+   "groups_within_2x": 0.9999,
+   "bump": {
+    "L": {
+     "strength": 0.246,
+     "shuffle_p99": 0.185,
+     "run_positions_deg": [
+      159.8,
+      167.7,
+      164.7,
+      160.3,
+      162.8,
+      158.1,
+      157.8,
+      160.3
+     ],
+     "resultant": 0.998
+    },
+    "R": {
+     "strength": 0.274,
+     "shuffle_p99": 0.176,
+     "run_positions_deg": [
+      -141.6,
+      -147.1,
+      -143.8,
+      -142.1,
+      -141.9,
+      -139.7,
+      -141.7,
+      -142.2
+     ],
+     "resultant": 0.999
+    }
+   },
+   "seconds": 5386
+  },
+  "rewired-1": {
+   "r": 0.498,
+   "r_independent": 0.4,
+   "mean_hz": 1.73,
+   "over_100hz": 0.0,
+   "groups_within_2x": 0.9999,
+   "bump": {
+    "L": {
+     "strength": 0.117,
+     "shuffle_p99": 0.188,
+     "run_positions_deg": [
+      -107.2,
+      -112.2,
+      -92.5,
+      -100.0,
+      -107.1,
+      -105.6,
+      -112.0,
+      -97.4
+     ],
+     "resultant": 0.993
+    },
+    "R": {
+     "strength": 0.183,
+     "shuffle_p99": 0.201,
+     "run_positions_deg": [
+      -95.8,
+      -93.2,
+      -93.4,
+      -91.9,
+      -100.5,
+      -100.8,
+      -98.8,
+      -98.1
+     ],
+     "resultant": 0.998
+    }
+   },
+   "seconds": 5386
+  },
+  "rewired-2": {
+   "r": 0.492,
+   "r_independent": 0.4,
+   "mean_hz": 1.734,
+   "over_100hz": 0.0,
+   "groups_within_2x": 0.9999,
+   "bump": {
+    "L": {
+     "strength": 0.127,
+     "shuffle_p99": 0.219,
+     "run_positions_deg": [
+      -122.0,
+      -121.2,
+      -119.7,
+      -108.7,
+      -122.2,
+      -115.4,
+      -121.8,
+      -131.0
+     ],
+     "resultant": 0.995
+    },
+    "R": {
+     "strength": 0.203,
+     "shuffle_p99": 0.234,
+     "run_positions_deg": [
+      -133.0,
+      -133.0,
+      -131.4,
+      -131.4,
+      -130.5,
+      -131.0,
+      -130.5,
+      -130.0
+     ],
+     "resultant": 1.0
+    }
+   },
+   "seconds": 5439
+  },
+  "default-1hz": {
+   "r": 0.436,
+   "r_independent": 0.4,
+   "mean_hz": 0.855,
+   "over_100hz": 0.0,
+   "groups_within_2x": 0.9999,
+   "bump": {
+    "L": {
+     "strength": 0.381,
+     "shuffle_p99": 0.263,
+     "run_positions_deg": [
+      168.9,
+      167.5,
+      168.1,
+      171.1,
+      165.7,
+      166.3,
+      159.5,
+      164.3
+     ],
+     "resultant": 0.998
+    },
+    "R": {
+     "strength": 0.394,
+     "shuffle_p99": 0.253,
+     "run_positions_deg": [
+      -164.0,
+      -167.0,
+      -163.9,
+      -164.5,
+      -165.2,
+      -164.6,
+      -162.0,
+      -160.9
+     ],
+     "resultant": 1.0
+    }
+   },
+   "seconds": 4824
+  },
+  "default-4hz": {
+   "r": 0.388,
+   "r_independent": 0.399,
+   "mean_hz": 3.436,
+   "over_100hz": 0.0,
+   "groups_within_2x": 0.9999,
+   "bump": {
+    "L": {
+     "strength": 0.218,
+     "shuffle_p99": 0.199,
+     "run_positions_deg": [
+      145.9,
+      145.6,
+      149.3,
+      147.7,
+      144.5,
+      145.4,
+      148.7,
+      146.2
+     ],
+     "resultant": 1.0
+    },
+    "R": {
+     "strength": 0.264,
+     "shuffle_p99": 0.192,
+     "run_positions_deg": [
+      -129.7,
+      -132.3,
+      -133.5,
+      -132.6,
+      -129.9,
+      -132.1,
+      -133.3,
+      -133.8
+     ],
+     "resultant": 1.0
+    }
+   },
+   "seconds": 5680
+  }
+ },
+ "missing": []
+}

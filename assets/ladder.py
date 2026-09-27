@@ -35,10 +35,9 @@ def verdict(name: str, *keys: str):
 
 def rungs() -> list[dict]:
     """Each rung: its name, status, and marks (done, text)."""
-    rest2 = verdict("rest_calibration2", "pass")
-    rung4 = [(False, "attempt 1: rests at 2.1 Hz, but its FC is worse than independent firing")]
-    rung4.append((True, "short-term depression: every type at its target rate, no runaway")
-                 if rest2 is None else (bool(rest2), "attempt 2: " + ("passed" if rest2 else "failed")))
+    rung4 = [(bool(verdict("rest_calibration2", "RATE")), "rests at the measured rates, nothing runs away"),
+             (bool(verdict("rest_calibration2", "FC")), "FC closer to flies' than scrambled wiring"),
+             (bool(verdict("rest_calibration2", "BUMP")), "a moving head-direction bump")]
     return [
         {"name": "Validated baseline", "status": "passed" if verdict("shiu_rewiring", "pass") else "in progress",
          "marks": [(True, "sugar drives the proboscis motor neuron; bitter suppresses it; rewiring abolishes it")]},
