@@ -1,0 +1,164 @@
+{
+ "question": "Exploratory, not pre-registered: where does sugar's signal die in the resting brain?\n\nIn rung 1's silent brain, 100 Hz of sugar drives MN9 to about 40 Hz through 343 active neurons\n(taste_depression.py). In the resting brain (escape_at_rest.py's model and calibrated biases) it moves\nMN9 by 2 Hz, and taste_hunger.py found that multiplying the sugar neurons' output by up to 10 only\nlowers that. This drives the left sugar neurons (shiu_baseline.py's SETS) at 100 Hz for 1 s, 8 flies, in\nboth brains (the silent one as taste_depression.py runs it; the resting one as escape_at_rest.py\nmeasures taste, rises over the 0.5 s before), and compares every neuron's rise:\n  layers   rung 1's active neurons (over 5 Hz) by their fewest excitatory steps from the sugar neurons\n           in the model's wiring, with how many rise at least 5 Hz in each brain and their median rises\n  MN9      MN9 L's 15 strongest inputs, signed, with their rises in each brain, and MN9's summed\n           excitatory and inhibitory input change (each input's rise times its weight, mV per ms of\n           current at the soma, before the membrane)\n\n    python experiments/taste_trace.py            (writes experiments/taste_trace.json)\n",
+ "mn9_rise_hz": {
+  "silent": 39.8,
+  "resting": 1.9
+ },
+ "active_in_silent": 343,
+ "layers": [
+  {
+   "steps": 0,
+   "neurons": 17,
+   "rise_5hz_silent": 17,
+   "rise_5hz_resting": 17,
+   "median_rise_silent_hz": 100.1,
+   "median_rise_resting_hz": 98.5
+  },
+  {
+   "steps": 1,
+   "neurons": 70,
+   "rise_5hz_silent": 70,
+   "rise_5hz_resting": 44,
+   "median_rise_silent_hz": 24.6,
+   "median_rise_resting_hz": 7.5
+  },
+  {
+   "steps": 2,
+   "neurons": 160,
+   "rise_5hz_silent": 160,
+   "rise_5hz_resting": 14,
+   "median_rise_silent_hz": 16.8,
+   "median_rise_resting_hz": 1.2
+  },
+  {
+   "steps": 3,
+   "neurons": 79,
+   "rise_5hz_silent": 79,
+   "rise_5hz_resting": 0,
+   "median_rise_silent_hz": 12.8,
+   "median_rise_resting_hz": 0.0
+  },
+  {
+   "steps": 4,
+   "neurons": 17,
+   "rise_5hz_silent": 17,
+   "rise_5hz_resting": 0,
+   "median_rise_silent_hz": 6.2,
+   "median_rise_resting_hz": 0.1
+  }
+ ],
+ "mn9_inputs": [
+  {
+   "input": "DNge062 R",
+   "mv_per_spike": 94.871,
+   "rise_silent_hz": 16.9,
+   "rise_resting_hz": -0.2,
+   "steps": 2
+  },
+  {
+   "input": "GNG120 R",
+   "mv_per_spike": 73.402,
+   "rise_silent_hz": 23.4,
+   "rise_resting_hz": 1.6,
+   "steps": 2
+  },
+  {
+   "input": "GNG130 L",
+   "mv_per_spike": -72.993,
+   "rise_silent_hz": 23.8,
+   "rise_resting_hz": 3.0,
+   "steps": 2
+  },
+  {
+   "input": "GNG095 L",
+   "mv_per_spike": -71.767,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": -2.0,
+   "steps": -1
+  },
+  {
+   "input": "GNG108 R",
+   "mv_per_spike": 71.153,
+   "rise_silent_hz": 24.9,
+   "rise_resting_hz": 1.5,
+   "steps": 2
+  },
+  {
+   "input": "GNG015 L",
+   "mv_per_spike": -54.387,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": -2.8,
+   "steps": -1
+  },
+  {
+   "input": "GNG117 L",
+   "mv_per_spike": 49.276,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": 3.9,
+   "steps": -1
+  },
+  {
+   "input": "GNG180 L",
+   "mv_per_spike": -43.755,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": -0.9,
+   "steps": -1
+  },
+  {
+   "input": "GNG234 L",
+   "mv_per_spike": 40.484,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": 1.0,
+   "steps": -1
+  },
+  {
+   "input": "GNG184 L",
+   "mv_per_spike": -38.235,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": -0.2,
+   "steps": -1
+  },
+  {
+   "input": "GNG015 R",
+   "mv_per_spike": -36.19,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": -3.5,
+   "steps": -1
+  },
+  {
+   "input": "GNG117 R",
+   "mv_per_spike": 32.714,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": 3.5,
+   "steps": -1
+  },
+  {
+   "input": "DNge051 L",
+   "mv_per_spike": -29.034,
+   "rise_silent_hz": 40.5,
+   "rise_resting_hz": 0.5,
+   "steps": 2
+  },
+  {
+   "input": "GNG234 R",
+   "mv_per_spike": 27.807,
+   "rise_silent_hz": 0.0,
+   "rise_resting_hz": 0.6,
+   "steps": -1
+  },
+  {
+   "input": "DNge080 L",
+   "mv_per_spike": 20.651,
+   "rise_silent_hz": 23.0,
+   "rise_resting_hz": -0.2,
+   "steps": 1
+  }
+ ],
+ "mn9_input_change_mv_per_s": {
+  "silent excitation": 7659.06,
+  "silent inhibition": -3816.3,
+  "resting excitation": 647.59,
+  "resting inhibition": 288.06
+ },
+ "seconds": 17
+}
