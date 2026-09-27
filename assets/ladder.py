@@ -41,8 +41,9 @@ def rungs() -> list[dict]:
     return [
         {"name": "Validated baseline", "status": "passed" if verdict("shiu_rewiring", "pass") else "in progress",
          "marks": [(True, "sugar drives the proboscis motor neuron; bitter suppresses it; rewiring abolishes it")]},
-        {"name": "Signs and modulators", "status": "in progress",
-         "marks": [(True, "consensus transmitters; monoamines out of fast excitation"), (False, "false positives")]},
+        {"name": "Signs and modulators", "status": "passed" if verdict("rung2_signs", "pass") else "in progress",
+         "marks": [(True, "consensus transmitters; monoamines out of fast excitation"),
+                   (bool(verdict("rung2_signs", "pass")), "signs audited by hemilineage; false positives 1 in 100")]},
         {"name": "Eye and optic lobe", "status": "passed" if verdict("rung3_verdict", "pass") else "in progress",
          "marks": [(True, "16/16 motion directions"),
                    (bool(verdict("eyepath_native_t2", "confirm", "pass")), "looming reaches LC4, LPLC2, giant fiber"),
