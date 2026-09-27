@@ -42,6 +42,14 @@ fourth, uncertain change, a quiet proboscis motor module, is tried too, again by
   route_quiet  route and the quiet module together
 Also measured for these: MN9's spontaneous bouts, the share of fly-seconds at rest in which MN9 L fires
 more than 20 spikes.
+Third round: route gave sugar +15.6 Hz with bitter and Ir94e cutting it and water doing nothing, but MN9 still
+burst in 19% of fly-seconds. The bouts come from a bilateral cluster (GNG117 with GNG245, GNG186, GNG268,
+GNG153, GNG281, GNG292 and the descending DNge024, DNge009, DNge022) that jumps from about 1 Hz to 70-105 Hz.
+Its excitatory driver, GNG117, is on none of rung 1's taste routes and lost its depression only through the
+type rule. The quiet module stopped the bouts but also the taste. So one rule for both changes:
+  route_all    rung 1's sugar route (the neurons sugar at 100 Hz raises by more than 5 Hz in the silent
+               brain) keeps rung 1's settings: its cholinergic neurons undepressed, its descending neurons at
+               2 Hz; DSOG1 at 17 Hz; everything else as in escape_at_rest2.py
 
     python experiments/taste_route.py --condition both     (also rank1, rank2, route, quiet, route_quiet;
                                                             writes experiments/taste_route/<condition>.json)
@@ -70,20 +78,25 @@ from shiu_baseline import SETS
 OUT = Path(__file__).with_suffix(".json")
 HERE = Path(__file__).with_suffix("")
 CONDITIONS = {"rank1": (True, None, False), "rank2": (False, "gnathal", False), "both": (True, "gnathal", False),
-              "route": (True, "route", False), "quiet": (True, "gnathal", True), "route_quiet": (True, "route", True)}
+              "route": (True, "route", False), "quiet": (True, "gnathal", True), "route_quiet": (True, "route", True),
+              "route_all": ("route", "route", False)}
 ROUNDS = [2.0] * 8 + [1.0] * 8 + [0.5] * 4
 FULL_TARGETS = attempt1.targets
 DSOG1 = ["DNg70", "DNg98"]
 PREMOTOR = ["GNG108", "GNG120", "DNge080"]
 
 
-def route_model(undepress: bool):
+def route_model(undepress):
+    """True: the type rule (cholinergic GNG*, PRW*, Clavicle); "route": rung 1's sugar route's cholinergic neurons."""
     def model(types, superclass):
         spec, sets = escape.model(types, superclass)
         if undepress:
             ach = consensus_transmitters() == "acetylcholine"
-            sez = np.char.startswith(types, "GNG") | np.char.startswith(types, "PRW") | (types == "ANXXX462a")
-            sets["sez_taste"] = np.flatnonzero(ach & sez)
+            if undepress == "route":
+                chosen = ach & sugar_route()
+            else:
+                chosen = ach & (np.char.startswith(types, "GNG") | np.char.startswith(types, "PRW") | (types == "ANXXX462a"))
+            sets["sez_taste"] = np.flatnonzero(chosen)
             spec["sez_taste"] = {"depression": 1.0}
         return spec, sets
     return model
@@ -96,14 +109,25 @@ def gnathal_targets(types, superclass, default):
     return t
 
 
+_ROUTE = {}
+
+
+def sugar_route() -> np.ndarray:
+    """rung 1's sugar route: the neurons sugar at 100 Hz raises by more than 5 Hz in its silent brain."""
+    if "sugar" not in _ROUTE:
+        from brainfly.hybrid import HybridBrain
+        from shiu_rewiring import W_SYN
+        M, scale, labels, types, superclass = FULL_NETWORK()
+        b = HybridBrain(trials=8, w_syn=W_SYN, matrix=M, scale=scale, labels=labels, seed=1)
+        _ROUTE["sugar"] = b.run(1.0, drive=[(b.cells(SETS["sugar"], "L"), 100.0)], seed=3).rates > 5
+        _ROUTE["superclass"] = superclass
+    return _ROUTE["sugar"]
+
+
 def route_descending() -> np.ndarray:
-    """The descending neurons sugar at 100 Hz raises by more than 5 Hz in rung 1's silent brain."""
-    from brainfly.hybrid import HybridBrain
-    from shiu_rewiring import W_SYN
-    M, scale, labels, types, superclass = FULL_NETWORK()
-    b = HybridBrain(trials=8, w_syn=W_SYN, matrix=M, scale=scale, labels=labels, seed=1)
-    rates = b.run(1.0, drive=[(b.cells(SETS["sugar"], "L"), 100.0)], seed=3).rates
-    return np.char.startswith(superclass, "descending_neuron") & (rates > 5)
+    """The descending neurons of rung 1's sugar route."""
+    route = sugar_route()
+    return np.char.startswith(_ROUTE["superclass"], "descending_neuron") & route
 
 
 def mn9_module(types) -> np.ndarray:

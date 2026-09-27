@@ -1,5 +1,5 @@
 {
- "question": "Exploratory, not pre-registered: do the SEZ's own settings bring taste back to the resting brain that escapes?\n\nresearch_notes/Rung 4 resting state data/taste_at_rest.md found sugar's signal intact at the second-order\ntaste neurons (G2N-1, Zorro, Clavicle, FMIn and Rattle rise 25-90 Hz in the resting brain, as in rung 1's\nsilent one) and lost one or two synapses later, in a recurrent premotor cluster (Roundup, Rounddown,\nDNge059, GNG169, Sternum) that can no longer ignite. It traced that to two of the resting brain's\nsettings, neither measured for this circuit:\n  depression   the central cholinergic default (0.9 of the strength left per spike, 0.5 s to recover)\n               caps the taste interneurons, which fire 25-90 Hz under sugar. No short-term plasticity has\n               been measured at any taste synapse, and the default was added to calm other loops.\n  targets      the 0.1 Hz target for every descending neuron holds the cluster's descending members 12-16\n               mV below threshold. That value came from walking, steering and escape descending neurons\n               (DNa02, DNp07, DNp10, the giant fiber). The only gnathal ones with measured rates fire\n               tonically: DSOG1 (DNg70 and DNg98, matched by the notes) at about 17 Hz in every feeding\n               state (Pool et al. 2014), the octopaminergic VUMd descending neurons at about 4 Hz.\nIts probes (no full recalibration) got MN9 from +2 to +27 Hz with both changed. Here, by rules rather than\nby which neurons sugar recruits, in escape_at_rest2.py's model (which passed):\n  rank 1   every cholinergic neuron of a GNG* or PRW* type, and Clavicle (ANXXX462a), undepressed\n  rank 2   every descending neuron of a DNg* type (gnathal, including DNge*) at the 2 Hz default instead of\n           0.1 Hz, and DNg70 and DNg98 at 17 Hz; other descending neurons keep 0.1 Hz\nfor rank 1 alone, rank 2 alone and both, each recalibrated from escape_at_rest2.py's biases in 20 fresh-start\nrounds (k = 2 mV for 8, then 1 for 8, then 0.5 for 4). Measured, 8 flies unless noted:\n  rest      10 s at grey: the brain's own mean rate, neurons over 100 Hz, neurons whose 1-s Fano factor\n            passes 10\n  ignition  the left looming loop over 32 flies, as ignition.py counts it\n  taste     MN9 L's rise over its rest (the 0.5 s before) under 1 s of drive at 100 Hz: sugar; sugar at 10 Hz;\n            sugar with bitter; sugar with Ir94e; water (rung 1's sets)\n  premotor  MN9 L's rise when the left Roundup, Roundtree and Rounddown (GNG108, GNG120, DNge080) are driven\n            at 50 Hz for 1 s (flies extend to MN9's own activation, so the path below the cluster must work)\n  looming   eyes_at_rest.py's tests at gain 1 on seed 1, and the giant fiber's rise\n\nSecond round (after the first three): with both, sugar raised MN9 by 20.5 Hz, but MN9 rested at 11 Hz in\nbouts of about 50 Hz lasting seconds, 262 neurons burst (gnathal descending types now at 2 Hz, such as\nDNg12, and the nerve-cord neurons they drive), and water alone raised MN9 13 Hz. Awake flies rarely extend\nthe proboscis at rest, and MN9 fires only while the rostrum moves (Gordon & Scott 2009), so the notes'\nfourth, uncertain change, a quiet proboscis motor module, is tried too, again by rule:\n  route        rank 1, and only the descending neurons of rung 1's own taste route (those sugar at 100 Hz\n               raises by more than 5 Hz in the silent brain: 42 neurons of 26 gnathal types) at 2 Hz; DSOG1\n               at 17 Hz; other descending neurons keep 0.1 Hz\n  quiet        both, and MN9 with every neuron making at least 100 synapses onto it (16 neurons: its\n               excitatory and inhibitory premotor inputs) at 0.2 Hz\n  route_quiet  route and the quiet module together\nAlso measured for these: MN9's spontaneous bouts, the share of fly-seconds at rest in which MN9 L fires\nmore than 20 spikes.\n\n    python experiments/taste_route.py --condition both     (also rank1, rank2, route, quiet, route_quiet;\n                                                            writes experiments/taste_route/<condition>.json)\n    python experiments/taste_route.py --report             (writes experiments/taste_route.json)\n",
+ "question": "Exploratory, not pre-registered: do the SEZ's own settings bring taste back to the resting brain that escapes?\n\nresearch_notes/Rung 4 resting state data/taste_at_rest.md found sugar's signal intact at the second-order\ntaste neurons (G2N-1, Zorro, Clavicle, FMIn and Rattle rise 25-90 Hz in the resting brain, as in rung 1's\nsilent one) and lost one or two synapses later, in a recurrent premotor cluster (Roundup, Rounddown,\nDNge059, GNG169, Sternum) that can no longer ignite. It traced that to two of the resting brain's\nsettings, neither measured for this circuit:\n  depression   the central cholinergic default (0.9 of the strength left per spike, 0.5 s to recover)\n               caps the taste interneurons, which fire 25-90 Hz under sugar. No short-term plasticity has\n               been measured at any taste synapse, and the default was added to calm other loops.\n  targets      the 0.1 Hz target for every descending neuron holds the cluster's descending members 12-16\n               mV below threshold. That value came from walking, steering and escape descending neurons\n               (DNa02, DNp07, DNp10, the giant fiber). The only gnathal ones with measured rates fire\n               tonically: DSOG1 (DNg70 and DNg98, matched by the notes) at about 17 Hz in every feeding\n               state (Pool et al. 2014), the octopaminergic VUMd descending neurons at about 4 Hz.\nIts probes (no full recalibration) got MN9 from +2 to +27 Hz with both changed. Here, by rules rather than\nby which neurons sugar recruits, in escape_at_rest2.py's model (which passed):\n  rank 1   every cholinergic neuron of a GNG* or PRW* type, and Clavicle (ANXXX462a), undepressed\n  rank 2   every descending neuron of a DNg* type (gnathal, including DNge*) at the 2 Hz default instead of\n           0.1 Hz, and DNg70 and DNg98 at 17 Hz; other descending neurons keep 0.1 Hz\nfor rank 1 alone, rank 2 alone and both, each recalibrated from escape_at_rest2.py's biases in 20 fresh-start\nrounds (k = 2 mV for 8, then 1 for 8, then 0.5 for 4). Measured, 8 flies unless noted:\n  rest      10 s at grey: the brain's own mean rate, neurons over 100 Hz, neurons whose 1-s Fano factor\n            passes 10\n  ignition  the left looming loop over 32 flies, as ignition.py counts it\n  taste     MN9 L's rise over its rest (the 0.5 s before) under 1 s of drive at 100 Hz: sugar; sugar at 10 Hz;\n            sugar with bitter; sugar with Ir94e; water (rung 1's sets)\n  premotor  MN9 L's rise when the left Roundup, Roundtree and Rounddown (GNG108, GNG120, DNge080) are driven\n            at 50 Hz for 1 s (flies extend to MN9's own activation, so the path below the cluster must work)\n  looming   eyes_at_rest.py's tests at gain 1 on seed 1, and the giant fiber's rise\n\nSecond round (after the first three): with both, sugar raised MN9 by 20.5 Hz, but MN9 rested at 11 Hz in\nbouts of about 50 Hz lasting seconds, 262 neurons burst (gnathal descending types now at 2 Hz, such as\nDNg12, and the nerve-cord neurons they drive), and water alone raised MN9 13 Hz. Awake flies rarely extend\nthe proboscis at rest, and MN9 fires only while the rostrum moves (Gordon & Scott 2009), so the notes'\nfourth, uncertain change, a quiet proboscis motor module, is tried too, again by rule:\n  route        rank 1, and only the descending neurons of rung 1's own taste route (those sugar at 100 Hz\n               raises by more than 5 Hz in the silent brain: 42 neurons of 26 gnathal types) at 2 Hz; DSOG1\n               at 17 Hz; other descending neurons keep 0.1 Hz\n  quiet        both, and MN9 with every neuron making at least 100 synapses onto it (16 neurons: its\n               excitatory and inhibitory premotor inputs) at 0.2 Hz\n  route_quiet  route and the quiet module together\nAlso measured for these: MN9's spontaneous bouts, the share of fly-seconds at rest in which MN9 L fires\nmore than 20 spikes.\nThird round: route gave sugar +15.6 Hz with bitter and Ir94e cutting it and water doing nothing, but MN9 still\nburst in 19% of fly-seconds. The bouts come from a bilateral cluster (GNG117 with GNG245, GNG186, GNG268,\nGNG153, GNG281, GNG292 and the descending DNge024, DNge009, DNge022) that jumps from about 1 Hz to 70-105 Hz.\nIts excitatory driver, GNG117, is on none of rung 1's taste routes and lost its depression only through the\ntype rule. The quiet module stopped the bouts but also the taste. So one rule for both changes:\n  route_all    rung 1's sugar route (the neurons sugar at 100 Hz raises by more than 5 Hz in the silent\n               brain) keeps rung 1's settings: its cholinergic neurons undepressed, its descending neurons at\n               2 Hz; DSOG1 at 17 Hz; everything else as in escape_at_rest2.py\n\n    python experiments/taste_route.py --condition both     (also rank1, rank2, route, quiet, route_quiet;\n                                                            writes experiments/taste_route/<condition>.json)\n    python experiments/taste_route.py --report             (writes experiments/taste_route.json)\n",
  "conditions": [
   {
    "condition": "rank1",
@@ -171,6 +171,242 @@
     "fastR DNp01": 26.25
    },
    "seconds": 1445
+  },
+  {
+   "condition": "route",
+   "undepressed_sez_taste": true,
+   "descending_targets": "route",
+   "quiet_module": false,
+   "calibration": {
+    "round": 20,
+    "mean_hz_own": 1.625,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9985
+   },
+   "rest": {
+    "mean_hz_own": 1.671,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 69,
+    "mn9_L_hz": 11.45,
+    "dsog1_hz": 17.13,
+    "mn9_L_bout_share": 0.188
+   },
+   "ignited_flies": 0,
+   "flies": 32,
+   "mn9_rise_hz": {
+    "sugar": {
+     "mean": 15.62,
+     "sem": 0.94
+    },
+    "sugar 10 Hz": {
+     "mean": -2.12,
+     "sem": 2.86
+    },
+    "sugar+bitter": {
+     "mean": -3.38,
+     "sem": 0.98
+    },
+    "sugar+ir94e": {
+     "mean": -0.12,
+     "sem": 1.25
+    },
+    "water": {
+     "mean": 1.75,
+     "sem": 0.84
+    },
+    "premotor 50 Hz": {
+     "mean": 32.25,
+     "sem": 1.78
+    }
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 27.5,
+    "fastR DNp01": 27.25
+   },
+   "seconds": 1475
+  },
+  {
+   "condition": "quiet",
+   "undepressed_sez_taste": true,
+   "descending_targets": "gnathal",
+   "quiet_module": true,
+   "calibration": {
+    "round": 20,
+    "mean_hz_own": 1.648,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9978
+   },
+   "rest": {
+    "mean_hz_own": 1.675,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 127,
+    "mn9_L_hz": 1.26,
+    "dsog1_hz": 16.96,
+    "mn9_L_bout_share": 0.013
+   },
+   "ignited_flies": 0,
+   "flies": 32,
+   "mn9_rise_hz": {
+    "sugar": {
+     "mean": 3.38,
+     "sem": 0.6
+    },
+    "sugar 10 Hz": {
+     "mean": -1.38,
+     "sem": 0.8
+    },
+    "sugar+bitter": {
+     "mean": -1.0,
+     "sem": 0.53
+    },
+    "sugar+ir94e": {
+     "mean": 0.0,
+     "sem": 0.19
+    },
+    "water": {
+     "mean": 1.0,
+     "sem": 0.42
+    },
+    "premotor 50 Hz": {
+     "mean": 17.0,
+     "sem": 0.98
+    }
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 28.25,
+    "fastR DNp01": 27.75
+   },
+   "seconds": 1409
+  },
+  {
+   "condition": "route_quiet",
+   "undepressed_sez_taste": true,
+   "descending_targets": "route",
+   "quiet_module": true,
+   "calibration": {
+    "round": 20,
+    "mean_hz_own": 1.626,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9989
+   },
+   "rest": {
+    "mean_hz_own": 1.671,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 15,
+    "mn9_L_hz": 0.47,
+    "dsog1_hz": 16.96,
+    "mn9_L_bout_share": 0.0
+   },
+   "ignited_flies": 0,
+   "flies": 32,
+   "mn9_rise_hz": {
+    "sugar": {
+     "mean": 3.38,
+     "sem": 0.86
+    },
+    "sugar 10 Hz": {
+     "mean": -0.5,
+     "sem": 0.46
+    },
+    "sugar+bitter": {
+     "mean": -1.0,
+     "sem": 0.53
+    },
+    "sugar+ir94e": {
+     "mean": -0.5,
+     "sem": 0.33
+    },
+    "water": {
+     "mean": 0.75,
+     "sem": 0.31
+    },
+    "premotor 50 Hz": {
+     "mean": 17.62,
+     "sem": 1.0
+    }
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 26.25,
+    "fastR DNp01": 26.25
+   },
+   "seconds": 1470
+  },
+  {
+   "condition": "route_all",
+   "undepressed_sez_taste": "route",
+   "descending_targets": "route",
+   "quiet_module": false,
+   "calibration": {
+    "round": 20,
+    "mean_hz_own": 1.639,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9996
+   },
+   "rest": {
+    "mean_hz_own": 1.653,
+    "over_100hz": 0,
+    "bursting_fano_over_10": 15,
+    "mn9_L_hz": 3.34,
+    "dsog1_hz": 17.0,
+    "mn9_L_bout_share": 0.0
+   },
+   "ignited_flies": 0,
+   "flies": 32,
+   "mn9_rise_hz": {
+    "sugar": {
+     "mean": 19.62,
+     "sem": 1.46
+    },
+    "sugar 10 Hz": {
+     "mean": 0.62,
+     "sem": 1.48
+    },
+    "sugar+bitter": {
+     "mean": -0.62,
+     "sem": 1.13
+    },
+    "sugar+ir94e": {
+     "mean": 3.25,
+     "sem": 1.06
+    },
+    "water": {
+     "mean": 1.75,
+     "sem": 1.52
+    },
+    "premotor 50 Hz": {
+     "mean": 32.62,
+     "sem": 1.25
+    }
+   },
+   "looming": {
+    "REST": true,
+    "RELAY": true,
+    "SIDE": true,
+    "ESCAPE": true
+   },
+   "giant_fiber_rise_hz": {
+    "fastL DNp01": 26.5,
+    "fastR DNp01": 25.5
+   },
+   "seconds": 353
   }
  ]
 }

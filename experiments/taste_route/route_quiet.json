@@ -1,0 +1,59 @@
+{
+ "condition": "route_quiet",
+ "undepressed_sez_taste": true,
+ "descending_targets": "route",
+ "quiet_module": true,
+ "calibration": {
+  "round": 20,
+  "mean_hz_own": 1.626,
+  "over_100hz": 0,
+  "groups_within_2x": 0.9989
+ },
+ "rest": {
+  "mean_hz_own": 1.671,
+  "over_100hz": 0,
+  "bursting_fano_over_10": 15,
+  "mn9_L_hz": 0.47,
+  "dsog1_hz": 16.96,
+  "mn9_L_bout_share": 0.0
+ },
+ "ignited_flies": 0,
+ "flies": 32,
+ "mn9_rise_hz": {
+  "sugar": {
+   "mean": 3.38,
+   "sem": 0.86
+  },
+  "sugar 10 Hz": {
+   "mean": -0.5,
+   "sem": 0.46
+  },
+  "sugar+bitter": {
+   "mean": -1.0,
+   "sem": 0.53
+  },
+  "sugar+ir94e": {
+   "mean": -0.5,
+   "sem": 0.33
+  },
+  "water": {
+   "mean": 0.75,
+   "sem": 0.31
+  },
+  "premotor 50 Hz": {
+   "mean": 17.62,
+   "sem": 1.0
+  }
+ },
+ "looming": {
+  "REST": true,
+  "RELAY": true,
+  "SIDE": true,
+  "ESCAPE": true
+ },
+ "giant_fiber_rise_hz": {
+  "fastL DNp01": 26.25,
+  "fastR DNp01": 26.25
+ },
+ "seconds": 1470
+}
