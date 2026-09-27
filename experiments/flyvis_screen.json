@@ -1,0 +1,749 @@
+{
+ "question": "Exploratory, not pre-registered: which of flyvis's 50 flow models match what is known of the fly's\noptic lobe, before any of them drives the brain?\n\nrung3_verdict.py found that flow/0000/001 gets T2 right (it depolarises to light increments and\ndecrements, as a real T2 does; Keles et al. 2020) but 29 of 32 known contrast polarities and T5a's\ndirection wrong. This screens every model on three properties that involve flyvis alone:\n  T2        the central T2's peak change in the second after a full-field ON and OFF flash (flyvis's\n            Flashes, radius 6): both over 0.02, the smaller at least a third of the larger\n  POLARITY  the flash response index has the known polarity's sign for how many of flyvis's 32 known\n            types (rung 3 asks for 30)\n  DIRECTION for the models passing both, flyvis_native.py's direction check on the male eye: how many\n            of the 16 T4/T5 subtypes prefer their expected direction (rung 3 asks for all)\nA model passing all three is the one to test on looming through the brain, a test it wasn't chosen on.\n\n    python experiments/flyvis_screen.py            (writes experiments/flyvis_screen.json)\n",
+ "models": [
+  {
+   "model": "flow/0000/000",
+   "rank": 0,
+   "t2_on": 2.893,
+   "t2_off": 0.001,
+   "T2": false,
+   "polarity": 30,
+   "polarity_wrong": [
+    "C3",
+    "T4d"
+   ]
+  },
+  {
+   "model": "flow/0000/001",
+   "rank": 1,
+   "t2_on": 1.289,
+   "t2_off": 2.83,
+   "T2": true,
+   "polarity": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ]
+  },
+  {
+   "model": "flow/0000/002",
+   "rank": 2,
+   "t2_on": 7.993,
+   "t2_off": 2.068,
+   "T2": false,
+   "polarity": 29,
+   "polarity_wrong": [
+    "L3",
+    "C3",
+    "Mi9"
+   ]
+  },
+  {
+   "model": "flow/0000/003",
+   "rank": 3,
+   "t2_on": 14.219,
+   "t2_off": 4.887,
+   "T2": true,
+   "polarity": 27,
+   "polarity_wrong": [
+    "L2",
+    "L3",
+    "C3",
+    "T5a",
+    "Tm2"
+   ]
+  },
+  {
+   "model": "flow/0000/004",
+   "rank": 4,
+   "t2_on": 30.132,
+   "t2_off": 0.033,
+   "T2": false,
+   "polarity": 21,
+   "polarity_wrong": [
+    "L3",
+    "L4",
+    "L5",
+    "CT1(Lo1)",
+    "Mi4",
+    "Mi9",
+    "T4a",
+    "T5a",
+    "T5d",
+    "Tm2",
+    "Tm9"
+   ]
+  },
+  {
+   "model": "flow/0000/005",
+   "rank": 5,
+   "t2_on": 3.962,
+   "t2_off": 1.112,
+   "T2": false,
+   "polarity": 25,
+   "polarity_wrong": [
+    "CT1(Lo1)",
+    "Mi4",
+    "Mi9",
+    "T5a",
+    "T5b",
+    "T5c",
+    "Tm9"
+   ]
+  },
+  {
+   "model": "flow/0000/006",
+   "rank": 6,
+   "t2_on": 4.943,
+   "t2_off": 0.954,
+   "T2": false,
+   "polarity": 32,
+   "polarity_wrong": []
+  },
+  {
+   "model": "flow/0000/007",
+   "rank": 7,
+   "t2_on": 7.648,
+   "t2_off": -0.017,
+   "T2": false,
+   "polarity": 26,
+   "polarity_wrong": [
+    "L2",
+    "L4",
+    "L5",
+    "Mi9",
+    "T5b",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/008",
+   "rank": 8,
+   "t2_on": 14.061,
+   "t2_off": 2.027,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "L3",
+    "C3",
+    "Mi9",
+    "T5c"
+   ]
+  },
+  {
+   "model": "flow/0000/009",
+   "rank": 9,
+   "t2_on": 4.31,
+   "t2_off": 0.272,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "L2",
+    "L4",
+    "CT1(Lo1)",
+    "Tm1"
+   ]
+  },
+  {
+   "model": "flow/0000/010",
+   "rank": 10,
+   "t2_on": 8.684,
+   "t2_off": -0.243,
+   "T2": false,
+   "polarity": 31,
+   "polarity_wrong": [
+    "L2"
+   ]
+  },
+  {
+   "model": "flow/0000/011",
+   "rank": 11,
+   "t2_on": 2.991,
+   "t2_off": 0.61,
+   "T2": false,
+   "polarity": 27,
+   "polarity_wrong": [
+    "L2",
+    "L3",
+    "T5d",
+    "Tm1",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/012",
+   "rank": 12,
+   "t2_on": 9.474,
+   "t2_off": 1.611,
+   "T2": false,
+   "polarity": 29,
+   "polarity_wrong": [
+    "L3",
+    "CT1(Lo1)",
+    "T5b"
+   ]
+  },
+  {
+   "model": "flow/0000/013",
+   "rank": 13,
+   "t2_on": 20.206,
+   "t2_off": -0.072,
+   "T2": false,
+   "polarity": 30,
+   "polarity_wrong": [
+    "C3",
+    "T5a"
+   ]
+  },
+  {
+   "model": "flow/0000/014",
+   "rank": 14,
+   "t2_on": 7.568,
+   "t2_off": 0.629,
+   "T2": false,
+   "polarity": 26,
+   "polarity_wrong": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6"
+   ]
+  },
+  {
+   "model": "flow/0000/015",
+   "rank": 15,
+   "t2_on": 7.56,
+   "t2_off": 0.007,
+   "T2": false,
+   "polarity": 24,
+   "polarity_wrong": [
+    "R1",
+    "R2",
+    "R3",
+    "R7",
+    "L3",
+    "L5",
+    "Mi9",
+    "T5a"
+   ]
+  },
+  {
+   "model": "flow/0000/016",
+   "rank": 16,
+   "t2_on": 0.324,
+   "t2_off": 0.524,
+   "T2": true,
+   "polarity": 24,
+   "polarity_wrong": [
+    "L5",
+    "Mi4",
+    "T5a",
+    "T5b",
+    "T5c",
+    "T5d",
+    "Tm2",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/017",
+   "rank": 17,
+   "t2_on": 14.348,
+   "t2_off": 1.436,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "R6",
+    "L2",
+    "L3",
+    "Tm1"
+   ]
+  },
+  {
+   "model": "flow/0000/018",
+   "rank": 18,
+   "t2_on": 4.951,
+   "t2_off": 0.49,
+   "T2": false,
+   "polarity": 31,
+   "polarity_wrong": [
+    "Mi9"
+   ]
+  },
+  {
+   "model": "flow/0000/019",
+   "rank": 19,
+   "t2_on": 7.854,
+   "t2_off": -0.058,
+   "T2": false,
+   "polarity": 29,
+   "polarity_wrong": [
+    "R2",
+    "C3",
+    "T5c"
+   ]
+  },
+  {
+   "model": "flow/0000/020",
+   "rank": 20,
+   "t2_on": 9.107,
+   "t2_off": 0.278,
+   "T2": false,
+   "polarity": 31,
+   "polarity_wrong": [
+    "L2"
+   ]
+  },
+  {
+   "model": "flow/0000/021",
+   "rank": 21,
+   "t2_on": 7.202,
+   "t2_off": -0.058,
+   "T2": false,
+   "polarity": 23,
+   "polarity_wrong": [
+    "L4",
+    "C3",
+    "CT1(Lo1)",
+    "T5a",
+    "T5b",
+    "T5c",
+    "T5d",
+    "Tm1",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/022",
+   "rank": 22,
+   "t2_on": 10.032,
+   "t2_off": -0.33,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "C3",
+    "T5b",
+    "T5c",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/023",
+   "rank": 23,
+   "t2_on": 6.24,
+   "t2_off": 1.272,
+   "T2": false,
+   "polarity": 25,
+   "polarity_wrong": [
+    "L2",
+    "L3",
+    "Mi9",
+    "T5a",
+    "T5b",
+    "T5c",
+    "T5d"
+   ]
+  },
+  {
+   "model": "flow/0000/024",
+   "rank": 24,
+   "t2_on": 45.453,
+   "t2_off": 0.072,
+   "T2": false,
+   "polarity": 27,
+   "polarity_wrong": [
+    "L3",
+    "CT1(Lo1)",
+    "T5a",
+    "T5b",
+    "Tm1"
+   ]
+  },
+  {
+   "model": "flow/0000/025",
+   "rank": 25,
+   "t2_on": 42.319,
+   "t2_off": 10.662,
+   "T2": false,
+   "polarity": 21,
+   "polarity_wrong": [
+    "R1",
+    "R3",
+    "R5",
+    "L3",
+    "C3",
+    "CT1(Lo1)",
+    "Mi9",
+    "T4d",
+    "T5a",
+    "T5b",
+    "Tm9"
+   ]
+  },
+  {
+   "model": "flow/0000/026",
+   "rank": 26,
+   "t2_on": 1.592,
+   "t2_off": 1.28,
+   "T2": true,
+   "polarity": 21,
+   "polarity_wrong": [
+    "L5",
+    "C3",
+    "CT1(Lo1)",
+    "Mi4",
+    "Mi9",
+    "T5a",
+    "T5d",
+    "Tm1",
+    "Tm2",
+    "Tm3",
+    "Tm9"
+   ]
+  },
+  {
+   "model": "flow/0000/027",
+   "rank": 27,
+   "t2_on": 29.637,
+   "t2_off": 0.971,
+   "T2": false,
+   "polarity": 24,
+   "polarity_wrong": [
+    "R1",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "L3",
+    "T5b",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/028",
+   "rank": 28,
+   "t2_on": 4.71,
+   "t2_off": -0.006,
+   "T2": false,
+   "polarity": 27,
+   "polarity_wrong": [
+    "R3",
+    "L3",
+    "L5",
+    "T5c",
+    "Tm9"
+   ]
+  },
+  {
+   "model": "flow/0000/029",
+   "rank": 29,
+   "t2_on": 2.546,
+   "t2_off": 0.063,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "L3",
+    "L4",
+    "L5",
+    "Mi4"
+   ]
+  },
+  {
+   "model": "flow/0000/030",
+   "rank": 30,
+   "t2_on": 13.171,
+   "t2_off": 0.099,
+   "T2": false,
+   "polarity": 30,
+   "polarity_wrong": [
+    "L2",
+    "T5b"
+   ]
+  },
+  {
+   "model": "flow/0000/031",
+   "rank": 31,
+   "t2_on": 13.207,
+   "t2_off": -0.007,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "L2",
+    "CT1(Lo1)",
+    "T5a",
+    "Tm1"
+   ]
+  },
+  {
+   "model": "flow/0000/032",
+   "rank": 32,
+   "t2_on": 2.401,
+   "t2_off": 5.73,
+   "T2": true,
+   "polarity": 29,
+   "polarity_wrong": [
+    "L5",
+    "Mi4",
+    "Mi9"
+   ]
+  },
+  {
+   "model": "flow/0000/033",
+   "rank": 33,
+   "t2_on": 15.747,
+   "t2_off": 0.161,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "R7",
+    "L3",
+    "Mi9",
+    "T4d"
+   ]
+  },
+  {
+   "model": "flow/0000/034",
+   "rank": 34,
+   "t2_on": 7.322,
+   "t2_off": -0.048,
+   "T2": false,
+   "polarity": 29,
+   "polarity_wrong": [
+    "R7",
+    "L3",
+    "Mi9"
+   ]
+  },
+  {
+   "model": "flow/0000/035",
+   "rank": 35,
+   "t2_on": 0.042,
+   "t2_off": 1.618,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "L5",
+    "C3",
+    "CT1(Lo1)",
+    "Tm1"
+   ]
+  },
+  {
+   "model": "flow/0000/036",
+   "rank": 36,
+   "t2_on": 19.405,
+   "t2_off": 3.341,
+   "T2": false,
+   "polarity": 26,
+   "polarity_wrong": [
+    "L3",
+    "C3",
+    "T5b",
+    "T5d",
+    "Tm2",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/037",
+   "rank": 37,
+   "t2_on": 24.711,
+   "t2_off": 0.007,
+   "T2": false,
+   "polarity": 26,
+   "polarity_wrong": [
+    "L2",
+    "L3",
+    "T4d",
+    "T5a",
+    "T5b",
+    "Tm2"
+   ]
+  },
+  {
+   "model": "flow/0000/038",
+   "rank": 38,
+   "t2_on": 17.076,
+   "t2_off": 0.597,
+   "T2": false,
+   "polarity": 28,
+   "polarity_wrong": [
+    "L4",
+    "Mi4",
+    "Mi9",
+    "T5a"
+   ]
+  },
+  {
+   "model": "flow/0000/039",
+   "rank": 39,
+   "t2_on": 12.824,
+   "t2_off": 0.125,
+   "T2": false,
+   "polarity": 29,
+   "polarity_wrong": [
+    "L2",
+    "CT1(M10)",
+    "Mi4"
+   ]
+  },
+  {
+   "model": "flow/0000/040",
+   "rank": 40,
+   "t2_on": 3.817,
+   "t2_off": 1.985,
+   "T2": true,
+   "polarity": 28,
+   "polarity_wrong": [
+    "R3",
+    "L3",
+    "C3",
+    "Mi9"
+   ]
+  },
+  {
+   "model": "flow/0000/041",
+   "rank": 41,
+   "t2_on": 86.282,
+   "t2_off": 40.741,
+   "T2": true,
+   "polarity": 26,
+   "polarity_wrong": [
+    "R3",
+    "R5",
+    "R6",
+    "C3",
+    "Mi4",
+    "Mi9"
+   ]
+  },
+  {
+   "model": "flow/0000/042",
+   "rank": 42,
+   "t2_on": 0.154,
+   "t2_off": 9.648,
+   "T2": false,
+   "polarity": 29,
+   "polarity_wrong": [
+    "L3",
+    "L5",
+    "Mi4"
+   ]
+  },
+  {
+   "model": "flow/0000/043",
+   "rank": 43,
+   "t2_on": 8.922,
+   "t2_off": 0.766,
+   "T2": false,
+   "polarity": 27,
+   "polarity_wrong": [
+    "R3",
+    "R5",
+    "L3",
+    "Mi4",
+    "Mi9"
+   ]
+  },
+  {
+   "model": "flow/0000/044",
+   "rank": 44,
+   "t2_on": 23.531,
+   "t2_off": 0.942,
+   "T2": false,
+   "polarity": 24,
+   "polarity_wrong": [
+    "L5",
+    "CT1(Lo1)",
+    "T5b",
+    "T5c",
+    "T5d",
+    "Tm1",
+    "Tm2",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/045",
+   "rank": 45,
+   "t2_on": 22.198,
+   "t2_off": 1.59,
+   "T2": false,
+   "polarity": 25,
+   "polarity_wrong": [
+    "R5",
+    "R6",
+    "L3",
+    "L5",
+    "Mi9",
+    "T4b",
+    "Tm1"
+   ]
+  },
+  {
+   "model": "flow/0000/046",
+   "rank": 46,
+   "t2_on": 2.308,
+   "t2_off": 5.51,
+   "T2": true,
+   "polarity": 23,
+   "polarity_wrong": [
+    "R2",
+    "L3",
+    "L5",
+    "C3",
+    "Mi4",
+    "Mi9",
+    "T5a",
+    "T5c",
+    "Tm4"
+   ]
+  },
+  {
+   "model": "flow/0000/047",
+   "rank": 47,
+   "t2_on": 7.084,
+   "t2_off": 0.603,
+   "T2": false,
+   "polarity": 30,
+   "polarity_wrong": [
+    "R3",
+    "Tm1"
+   ]
+  },
+  {
+   "model": "flow/0000/048",
+   "rank": 48,
+   "t2_on": 94.165,
+   "t2_off": 2.324,
+   "T2": false,
+   "polarity": 27,
+   "polarity_wrong": [
+    "L2",
+    "L4",
+    "Mi9",
+    "T5b",
+    "Tm1"
+   ]
+  },
+  {
+   "model": "flow/0000/049",
+   "rank": 49,
+   "t2_on": 1.002,
+   "t2_off": -0.159,
+   "T2": false,
+   "polarity": 27,
+   "polarity_wrong": [
+    "L4",
+    "Mi9",
+    "T4d",
+    "T5a",
+    "Tm1"
+   ]
+  }
+ ],
+ "passing": []
+}
