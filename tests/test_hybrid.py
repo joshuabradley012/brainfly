@@ -59,6 +59,23 @@ def test_advancing_in_pieces_changes_nothing():
         np.testing.assert_array_equal(getattr(whole, name), getattr(pieces, name), err_msg=name)
 
 
+def test_only_the_slow_synapses_targets_carry_a_slow_current():
+    """Delivering slow input to the slow synapses' targets alone gives the same spikes and state as scanning every
+    neuron for it, as the kernel once did."""
+    edges, slow, types, n = random_circuit()
+    slow = [(i, j, w) for i, j, w in slow if j % 3]            # leave every third neuron without slow input
+    drive = [(np.arange(4), 120.0)]
+    listed = small(edges, n, slow, types=types, trials=3, w_poi=30.0)
+    scanned = small(edges, n, slow, types=types, trials=3, w_poi=30.0)
+    scanned.stargets, scanned.slow_in = np.arange(n, dtype=np.int64), np.ones(n, np.bool_)
+    a, b = listed.advance(2000, drive), scanned.advance(2000, drive)
+    assert len(listed.stargets) < n and a.sum() > 100
+    np.testing.assert_array_equal(a, b)
+    for name in ("u", "x", "s"):
+        np.testing.assert_array_equal(getattr(listed, name), getattr(scanned, name), err_msg=name)
+    assert not listed.s[:, ~listed.slow_in].any()
+
+
 def test_graded_release_and_its_effect_at_steady_state():
     """A graded neuron held at 20 mV releases gain x (20 - 7) Hz, and its target settles where that
     continuous input puts it."""
