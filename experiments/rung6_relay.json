@@ -1,0 +1,310 @@
+{
+ "criteria": "Rung 6 (pre-registered): does the resting brain relay giant fiber spikes to the jump and flight muscles like a\nfly, and does removing the giant fiber's electrical synapses, as in shakB2 mutants, slow or silence the relay as in\nflies?\n\nRung 6 (README): \"giant fiber to jump muscle in 0.7-1.2 ms, slowing without the gap junctions as in shakB\nmutants\". The test is research_notes/Embodied fly connectome simulation/escape_circuit.md's (its 1.4), with the\nconstants escape_relay.py (exploratory) measured, fixed here before any run of this test.\nModel: taste_escape.py's brain (which tastes and escapes; its model and calibrated biases), plus escape_relay.py's\nrelay: one-way spikelets from each giant fiber (DNp01) to its own TTMn and PSI, and PSI -> DLMn fast synapses\n(0.3 ms, depressing with PSI) onto the DLMn MaleCNS's PSI contacts; the jump and flight motor neurons (TTMn,\nSTTMm, PSI, DLMn) quieted at rest by escape_relay.py's procedure, each resetting 5 mV below its own lowered rest.\nConstants (escape_relay.json): SIZES_MV (spikelets and fast synapses, per target neuron), PSI_DEPRESSION (f, tau),\n  RESETS_MV (the quieted types' resets), QUIET_BIAS (the quieted group biases, escape_relay/quiet.npz)\n  delays outside the model: GF axon 0.3 ms, TTMn -> TTM 0.5 ms, DLMn -> DLM 0.6 ms (Kadas et al. 2019; Thomas &\n  Wyman 1984), so a muscle's latency is 0.3 ms + (motor neuron spike - GF spike) + its own delay\nConditions: INTACT; SHAKB, the spikelets removed (chemical synapses and the fast PSI -> DLMn synapse kept);\nNULL, 2 degree-preserving rewirings of the chemical network (eyes_at_rest.py's), each recalibrated as\ntaste_escape.py's nulls were and quieted by the same procedure, with the same relay.\nProtocols (8 flies each, both giant fibers forced to spike together, as by electrodes in the brain; fresh seeds):\n  single   50 GF spikes, 1 s apart, after 1 s at rest\n  trains   10 trains of 10 GF spikes at 100 Hz and at 250 Hz, each from a fresh rest\n  quiet    100 s at rest\n  looms    eyes_at_rest.py's fast loom on each side at gain 1 (escape_at_rest2.py's confirmed gain), 10 per fly\nA motor neuron answers a GF spike if it fires within 0.5 ms (TTMn) or 1.2 ms (DLMn) after it; GF spikes that\nfall in a motor neuron's own refractory period still count as stimuli.\nCriteria, INTACT (all):\n  W1  median TTM latency 0.7-1.2 ms, median DLM latency 1.3-1.7 ms, their difference 0.24-0.6 ms (single)\n  W2  TTMn answer at least 95% of single GF spikes, DLMn at least 90%\n  W3  TTMn follow at least 95% at 100 Hz and 80% at 250 Hz; DLMn at least 70% at 100 Hz and at most 60% at 250 Hz\n      (flies: TTM 100% and 88-100%; DLM 84% and 28-57%)\n  W4  in 100 s at rest, no fly's TTMn (both together) fire more than one spike without a GF spike in the 5 ms\n      before, and likewise its PSI\n  W5  in at least 95% of the looms that fire the loomed side's GF, that side's TTMn fires within 0.5 ms of the\n      GF's first spike\nCriteria, SHAKB (all):\n  S1  TTMn answer at most 50% of single GF spikes, or their median latency is at least 0.4 ms longer than intact\n  S2  TTMn follow at most 30% at 100 Hz (flies 10-26%)\n  S3  DLMn answer at most 5% of single GF spikes (flies: none)\n  S4  in at least 80% of the looms that fire the loomed side's GF, that side's TTMn doesn't fire within 2 ms of\n      the GF's first spike\nCriterion, NULL: in each rewiring, the loomed side's TTMn fires during the loom's last 0.5 s in at most half as\nmany looms as in INTACT.\nPass: every W, every S, and NULL.\nReported: latency distributions, twin pulses (10, 8, 6, 4, 3 and 2 ms apart; 5 pairs each), whether one or both\nTTMn fire per loom, and an \"aged\" condition with the spikelets at 1.9/3 of their size (single spikes, trains).\n\n    python experiments/rung6_relay.py            (writes experiments/rung6_relay.json)\n",
+ "constants": {
+  "sizes_mv": {
+   "147865": 141.17,
+   "144432": 142.2,
+   "146104": 90.01,
+   "160923": 89.39,
+   "145797": 146.17,
+   "145817": 151.17,
+   "146214": 152.27,
+   "146596": 151.41,
+   "166189": 150.61,
+   "144854": 151.3,
+   "144977": 151.45,
+   "145286": 146.97,
+   "145741": 151.49,
+   "146566": 152.19
+  },
+  "psi_depression": [
+   0.2218,
+   0.02
+  ],
+  "delays_ms": [
+   0.3,
+   0.5,
+   0.6
+  ]
+ },
+ "intact": {
+  "part_a": {
+   "single": {
+    "ttmn_answered": 0.9988,
+    "dlmn_answered": 0.9975,
+    "ttm_latency_ms_median": 0.9,
+    "dlm_latency_ms_median": 1.4,
+    "ttm_latency_ms_counts": {
+     "0.9": 799
+    },
+    "dlm_latency_ms_counts": {
+     "1.4": 3990
+    }
+   },
+   "train_100hz": {
+    "ttmn_following": 1.0,
+    "dlmn_following": 0.8664
+   },
+   "train_250hz": {
+    "ttmn_following": 1.0,
+    "dlmn_following": 0.4
+   },
+   "twin": {
+    "10ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 1.0
+    },
+    "8ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 0.985
+    },
+    "6ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 0.0
+    },
+    "4ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 0.0
+    },
+    "3ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 0.0
+    },
+    "2ms": {
+     "ttmn_second": 0.0,
+     "dlmn_second": 0.0
+    }
+   }
+  },
+  "looms": {
+   "fastL": {
+    "gf_fired_looms": 80,
+    "looms": 80,
+    "ttmn_within_0.5ms": 1.0,
+    "ttmn_not_within_2ms": 0.0,
+    "ttmn_fired_late": 1.0,
+    "both_ttmn_late": 0.025,
+    "delay_ms_counts": {
+     "0.1": 80
+    }
+   },
+   "fastR": {
+    "gf_fired_looms": 80,
+    "looms": 80,
+    "ttmn_within_0.5ms": 1.0,
+    "ttmn_not_within_2ms": 0.0,
+    "ttmn_fired_late": 1.0,
+    "both_ttmn_late": 0.0,
+    "delay_ms_counts": {
+     "0.1": 80
+    }
+   }
+  },
+  "quiet": {
+   "ttmn_lone_spikes_per_fly": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "psi_lone_spikes_per_fly": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ "shakB": {
+  "part_a": {
+   "single": {
+    "ttmn_answered": 0.0,
+    "dlmn_answered": 0.0,
+    "ttm_latency_ms_median": null,
+    "dlm_latency_ms_median": null,
+    "ttm_latency_ms_counts": {},
+    "dlm_latency_ms_counts": {}
+   },
+   "train_100hz": {
+    "ttmn_following": 0.0,
+    "dlmn_following": 0.0
+   },
+   "train_250hz": {
+    "ttmn_following": 0.0,
+    "dlmn_following": 0.0
+   },
+   "twin": {
+    "10ms": {
+     "ttmn_second": 0.0,
+     "dlmn_second": 0.0
+    },
+    "8ms": {
+     "ttmn_second": 0.0,
+     "dlmn_second": 0.0
+    },
+    "6ms": {
+     "ttmn_second": 0.0,
+     "dlmn_second": 0.0
+    },
+    "4ms": {
+     "ttmn_second": 0.0,
+     "dlmn_second": 0.0
+    },
+    "3ms": {
+     "ttmn_second": 0.0,
+     "dlmn_second": 0.0
+    },
+    "2ms": {
+     "ttmn_second": 0.0,
+     "dlmn_second": 0.0
+    }
+   }
+  },
+  "looms": {
+   "fastL": {
+    "gf_fired_looms": 80,
+    "looms": 80,
+    "ttmn_within_0.5ms": 0.0,
+    "ttmn_not_within_2ms": 1.0,
+    "ttmn_fired_late": 0.0,
+    "both_ttmn_late": 0.0,
+    "delay_ms_counts": {}
+   },
+   "fastR": {
+    "gf_fired_looms": 80,
+    "looms": 80,
+    "ttmn_within_0.5ms": 0.0,
+    "ttmn_not_within_2ms": 1.0,
+    "ttmn_fired_late": 0.0,
+    "both_ttmn_late": 0.0,
+    "delay_ms_counts": {}
+   }
+  }
+ },
+ "W1": true,
+ "W2": true,
+ "W3": true,
+ "W4": true,
+ "W5": true,
+ "S1": true,
+ "S2": true,
+ "S3": true,
+ "S4": true,
+ "nulls": [
+  {
+   "rewiring": 1,
+   "looms": {
+    "fastL": {
+     "gf_fired_looms": 23,
+     "looms": 80,
+     "ttmn_within_0.5ms": 1.0,
+     "ttmn_not_within_2ms": 0.0,
+     "ttmn_fired_late": 0.1,
+     "both_ttmn_late": 0.0,
+     "delay_ms_counts": {
+      "0.1": 23
+     }
+    },
+    "fastR": {
+     "gf_fired_looms": 14,
+     "looms": 80,
+     "ttmn_within_0.5ms": 1.0,
+     "ttmn_not_within_2ms": 0.0,
+     "ttmn_fired_late": 0.037,
+     "both_ttmn_late": 0.0,
+     "delay_ms_counts": {
+      "0.1": 14
+     }
+    }
+   }
+  },
+  {
+   "rewiring": 2,
+   "looms": {
+    "fastL": {
+     "gf_fired_looms": 5,
+     "looms": 80,
+     "ttmn_within_0.5ms": 1.0,
+     "ttmn_not_within_2ms": 0.0,
+     "ttmn_fired_late": 0.025,
+     "both_ttmn_late": 0.0,
+     "delay_ms_counts": {
+      "0.1": 5
+     }
+    },
+    "fastR": {
+     "gf_fired_looms": 22,
+     "looms": 80,
+     "ttmn_within_0.5ms": 1.0,
+     "ttmn_not_within_2ms": 0.0,
+     "ttmn_fired_late": 0.05,
+     "both_ttmn_late": 0.0,
+     "delay_ms_counts": {
+      "0.1": 22
+     }
+    }
+   }
+  }
+ ],
+ "NULL": true,
+ "aged": {
+  "part_a": {
+   "single": {
+    "ttmn_answered": 0.9962,
+    "dlmn_answered": 1.0,
+    "ttm_latency_ms_median": 0.9,
+    "dlm_latency_ms_median": 1.4,
+    "ttm_latency_ms_counts": {
+     "0.9": 797
+    },
+    "dlm_latency_ms_counts": {
+     "1.4": 4000
+    }
+   },
+   "train_100hz": {
+    "ttmn_following": 1.0,
+    "dlmn_following": 0.8719
+   },
+   "train_250hz": {
+    "ttmn_following": 0.9994,
+    "dlmn_following": 0.4
+   },
+   "twin": {
+    "10ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 1.0
+    },
+    "8ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 0.997
+    },
+    "6ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 0.0
+    },
+    "4ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 0.0
+    },
+    "3ms": {
+     "ttmn_second": 1.0,
+     "dlmn_second": 0.0
+    },
+    "2ms": {
+     "ttmn_second": 0.0,
+     "dlmn_second": 0.0
+    }
+   }
+  }
+ },
+ "pass": true,
+ "seconds": 13841
+}

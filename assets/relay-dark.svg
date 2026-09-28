@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="350" viewBox="0 0 1120 350" role="img" aria-labelledby="t">
+<title id="t">The giant fiber relay in brainfly: muscle latencies, following at 100 and 250 Hz, and twin-pulse refractoriness, intact and without electrical synapses, against flies</title>
+<style>text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; } .h { font-size: 16px; font-weight: 600; fill: #e6edf3; } .lab { font-size: 12px; fill: #9198a1; } .val { font-size: 13px; font-weight: 600; fill: #e6edf3; }</style>
+<rect width="1120" height="350" fill="#0d1117"/>
+<text x="40.0" y="36.0" class="h" text-anchor="start">Latency after a giant fiber spike</text>
+<rect x="218.0" y="100" width="28.0" height="20" fill="#3a2422"/>
+<circle cx="227.3" cy="110" r="5" fill="#e5533f"/>
+<text x="180.0" y="114.0" class="lab" text-anchor="end">jump muscle (TTM)</text>
+<rect x="264.7" y="160" width="28.0" height="20" fill="#3a2422"/>
+<circle cx="274.0" cy="170" r="5" fill="#e5533f"/>
+<text x="180.0" y="174.0" class="lab" text-anchor="end">flight muscle (DLM)</text>
+<text x="190.0" y="240.0" class="lab" text-anchor="middle">0.5</text>
+<text x="236.7" y="240.0" class="lab" text-anchor="middle">1</text>
+<text x="283.3" y="240.0" class="lab" text-anchor="middle">1.5</text>
+<text x="330.0" y="240.0" class="lab" text-anchor="middle">2</text>
+<text x="260.0" y="258.0" class="lab" text-anchor="middle">ms (band: flies; dot: brainfly)</text>
+<text x="40.0" y="300.0" class="val" text-anchor="start">Without electrical synapses: TTMn answer 0%, DLMn 0%</text>
+<text x="40.0" y="320.0" class="lab" text-anchor="start">of single giant fiber spikes (shakB² flies: 0-57% and none)</text>
+<text x="420.0" y="36.0" class="h" text-anchor="start">Following 10-spike trains</text>
+<rect x="440" y="90.0" width="22" height="2.0" fill="#3a2422" stroke="#e5533f" stroke-width="0.8"/>
+<rect x="462.0" y="90.0" width="19" height="180.0" fill="#e6edf3"/>
+<rect x="484.0" y="270.0" width="19" height="1.0" fill="#9198a1"/>
+<text x="473.0" y="286.0" class="lab" text-anchor="middle">TTMn</text>
+<text x="473.0" y="300.0" class="lab" text-anchor="middle">100 Hz</text>
+<rect x="524" y="90.0" width="22" height="21.6" fill="#3a2422" stroke="#e5533f" stroke-width="0.8"/>
+<rect x="546.0" y="90.0" width="19" height="180.0" fill="#e6edf3"/>
+<rect x="568.0" y="270.0" width="19" height="1.0" fill="#9198a1"/>
+<text x="557.0" y="286.0" class="lab" text-anchor="middle">TTMn</text>
+<text x="557.0" y="300.0" class="lab" text-anchor="middle">250 Hz</text>
+<rect x="608" y="118.8" width="22" height="2.0" fill="#3a2422" stroke="#e5533f" stroke-width="0.8"/>
+<rect x="630.0" y="114.0" width="19" height="156.0" fill="#e6edf3"/>
+<rect x="652.0" y="270.0" width="19" height="1.0" fill="#9198a1"/>
+<text x="641.0" y="286.0" class="lab" text-anchor="middle">DLMn</text>
+<text x="641.0" y="300.0" class="lab" text-anchor="middle">100 Hz</text>
+<rect x="692" y="167.4" width="22" height="52.2" fill="#3a2422" stroke="#e5533f" stroke-width="0.8"/>
+<rect x="714.0" y="198.0" width="19" height="72.0" fill="#e6edf3"/>
+<rect x="736.0" y="270.0" width="19" height="1.0" fill="#9198a1"/>
+<text x="725.0" y="286.0" class="lab" text-anchor="middle">DLMn</text>
+<text x="725.0" y="300.0" class="lab" text-anchor="middle">250 Hz</text>
+<line x1="420" y1="270" x2="750" y2="270" stroke="#3d444d"/>
+<text x="420.0" y="326.0" class="lab" text-anchor="start">each group: flies (band), brainfly intact (dark), without electrical synapses (grey)</text>
+<text x="800.0" y="36.0" class="h" text-anchor="start">Second of two spikes answered</text>
+<polyline points="845.0,270.0 870.0,90.0 895.0,90.0 945.0,90.0 995.0,90.0 1045.0,90.0" fill="none" stroke="#e6edf3" stroke-width="1.8"/>
+<line x1="877.5" y1="90" x2="877.5" y2="270" stroke="#e5533f" stroke-width="1.2"/>
+<text x="880.5" y="102.0" class="lab" text-anchor="start">flies' TTM 3.3 ms</text>
+<polyline points="845.0,270.0 870.0,270.0 895.0,270.0 945.0,270.0 995.0,92.7 1045.0,90.0" fill="none" stroke="#e6edf3" stroke-width="1.8" stroke-dasharray="5 3"/>
+<line x1="925.0" y1="90" x2="925.0" y2="270" stroke="#e5533f" stroke-width="1.2" stroke-dasharray="5 3"/>
+<text x="928.0" y="118.0" class="lab" text-anchor="start">flies' DLM 5.2 ms</text>
+<text x="845.0" y="286.0" class="lab" text-anchor="middle">2</text>
+<text x="895.0" y="286.0" class="lab" text-anchor="middle">4</text>
+<text x="945.0" y="286.0" class="lab" text-anchor="middle">6</text>
+<text x="995.0" y="286.0" class="lab" text-anchor="middle">8</text>
+<text x="1045.0" y="286.0" class="lab" text-anchor="middle">10</text>
+<line x1="800" y1="270" x2="1080" y2="270" stroke="#3d444d"/>
+<text x="945.0" y="302.0" class="lab" text-anchor="middle">ms between spikes; solid TTMn, dashed DLMn</text>
+</svg>
