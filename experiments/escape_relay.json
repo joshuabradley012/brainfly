@@ -1,0 +1,585 @@
+{
+ "question": "Exploratory, not pre-registered: the giant fiber's relay to the jump and flight motor neurons, and the constants\nrung 6's test fixes before it runs.\n\nRung 6 (README): \"giant fiber to jump muscle in 0.7-1.2 ms, slowing without the gap junctions as in shakB\nmutants\". research_notes/Embodied fly connectome simulation/escape_circuit.md collects the physiology and\nproposes the test (its 1.1-1.4). The connectome has no electrical synapses, so the relay comes from the\nliterature:\n- one-way spikelets from each giant fiber (DNp01) to its own side's TTMn (the jump motor neuron) and PSI: the\n  rectifying ShakB junctions (Phelan et al. 2008), paired as King & Wyman (1980) found and as MaleCNS's\n  chemical contacts agree. No depression: the TTM follows beyond 250 Hz.\n- PSI -> DLMn (the flight power motor neurons) as a fast synapse: a jump of the DLMn's membrane 0.3 ms after\n  each PSI spike (0.3-0.5 ms measured), depressing with PSI, onto every DLMn that MaleCNS's PSI makes at least 10\n  synapses onto (each PSI reaches the 5 motor neurons of the opposite side's DLM). MaleCNS gives PSI no clear\n  transmitter, so brainfly's network has no PSI synapses to replace.\n- sizes by the notes' rule: 3x (TTMn) and 2.5x (PSI, DLMn) the target's distance from its median resting\n  voltage to threshold (Augustin et al. 2019's model of the junction gives a safety factor of about 3).\nThis measures the constants in the brain that tastes and escapes (taste_escape.py's model and biases):\n  1. QUIET: flies' jump and flight motor neurons are silent at rest (the TTM fires once, at takeoff), while\n     the calibration holds them near 2 Hz. Only the TTMn, STTMm, PSI and DLMn groups' biases move: each group\n     down by 2 mV after a round (8 flies x 10 s at rest) in which any of its neurons fired, until a round in\n     which none does, and then every group down 4 mV more, since rung 6 asks for at most one spike per fly in\n     100 s, far rarer than one silent round can show. (A first version stepped 0.5 mV, far too slowly: 3,123\n     then 2,795 spikes a round.)\n  2. VOLTAGE: each target's median membrane voltage over 8 flies x 20 s at rest (sampled every 5 ms), and from\n     it the sizes.\n  3. DEPRESSION: PSI's depression (f of its strength left after a spike, recovering with time constant tau)\n     such that a second PSI spike 5.2 ms after a first just fires a DLMn at its median voltage (the DLM's\n     twin-pulse refractory period; Engel & Wu 1996), and the DLMn follow 84% of the GF spikes in 10-spike trains\n     at 100 Hz (Allen & Murphey 2007): f from the first condition for each tau on a grid, the tau whose following\n     comes closest to 84%. Rung 6 tests following at 250 Hz, which this doesn't measure.\n  RESET: every brainfly neuron resets 5 mV below rest after a spike (rest_calibration2.py), rest meaning the\n     nominal one. Quieting lowers these motor neurons' rest by 30-55 mV, so that reset threw each spike's neuron back\n     up near threshold: a first run of stage 3 found DLMn following 100% at 100 Hz for every tau. So the quieted types\n     reset 5 mV below their own lowered rest (their group's bias - 5 mV), and stage 3 was rerun with that\n     (python experiments/escape_relay.py --depression, which keeps stages 1 and 2's results).\n\n    python experiments/escape_relay.py            (writes experiments/escape_relay.json and escape_relay/quiet.npz)\n    python experiments/escape_relay.py --depression   (stage 3 again, keeping stages 1 and 2's results)\n",
+ "cells": {
+  "gf": {
+   "L": 6,
+   "R": 0
+  },
+  "ttmn": {
+   "L": 147865,
+   "R": 144432
+  },
+  "psi": {
+   "L": 146104,
+   "R": 160923
+  },
+  "dlmn": {
+   "L": [
+    145797,
+    145817,
+    146214,
+    146596,
+    166189
+   ],
+   "R": [
+    144854,
+    144977,
+    145286,
+    145741,
+    146566
+   ]
+  }
+ },
+ "quiet": [
+  {
+   "round": 1,
+   "spikes": {
+    "DLMn a, b": 351,
+    "DLMn c-f": 1460,
+    "PSI": 295,
+    "STTMm": 677,
+    "TTMn": 340
+   },
+   "bias": {
+    "DLMn a, b": -13.37,
+    "DLMn c-f": -12.54,
+    "PSI": -4.39,
+    "STTMm": -8.43,
+    "TTMn": -5.27
+   }
+  },
+  {
+   "round": 2,
+   "spikes": {
+    "DLMn a, b": 316,
+    "DLMn c-f": 1272,
+    "PSI": 179,
+    "STTMm": 461,
+    "TTMn": 306
+   },
+   "bias": {
+    "DLMn a, b": -15.37,
+    "DLMn c-f": -14.54,
+    "PSI": -6.39,
+    "STTMm": -10.43,
+    "TTMn": -7.27
+   }
+  },
+  {
+   "round": 3,
+   "spikes": {
+    "DLMn a, b": 215,
+    "DLMn c-f": 876,
+    "PSI": 97,
+    "STTMm": 298,
+    "TTMn": 250
+   },
+   "bias": {
+    "DLMn a, b": -17.37,
+    "DLMn c-f": -16.54,
+    "PSI": -8.39,
+    "STTMm": -12.43,
+    "TTMn": -9.27
+   }
+  },
+  {
+   "round": 4,
+   "spikes": {
+    "DLMn a, b": 190,
+    "DLMn c-f": 870,
+    "PSI": 44,
+    "STTMm": 198,
+    "TTMn": 185
+   },
+   "bias": {
+    "DLMn a, b": -19.37,
+    "DLMn c-f": -18.54,
+    "PSI": -10.39,
+    "STTMm": -14.43,
+    "TTMn": -11.27
+   }
+  },
+  {
+   "round": 5,
+   "spikes": {
+    "DLMn a, b": 127,
+    "DLMn c-f": 602,
+    "PSI": 15,
+    "STTMm": 145,
+    "TTMn": 147
+   },
+   "bias": {
+    "DLMn a, b": -21.37,
+    "DLMn c-f": -20.54,
+    "PSI": -12.39,
+    "STTMm": -16.43,
+    "TTMn": -13.27
+   }
+  },
+  {
+   "round": 6,
+   "spikes": {
+    "DLMn a, b": 108,
+    "DLMn c-f": 569,
+    "PSI": 12,
+    "STTMm": 99,
+    "TTMn": 133
+   },
+   "bias": {
+    "DLMn a, b": -23.37,
+    "DLMn c-f": -22.54,
+    "PSI": -14.39,
+    "STTMm": -18.43,
+    "TTMn": -15.27
+   }
+  },
+  {
+   "round": 7,
+   "spikes": {
+    "DLMn a, b": 79,
+    "DLMn c-f": 409,
+    "PSI": 9,
+    "STTMm": 38,
+    "TTMn": 91
+   },
+   "bias": {
+    "DLMn a, b": -25.37,
+    "DLMn c-f": -24.54,
+    "PSI": -16.39,
+    "STTMm": -20.43,
+    "TTMn": -17.27
+   }
+  },
+  {
+   "round": 8,
+   "spikes": {
+    "DLMn a, b": 72,
+    "DLMn c-f": 380,
+    "PSI": 2,
+    "STTMm": 14,
+    "TTMn": 52
+   },
+   "bias": {
+    "DLMn a, b": -27.37,
+    "DLMn c-f": -26.54,
+    "PSI": -18.39,
+    "STTMm": -22.43,
+    "TTMn": -19.27
+   }
+  },
+  {
+   "round": 9,
+   "spikes": {
+    "DLMn a, b": 59,
+    "DLMn c-f": 302,
+    "PSI": 0,
+    "STTMm": 6,
+    "TTMn": 45
+   },
+   "bias": {
+    "DLMn a, b": -29.37,
+    "DLMn c-f": -28.54,
+    "PSI": -20.39,
+    "STTMm": -24.43,
+    "TTMn": -21.27
+   }
+  },
+  {
+   "round": 10,
+   "spikes": {
+    "DLMn a, b": 50,
+    "DLMn c-f": 267,
+    "PSI": 0,
+    "STTMm": 3,
+    "TTMn": 34
+   },
+   "bias": {
+    "DLMn a, b": -31.37,
+    "DLMn c-f": -30.54,
+    "PSI": -20.39,
+    "STTMm": -26.43,
+    "TTMn": -23.27
+   }
+  },
+  {
+   "round": 11,
+   "spikes": {
+    "DLMn a, b": 30,
+    "DLMn c-f": 154,
+    "PSI": 4,
+    "STTMm": 2,
+    "TTMn": 24
+   },
+   "bias": {
+    "DLMn a, b": -33.37,
+    "DLMn c-f": -32.54,
+    "PSI": -20.39,
+    "STTMm": -28.43,
+    "TTMn": -25.27
+   }
+  },
+  {
+   "round": 12,
+   "spikes": {
+    "DLMn a, b": 30,
+    "DLMn c-f": 137,
+    "PSI": 1,
+    "STTMm": 0,
+    "TTMn": 17
+   },
+   "bias": {
+    "DLMn a, b": -35.37,
+    "DLMn c-f": -34.54,
+    "PSI": -22.39,
+    "STTMm": -30.43,
+    "TTMn": -27.27
+   }
+  },
+  {
+   "round": 13,
+   "spikes": {
+    "DLMn a, b": 24,
+    "DLMn c-f": 127,
+    "PSI": 0,
+    "STTMm": 0,
+    "TTMn": 4
+   },
+   "bias": {
+    "DLMn a, b": -37.37,
+    "DLMn c-f": -36.54,
+    "PSI": -24.39,
+    "STTMm": -30.43,
+    "TTMn": -29.27
+   }
+  },
+  {
+   "round": 14,
+   "spikes": {
+    "DLMn a, b": 19,
+    "DLMn c-f": 104,
+    "PSI": 0,
+    "STTMm": 0,
+    "TTMn": 1
+   },
+   "bias": {
+    "DLMn a, b": -39.37,
+    "DLMn c-f": -38.54,
+    "PSI": -24.39,
+    "STTMm": -30.43,
+    "TTMn": -31.27
+   }
+  },
+  {
+   "round": 15,
+   "spikes": {
+    "DLMn a, b": 7,
+    "DLMn c-f": 60,
+    "PSI": 0,
+    "STTMm": 3,
+    "TTMn": 3
+   },
+   "bias": {
+    "DLMn a, b": -41.37,
+    "DLMn c-f": -40.54,
+    "PSI": -24.39,
+    "STTMm": -30.43,
+    "TTMn": -33.27
+   }
+  },
+  {
+   "round": 16,
+   "spikes": {
+    "DLMn a, b": 3,
+    "DLMn c-f": 20,
+    "PSI": 1,
+    "STTMm": 0,
+    "TTMn": 1
+   },
+   "bias": {
+    "DLMn a, b": -43.37,
+    "DLMn c-f": -42.54,
+    "PSI": -24.39,
+    "STTMm": -32.43,
+    "TTMn": -35.27
+   }
+  },
+  {
+   "round": 17,
+   "spikes": {
+    "DLMn a, b": 5,
+    "DLMn c-f": 34,
+    "PSI": 1,
+    "STTMm": 0,
+    "TTMn": 0
+   },
+   "bias": {
+    "DLMn a, b": -45.37,
+    "DLMn c-f": -44.54,
+    "PSI": -26.39,
+    "STTMm": -32.43,
+    "TTMn": -37.27
+   }
+  },
+  {
+   "round": 18,
+   "spikes": {
+    "DLMn a, b": 6,
+    "DLMn c-f": 28,
+    "PSI": 0,
+    "STTMm": 1,
+    "TTMn": 0
+   },
+   "bias": {
+    "DLMn a, b": -47.37,
+    "DLMn c-f": -46.54,
+    "PSI": -28.39,
+    "STTMm": -32.43,
+    "TTMn": -37.27
+   }
+  },
+  {
+   "round": 19,
+   "spikes": {
+    "DLMn a, b": 0,
+    "DLMn c-f": 3,
+    "PSI": 0,
+    "STTMm": 0,
+    "TTMn": 0
+   },
+   "bias": {
+    "DLMn a, b": -49.37,
+    "DLMn c-f": -48.54,
+    "PSI": -28.39,
+    "STTMm": -34.43,
+    "TTMn": -37.27
+   }
+  },
+  {
+   "round": 20,
+   "spikes": {
+    "DLMn a, b": 3,
+    "DLMn c-f": 10,
+    "PSI": 0,
+    "STTMm": 0,
+    "TTMn": 0
+   },
+   "bias": {
+    "DLMn a, b": -49.37,
+    "DLMn c-f": -50.54,
+    "PSI": -28.39,
+    "STTMm": -34.43,
+    "TTMn": -37.27
+   }
+  },
+  {
+   "round": 21,
+   "spikes": {
+    "DLMn a, b": 2,
+    "DLMn c-f": 3,
+    "PSI": 0,
+    "STTMm": 0,
+    "TTMn": 0
+   },
+   "bias": {
+    "DLMn a, b": -51.37,
+    "DLMn c-f": -52.54,
+    "PSI": -28.39,
+    "STTMm": -34.43,
+    "TTMn": -37.27
+   }
+  },
+  {
+   "round": 22,
+   "spikes": {
+    "DLMn a, b": 0,
+    "DLMn c-f": 0,
+    "PSI": 0,
+    "STTMm": 0,
+    "TTMn": 0
+   },
+   "bias": {
+    "DLMn a, b": -53.37,
+    "DLMn c-f": -54.54,
+    "PSI": -28.39,
+    "STTMm": -34.43,
+    "TTMn": -37.27
+   }
+  }
+ ],
+ "voltage": {
+  "147865": {
+   "type": "TTMn",
+   "side": "L",
+   "median_mv": -40.06,
+   "threshold_mv": 7.0,
+   "size_mv": 141.17
+  },
+  "144432": {
+   "type": "TTMn",
+   "side": "R",
+   "median_mv": -40.4,
+   "threshold_mv": 7.0,
+   "size_mv": 142.2
+  },
+  "146104": {
+   "type": "PSI",
+   "side": "L",
+   "median_mv": -29.0,
+   "threshold_mv": 7.0,
+   "size_mv": 90.01
+  },
+  "160923": {
+   "type": "PSI",
+   "side": "R",
+   "median_mv": -28.76,
+   "threshold_mv": 7.0,
+   "size_mv": 89.39
+  },
+  "145797": {
+   "type": "DLMn a, b",
+   "side": "L",
+   "median_mv": -51.47,
+   "threshold_mv": 7.0,
+   "size_mv": 146.17
+  },
+  "145817": {
+   "type": "DLMn c-f",
+   "side": "R",
+   "median_mv": -53.47,
+   "threshold_mv": 7.0,
+   "size_mv": 151.17
+  },
+  "146214": {
+   "type": "DLMn c-f",
+   "side": "R",
+   "median_mv": -53.91,
+   "threshold_mv": 7.0,
+   "size_mv": 152.27
+  },
+  "146596": {
+   "type": "DLMn c-f",
+   "side": "R",
+   "median_mv": -53.56,
+   "threshold_mv": 7.0,
+   "size_mv": 151.41
+  },
+  "166189": {
+   "type": "DLMn c-f",
+   "side": "R",
+   "median_mv": -53.24,
+   "threshold_mv": 7.0,
+   "size_mv": 150.61
+  },
+  "144854": {
+   "type": "DLMn c-f",
+   "side": "L",
+   "median_mv": -53.52,
+   "threshold_mv": 7.0,
+   "size_mv": 151.3
+  },
+  "144977": {
+   "type": "DLMn c-f",
+   "side": "L",
+   "median_mv": -53.58,
+   "threshold_mv": 7.0,
+   "size_mv": 151.45
+  },
+  "145286": {
+   "type": "DLMn a, b",
+   "side": "R",
+   "median_mv": -51.79,
+   "threshold_mv": 7.0,
+   "size_mv": 146.97
+  },
+  "145741": {
+   "type": "DLMn c-f",
+   "side": "L",
+   "median_mv": -53.59,
+   "threshold_mv": 7.0,
+   "size_mv": 151.49
+  },
+  "146566": {
+   "type": "DLMn c-f",
+   "side": "L",
+   "median_mv": -53.88,
+   "threshold_mv": 7.0,
+   "size_mv": 152.19
+  }
+ },
+ "depression": {
+  "grid": [
+   {
+    "tau_s": 0.011,
+    "f": 0.0374,
+    "dlmn_following_100hz": 1.0,
+    "ttmn_following_100hz": 1.0
+   },
+   {
+    "tau_s": 0.013,
+    "f": 0.1049,
+    "dlmn_following_100hz": 1.0,
+    "ttmn_following_100hz": 1.0
+   },
+   {
+    "tau_s": 0.016,
+    "f": 0.1696,
+    "dlmn_following_100hz": 1.0,
+    "ttmn_following_100hz": 1.0
+   },
+   {
+    "tau_s": 0.02,
+    "f": 0.2218,
+    "dlmn_following_100hz": 0.871,
+    "ttmn_following_100hz": 1.0
+   },
+   {
+    "tau_s": 0.025,
+    "f": 0.2613,
+    "dlmn_following_100hz": 0.604,
+    "ttmn_following_100hz": 1.0
+   },
+   {
+    "tau_s": 0.032,
+    "f": 0.2941,
+    "dlmn_following_100hz": 0.599,
+    "ttmn_following_100hz": 1.0
+   },
+   {
+    "tau_s": 0.04,
+    "f": 0.3167,
+    "dlmn_following_100hz": 0.589,
+    "ttmn_following_100hz": 1.0
+   }
+  ],
+  "chosen": {
+   "tau_s": 0.02,
+   "f": 0.2218,
+   "dlmn_following_100hz": 0.871,
+   "ttmn_following_100hz": 1.0
+  }
+ },
+ "size_mv": {
+  "147865": 141.17,
+  "144432": 142.2,
+  "146104": 90.01,
+  "160923": 89.39,
+  "145797": 146.17,
+  "145817": 151.17,
+  "146214": 152.27,
+  "146596": 151.41,
+  "166189": 150.61,
+  "144854": 151.3,
+  "144977": 151.45,
+  "145286": 146.97,
+  "145741": 151.49,
+  "146566": 152.19
+ },
+ "seconds": 536,
+ "resets_mv": {
+  "TTMn": -46.27,
+  "STTMm": -43.43,
+  "PSI": -37.39,
+  "DLMn a, b": -62.37,
+  "DLMn c-f": -63.54
+ }
+}
