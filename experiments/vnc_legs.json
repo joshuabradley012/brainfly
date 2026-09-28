@@ -1,0 +1,7890 @@
+{
+ "question": "Exploratory, not pre-registered: the nerve cord's DNg100 rhythm moving NeuroMechFly's front legs. Does the leg step,\nor does it twitch?\n\nRung 5 (rung5_vnc.py) found that driving DNg100 in brainfly's copy of Pugliese et al.'s front-leg network gives\n11.6-13.7 Hz rhythms in the front legs' motor neurons. This feeds those motor neurons into the body. brainfly.legs\nturns each motor neuron's rate into torque on the front-leg joint its motor module moves (a 15 ms low-pass, times one\ngain), with the thorax fixed in the air. Rate model, network and seeds are rung 5's. Each rate-model run is\nsimulated for 2 s, with the drive from 0.02 s. The body is scored from 0.5 s, after the onset transient.\nGain: calibrated once, on the reference replicate (the right DNg100 replicate in the README's rhythm figure,\nassets/rhythm.py). Its active motor neurons move two joints of the left leg, ThC pitch and CTr pitch. The gain is set\nso that, in geometric mean, those two joints swing peak to peak as far as the same joints in the fly step FlyGym\nships (PreprogrammedSteps, one step from NeuroMechFly's recordings of a walking fly: ThC pitch 31.7°, CTr pitch\n57.7°). Every other run uses that gain.\nConditions:\n  reference  the calibration replicate\n  DNg100     the first 4 of rung 5's 32 replicates for each DNg100, with their parameters exactly, driven at 400\n  none       the reference replicate's parameters with no drive\n  rewired    rung 5's first degree-preserving rewiring, its first 4 replicates for each DNg100\n  standing   the reference replicate with the fly on the ground: the front legs' adhesion is off, the others' on\nReported for each run and each front leg: every joint's mean, range and peak-to-peak excursion, plus its rhythm\nscore and frequency (rung 5's: the autocorrelation's best peak, scaled by a sine's; rhythmic above 0.5). The foot\n(the last tarsal segment) relative to the thorax: its fore-aft, lateral and vertical ranges. The loop it draws seen\nfrom the side: the signed area per cycle, over the area of an ellipse with the same ranges. A loop index of +1 is an\nellipse run forward at the top and back at the bottom, as in a step; 0 is a line and -1 the reverse loop. Also the\nphase of each moving joint against ThC pitch, and of each motor module's summed rate against coxa swing. The\nrecorded fly step gets the same numbers, from forward kinematics. The JSON keeps some runs' joint traces (every 2 ms,\nover the figure's window, 1.2-1.5 s).\nRan: the gain came out at 4.3 µN·mm per Hz. Each DNg100 moves the front leg on the other side (the right DNg100 the\nleft leg), and the other front leg moves less than 4°. The driven leg's joints swing at exactly their motor neurons'\nfrequency, 10.9-15.4 Hz, with rhythm scores near 1. That includes the one replicate rung 5 scores unrhythmic (0.43),\nwhere the coxa swings at 15.4 Hz. Only ThC pitch (26-58° peak to peak) and CTr pitch (6-40°) move, because no tibia or\ntarsus motor neuron is active. The left DNg100's replicates move mostly the coxa. The motor neurons' rates have a\nlarge steady part, so the leg is also held 16-76° forward and up to 26° flexed. The torque cap is never reached. The\nleg doesn't step. The promotors (coxa swing) fire within 8-32° of the femur's Tr flexors (femur/tr flex, a stance\nmodule), and both raise the foot. The remotor (coxa stance) leads them by 76-109°, but it only works against the\npromotors on the same joint. So CTr pitch runs 25-40° ahead of ThC pitch, where in the fly's step the two are 135°\napart: the fly extends the femur as the coxa swings forward. The foot runs up and down one path, with loop indices of\nat most 0.11 against the fly step's 0.52. It travels 0.56-1.61 mm up and down but only 0.06-0.61 mm fore and aft; the\nfly's step goes 0.76 and 0.80 mm. Standing, the driven foot is off the ground 98% of the time, bobbing in the air, and\nthe thorax moves 0.04 mm. With no drive no motor neuron fires and the legs stay at rest. Rewired, 100-108 motor\nneurons are active with no rhythm (rung 5's scores 0.04-0.18), and every motor sits at its cap throughout. The legs\nare held at the extremes the cap allows (up to 109° from rest), and some joints flip between them every second or so.\n\n    python experiments/vnc_legs.py            (writes experiments/vnc_legs.json, about 5 min)\n",
+ "constants": {
+  "tau_s": 0.015,
+  "torque_range": 85.6,
+  "window_s": 0.5,
+  "timestep_s": 0.0001
+ },
+ "recorded_step": {
+  "duration_s": 0.135,
+  "freq_hz": 7.41,
+  "swing_fraction": 0.378,
+  "joints": {
+   "ThC yaw": {
+    "min": -10.7,
+    "max": 9.5,
+    "pp": 20.24,
+    "phase_vs_thc_pitch_deg": 116.9
+   },
+   "ThC pitch": {
+    "min": 9.2,
+    "max": 40.9,
+    "pp": 31.69,
+    "phase_vs_thc_pitch_deg": 0.0
+   },
+   "ThC roll": {
+    "min": 37.0,
+    "max": 75.8,
+    "pp": 38.8,
+    "phase_vs_thc_pitch_deg": -19.4
+   },
+   "CTr pitch": {
+    "min": -157.0,
+    "max": -99.4,
+    "pp": 57.69,
+    "phase_vs_thc_pitch_deg": 134.7
+   },
+   "CTr roll": {
+    "min": 33.4,
+    "max": 58.8,
+    "pp": 25.49,
+    "phase_vs_thc_pitch_deg": -53.3
+   },
+   "FTi pitch": {
+    "min": 72.5,
+    "max": 124.1,
+    "pp": 51.65,
+    "phase_vs_thc_pitch_deg": -17.9
+   },
+   "TiTa pitch": {
+    "min": -51.6,
+    "max": -23.6,
+    "pp": 27.99,
+    "phase_vs_thc_pitch_deg": 9.0
+   }
+  },
+  "foot": {
+   "fore_aft_mm": 0.803,
+   "lateral_mm": 0.346,
+   "vertical_mm": 0.757,
+   "loop_index": 0.519
+  },
+  "foot_path": [
+   [
+    0.461,
+    0.607,
+    -1.083
+   ],
+   [
+    0.505,
+    0.608,
+    -1.052
+   ],
+   [
+    0.555,
+    0.608,
+    -1.014
+   ],
+   [
+    0.612,
+    0.606,
+    -0.97
+   ],
+   [
+    0.671,
+    0.602,
+    -0.918
+   ],
+   [
+    0.731,
+    0.596,
+    -0.859
+   ],
+   [
+    0.789,
+    0.588,
+    -0.797
+   ],
+   [
+    0.842,
+    0.579,
+    -0.733
+   ],
+   [
+    0.889,
+    0.572,
+    -0.672
+   ],
+   [
+    0.929,
+    0.569,
+    -0.615
+   ],
+   [
+    0.963,
+    0.573,
+    -0.566
+   ],
+   [
+    0.993,
+    0.583,
+    -0.526
+   ],
+   [
+    1.019,
+    0.6,
+    -0.497
+   ],
+   [
+    1.042,
+    0.623,
+    -0.479
+   ],
+   [
+    1.064,
+    0.651,
+    -0.472
+   ],
+   [
+    1.083,
+    0.682,
+    -0.476
+   ],
+   [
+    1.1,
+    0.714,
+    -0.491
+   ],
+   [
+    1.115,
+    0.746,
+    -0.516
+   ],
+   [
+    1.128,
+    0.775,
+    -0.55
+   ],
+   [
+    1.137,
+    0.802,
+    -0.592
+   ],
+   [
+    1.145,
+    0.824,
+    -0.64
+   ],
+   [
+    1.149,
+    0.842,
+    -0.691
+   ],
+   [
+    1.151,
+    0.855,
+    -0.744
+   ],
+   [
+    1.152,
+    0.862,
+    -0.797
+   ],
+   [
+    1.15,
+    0.866,
+    -0.849
+   ],
+   [
+    1.146,
+    0.865,
+    -0.897
+   ],
+   [
+    1.14,
+    0.86,
+    -0.941
+   ],
+   [
+    1.133,
+    0.854,
+    -0.98
+   ],
+   [
+    1.123,
+    0.847,
+    -1.013
+   ],
+   [
+    1.11,
+    0.84,
+    -1.04
+   ],
+   [
+    1.095,
+    0.834,
+    -1.059
+   ],
+   [
+    1.078,
+    0.829,
+    -1.072
+   ],
+   [
+    1.058,
+    0.825,
+    -1.079
+   ],
+   [
+    1.037,
+    0.823,
+    -1.078
+   ],
+   [
+    1.014,
+    0.819,
+    -1.071
+   ],
+   [
+    0.989,
+    0.819,
+    -1.069
+   ],
+   [
+    0.963,
+    0.824,
+    -1.077
+   ],
+   [
+    0.937,
+    0.831,
+    -1.088
+   ],
+   [
+    0.912,
+    0.837,
+    -1.095
+   ],
+   [
+    0.888,
+    0.844,
+    -1.099
+   ],
+   [
+    0.864,
+    0.853,
+    -1.103
+   ],
+   [
+    0.84,
+    0.863,
+    -1.105
+   ],
+   [
+    0.817,
+    0.874,
+    -1.106
+   ],
+   [
+    0.795,
+    0.884,
+    -1.105
+   ],
+   [
+    0.774,
+    0.894,
+    -1.104
+   ],
+   [
+    0.756,
+    0.903,
+    -1.104
+   ],
+   [
+    0.74,
+    0.909,
+    -1.103
+   ],
+   [
+    0.726,
+    0.914,
+    -1.104
+   ],
+   [
+    0.714,
+    0.916,
+    -1.105
+   ],
+   [
+    0.703,
+    0.915,
+    -1.107
+   ],
+   [
+    0.695,
+    0.913,
+    -1.11
+   ],
+   [
+    0.687,
+    0.909,
+    -1.114
+   ],
+   [
+    0.679,
+    0.905,
+    -1.118
+   ],
+   [
+    0.672,
+    0.9,
+    -1.123
+   ],
+   [
+    0.665,
+    0.895,
+    -1.128
+   ],
+   [
+    0.657,
+    0.889,
+    -1.133
+   ],
+   [
+    0.648,
+    0.883,
+    -1.139
+   ],
+   [
+    0.639,
+    0.877,
+    -1.144
+   ],
+   [
+    0.629,
+    0.868,
+    -1.149
+   ],
+   [
+    0.618,
+    0.857,
+    -1.154
+   ],
+   [
+    0.606,
+    0.844,
+    -1.158
+   ],
+   [
+    0.594,
+    0.828,
+    -1.162
+   ],
+   [
+    0.582,
+    0.81,
+    -1.165
+   ],
+   [
+    0.571,
+    0.791,
+    -1.168
+   ],
+   [
+    0.56,
+    0.77,
+    -1.171
+   ],
+   [
+    0.551,
+    0.749,
+    -1.174
+   ],
+   [
+    0.543,
+    0.729,
+    -1.177
+   ],
+   [
+    0.536,
+    0.711,
+    -1.182
+   ],
+   [
+    0.53,
+    0.696,
+    -1.188
+   ],
+   [
+    0.524,
+    0.683,
+    -1.194
+   ],
+   [
+    0.518,
+    0.675,
+    -1.201
+   ],
+   [
+    0.511,
+    0.669,
+    -1.208
+   ],
+   [
+    0.502,
+    0.665,
+    -1.214
+   ],
+   [
+    0.491,
+    0.664,
+    -1.219
+   ],
+   [
+    0.479,
+    0.664,
+    -1.224
+   ],
+   [
+    0.466,
+    0.664,
+    -1.227
+   ],
+   [
+    0.45,
+    0.665,
+    -1.229
+   ],
+   [
+    0.434,
+    0.664,
+    -1.229
+   ],
+   [
+    0.417,
+    0.663,
+    -1.227
+   ],
+   [
+    0.4,
+    0.661,
+    -1.224
+   ],
+   [
+    0.384,
+    0.658,
+    -1.219
+   ],
+   [
+    0.37,
+    0.652,
+    -1.212
+   ],
+   [
+    0.359,
+    0.646,
+    -1.203
+   ],
+   [
+    0.351,
+    0.638,
+    -1.194
+   ],
+   [
+    0.348,
+    0.63,
+    -1.184
+   ],
+   [
+    0.351,
+    0.622,
+    -1.173
+   ],
+   [
+    0.359,
+    0.615,
+    -1.161
+   ],
+   [
+    0.373,
+    0.611,
+    -1.146
+   ],
+   [
+    0.395,
+    0.608,
+    -1.13
+   ],
+   [
+    0.424,
+    0.607,
+    -1.109
+   ]
+  ]
+ },
+ "calibration": {
+  "joints": [
+   "ThC pitch",
+   "CTr pitch"
+  ],
+  "fly_pp": [
+   31.69,
+   57.69
+  ],
+  "pp_at_gain_1.0": [
+   13.52,
+   7.34
+  ],
+  "gain": 4.3,
+  "pp_at_gain": [
+   58.21,
+   31.62
+  ],
+  "module_gain": 4.3
+ },
+ "runs": {
+  "reference": {
+   "mn_rhythm": {
+    "score": 0.7998432888480519,
+    "active_mn": 10,
+    "freq_hz": 12.048192771084336
+   },
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 5.49,
+     "mean_hz": 2.84,
+     "min_hz": 0.74
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 12.19,
+     "mean_hz": 6.97,
+     "min_hz": 2.11
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "L",
+     "peak_hz": 8.7,
+     "mean_hz": 3.72,
+     "min_hz": 0.72
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "R",
+     "peak_hz": 1.12,
+     "mean_hz": 0.62,
+     "min_hz": 0.14
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 3.23,
+     "mean_hz": 1.2,
+     "min_hz": 0.16
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 1.68,
+     "mean_hz": 0.63,
+     "min_hz": 0.09
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 2.2,
+     "mean_hz": 0.8,
+     "min_hz": 0.1
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 3.91,
+     "mean_hz": 1.53,
+     "min_hz": 0.18
+    }
+   ],
+   "module_phase_deg": {
+    "L": {
+     "coxa swing": -0.0,
+     "coxa stance": 89.5,
+     "femur/tr flex": 14.0
+    }
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.0,
+       "max": 3.1,
+       "pp": 0.11,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -8.1,
+       "min": -33.0,
+       "max": 25.2,
+       "pp": 58.21,
+       "score": 1.0,
+       "freq_hz": 12.0
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -146.0,
+       "min": -162.3,
+       "max": -130.7,
+       "pp": 31.62,
+       "score": 1.0,
+       "freq_hz": 12.0
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.1,
+       "pp": 0.07,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.5,
+       "max": -33.4,
+       "pp": 0.05,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch",
+      "CTr pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 12.0,
+     "foot": {
+      "fore_aft_mm": 0.439,
+      "lateral_mm": 0.266,
+      "vertical_mm": 1.611,
+      "loop_index": 0.105,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": -0.0,
+       "CTr pitch": 40.4
+      }
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 28.1,
+       "min": 26.3,
+       "max": 29.8,
+       "pp": 3.47,
+       "score": 1.0,
+       "freq_hz": 12.0
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 12.0,
+     "foot": {
+      "fore_aft_mm": 0.058,
+      "lateral_mm": 0.003,
+      "vertical_mm": 0.052,
+      "loop_index": -0.0,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": -0.0
+      }
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "traces": {
+    "t_ms": [
+     1200.0,
+     1202.0,
+     1204.0,
+     1206.0,
+     1208.0,
+     1210.0,
+     1212.0,
+     1214.0,
+     1216.0,
+     1218.0,
+     1220.0,
+     1222.0,
+     1224.0,
+     1226.0,
+     1228.0,
+     1230.0,
+     1232.0,
+     1234.0,
+     1236.0,
+     1238.0,
+     1240.0,
+     1242.0,
+     1244.0,
+     1246.0,
+     1248.0,
+     1250.0,
+     1252.0,
+     1254.0,
+     1256.0,
+     1258.0,
+     1260.0,
+     1262.0,
+     1264.0,
+     1266.0,
+     1268.0,
+     1270.0,
+     1272.0,
+     1274.0,
+     1276.0,
+     1278.0,
+     1280.0,
+     1282.0,
+     1284.0,
+     1286.0,
+     1288.0,
+     1290.0,
+     1292.0,
+     1294.0,
+     1296.0,
+     1298.0,
+     1300.0,
+     1302.0,
+     1304.0,
+     1306.0,
+     1308.0,
+     1310.0,
+     1312.0,
+     1314.0,
+     1316.0,
+     1318.0,
+     1320.0,
+     1322.0,
+     1324.0,
+     1326.0,
+     1328.0,
+     1330.0,
+     1332.0,
+     1334.0,
+     1336.0,
+     1338.0,
+     1340.0,
+     1342.0,
+     1344.0,
+     1346.0,
+     1348.0,
+     1350.0,
+     1352.0,
+     1354.0,
+     1356.0,
+     1358.0,
+     1360.0,
+     1362.0,
+     1364.0,
+     1366.0,
+     1368.0,
+     1370.0,
+     1372.0,
+     1374.0,
+     1376.0,
+     1378.0,
+     1380.0,
+     1382.0,
+     1384.0,
+     1386.0,
+     1388.0,
+     1390.0,
+     1392.0,
+     1394.0,
+     1396.0,
+     1398.0,
+     1400.0,
+     1402.0,
+     1404.0,
+     1406.0,
+     1408.0,
+     1410.0,
+     1412.0,
+     1414.0,
+     1416.0,
+     1418.0,
+     1420.0,
+     1422.0,
+     1424.0,
+     1426.0,
+     1428.0,
+     1430.0,
+     1432.0,
+     1434.0,
+     1436.0,
+     1438.0,
+     1440.0,
+     1442.0,
+     1444.0,
+     1446.0,
+     1448.0,
+     1450.0,
+     1452.0,
+     1454.0,
+     1456.0,
+     1458.0,
+     1460.0,
+     1462.0,
+     1464.0,
+     1466.0,
+     1468.0,
+     1470.0,
+     1472.0,
+     1474.0,
+     1476.0,
+     1478.0,
+     1480.0,
+     1482.0,
+     1484.0,
+     1486.0,
+     1488.0,
+     1490.0,
+     1492.0,
+     1494.0,
+     1496.0,
+     1498.0,
+     1500.0
+    ],
+    "L": {
+     "ThC pitch": [
+      -9.84,
+      -6.67,
+      -3.33,
+      0.17,
+      3.83,
+      7.64,
+      11.52,
+      15.31,
+      18.81,
+      21.78,
+      23.96,
+      25.09,
+      24.97,
+      23.48,
+      20.58,
+      16.46,
+      11.43,
+      5.83,
+      0.03,
+      -5.7,
+      -11.1,
+      -16.03,
+      -20.38,
+      -24.09,
+      -27.14,
+      -29.52,
+      -31.24,
+      -32.36,
+      -32.92,
+      -32.98,
+      -32.59,
+      -31.82,
+      -30.7,
+      -29.3,
+      -27.65,
+      -25.83,
+      -23.85,
+      -21.71,
+      -19.4,
+      -16.9,
+      -14.19,
+      -11.3,
+      -8.21,
+      -4.95,
+      -1.53,
+      2.05,
+      5.79,
+      9.65,
+      13.51,
+      17.18,
+      20.44,
+      23.03,
+      24.69,
+      25.2,
+      24.37,
+      22.14,
+      18.57,
+      13.94,
+      8.57,
+      2.82,
+      -2.97,
+      -8.55,
+      -13.73,
+      -18.37,
+      -22.39,
+      -25.76,
+      -28.46,
+      -30.49,
+      -31.9,
+      -32.71,
+      -33.01,
+      -32.83,
+      -32.23,
+      -31.28,
+      -30.01,
+      -28.47,
+      -26.72,
+      -24.82,
+      -22.76,
+      -20.54,
+      -18.12,
+      -15.52,
+      -12.71,
+      -9.72,
+      -6.54,
+      -3.2,
+      0.31,
+      3.98,
+      7.79,
+      11.67,
+      15.46,
+      18.94,
+      21.88,
+      24.02,
+      25.11,
+      24.94,
+      23.39,
+      20.44,
+      16.28,
+      11.22,
+      5.61,
+      -0.2,
+      -5.92,
+      -11.3,
+      -16.21,
+      -20.54,
+      -24.23,
+      -27.25,
+      -29.6,
+      -31.3,
+      -32.39,
+      -32.93,
+      -32.97,
+      -32.57,
+      -31.78,
+      -30.65,
+      -29.24,
+      -27.59,
+      -25.75,
+      -23.77,
+      -21.63,
+      -19.31,
+      -16.79,
+      -14.08,
+      -11.18,
+      -8.09,
+      -4.82,
+      -1.39,
+      2.2,
+      5.94,
+      9.81,
+      13.66,
+      17.32,
+      20.55,
+      23.11,
+      24.73,
+      25.19,
+      24.31,
+      22.02,
+      18.41,
+      13.74,
+      8.35,
+      2.59,
+      -3.2,
+      -8.77,
+      -13.92,
+      -18.54,
+      -22.54,
+      -25.88,
+      -28.55,
+      -30.56
+     ],
+     "CTr pitch": [
+      -138.67,
+      -137.59,
+      -136.57,
+      -135.61,
+      -134.71,
+      -133.87,
+      -133.09,
+      -132.35,
+      -131.66,
+      -131.05,
+      -130.68,
+      -130.94,
+      -132.16,
+      -134.46,
+      -137.79,
+      -141.88,
+      -146.36,
+      -150.76,
+      -154.61,
+      -157.65,
+      -159.88,
+      -161.34,
+      -162.1,
+      -162.28,
+      -161.99,
+      -161.34,
+      -160.39,
+      -159.23,
+      -157.9,
+      -156.46,
+      -154.95,
+      -153.39,
+      -151.81,
+      -150.24,
+      -148.69,
+      -147.18,
+      -145.71,
+      -144.29,
+      -142.93,
+      -141.62,
+      -140.38,
+      -139.21,
+      -138.1,
+      -137.05,
+      -136.06,
+      -135.14,
+      -134.27,
+      -133.46,
+      -132.7,
+      -131.99,
+      -131.33,
+      -130.8,
+      -130.71,
+      -131.44,
+      -133.22,
+      -136.08,
+      -139.84,
+      -144.19,
+      -148.69,
+      -152.85,
+      -156.29,
+      -158.91,
+      -160.73,
+      -161.81,
+      -162.26,
+      -162.18,
+      -161.69,
+      -160.88,
+      -159.81,
+      -158.55,
+      -157.16,
+      -155.68,
+      -154.14,
+      -152.57,
+      -150.99,
+      -149.43,
+      -147.9,
+      -146.41,
+      -144.96,
+      -143.57,
+      -142.24,
+      -140.97,
+      -139.77,
+      -138.62,
+      -137.54,
+      -136.53,
+      -135.57,
+      -134.68,
+      -133.84,
+      -133.06,
+      -132.32,
+      -131.64,
+      -131.02,
+      -130.67,
+      -130.97,
+      -132.23,
+      -134.58,
+      -137.94,
+      -142.05,
+      -146.54,
+      -150.93,
+      -154.74,
+      -157.76,
+      -159.96,
+      -161.38,
+      -162.12,
+      -162.28,
+      -161.98,
+      -161.3,
+      -160.35,
+      -159.18,
+      -157.85,
+      -156.4,
+      -154.88,
+      -153.32,
+      -151.75,
+      -150.18,
+      -148.63,
+      -147.12,
+      -145.65,
+      -144.23,
+      -142.87,
+      -141.57,
+      -140.34,
+      -139.16,
+      -138.05,
+      -137.01,
+      -136.02,
+      -135.1,
+      -134.24,
+      -133.43,
+      -132.67,
+      -131.96,
+      -131.3,
+      -130.79,
+      -130.72,
+      -131.49,
+      -133.31,
+      -136.21,
+      -140.0,
+      -144.37,
+      -148.86,
+      -153.0,
+      -156.41,
+      -159.0,
+      -160.79,
+      -161.84,
+      -162.27,
+      -162.17,
+      -161.67,
+      -160.84
+     ]
+    },
+    "R": {
+     "ThC pitch": [
+      27.3,
+      27.12,
+      26.96,
+      26.8,
+      26.65,
+      26.51,
+      26.4,
+      26.33,
+      26.31,
+      26.36,
+      26.48,
+      26.66,
+      26.9,
+      27.19,
+      27.5,
+      27.82,
+      28.15,
+      28.47,
+      28.76,
+      29.03,
+      29.25,
+      29.44,
+      29.59,
+      29.69,
+      29.76,
+      29.78,
+      29.77,
+      29.72,
+      29.65,
+      29.55,
+      29.42,
+      29.28,
+      29.12,
+      28.95,
+      28.76,
+      28.56,
+      28.36,
+      28.16,
+      27.96,
+      27.76,
+      27.57,
+      27.38,
+      27.21,
+      27.03,
+      26.87,
+      26.72,
+      26.58,
+      26.45,
+      26.36,
+      26.31,
+      26.33,
+      26.42,
+      26.57,
+      26.78,
+      27.05,
+      27.35,
+      27.67,
+      27.99,
+      28.32,
+      28.62,
+      28.9,
+      29.15,
+      29.36,
+      29.53,
+      29.65,
+      29.73,
+      29.77,
+      29.78,
+      29.75,
+      29.69,
+      29.6,
+      29.48,
+      29.35,
+      29.2,
+      29.03,
+      28.85,
+      28.66,
+      28.46,
+      28.26,
+      28.05,
+      27.86,
+      27.66,
+      27.47,
+      27.29,
+      27.12,
+      26.95,
+      26.79,
+      26.64,
+      26.51,
+      26.4,
+      26.33,
+      26.32,
+      26.37,
+      26.49,
+      26.67,
+      26.91,
+      27.2,
+      27.51,
+      27.84,
+      28.16,
+      28.48,
+      28.77,
+      29.04,
+      29.26,
+      29.45,
+      29.6,
+      29.7,
+      29.76,
+      29.78,
+      29.76,
+      29.72,
+      29.64,
+      29.54,
+      29.42,
+      29.27,
+      29.11,
+      28.94,
+      28.75,
+      28.55,
+      28.35,
+      28.15,
+      27.95,
+      27.75,
+      27.56,
+      27.38,
+      27.2,
+      27.03,
+      26.87,
+      26.71,
+      26.57,
+      26.45,
+      26.36,
+      26.31,
+      26.33,
+      26.42,
+      26.58,
+      26.79,
+      27.06,
+      27.36,
+      27.68,
+      28.01,
+      28.33,
+      28.63,
+      28.91,
+      29.16,
+      29.37,
+      29.53,
+      29.65,
+      29.73,
+      29.77,
+      29.78
+     ]
+    }
+   }
+  },
+  "none": {
+   "mn_rhythm": {
+    "score": 0.0,
+    "active_mn": 0,
+    "freq_hz": null
+   },
+   "motor_neurons": [],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 24.8,
+       "min": 24.8,
+       "max": 24.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 24.8,
+       "min": 24.8,
+       "max": 24.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "largest_pp_deg": 0.0,
+   "largest_offset_from_rest_deg": 0.1
+  },
+  "DNg100 DNg100_L 0": {
+   "mn_rhythm": {
+    "score": 0.9168025500007189,
+    "active_mn": 4,
+    "freq_hz": 13.888888888888888
+   },
+   "rung5_score": 0.917,
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "R",
+     "peak_hz": 4.42,
+     "mean_hz": 2.35,
+     "min_hz": 0.61
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "R",
+     "peak_hz": 8.84,
+     "mean_hz": 6.8,
+     "min_hz": 4.79
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "R",
+     "peak_hz": 0.34,
+     "mean_hz": 0.12,
+     "min_hz": 0.02
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "R",
+     "peak_hz": 0.03,
+     "mean_hz": 0.01,
+     "min_hz": 0.0
+    }
+   ],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 24.8,
+       "min": 24.8,
+       "max": 24.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -24.4,
+       "min": -37.0,
+       "max": -11.3,
+       "pp": 25.64,
+       "score": 1.0,
+       "freq_hz": 13.9
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.8,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.6,
+       "min": -123.6,
+       "max": -123.5,
+       "pp": 0.11,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.5,
+       "max": -33.4,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 13.9,
+     "foot": {
+      "fore_aft_mm": 0.056,
+      "lateral_mm": 0.03,
+      "vertical_mm": 0.575,
+      "loop_index": -0.001,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": -0.0
+      }
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "module_phase_deg": {
+    "R": {
+     "coxa swing": -0.0,
+     "coxa stance": 108.9,
+     "femur/tr flex": 24.4
+    }
+   },
+   "traces": {
+    "t_ms": [
+     1200.0,
+     1202.0,
+     1204.0,
+     1206.0,
+     1208.0,
+     1210.0,
+     1212.0,
+     1214.0,
+     1216.0,
+     1218.0,
+     1220.0,
+     1222.0,
+     1224.0,
+     1226.0,
+     1228.0,
+     1230.0,
+     1232.0,
+     1234.0,
+     1236.0,
+     1238.0,
+     1240.0,
+     1242.0,
+     1244.0,
+     1246.0,
+     1248.0,
+     1250.0,
+     1252.0,
+     1254.0,
+     1256.0,
+     1258.0,
+     1260.0,
+     1262.0,
+     1264.0,
+     1266.0,
+     1268.0,
+     1270.0,
+     1272.0,
+     1274.0,
+     1276.0,
+     1278.0,
+     1280.0,
+     1282.0,
+     1284.0,
+     1286.0,
+     1288.0,
+     1290.0,
+     1292.0,
+     1294.0,
+     1296.0,
+     1298.0,
+     1300.0,
+     1302.0,
+     1304.0,
+     1306.0,
+     1308.0,
+     1310.0,
+     1312.0,
+     1314.0,
+     1316.0,
+     1318.0,
+     1320.0,
+     1322.0,
+     1324.0,
+     1326.0,
+     1328.0,
+     1330.0,
+     1332.0,
+     1334.0,
+     1336.0,
+     1338.0,
+     1340.0,
+     1342.0,
+     1344.0,
+     1346.0,
+     1348.0,
+     1350.0,
+     1352.0,
+     1354.0,
+     1356.0,
+     1358.0,
+     1360.0,
+     1362.0,
+     1364.0,
+     1366.0,
+     1368.0,
+     1370.0,
+     1372.0,
+     1374.0,
+     1376.0,
+     1378.0,
+     1380.0,
+     1382.0,
+     1384.0,
+     1386.0,
+     1388.0,
+     1390.0,
+     1392.0,
+     1394.0,
+     1396.0,
+     1398.0,
+     1400.0,
+     1402.0,
+     1404.0,
+     1406.0,
+     1408.0,
+     1410.0,
+     1412.0,
+     1414.0,
+     1416.0,
+     1418.0,
+     1420.0,
+     1422.0,
+     1424.0,
+     1426.0,
+     1428.0,
+     1430.0,
+     1432.0,
+     1434.0,
+     1436.0,
+     1438.0,
+     1440.0,
+     1442.0,
+     1444.0,
+     1446.0,
+     1448.0,
+     1450.0,
+     1452.0,
+     1454.0,
+     1456.0,
+     1458.0,
+     1460.0,
+     1462.0,
+     1464.0,
+     1466.0,
+     1468.0,
+     1470.0,
+     1472.0,
+     1474.0,
+     1476.0,
+     1478.0,
+     1480.0,
+     1482.0,
+     1484.0,
+     1486.0,
+     1488.0,
+     1490.0,
+     1492.0,
+     1494.0,
+     1496.0,
+     1498.0,
+     1500.0
+    ],
+    "L": {},
+    "R": {
+     "ThC pitch": [
+      -30.21,
+      -32.28,
+      -34.0,
+      -35.35,
+      -36.29,
+      -36.82,
+      -36.95,
+      -36.7,
+      -36.1,
+      -35.2,
+      -34.06,
+      -32.72,
+      -31.22,
+      -29.6,
+      -27.91,
+      -26.16,
+      -24.39,
+      -22.63,
+      -20.88,
+      -19.17,
+      -17.49,
+      -15.87,
+      -14.37,
+      -13.06,
+      -12.07,
+      -11.47,
+      -11.32,
+      -11.66,
+      -12.5,
+      -13.81,
+      -15.57,
+      -17.68,
+      -20.07,
+      -22.63,
+      -25.24,
+      -27.78,
+      -30.13,
+      -32.21,
+      -33.95,
+      -35.31,
+      -36.26,
+      -36.81,
+      -36.95,
+      -36.71,
+      -36.12,
+      -35.24,
+      -34.11,
+      -32.77,
+      -31.27,
+      -29.66,
+      -27.97,
+      -26.22,
+      -24.45,
+      -22.69,
+      -20.95,
+      -19.23,
+      -17.55,
+      -15.93,
+      -14.42,
+      -13.1,
+      -12.09,
+      -11.48,
+      -11.32,
+      -11.64,
+      -12.46,
+      -13.76,
+      -15.5,
+      -17.6,
+      -19.99,
+      -22.54,
+      -25.15,
+      -27.69,
+      -30.05,
+      -32.14,
+      -33.89,
+      -35.26,
+      -36.23,
+      -36.79,
+      -36.95,
+      -36.73,
+      -36.15,
+      -35.27,
+      -34.15,
+      -32.82,
+      -31.33,
+      -29.72,
+      -28.03,
+      -26.28,
+      -24.52,
+      -22.75,
+      -21.01,
+      -19.29,
+      -17.61,
+      -15.99,
+      -14.47,
+      -13.14,
+      -12.12,
+      -11.49,
+      -11.31,
+      -11.62,
+      -12.42,
+      -13.71,
+      -15.43,
+      -17.52,
+      -19.9,
+      -22.45,
+      -25.06,
+      -27.6,
+      -29.97,
+      -32.07,
+      -33.84,
+      -35.22,
+      -36.21,
+      -36.78,
+      -36.95,
+      -36.74,
+      -36.18,
+      -35.31,
+      -34.19,
+      -32.87,
+      -31.38,
+      -29.78,
+      -28.09,
+      -26.35,
+      -24.58,
+      -22.81,
+      -21.07,
+      -19.35,
+      -17.67,
+      -16.04,
+      -14.52,
+      -13.19,
+      -12.15,
+      -11.51,
+      -11.31,
+      -11.6,
+      -12.39,
+      -13.65,
+      -15.36,
+      -17.45,
+      -19.81,
+      -22.36,
+      -24.97,
+      -27.52,
+      -29.89,
+      -32.01,
+      -33.78,
+      -35.18,
+      -36.18,
+      -36.77,
+      -36.95
+     ]
+    }
+   }
+  },
+  "DNg100 DNg100_L 1": {
+   "mn_rhythm": {
+    "score": 0.42838545195211836,
+    "active_mn": 7,
+    "freq_hz": 15.384615384615383
+   },
+   "rung5_score": 0.428,
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "R",
+     "peak_hz": 7.97,
+     "mean_hz": 5.4,
+     "min_hz": 2.79
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "R",
+     "peak_hz": 10.78,
+     "mean_hz": 8.53,
+     "min_hz": 6.28
+    },
+    {
+     "module": "femur/tr extend",
+     "type": "Tergotr. MN",
+     "side": "L",
+     "peak_hz": 0.01,
+     "mean_hz": 0.0,
+     "min_hz": 0.0
+    },
+    {
+     "module": "femur/tr extend",
+     "type": "Tergotr. MN",
+     "side": "L",
+     "peak_hz": 0.03,
+     "mean_hz": 0.0,
+     "min_hz": 0.0
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "R",
+     "peak_hz": 0.12,
+     "mean_hz": 0.05,
+     "min_hz": 0.01
+    }
+   ],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 24.8,
+       "min": 24.8,
+       "max": 24.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -51.3,
+       "min": -65.4,
+       "max": -36.3,
+       "pp": 29.04,
+       "score": 0.999,
+       "freq_hz": 15.4
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.8,
+       "min": 55.8,
+       "max": 55.8,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.8,
+       "min": -124.0,
+       "max": -123.6,
+       "pp": 0.32,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.5,
+       "min": -33.5,
+       "max": -33.4,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 15.4,
+     "foot": {
+      "fore_aft_mm": 0.337,
+      "lateral_mm": 0.029,
+      "vertical_mm": 0.561,
+      "loop_index": 0.002,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": -0.0
+      }
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "module_phase_deg": {
+    "R": {
+     "coxa swing": 0.0,
+     "femur/tr flex": 25.2
+    }
+   }
+  },
+  "DNg100 DNg100_L 2": {
+   "mn_rhythm": {
+    "score": 0.5994744876961872,
+    "active_mn": 5,
+    "freq_hz": 13.333333333333334
+   },
+   "rung5_score": 0.599,
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "R",
+     "peak_hz": 7.27,
+     "mean_hz": 4.29,
+     "min_hz": 1.53
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "R",
+     "peak_hz": 9.23,
+     "mean_hz": 6.56,
+     "min_hz": 4.04
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "R",
+     "peak_hz": 2.07,
+     "mean_hz": 0.8,
+     "min_hz": 0.11
+    }
+   ],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 24.8,
+       "min": 24.8,
+       "max": 24.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.0,
+       "max": 3.1,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -34.6,
+       "min": -52.4,
+       "max": -16.0,
+       "pp": 36.42,
+       "score": 0.999,
+       "freq_hz": 13.3
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.8,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -127.9,
+       "min": -130.9,
+       "max": -125.1,
+       "pp": 5.78,
+       "score": 0.999,
+       "freq_hz": 13.3
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.5,
+       "max": -33.4,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch",
+      "CTr pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 13.3,
+     "foot": {
+      "fore_aft_mm": 0.299,
+      "lateral_mm": 0.045,
+      "vertical_mm": 0.839,
+      "loop_index": 0.058,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": -0.0,
+       "CTr pitch": 30.8
+      }
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "module_phase_deg": {
+    "R": {
+     "coxa swing": 0.0,
+     "femur/tr flex": 31.5
+    }
+   }
+  },
+  "DNg100 DNg100_L 3": {
+   "mn_rhythm": {
+    "score": 0.5999359292105657,
+    "active_mn": 5,
+    "freq_hz": 14.705882352941176
+   },
+   "rung5_score": 0.6,
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "R",
+     "peak_hz": 6.01,
+     "mean_hz": 3.69,
+     "min_hz": 1.49
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "R",
+     "peak_hz": 6.31,
+     "mean_hz": 4.21,
+     "min_hz": 2.31
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "R",
+     "peak_hz": 1.42,
+     "mean_hz": 0.61,
+     "min_hz": 0.12
+    }
+   ],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 24.8,
+       "min": 24.8,
+       "max": 24.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.0,
+       "max": 3.1,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -15.0,
+       "min": -28.2,
+       "max": -0.6,
+       "pp": 27.58,
+       "score": 1.0,
+       "freq_hz": 14.7
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.6,
+       "max": -123.5,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 14.7,
+     "foot": {
+      "fore_aft_mm": 0.075,
+      "lateral_mm": 0.032,
+      "vertical_mm": 0.615,
+      "loop_index": -0.001,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": -0.0
+      }
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "module_phase_deg": {
+    "R": {
+     "coxa swing": -0.0,
+     "coxa stance": 94.8
+    }
+   }
+  },
+  "DNg100 DNg100_R 0": {
+   "mn_rhythm": {
+    "score": 0.8693811105111795,
+    "active_mn": 8,
+    "freq_hz": 11.76470588235294
+   },
+   "rung5_score": 0.869,
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 2.48,
+     "mean_hz": 1.04,
+     "min_hz": 0.17
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 8.73,
+     "mean_hz": 4.26,
+     "min_hz": 0.71
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "L",
+     "peak_hz": 5.47,
+     "mean_hz": 2.29,
+     "min_hz": 0.43
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 3.38,
+     "mean_hz": 1.18,
+     "min_hz": 0.14
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 0.45,
+     "mean_hz": 0.14,
+     "min_hz": 0.01
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 0.76,
+     "mean_hz": 0.23,
+     "min_hz": 0.02
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 1.01,
+     "mean_hz": 0.36,
+     "min_hz": 0.05
+    }
+   ],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.0,
+       "max": 3.1,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 8.2,
+       "min": -8.7,
+       "max": 30.0,
+       "pp": 38.65,
+       "score": 0.999,
+       "freq_hz": 11.8
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -134.0,
+       "min": -142.1,
+       "max": -126.5,
+       "pp": 15.59,
+       "score": 0.999,
+       "freq_hz": 11.8
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch",
+      "CTr pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 11.8,
+     "foot": {
+      "fore_aft_mm": 0.357,
+      "lateral_mm": 0.086,
+      "vertical_mm": 1.039,
+      "loop_index": 0.088,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": -0.0,
+       "CTr pitch": 34.6
+      }
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 24.8,
+       "min": 24.8,
+       "max": 24.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "module_phase_deg": {
+    "L": {
+     "coxa swing": -0.0,
+     "coxa stance": 82.2,
+     "femur/tr flex": 8.8
+    }
+   },
+   "traces": {
+    "t_ms": [
+     1200.0,
+     1202.0,
+     1204.0,
+     1206.0,
+     1208.0,
+     1210.0,
+     1212.0,
+     1214.0,
+     1216.0,
+     1218.0,
+     1220.0,
+     1222.0,
+     1224.0,
+     1226.0,
+     1228.0,
+     1230.0,
+     1232.0,
+     1234.0,
+     1236.0,
+     1238.0,
+     1240.0,
+     1242.0,
+     1244.0,
+     1246.0,
+     1248.0,
+     1250.0,
+     1252.0,
+     1254.0,
+     1256.0,
+     1258.0,
+     1260.0,
+     1262.0,
+     1264.0,
+     1266.0,
+     1268.0,
+     1270.0,
+     1272.0,
+     1274.0,
+     1276.0,
+     1278.0,
+     1280.0,
+     1282.0,
+     1284.0,
+     1286.0,
+     1288.0,
+     1290.0,
+     1292.0,
+     1294.0,
+     1296.0,
+     1298.0,
+     1300.0,
+     1302.0,
+     1304.0,
+     1306.0,
+     1308.0,
+     1310.0,
+     1312.0,
+     1314.0,
+     1316.0,
+     1318.0,
+     1320.0,
+     1322.0,
+     1324.0,
+     1326.0,
+     1328.0,
+     1330.0,
+     1332.0,
+     1334.0,
+     1336.0,
+     1338.0,
+     1340.0,
+     1342.0,
+     1344.0,
+     1346.0,
+     1348.0,
+     1350.0,
+     1352.0,
+     1354.0,
+     1356.0,
+     1358.0,
+     1360.0,
+     1362.0,
+     1364.0,
+     1366.0,
+     1368.0,
+     1370.0,
+     1372.0,
+     1374.0,
+     1376.0,
+     1378.0,
+     1380.0,
+     1382.0,
+     1384.0,
+     1386.0,
+     1388.0,
+     1390.0,
+     1392.0,
+     1394.0,
+     1396.0,
+     1398.0,
+     1400.0,
+     1402.0,
+     1404.0,
+     1406.0,
+     1408.0,
+     1410.0,
+     1412.0,
+     1414.0,
+     1416.0,
+     1418.0,
+     1420.0,
+     1422.0,
+     1424.0,
+     1426.0,
+     1428.0,
+     1430.0,
+     1432.0,
+     1434.0,
+     1436.0,
+     1438.0,
+     1440.0,
+     1442.0,
+     1444.0,
+     1446.0,
+     1448.0,
+     1450.0,
+     1452.0,
+     1454.0,
+     1456.0,
+     1458.0,
+     1460.0,
+     1462.0,
+     1464.0,
+     1466.0,
+     1468.0,
+     1470.0,
+     1472.0,
+     1474.0,
+     1476.0,
+     1478.0,
+     1480.0,
+     1482.0,
+     1484.0,
+     1486.0,
+     1488.0,
+     1490.0,
+     1492.0,
+     1494.0,
+     1496.0,
+     1498.0,
+     1500.0
+    ],
+    "L": {
+     "ThC pitch": [
+      -5.17,
+      -6.69,
+      -7.76,
+      -8.4,
+      -8.66,
+      -8.58,
+      -8.19,
+      -7.54,
+      -6.65,
+      -5.57,
+      -4.34,
+      -3.01,
+      -1.6,
+      -0.11,
+      1.46,
+      3.11,
+      4.84,
+      6.64,
+      8.5,
+      10.41,
+      12.37,
+      14.37,
+      16.41,
+      18.49,
+      20.62,
+      22.78,
+      24.88,
+      26.82,
+      28.44,
+      29.55,
+      29.98,
+      29.57,
+      28.23,
+      25.95,
+      22.82,
+      19.09,
+      15.03,
+      10.92,
+      6.99,
+      3.39,
+      0.24,
+      -2.42,
+      -4.57,
+      -6.25,
+      -7.46,
+      -8.24,
+      -8.62,
+      -8.64,
+      -8.35,
+      -7.78,
+      -6.96,
+      -5.94,
+      -4.76,
+      -3.45,
+      -2.07,
+      -0.6,
+      0.94,
+      2.57,
+      4.27,
+      6.04,
+      7.88,
+      9.78,
+      11.73,
+      13.71,
+      15.74,
+      17.81,
+      19.92,
+      22.08,
+      24.21,
+      26.22,
+      27.96,
+      29.25,
+      29.92,
+      29.81,
+      28.78,
+      26.79,
+      23.92,
+      20.36,
+      16.38,
+      12.26,
+      8.24,
+      4.52,
+      1.22,
+      -1.6,
+      -3.92,
+      -5.75,
+      -7.11,
+      -8.03,
+      -8.53,
+      -8.67,
+      -8.48,
+      -7.99,
+      -7.25,
+      -6.3,
+      -5.16,
+      -3.89,
+      -2.53,
+      -1.09,
+      0.43,
+      2.03,
+      3.71,
+      5.46,
+      7.28,
+      9.16,
+      11.09,
+      13.06,
+      15.07,
+      17.13,
+      19.23,
+      21.37,
+      23.52,
+      25.58,
+      27.43,
+      28.89,
+      29.78,
+      29.94,
+      29.22,
+      27.54,
+      24.94,
+      21.58,
+      17.7,
+      13.6,
+      9.53,
+      5.69,
+      2.24,
+      -0.74,
+      -3.22,
+      -5.21,
+      -6.72,
+      -7.78,
+      -8.41,
+      -8.67,
+      -8.58,
+      -8.18,
+      -7.52,
+      -6.63,
+      -5.55,
+      -4.32,
+      -2.98,
+      -1.57,
+      -0.07,
+      1.5,
+      3.15,
+      4.88,
+      6.67,
+      8.54,
+      10.45,
+      12.41,
+      14.41,
+      16.45,
+      18.54
+     ],
+     "CTr pitch": [
+      -141.99,
+      -141.73,
+      -141.31,
+      -140.78,
+      -140.17,
+      -139.49,
+      -138.78,
+      -138.03,
+      -137.28,
+      -136.52,
+      -135.77,
+      -135.04,
+      -134.33,
+      -133.64,
+      -132.98,
+      -132.35,
+      -131.74,
+      -131.17,
+      -130.63,
+      -130.12,
+      -129.64,
+      -129.19,
+      -128.77,
+      -128.37,
+      -128.0,
+      -127.66,
+      -127.33,
+      -127.03,
+      -126.75,
+      -126.52,
+      -126.53,
+      -127.02,
+      -128.16,
+      -129.92,
+      -132.13,
+      -134.52,
+      -136.81,
+      -138.75,
+      -140.2,
+      -141.18,
+      -141.77,
+      -142.03,
+      -142.04,
+      -141.83,
+      -141.46,
+      -140.97,
+      -140.38,
+      -139.72,
+      -139.01,
+      -138.28,
+      -137.52,
+      -136.77,
+      -136.02,
+      -135.28,
+      -134.56,
+      -133.86,
+      -133.19,
+      -132.55,
+      -131.94,
+      -131.36,
+      -130.8,
+      -130.28,
+      -129.79,
+      -129.33,
+      -128.9,
+      -128.5,
+      -128.12,
+      -127.77,
+      -127.44,
+      -127.13,
+      -126.84,
+      -126.58,
+      -126.48,
+      -126.8,
+      -127.72,
+      -129.28,
+      -131.37,
+      -133.74,
+      -136.09,
+      -138.16,
+      -139.78,
+      -140.91,
+      -141.62,
+      -141.98,
+      -142.06,
+      -141.92,
+      -141.6,
+      -141.14,
+      -140.58,
+      -139.94,
+      -139.25,
+      -138.52,
+      -137.77,
+      -137.01,
+      -136.26,
+      -135.52,
+      -134.79,
+      -134.09,
+      -133.41,
+      -132.76,
+      -132.13,
+      -131.54,
+      -130.98,
+      -130.45,
+      -129.95,
+      -129.48,
+      -129.04,
+      -128.62,
+      -128.24,
+      -127.88,
+      -127.54,
+      -127.23,
+      -126.93,
+      -126.66,
+      -126.48,
+      -126.63,
+      -127.34,
+      -128.71,
+      -130.65,
+      -132.96,
+      -135.34,
+      -137.53,
+      -139.31,
+      -140.59,
+      -141.43,
+      -141.9,
+      -142.06,
+      -141.99,
+      -141.72,
+      -141.3,
+      -140.77,
+      -140.16,
+      -139.48,
+      -138.76,
+      -138.02,
+      -137.26,
+      -136.51,
+      -135.76,
+      -135.03,
+      -134.31,
+      -133.63,
+      -132.97,
+      -132.33,
+      -131.73,
+      -131.16,
+      -130.62,
+      -130.11,
+      -129.63,
+      -129.18,
+      -128.76,
+      -128.36
+     ]
+    },
+    "R": {}
+   }
+  },
+  "DNg100 DNg100_R 1": {
+   "mn_rhythm": {
+    "score": 0.9995095546916507,
+    "active_mn": 8,
+    "freq_hz": 11.363636363636365
+   },
+   "rung5_score": 1.0,
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 4.47,
+     "mean_hz": 1.78,
+     "min_hz": 0.21
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 11.64,
+     "mean_hz": 5.95,
+     "min_hz": 1.23
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "L",
+     "peak_hz": 4.08,
+     "mean_hz": 1.3,
+     "min_hz": 0.1
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "R",
+     "peak_hz": 0.4,
+     "mean_hz": 0.16,
+     "min_hz": 0.02
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 4.48,
+     "mean_hz": 1.42,
+     "min_hz": 0.11
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 2.07,
+     "mean_hz": 0.71,
+     "min_hz": 0.08
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 3.72,
+     "mean_hz": 1.34,
+     "min_hz": 0.18
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 3.31,
+     "mean_hz": 1.23,
+     "min_hz": 0.13
+    }
+   ],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.0,
+       "max": 3.1,
+       "pp": 0.13,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -10.5,
+       "min": -34.6,
+       "max": 17.8,
+       "pp": 52.34,
+       "score": 1.0,
+       "freq_hz": 11.4
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.05,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -149.3,
+       "min": -170.6,
+       "max": -130.5,
+       "pp": 40.17,
+       "score": 1.0,
+       "freq_hz": 11.4
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 39.0,
+       "pp": 0.07,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.1,
+       "pp": 0.09,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.5,
+       "max": -33.4,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch",
+      "CTr pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 11.4,
+     "foot": {
+      "fore_aft_mm": 0.614,
+      "lateral_mm": 0.365,
+      "vertical_mm": 1.608,
+      "loop_index": 0.046,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": 0.0,
+       "CTr pitch": 24.7
+      }
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 25.7,
+       "min": 25.0,
+       "max": 26.4,
+       "pp": 1.33,
+       "score": 1.0,
+       "freq_hz": 11.4
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 11.4,
+     "foot": {
+      "fore_aft_mm": 0.022,
+      "lateral_mm": 0.001,
+      "vertical_mm": 0.021,
+      "loop_index": -0.0,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": 0.0
+      }
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "module_phase_deg": {
+    "L": {
+     "coxa swing": -0.0,
+     "coxa stance": 75.8,
+     "femur/tr flex": 11.9
+    }
+   }
+  },
+  "DNg100 DNg100_R 2": {
+   "mn_rhythm": {
+    "score": 0.9998400460197456,
+    "active_mn": 8,
+    "freq_hz": 14.08450704225352
+   },
+   "rung5_score": 1.0,
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 3.86,
+     "mean_hz": 1.74,
+     "min_hz": 0.32
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 12.33,
+     "mean_hz": 7.59,
+     "min_hz": 2.9
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "L",
+     "peak_hz": 5.05,
+     "mean_hz": 2.13,
+     "min_hz": 0.46
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "R",
+     "peak_hz": 0.59,
+     "mean_hz": 0.28,
+     "min_hz": 0.05
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 4.5,
+     "mean_hz": 1.75,
+     "min_hz": 0.3
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 0.94,
+     "mean_hz": 0.35,
+     "min_hz": 0.06
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 2.34,
+     "mean_hz": 0.87,
+     "min_hz": 0.14
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 2.67,
+     "mean_hz": 1.04,
+     "min_hz": 0.15
+    }
+   ],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.0,
+       "max": 3.1,
+       "pp": 0.11,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -14.7,
+       "min": -32.3,
+       "max": 8.5,
+       "pp": 40.74,
+       "score": 1.0,
+       "freq_hz": 14.1
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -145.6,
+       "min": -158.5,
+       "max": -132.1,
+       "pp": 26.36,
+       "score": 1.0,
+       "freq_hz": 14.1
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.07,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.1,
+       "pp": 0.08,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.5,
+       "max": -33.4,
+       "pp": 0.05,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch",
+      "CTr pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 14.1,
+     "foot": {
+      "fore_aft_mm": 0.394,
+      "lateral_mm": 0.208,
+      "vertical_mm": 1.226,
+      "loop_index": 0.086,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": 0.0,
+       "CTr pitch": 36.9
+      }
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 26.3,
+       "min": 25.5,
+       "max": 27.2,
+       "pp": 1.67,
+       "score": 1.0,
+       "freq_hz": 14.1
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 14.1,
+     "foot": {
+      "fore_aft_mm": 0.027,
+      "lateral_mm": 0.001,
+      "vertical_mm": 0.026,
+      "loop_index": -0.0,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": -0.0
+      }
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "module_phase_deg": {
+    "L": {
+     "coxa swing": -0.0,
+     "coxa stance": 78.6,
+     "femur/tr flex": 18.8
+    }
+   }
+  },
+  "DNg100 DNg100_R 3": {
+   "mn_rhythm": {
+    "score": 0.9942086437497489,
+    "active_mn": 7,
+    "freq_hz": 10.869565217391305
+   },
+   "rung5_score": 0.994,
+   "motor_neurons": [
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 4.62,
+     "mean_hz": 1.83,
+     "min_hz": 0.23
+    },
+    {
+     "module": "coxa swing",
+     "type": "Tergopleural/Pleural promotor MN",
+     "side": "L",
+     "peak_hz": 8.99,
+     "mean_hz": 4.17,
+     "min_hz": 0.73
+    },
+    {
+     "module": "coxa stance",
+     "type": "Pleural remotor/abductor MN",
+     "side": "L",
+     "peak_hz": 7.1,
+     "mean_hz": 3.0,
+     "min_hz": 0.55
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 3.35,
+     "mean_hz": 0.94,
+     "min_hz": 0.05
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 2.19,
+     "mean_hz": 0.63,
+     "min_hz": 0.03
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 2.6,
+     "mean_hz": 0.81,
+     "min_hz": 0.06
+    },
+    {
+     "module": "femur/tr flex",
+     "type": "Tr flexor MN",
+     "side": "L",
+     "peak_hz": 2.39,
+     "mean_hz": 0.8,
+     "min_hz": 0.06
+    }
+   ],
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.0,
+       "max": 3.1,
+       "pp": 0.1,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 8.5,
+       "min": -13.4,
+       "max": 36.6,
+       "pp": 50.06,
+       "score": 1.0,
+       "freq_hz": 10.9
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -140.8,
+       "min": -158.2,
+       "max": -127.1,
+       "pp": 31.14,
+       "score": 1.0,
+       "freq_hz": 10.9
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 39.0,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.5,
+       "max": -33.4,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch",
+      "CTr pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 10.9,
+     "foot": {
+      "fore_aft_mm": 0.448,
+      "lateral_mm": 0.223,
+      "vertical_mm": 1.502,
+      "loop_index": 0.1,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": 0.0,
+       "CTr pitch": 35.2
+      }
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 24.8,
+       "min": 24.8,
+       "max": 24.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -123.5,
+       "min": -123.5,
+       "max": -123.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 38.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 94.0,
+       "max": 94.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.4,
+       "max": -33.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "module_phase_deg": {
+    "L": {
+     "coxa swing": 0.0,
+     "coxa stance": 84.0,
+     "femur/tr flex": 8.0
+    }
+   }
+  },
+  "rewired DNg100_L 0": {
+   "mn_rhythm": {
+    "score": 0.15737210777834176,
+    "active_mn": 100,
+    "freq_hz": 1.1161604081958063
+   },
+   "rung5_score": 0.157,
+   "motor_neurons": {
+    "coxa stance (L)": 5,
+    "coxa stance (R)": 2,
+    "coxa swing (L)": 4,
+    "coxa swing (R)": 5,
+    "femur reductor (L)": 2,
+    "femur reductor (R)": 4,
+    "femur/tr extend (L)": 8,
+    "femur/tr extend (R)": 7,
+    "femur/tr flex (L)": 7,
+    "femur/tr flex (R)": 9,
+    "substrate grip (L)": 6,
+    "substrate grip (R)": 4,
+    "tarsus control (L)": 5,
+    "tarsus control (R)": 4,
+    "tibia extend (L)": 1,
+    "tibia extend (R)": 2,
+    "tibia flex (L)": 12,
+    "tibia flex (R)": 12
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.2,
+       "pp": 0.1,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 133.5,
+       "min": 133.5,
+       "max": 133.6,
+       "pp": 0.1,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -19.9,
+       "min": -180.5,
+       "max": -14.8,
+       "pp": 165.67,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.2,
+       "max": 181.3,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": 75.4,
+       "min": 75.4,
+       "max": 75.4,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "CTr pitch"
+     ],
+     "largest": "CTr pitch",
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.183,
+      "lateral_mm": 0.303,
+      "vertical_mm": 0.207,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 1.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -84.0,
+       "min": -84.1,
+       "max": -84.0,
+       "pp": 0.07,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.7,
+       "min": -14.7,
+       "max": -14.7,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.2,
+       "max": 181.3,
+       "pp": 0.14,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -60.6,
+       "min": -142.3,
+       "max": 75.4,
+       "pp": 217.71,
+       "score": 0.625,
+       "freq_hz": 0.9
+      }
+     },
+     "moving": [
+      "TiTa pitch"
+     ],
+     "largest": "TiTa pitch",
+     "freq_hz": 0.9,
+     "foot": {
+      "fore_aft_mm": 1.005,
+      "lateral_mm": 0.416,
+      "vertical_mm": 1.03,
+      "loop_index": 0.104,
+      "phase_vs_thc_pitch_deg": {
+       "TiTa pitch": 179.1
+      }
+     },
+     "time_at_torque_cap": 1.0
+    }
+   },
+   "traces": {
+    "t_ms": [
+     1200.0,
+     1202.0,
+     1204.0,
+     1206.0,
+     1208.0,
+     1210.0,
+     1212.0,
+     1214.0,
+     1216.0,
+     1218.0,
+     1220.0,
+     1222.0,
+     1224.0,
+     1226.0,
+     1228.0,
+     1230.0,
+     1232.0,
+     1234.0,
+     1236.0,
+     1238.0,
+     1240.0,
+     1242.0,
+     1244.0,
+     1246.0,
+     1248.0,
+     1250.0,
+     1252.0,
+     1254.0,
+     1256.0,
+     1258.0,
+     1260.0,
+     1262.0,
+     1264.0,
+     1266.0,
+     1268.0,
+     1270.0,
+     1272.0,
+     1274.0,
+     1276.0,
+     1278.0,
+     1280.0,
+     1282.0,
+     1284.0,
+     1286.0,
+     1288.0,
+     1290.0,
+     1292.0,
+     1294.0,
+     1296.0,
+     1298.0,
+     1300.0,
+     1302.0,
+     1304.0,
+     1306.0,
+     1308.0,
+     1310.0,
+     1312.0,
+     1314.0,
+     1316.0,
+     1318.0,
+     1320.0,
+     1322.0,
+     1324.0,
+     1326.0,
+     1328.0,
+     1330.0,
+     1332.0,
+     1334.0,
+     1336.0,
+     1338.0,
+     1340.0,
+     1342.0,
+     1344.0,
+     1346.0,
+     1348.0,
+     1350.0,
+     1352.0,
+     1354.0,
+     1356.0,
+     1358.0,
+     1360.0,
+     1362.0,
+     1364.0,
+     1366.0,
+     1368.0,
+     1370.0,
+     1372.0,
+     1374.0,
+     1376.0,
+     1378.0,
+     1380.0,
+     1382.0,
+     1384.0,
+     1386.0,
+     1388.0,
+     1390.0,
+     1392.0,
+     1394.0,
+     1396.0,
+     1398.0,
+     1400.0,
+     1402.0,
+     1404.0,
+     1406.0,
+     1408.0,
+     1410.0,
+     1412.0,
+     1414.0,
+     1416.0,
+     1418.0,
+     1420.0,
+     1422.0,
+     1424.0,
+     1426.0,
+     1428.0,
+     1430.0,
+     1432.0,
+     1434.0,
+     1436.0,
+     1438.0,
+     1440.0,
+     1442.0,
+     1444.0,
+     1446.0,
+     1448.0,
+     1450.0,
+     1452.0,
+     1454.0,
+     1456.0,
+     1458.0,
+     1460.0,
+     1462.0,
+     1464.0,
+     1466.0,
+     1468.0,
+     1470.0,
+     1472.0,
+     1474.0,
+     1476.0,
+     1478.0,
+     1480.0,
+     1482.0,
+     1484.0,
+     1486.0,
+     1488.0,
+     1490.0,
+     1492.0,
+     1494.0,
+     1496.0,
+     1498.0,
+     1500.0
+    ],
+    "L": {},
+    "R": {
+     "TiTa pitch": [
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -140.76,
+      -132.35,
+      -121.82,
+      -110.83,
+      -99.81,
+      -88.91,
+      -78.24,
+      -67.89,
+      -57.96,
+      -48.52,
+      -39.65,
+      -31.41,
+      -23.85,
+      -16.99,
+      -10.86,
+      -5.47,
+      -0.82,
+      3.12,
+      6.35,
+      8.91,
+      10.85,
+      12.2,
+      13.02,
+      13.35,
+      13.26,
+      12.8,
+      12.03,
+      11.0,
+      9.78,
+      8.41,
+      6.94,
+      5.42,
+      3.9,
+      2.4,
+      0.96,
+      -0.39,
+      -1.62,
+      -2.71,
+      -3.64,
+      -4.39,
+      -4.94,
+      -5.28,
+      -5.41,
+      -5.3,
+      -4.95,
+      -4.36,
+      -3.52,
+      -2.43,
+      -1.08,
+      0.52,
+      2.37,
+      4.46,
+      6.78,
+      9.32,
+      12.07,
+      15.01,
+      18.13,
+      21.42,
+      24.86,
+      28.43,
+      32.14,
+      35.97,
+      39.9,
+      43.94,
+      48.07,
+      52.29,
+      56.59,
+      60.97,
+      65.41,
+      69.91,
+      73.94,
+      75.1,
+      75.34,
+      75.38,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39,
+      75.39
+     ]
+    }
+   }
+  },
+  "rewired DNg100_L 1": {
+   "mn_rhythm": {
+    "score": 0.04267481733918159,
+    "active_mn": 100,
+    "freq_hz": 1.1368936190553707
+   },
+   "rung5_score": 0.043,
+   "motor_neurons": {
+    "coxa stance (L)": 5,
+    "coxa stance (R)": 2,
+    "coxa swing (L)": 4,
+    "coxa swing (R)": 5,
+    "femur reductor (L)": 2,
+    "femur reductor (R)": 4,
+    "femur/tr extend (L)": 6,
+    "femur/tr extend (R)": 7,
+    "femur/tr flex (L)": 7,
+    "femur/tr flex (R)": 8,
+    "substrate grip (L)": 7,
+    "substrate grip (R)": 4,
+    "tarsus control (L)": 5,
+    "tarsus control (R)": 4,
+    "tibia extend (L)": 1,
+    "tibia extend (R)": 2,
+    "tibia flex (L)": 13,
+    "tibia flex (R)": 12
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 133.5,
+       "min": 133.5,
+       "max": 133.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.8,
+       "min": -14.8,
+       "max": -14.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.3,
+       "max": 181.3,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": 75.4,
+       "min": 75.4,
+       "max": 75.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 1.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -84.0,
+       "min": -84.0,
+       "max": -84.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.7,
+       "min": -14.7,
+       "max": -14.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.3,
+       "max": 181.3,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -142.3,
+       "min": -142.3,
+       "max": -142.3,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 1.0
+    }
+   }
+  },
+  "rewired DNg100_L 2": {
+   "mn_rhythm": {
+    "score": 0.17548779013103769,
+    "active_mn": 100,
+    "freq_hz": 0.8223684210526316
+   },
+   "rung5_score": 0.175,
+   "motor_neurons": {
+    "coxa stance (L)": 5,
+    "coxa stance (R)": 2,
+    "coxa swing (L)": 5,
+    "coxa swing (R)": 5,
+    "femur reductor (L)": 2,
+    "femur reductor (R)": 4,
+    "femur/tr extend (L)": 7,
+    "femur/tr extend (R)": 7,
+    "femur/tr flex (L)": 7,
+    "femur/tr flex (R)": 8,
+    "substrate grip (L)": 7,
+    "substrate grip (R)": 4,
+    "tarsus control (L)": 5,
+    "tarsus control (R)": 4,
+    "tibia extend (L)": 1,
+    "tibia extend (R)": 2,
+    "tibia flex (L)": 12,
+    "tibia flex (R)": 12
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.2,
+       "min": 3.1,
+       "max": 3.2,
+       "pp": 0.15,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 133.5,
+       "min": 133.5,
+       "max": 133.6,
+       "pp": 0.15,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -136.2,
+       "min": -182.6,
+       "max": -14.8,
+       "pp": 167.86,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.2,
+       "max": 181.3,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": 75.4,
+       "min": 75.4,
+       "max": 75.4,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "CTr pitch"
+     ],
+     "largest": "CTr pitch",
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.183,
+      "lateral_mm": 0.304,
+      "vertical_mm": 0.211,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 1.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -84.0,
+       "min": -84.1,
+       "max": -84.0,
+       "pp": 0.1,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.7,
+       "min": -14.7,
+       "max": -14.7,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.1,
+       "max": 181.3,
+       "pp": 0.27,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -68.2,
+       "min": -142.3,
+       "max": 75.4,
+       "pp": 217.71,
+       "score": 0.553,
+       "freq_hz": 1.5
+      }
+     },
+     "moving": [
+      "TiTa pitch"
+     ],
+     "largest": "TiTa pitch",
+     "freq_hz": 1.5,
+     "foot": {
+      "fore_aft_mm": 1.005,
+      "lateral_mm": 0.416,
+      "vertical_mm": 1.03,
+      "loop_index": 0.013,
+      "phase_vs_thc_pitch_deg": {
+       "TiTa pitch": -173.1
+      }
+     },
+     "time_at_torque_cap": 1.0
+    }
+   }
+  },
+  "rewired DNg100_L 3": {
+   "mn_rhythm": {
+    "score": 0.15944483335339912,
+    "active_mn": 103,
+    "freq_hz": 1.0352366255144032
+   },
+   "rung5_score": 0.159,
+   "motor_neurons": {
+    "coxa stance (L)": 6,
+    "coxa stance (R)": 2,
+    "coxa swing (L)": 4,
+    "coxa swing (R)": 5,
+    "femur reductor (L)": 2,
+    "femur reductor (R)": 4,
+    "femur/tr extend (L)": 7,
+    "femur/tr extend (R)": 7,
+    "femur/tr flex (L)": 7,
+    "femur/tr flex (R)": 9,
+    "substrate grip (L)": 7,
+    "substrate grip (R)": 5,
+    "tarsus control (L)": 5,
+    "tarsus control (R)": 4,
+    "tibia extend (L)": 1,
+    "tibia extend (R)": 2,
+    "tibia flex (L)": 13,
+    "tibia flex (R)": 12
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.2,
+       "pp": 0.09,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 133.5,
+       "min": 133.5,
+       "max": 133.6,
+       "pp": 0.08,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -97.7,
+       "min": -182.7,
+       "max": -14.8,
+       "pp": 167.87,
+       "score": 0.87,
+       "freq_hz": 0.8
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.2,
+       "max": 181.3,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": 75.4,
+       "min": 75.4,
+       "max": 75.4,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "CTr pitch"
+     ],
+     "largest": "CTr pitch",
+     "freq_hz": 0.8,
+     "foot": {
+      "fore_aft_mm": 0.183,
+      "lateral_mm": 0.304,
+      "vertical_mm": 0.211,
+      "loop_index": 0.0,
+      "phase_vs_thc_pitch_deg": {
+       "CTr pitch": -179.8
+      }
+     },
+     "time_at_torque_cap": 1.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -84.0,
+       "min": -84.0,
+       "max": -84.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.7,
+       "min": -14.7,
+       "max": -14.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.3,
+       "max": 181.3,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -142.3,
+       "min": -142.3,
+       "max": -142.3,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 1.0
+    }
+   }
+  },
+  "rewired DNg100_R 0": {
+   "mn_rhythm": {
+    "score": 0.10602506239413581,
+    "active_mn": 108,
+    "freq_hz": 1.2937390061473524
+   },
+   "rung5_score": 0.106,
+   "motor_neurons": {
+    "coxa stance (L)": 5,
+    "coxa stance (R)": 4,
+    "coxa swing (L)": 5,
+    "coxa swing (R)": 5,
+    "femur reductor (L)": 4,
+    "femur reductor (R)": 4,
+    "femur/tr extend (L)": 7,
+    "femur/tr extend (R)": 7,
+    "femur/tr flex (L)": 7,
+    "femur/tr flex (R)": 9,
+    "substrate grip (L)": 7,
+    "substrate grip (R)": 3,
+    "tarsus control (L)": 5,
+    "tarsus control (R)": 5,
+    "tibia extend (L)": 1,
+    "tibia extend (R)": 2,
+    "tibia flex (L)": 10,
+    "tibia flex (R)": 11
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.2,
+       "min": 3.1,
+       "max": 3.3,
+       "pp": 0.26,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 133.5,
+       "min": 133.4,
+       "max": 133.7,
+       "pp": 0.28,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -158.7,
+       "min": -183.0,
+       "max": -14.8,
+       "pp": 168.19,
+       "score": 0.182,
+       "freq_hz": 2.3
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.2,
+       "max": 181.3,
+       "pp": 0.09,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": 75.4,
+       "min": 75.4,
+       "max": 75.4,
+       "pp": 0.07,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "CTr pitch"
+     ],
+     "largest": "CTr pitch",
+     "freq_hz": 2.3,
+     "foot": {
+      "fore_aft_mm": 0.184,
+      "lateral_mm": 0.304,
+      "vertical_mm": 0.216,
+      "loop_index": -0.137,
+      "phase_vs_thc_pitch_deg": {
+       "CTr pitch": -178.5
+      }
+     },
+     "time_at_torque_cap": 1.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -84.0,
+       "min": -84.0,
+       "max": -84.0,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.7,
+       "min": -14.7,
+       "max": -14.7,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.3,
+       "max": 181.3,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -124.6,
+       "min": -142.3,
+       "max": -38.0,
+       "pp": 104.33,
+       "score": 0.237,
+       "freq_hz": 2.4
+      }
+     },
+     "moving": [
+      "TiTa pitch"
+     ],
+     "largest": "TiTa pitch",
+     "freq_hz": 2.4,
+     "foot": {
+      "fore_aft_mm": 0.864,
+      "lateral_mm": 0.176,
+      "vertical_mm": 0.269,
+      "loop_index": 0.0,
+      "phase_vs_thc_pitch_deg": {
+       "TiTa pitch": -178.1
+      }
+     },
+     "time_at_torque_cap": 1.0
+    }
+   },
+   "traces": {
+    "t_ms": [
+     1200.0,
+     1202.0,
+     1204.0,
+     1206.0,
+     1208.0,
+     1210.0,
+     1212.0,
+     1214.0,
+     1216.0,
+     1218.0,
+     1220.0,
+     1222.0,
+     1224.0,
+     1226.0,
+     1228.0,
+     1230.0,
+     1232.0,
+     1234.0,
+     1236.0,
+     1238.0,
+     1240.0,
+     1242.0,
+     1244.0,
+     1246.0,
+     1248.0,
+     1250.0,
+     1252.0,
+     1254.0,
+     1256.0,
+     1258.0,
+     1260.0,
+     1262.0,
+     1264.0,
+     1266.0,
+     1268.0,
+     1270.0,
+     1272.0,
+     1274.0,
+     1276.0,
+     1278.0,
+     1280.0,
+     1282.0,
+     1284.0,
+     1286.0,
+     1288.0,
+     1290.0,
+     1292.0,
+     1294.0,
+     1296.0,
+     1298.0,
+     1300.0,
+     1302.0,
+     1304.0,
+     1306.0,
+     1308.0,
+     1310.0,
+     1312.0,
+     1314.0,
+     1316.0,
+     1318.0,
+     1320.0,
+     1322.0,
+     1324.0,
+     1326.0,
+     1328.0,
+     1330.0,
+     1332.0,
+     1334.0,
+     1336.0,
+     1338.0,
+     1340.0,
+     1342.0,
+     1344.0,
+     1346.0,
+     1348.0,
+     1350.0,
+     1352.0,
+     1354.0,
+     1356.0,
+     1358.0,
+     1360.0,
+     1362.0,
+     1364.0,
+     1366.0,
+     1368.0,
+     1370.0,
+     1372.0,
+     1374.0,
+     1376.0,
+     1378.0,
+     1380.0,
+     1382.0,
+     1384.0,
+     1386.0,
+     1388.0,
+     1390.0,
+     1392.0,
+     1394.0,
+     1396.0,
+     1398.0,
+     1400.0,
+     1402.0,
+     1404.0,
+     1406.0,
+     1408.0,
+     1410.0,
+     1412.0,
+     1414.0,
+     1416.0,
+     1418.0,
+     1420.0,
+     1422.0,
+     1424.0,
+     1426.0,
+     1428.0,
+     1430.0,
+     1432.0,
+     1434.0,
+     1436.0,
+     1438.0,
+     1440.0,
+     1442.0,
+     1444.0,
+     1446.0,
+     1448.0,
+     1450.0,
+     1452.0,
+     1454.0,
+     1456.0,
+     1458.0,
+     1460.0,
+     1462.0,
+     1464.0,
+     1466.0,
+     1468.0,
+     1470.0,
+     1472.0,
+     1474.0,
+     1476.0,
+     1478.0,
+     1480.0,
+     1482.0,
+     1484.0,
+     1486.0,
+     1488.0,
+     1490.0,
+     1492.0,
+     1494.0,
+     1496.0,
+     1498.0,
+     1500.0
+    ],
+    "L": {},
+    "R": {
+     "TiTa pitch": [
+      -98.6,
+      -101.65,
+      -104.73,
+      -107.83,
+      -110.97,
+      -114.14,
+      -117.36,
+      -120.63,
+      -123.96,
+      -127.36,
+      -130.83,
+      -134.38,
+      -138.02,
+      -141.22,
+      -142.09,
+      -142.27,
+      -142.3,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.31,
+      -142.26,
+      -140.69,
+      -138.37,
+      -135.95,
+      -133.58,
+      -131.27,
+      -129.03,
+      -126.86,
+      -124.78,
+      -122.78,
+      -120.85,
+      -119.01,
+      -117.25,
+      -115.58,
+      -113.99,
+      -112.48,
+      -111.05,
+      -109.71,
+      -108.44,
+      -107.25,
+      -106.14,
+      -105.11,
+      -104.14,
+      -103.24,
+      -102.41,
+      -101.65,
+      -100.94,
+      -100.29,
+      -99.7,
+      -99.16,
+      -98.68,
+      -98.24,
+      -97.85,
+      -97.51,
+      -97.22,
+      -96.97,
+      -96.77,
+      -96.6,
+      -96.46,
+      -96.36,
+      -96.29,
+      -96.24,
+      -96.22,
+      -96.22,
+      -96.24,
+      -96.28
+     ]
+    }
+   }
+  },
+  "rewired DNg100_R 1": {
+   "mn_rhythm": {
+    "score": 0.13185214915315716,
+    "active_mn": 106,
+    "freq_hz": 1.3458950201884252
+   },
+   "rung5_score": 0.132,
+   "motor_neurons": {
+    "coxa stance (L)": 5,
+    "coxa stance (R)": 4,
+    "coxa swing (L)": 5,
+    "coxa swing (R)": 5,
+    "femur reductor (L)": 3,
+    "femur reductor (R)": 4,
+    "femur/tr extend (L)": 7,
+    "femur/tr extend (R)": 7,
+    "femur/tr flex (L)": 8,
+    "femur/tr flex (R)": 8,
+    "substrate grip (L)": 7,
+    "substrate grip (R)": 3,
+    "tarsus control (L)": 5,
+    "tarsus control (R)": 4,
+    "tibia extend (L)": 1,
+    "tibia extend (R)": 2,
+    "tibia flex (L)": 13,
+    "tibia flex (R)": 11
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.3,
+       "pp": 0.21,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 133.5,
+       "min": 133.4,
+       "max": 133.7,
+       "pp": 0.22,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -37.3,
+       "min": -182.7,
+       "max": -14.8,
+       "pp": 167.89,
+       "score": 0.211,
+       "freq_hz": 0.7
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.05,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.2,
+       "max": 181.3,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": 75.4,
+       "min": 75.4,
+       "max": 75.4,
+       "pp": 0.05,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "CTr pitch"
+     ],
+     "largest": "CTr pitch",
+     "freq_hz": 0.7,
+     "foot": {
+      "fore_aft_mm": 0.184,
+      "lateral_mm": 0.304,
+      "vertical_mm": 0.212,
+      "loop_index": 0.005,
+      "phase_vs_thc_pitch_deg": {
+       "CTr pitch": 180.0
+      }
+     },
+     "time_at_torque_cap": 1.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -84.0,
+       "min": -84.1,
+       "max": -84.0,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.7,
+       "min": -14.7,
+       "max": -14.7,
+       "pp": 0.03,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.2,
+       "max": 181.3,
+       "pp": 0.06,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -113.2,
+       "min": -142.3,
+       "max": 75.4,
+       "pp": 217.71,
+       "score": 0.645,
+       "freq_hz": 1.2
+      }
+     },
+     "moving": [
+      "TiTa pitch"
+     ],
+     "largest": "TiTa pitch",
+     "freq_hz": 1.2,
+     "foot": {
+      "fore_aft_mm": 1.005,
+      "lateral_mm": 0.416,
+      "vertical_mm": 1.03,
+      "loop_index": -0.0,
+      "phase_vs_thc_pitch_deg": {
+       "TiTa pitch": 178.6
+      }
+     },
+     "time_at_torque_cap": 1.0
+    }
+   }
+  },
+  "rewired DNg100_R 2": {
+   "mn_rhythm": {
+    "score": 0.1265812525948291,
+    "active_mn": 106,
+    "freq_hz": 1.2953563488401358
+   },
+   "rung5_score": 0.127,
+   "motor_neurons": {
+    "coxa stance (L)": 5,
+    "coxa stance (R)": 3,
+    "coxa swing (L)": 5,
+    "coxa swing (R)": 5,
+    "femur reductor (L)": 3,
+    "femur reductor (R)": 4,
+    "femur/tr extend (L)": 7,
+    "femur/tr extend (R)": 7,
+    "femur/tr flex (L)": 8,
+    "femur/tr flex (R)": 8,
+    "substrate grip (L)": 6,
+    "substrate grip (R)": 3,
+    "tarsus control (L)": 5,
+    "tarsus control (R)": 4,
+    "tibia extend (L)": 1,
+    "tibia extend (R)": 2,
+    "tibia flex (L)": 13,
+    "tibia flex (R)": 11
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.3,
+       "pp": 0.22,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 133.5,
+       "min": 133.4,
+       "max": 133.7,
+       "pp": 0.24,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -40.7,
+       "min": -182.7,
+       "max": -14.8,
+       "pp": 167.88,
+       "score": 0.313,
+       "freq_hz": 0.7
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.05,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.2,
+       "max": 181.3,
+       "pp": 0.07,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": 75.4,
+       "min": 75.4,
+       "max": 75.4,
+       "pp": 0.05,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "CTr pitch"
+     ],
+     "largest": "CTr pitch",
+     "freq_hz": 0.7,
+     "foot": {
+      "fore_aft_mm": 0.183,
+      "lateral_mm": 0.304,
+      "vertical_mm": 0.212,
+      "loop_index": 0.004,
+      "phase_vs_thc_pitch_deg": {
+       "CTr pitch": -179.7
+      }
+     },
+     "time_at_torque_cap": 1.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -84.0,
+       "min": -84.0,
+       "max": -84.0,
+       "pp": 0.04,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.7,
+       "min": -14.7,
+       "max": -14.7,
+       "pp": 0.02,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.3,
+       "max": 181.3,
+       "pp": 0.01,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -132.3,
+       "min": -142.3,
+       "max": -45.0,
+       "pp": 97.33,
+       "score": 0.108,
+       "freq_hz": 2.1
+      }
+     },
+     "moving": [
+      "TiTa pitch"
+     ],
+     "largest": "TiTa pitch",
+     "freq_hz": 2.1,
+     "foot": {
+      "fore_aft_mm": 0.816,
+      "lateral_mm": 0.151,
+      "vertical_mm": 0.269,
+      "loop_index": -0.0,
+      "phase_vs_thc_pitch_deg": {
+       "TiTa pitch": -179.6
+      }
+     },
+     "time_at_torque_cap": 1.0
+    }
+   }
+  },
+  "rewired DNg100_R 3": {
+   "mn_rhythm": {
+    "score": 0.0935233957086699,
+    "active_mn": 106,
+    "freq_hz": 1.4492753623188404
+   },
+   "rung5_score": 0.094,
+   "motor_neurons": {
+    "coxa stance (L)": 5,
+    "coxa stance (R)": 3,
+    "coxa swing (L)": 5,
+    "coxa swing (R)": 5,
+    "femur reductor (L)": 3,
+    "femur reductor (R)": 4,
+    "femur/tr extend (L)": 7,
+    "femur/tr extend (R)": 7,
+    "femur/tr flex (L)": 8,
+    "femur/tr flex (R)": 9,
+    "substrate grip (L)": 7,
+    "substrate grip (R)": 3,
+    "tarsus control (L)": 5,
+    "tarsus control (R)": 4,
+    "tibia extend (L)": 1,
+    "tibia extend (R)": 2,
+    "tibia flex (L)": 12,
+    "tibia flex (R)": 11
+   },
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 133.5,
+       "min": 133.5,
+       "max": 133.5,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.8,
+       "min": -14.8,
+       "max": -14.8,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.3,
+       "max": 181.3,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": 75.4,
+       "min": 75.4,
+       "max": 75.4,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 1.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.1,
+       "max": 3.1,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -84.0,
+       "min": -84.0,
+       "max": -84.0,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.7,
+       "max": 55.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -14.7,
+       "min": -14.7,
+       "max": -14.7,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": -69.9,
+       "min": -69.9,
+       "max": -69.9,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 181.3,
+       "min": 181.3,
+       "max": 181.3,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -142.3,
+       "min": -142.3,
+       "max": -142.3,
+       "pp": 0.0,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [],
+     "largest": null,
+     "freq_hz": null,
+     "foot": {
+      "fore_aft_mm": 0.0,
+      "lateral_mm": 0.0,
+      "vertical_mm": 0.0,
+      "loop_index": null
+     },
+     "time_at_torque_cap": 1.0
+    }
+   }
+  },
+  "standing": {
+   "body": {
+    "L": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 3.1,
+       "min": 3.0,
+       "max": 3.2,
+       "pp": 0.14,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": -8.1,
+       "min": -33.0,
+       "max": 25.0,
+       "pp": 58.02,
+       "score": 1.0,
+       "freq_hz": 12.0
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.7,
+       "min": 55.6,
+       "max": 55.7,
+       "pp": 0.15,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -146.0,
+       "min": -162.3,
+       "max": -130.7,
+       "pp": 31.54,
+       "score": 1.0,
+       "freq_hz": 12.0
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 38.9,
+       "min": 38.9,
+       "max": 39.1,
+       "pp": 0.19,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 94.0,
+       "min": 93.8,
+       "max": 94.1,
+       "pp": 0.22,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -33.4,
+       "min": -33.5,
+       "max": -33.4,
+       "pp": 0.14,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch",
+      "CTr pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 12.0,
+     "foot": {
+      "fore_aft_mm": 0.439,
+      "lateral_mm": 0.267,
+      "vertical_mm": 1.591,
+      "loop_index": 0.106,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": 0.0,
+       "CTr pitch": 40.5
+      }
+     },
+     "time_at_torque_cap": 0.0
+    },
+    "R": {
+     "joints": {
+      "ThC yaw": {
+       "rest": 3.2,
+       "mean": 4.3,
+       "min": 4.1,
+       "max": 4.4,
+       "pp": 0.23,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "ThC pitch": {
+       "rest": 24.7,
+       "mean": 26.0,
+       "min": 24.6,
+       "max": 27.2,
+       "pp": 2.63,
+       "score": 1.0,
+       "freq_hz": 12.0
+      },
+      "ThC roll": {
+       "rest": 55.7,
+       "mean": 55.8,
+       "min": 55.6,
+       "max": 55.9,
+       "pp": 0.29,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "CTr pitch": {
+       "rest": -123.6,
+       "mean": -126.1,
+       "min": -126.4,
+       "max": -125.8,
+       "pp": 0.6,
+       "score": 1.0,
+       "freq_hz": 12.0
+      },
+      "CTr roll": {
+       "rest": 39.0,
+       "mean": 39.8,
+       "min": 39.6,
+       "max": 40.0,
+       "pp": 0.38,
+       "score": 0.0,
+       "freq_hz": null
+      },
+      "FTi pitch": {
+       "rest": 94.0,
+       "mean": 92.8,
+       "min": 92.4,
+       "max": 93.1,
+       "pp": 0.67,
+       "score": 1.0,
+       "freq_hz": 12.0
+      },
+      "TiTa pitch": {
+       "rest": -33.5,
+       "mean": -34.5,
+       "min": -34.6,
+       "max": -34.3,
+       "pp": 0.24,
+       "score": 0.0,
+       "freq_hz": null
+      }
+     },
+     "moving": [
+      "ThC pitch",
+      "CTr pitch",
+      "FTi pitch"
+     ],
+     "largest": "ThC pitch",
+     "freq_hz": 12.0,
+     "foot": {
+      "fore_aft_mm": 0.019,
+      "lateral_mm": 0.005,
+      "vertical_mm": 0.014,
+      "loop_index": 0.003,
+      "phase_vs_thc_pitch_deg": {
+       "ThC pitch": 0.0,
+       "CTr pitch": -180.0,
+       "FTi pitch": -179.9
+      }
+     },
+     "time_at_torque_cap": 0.0
+    }
+   },
+   "traces": {
+    "t_ms": [
+     1200.0,
+     1202.0,
+     1204.0,
+     1206.0,
+     1208.0,
+     1210.0,
+     1212.0,
+     1214.0,
+     1216.0,
+     1218.0,
+     1220.0,
+     1222.0,
+     1224.0,
+     1226.0,
+     1228.0,
+     1230.0,
+     1232.0,
+     1234.0,
+     1236.0,
+     1238.0,
+     1240.0,
+     1242.0,
+     1244.0,
+     1246.0,
+     1248.0,
+     1250.0,
+     1252.0,
+     1254.0,
+     1256.0,
+     1258.0,
+     1260.0,
+     1262.0,
+     1264.0,
+     1266.0,
+     1268.0,
+     1270.0,
+     1272.0,
+     1274.0,
+     1276.0,
+     1278.0,
+     1280.0,
+     1282.0,
+     1284.0,
+     1286.0,
+     1288.0,
+     1290.0,
+     1292.0,
+     1294.0,
+     1296.0,
+     1298.0,
+     1300.0,
+     1302.0,
+     1304.0,
+     1306.0,
+     1308.0,
+     1310.0,
+     1312.0,
+     1314.0,
+     1316.0,
+     1318.0,
+     1320.0,
+     1322.0,
+     1324.0,
+     1326.0,
+     1328.0,
+     1330.0,
+     1332.0,
+     1334.0,
+     1336.0,
+     1338.0,
+     1340.0,
+     1342.0,
+     1344.0,
+     1346.0,
+     1348.0,
+     1350.0,
+     1352.0,
+     1354.0,
+     1356.0,
+     1358.0,
+     1360.0,
+     1362.0,
+     1364.0,
+     1366.0,
+     1368.0,
+     1370.0,
+     1372.0,
+     1374.0,
+     1376.0,
+     1378.0,
+     1380.0,
+     1382.0,
+     1384.0,
+     1386.0,
+     1388.0,
+     1390.0,
+     1392.0,
+     1394.0,
+     1396.0,
+     1398.0,
+     1400.0,
+     1402.0,
+     1404.0,
+     1406.0,
+     1408.0,
+     1410.0,
+     1412.0,
+     1414.0,
+     1416.0,
+     1418.0,
+     1420.0,
+     1422.0,
+     1424.0,
+     1426.0,
+     1428.0,
+     1430.0,
+     1432.0,
+     1434.0,
+     1436.0,
+     1438.0,
+     1440.0,
+     1442.0,
+     1444.0,
+     1446.0,
+     1448.0,
+     1450.0,
+     1452.0,
+     1454.0,
+     1456.0,
+     1458.0,
+     1460.0,
+     1462.0,
+     1464.0,
+     1466.0,
+     1468.0,
+     1470.0,
+     1472.0,
+     1474.0,
+     1476.0,
+     1478.0,
+     1480.0,
+     1482.0,
+     1484.0,
+     1486.0,
+     1488.0,
+     1490.0,
+     1492.0,
+     1494.0,
+     1496.0,
+     1498.0,
+     1500.0
+    ],
+    "L": {
+     "ThC pitch": [
+      -9.84,
+      -6.67,
+      -3.33,
+      0.17,
+      3.83,
+      7.64,
+      11.52,
+      15.31,
+      18.81,
+      21.78,
+      23.79,
+      24.78,
+      24.89,
+      23.47,
+      20.58,
+      16.46,
+      11.43,
+      5.84,
+      0.03,
+      -5.7,
+      -11.1,
+      -16.03,
+      -20.38,
+      -24.09,
+      -27.14,
+      -29.51,
+      -31.24,
+      -32.36,
+      -32.92,
+      -32.97,
+      -32.59,
+      -31.82,
+      -30.7,
+      -29.3,
+      -27.65,
+      -25.83,
+      -23.85,
+      -21.71,
+      -19.4,
+      -16.9,
+      -14.19,
+      -11.3,
+      -8.21,
+      -4.96,
+      -1.53,
+      2.05,
+      5.79,
+      9.65,
+      13.51,
+      17.18,
+      20.44,
+      23.02,
+      24.36,
+      25.01,
+      24.35,
+      22.14,
+      18.58,
+      13.94,
+      8.57,
+      2.82,
+      -2.97,
+      -8.56,
+      -13.73,
+      -18.37,
+      -22.39,
+      -25.76,
+      -28.46,
+      -30.49,
+      -31.89,
+      -32.71,
+      -33.0,
+      -32.83,
+      -32.23,
+      -31.28,
+      -30.0,
+      -28.47,
+      -26.72,
+      -24.82,
+      -22.76,
+      -20.53,
+      -18.12,
+      -15.51,
+      -12.71,
+      -9.72,
+      -6.54,
+      -3.2,
+      0.31,
+      3.97,
+      7.79,
+      11.67,
+      15.46,
+      18.94,
+      21.88,
+      23.82,
+      24.8,
+      24.87,
+      23.38,
+      20.44,
+      16.28,
+      11.22,
+      5.61,
+      -0.2,
+      -5.92,
+      -11.31,
+      -16.22,
+      -20.54,
+      -24.23,
+      -27.24,
+      -29.59,
+      -31.3,
+      -32.39,
+      -32.93,
+      -32.97,
+      -32.57,
+      -31.78,
+      -30.65,
+      -29.24,
+      -27.58,
+      -25.75,
+      -23.77,
+      -21.63,
+      -19.31,
+      -16.79,
+      -14.08,
+      -11.18,
+      -8.09,
+      -4.82,
+      -1.39,
+      2.19,
+      5.94,
+      9.81,
+      13.66,
+      17.32,
+      20.55,
+      23.11,
+      24.4,
+      25.01,
+      24.29,
+      22.02,
+      18.41,
+      13.74,
+      8.35,
+      2.59,
+      -3.2,
+      -8.77,
+      -13.93,
+      -18.54,
+      -22.54,
+      -25.88,
+      -28.55,
+      -30.56
+     ],
+     "CTr pitch": [
+      -138.66,
+      -137.58,
+      -136.56,
+      -135.61,
+      -134.71,
+      -133.87,
+      -133.09,
+      -132.35,
+      -131.66,
+      -131.05,
+      -130.87,
+      -131.25,
+      -132.24,
+      -134.47,
+      -137.78,
+      -141.87,
+      -146.36,
+      -150.75,
+      -154.6,
+      -157.65,
+      -159.88,
+      -161.34,
+      -162.1,
+      -162.28,
+      -161.99,
+      -161.33,
+      -160.39,
+      -159.22,
+      -157.9,
+      -156.46,
+      -154.94,
+      -153.38,
+      -151.81,
+      -150.24,
+      -148.69,
+      -147.17,
+      -145.7,
+      -144.28,
+      -142.92,
+      -141.62,
+      -140.38,
+      -139.21,
+      -138.09,
+      -137.05,
+      -136.06,
+      -135.14,
+      -134.27,
+      -133.46,
+      -132.7,
+      -131.99,
+      -131.33,
+      -130.8,
+      -131.03,
+      -131.62,
+      -133.25,
+      -136.08,
+      -139.83,
+      -144.18,
+      -148.68,
+      -152.84,
+      -156.29,
+      -158.91,
+      -160.73,
+      -161.81,
+      -162.26,
+      -162.18,
+      -161.69,
+      -160.87,
+      -159.8,
+      -158.55,
+      -157.16,
+      -155.68,
+      -154.13,
+      -152.57,
+      -150.99,
+      -149.43,
+      -147.89,
+      -146.4,
+      -144.96,
+      -143.57,
+      -142.24,
+      -140.97,
+      -139.76,
+      -138.62,
+      -137.54,
+      -136.53,
+      -135.57,
+      -134.68,
+      -133.84,
+      -133.06,
+      -132.32,
+      -131.64,
+      -131.02,
+      -130.88,
+      -131.27,
+      -132.3,
+      -134.58,
+      -137.93,
+      -142.05,
+      -146.53,
+      -150.92,
+      -154.74,
+      -157.75,
+      -159.95,
+      -161.38,
+      -162.12,
+      -162.28,
+      -161.97,
+      -161.3,
+      -160.34,
+      -159.17,
+      -157.84,
+      -156.4,
+      -154.88,
+      -153.32,
+      -151.75,
+      -150.18,
+      -148.63,
+      -147.11,
+      -145.64,
+      -144.23,
+      -142.87,
+      -141.57,
+      -140.33,
+      -139.16,
+      -138.05,
+      -137.01,
+      -136.02,
+      -135.1,
+      -134.24,
+      -133.43,
+      -132.67,
+      -131.96,
+      -131.3,
+      -130.79,
+      -131.05,
+      -131.66,
+      -133.34,
+      -136.21,
+      -140.0,
+      -144.36,
+      -148.86,
+      -153.0,
+      -156.41,
+      -159.0,
+      -160.79,
+      -161.84,
+      -162.26,
+      -162.17,
+      -161.66,
+      -160.83
+     ]
+    },
+    "R": {
+     "ThC pitch": [
+      25.34,
+      25.21,
+      25.08,
+      24.96,
+      24.85,
+      24.75,
+      24.66,
+      24.61,
+      24.59,
+      24.62,
+      24.71,
+      24.87,
+      25.07,
+      25.25,
+      25.46,
+      25.7,
+      25.96,
+      26.22,
+      26.45,
+      26.66,
+      26.83,
+      26.97,
+      27.08,
+      27.15,
+      27.2,
+      27.21,
+      27.21,
+      27.17,
+      27.12,
+      27.04,
+      26.95,
+      26.84,
+      26.72,
+      26.58,
+      26.44,
+      26.3,
+      26.14,
+      25.99,
+      25.84,
+      25.69,
+      25.54,
+      25.4,
+      25.27,
+      25.14,
+      25.02,
+      24.9,
+      24.8,
+      24.7,
+      24.63,
+      24.59,
+      24.6,
+      24.66,
+      24.79,
+      24.98,
+      25.17,
+      25.36,
+      25.58,
+      25.84,
+      26.1,
+      26.34,
+      26.56,
+      26.75,
+      26.91,
+      27.03,
+      27.12,
+      27.18,
+      27.21,
+      27.21,
+      27.19,
+      27.15,
+      27.08,
+      27.0,
+      26.89,
+      26.78,
+      26.65,
+      26.51,
+      26.37,
+      26.22,
+      26.06,
+      25.91,
+      25.76,
+      25.61,
+      25.47,
+      25.33,
+      25.2,
+      25.08,
+      24.96,
+      24.85,
+      24.74,
+      24.66,
+      24.6,
+      24.59,
+      24.62,
+      24.71,
+      24.88,
+      25.08,
+      25.26,
+      25.47,
+      25.71,
+      25.97,
+      26.23,
+      26.46,
+      26.67,
+      26.84,
+      26.98,
+      27.08,
+      27.15,
+      27.2,
+      27.21,
+      27.2,
+      27.17,
+      27.12,
+      27.04,
+      26.95,
+      26.84,
+      26.71,
+      26.58,
+      26.44,
+      26.29,
+      26.14,
+      25.98,
+      25.83,
+      25.68,
+      25.54,
+      25.4,
+      25.26,
+      25.14,
+      25.01,
+      24.9,
+      24.79,
+      24.7,
+      24.63,
+      24.59,
+      24.6,
+      24.66,
+      24.79,
+      24.99,
+      25.18,
+      25.36,
+      25.59,
+      25.85,
+      26.11,
+      26.35,
+      26.57,
+      26.76,
+      26.92,
+      27.04,
+      27.12,
+      27.18,
+      27.21,
+      27.21
+     ],
+     "CTr pitch": [
+      -125.94,
+      -125.91,
+      -125.88,
+      -125.85,
+      -125.83,
+      -125.81,
+      -125.79,
+      -125.78,
+      -125.77,
+      -125.78,
+      -125.8,
+      -125.79,
+      -125.8,
+      -125.88,
+      -125.99,
+      -126.09,
+      -126.16,
+      -126.2,
+      -126.21,
+      -126.22,
+      -126.24,
+      -126.27,
+      -126.3,
+      -126.33,
+      -126.35,
+      -126.37,
+      -126.37,
+      -126.36,
+      -126.35,
+      -126.33,
+      -126.3,
+      -126.28,
+      -126.25,
+      -126.22,
+      -126.19,
+      -126.16,
+      -126.13,
+      -126.09,
+      -126.06,
+      -126.02,
+      -125.99,
+      -125.95,
+      -125.92,
+      -125.89,
+      -125.87,
+      -125.84,
+      -125.82,
+      -125.8,
+      -125.78,
+      -125.77,
+      -125.78,
+      -125.8,
+      -125.81,
+      -125.79,
+      -125.84,
+      -125.94,
+      -126.05,
+      -126.13,
+      -126.18,
+      -126.2,
+      -126.22,
+      -126.23,
+      -126.25,
+      -126.28,
+      -126.32,
+      -126.34,
+      -126.36,
+      -126.37,
+      -126.37,
+      -126.36,
+      -126.34,
+      -126.32,
+      -126.29,
+      -126.26,
+      -126.24,
+      -126.21,
+      -126.18,
+      -126.14,
+      -126.11,
+      -126.07,
+      -126.04,
+      -126.0,
+      -125.97,
+      -125.94,
+      -125.91,
+      -125.88,
+      -125.85,
+      -125.83,
+      -125.81,
+      -125.79,
+      -125.78,
+      -125.77,
+      -125.79,
+      -125.81,
+      -125.8,
+      -125.8,
+      -125.88,
+      -125.99,
+      -126.1,
+      -126.16,
+      -126.2,
+      -126.21,
+      -126.22,
+      -126.24,
+      -126.27,
+      -126.3,
+      -126.33,
+      -126.36,
+      -126.37,
+      -126.37,
+      -126.36,
+      -126.35,
+      -126.33,
+      -126.3,
+      -126.28,
+      -126.25,
+      -126.22,
+      -126.19,
+      -126.16,
+      -126.13,
+      -126.09,
+      -126.06,
+      -126.02,
+      -125.99,
+      -125.95,
+      -125.92,
+      -125.89,
+      -125.87,
+      -125.84,
+      -125.82,
+      -125.79,
+      -125.78,
+      -125.77,
+      -125.78,
+      -125.8,
+      -125.81,
+      -125.79,
+      -125.84,
+      -125.94,
+      -126.05,
+      -126.14,
+      -126.18,
+      -126.21,
+      -126.22,
+      -126.23,
+      -126.26,
+      -126.29,
+      -126.32,
+      -126.35,
+      -126.36,
+      -126.37
+     ],
+     "FTi pitch": [
+      92.92,
+      92.95,
+      92.98,
+      93.02,
+      93.04,
+      93.07,
+      93.09,
+      93.1,
+      93.1,
+      93.09,
+      93.06,
+      93.03,
+      92.99,
+      92.92,
+      92.85,
+      92.82,
+      92.79,
+      92.74,
+      92.68,
+      92.61,
+      92.54,
+      92.5,
+      92.46,
+      92.44,
+      92.44,
+      92.44,
+      92.45,
+      92.47,
+      92.48,
+      92.5,
+      92.52,
+      92.54,
+      92.57,
+      92.6,
+      92.64,
+      92.68,
+      92.72,
+      92.76,
+      92.8,
+      92.83,
+      92.87,
+      92.9,
+      92.94,
+      92.97,
+      93.0,
+      93.03,
+      93.06,
+      93.08,
+      93.1,
+      93.1,
+      93.09,
+      93.07,
+      93.05,
+      93.02,
+      92.96,
+      92.88,
+      92.83,
+      92.8,
+      92.76,
+      92.71,
+      92.64,
+      92.57,
+      92.52,
+      92.48,
+      92.45,
+      92.44,
+      92.44,
+      92.45,
+      92.46,
+      92.47,
+      92.49,
+      92.51,
+      92.53,
+      92.55,
+      92.58,
+      92.62,
+      92.66,
+      92.7,
+      92.74,
+      92.78,
+      92.82,
+      92.85,
+      92.89,
+      92.92,
+      92.95,
+      92.99,
+      93.02,
+      93.05,
+      93.07,
+      93.09,
+      93.1,
+      93.1,
+      93.08,
+      93.06,
+      93.04,
+      92.99,
+      92.91,
+      92.85,
+      92.82,
+      92.79,
+      92.74,
+      92.67,
+      92.6,
+      92.54,
+      92.49,
+      92.46,
+      92.44,
+      92.44,
+      92.44,
+      92.45,
+      92.47,
+      92.48,
+      92.5,
+      92.52,
+      92.54,
+      92.57,
+      92.6,
+      92.64,
+      92.68,
+      92.72,
+      92.76,
+      92.8,
+      92.83,
+      92.87,
+      92.9,
+      92.94,
+      92.97,
+      93.0,
+      93.03,
+      93.06,
+      93.08,
+      93.1,
+      93.1,
+      93.09,
+      93.07,
+      93.05,
+      93.02,
+      92.95,
+      92.88,
+      92.83,
+      92.8,
+      92.76,
+      92.7,
+      92.63,
+      92.57,
+      92.52,
+      92.48,
+      92.45,
+      92.44,
+      92.44,
+      92.45
+     ]
+    }
+   },
+   "front_feet_on_ground": [
+    0.023,
+    1.0
+   ],
+   "thorax_moved_mm": 0.035
+  }
+ },
+ "summary": {
+  "recorded_step": {
+   "loop_index": 0.519,
+   "fore_aft_mm": 0.803,
+   "vertical_mm": 0.757,
+   "ctr_vs_thc_deg": 134.7
+  },
+  "reference": [
+   {
+    "run": "reference",
+    "mn_score": 0.8,
+    "mn_freq_hz": 12.0,
+    "active_mn": 10,
+    "leg": "L",
+    "joint_freq_hz": {
+     "ThC pitch": 12.0,
+     "CTr pitch": 12.0
+    },
+    "joint_score": {
+     "ThC pitch": 1.0,
+     "CTr pitch": 1.0
+    },
+    "pp_deg": {
+     "ThC pitch": 58.21,
+     "CTr pitch": 31.62
+    },
+    "offset_deg": {
+     "ThC pitch": -32.8,
+     "CTr pitch": -22.4
+    },
+    "loop_index": 0.105,
+    "fore_aft_mm": 0.439,
+    "vertical_mm": 1.611,
+    "ctr_vs_thc_deg": 40.4,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": -0.0,
+     "coxa stance": 89.5,
+     "femur/tr flex": 14.0
+    },
+    "other_leg_largest_pp_deg": 3.47,
+    "time_at_torque_cap": 0.0
+   }
+  ],
+  "DNg100": [
+   {
+    "run": "DNg100 DNg100_L 0",
+    "mn_score": 0.917,
+    "mn_freq_hz": 13.9,
+    "active_mn": 4,
+    "leg": "R",
+    "joint_freq_hz": {
+     "ThC pitch": 13.9
+    },
+    "joint_score": {
+     "ThC pitch": 1.0
+    },
+    "pp_deg": {
+     "ThC pitch": 25.64
+    },
+    "offset_deg": {
+     "ThC pitch": -49.1
+    },
+    "loop_index": -0.001,
+    "fore_aft_mm": 0.056,
+    "vertical_mm": 0.575,
+    "ctr_vs_thc_deg": null,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": -0.0,
+     "coxa stance": 108.9,
+     "femur/tr flex": 24.4
+    },
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 0.0
+   },
+   {
+    "run": "DNg100 DNg100_L 1",
+    "mn_score": 0.428,
+    "mn_freq_hz": 15.4,
+    "active_mn": 7,
+    "leg": "R",
+    "joint_freq_hz": {
+     "ThC pitch": 15.4
+    },
+    "joint_score": {
+     "ThC pitch": 0.999
+    },
+    "pp_deg": {
+     "ThC pitch": 29.04
+    },
+    "offset_deg": {
+     "ThC pitch": -76.0
+    },
+    "loop_index": 0.002,
+    "fore_aft_mm": 0.337,
+    "vertical_mm": 0.561,
+    "ctr_vs_thc_deg": null,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": 0.0,
+     "femur/tr flex": 25.2
+    },
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 0.0
+   },
+   {
+    "run": "DNg100 DNg100_L 2",
+    "mn_score": 0.599,
+    "mn_freq_hz": 13.3,
+    "active_mn": 5,
+    "leg": "R",
+    "joint_freq_hz": {
+     "ThC pitch": 13.3,
+     "CTr pitch": 13.3
+    },
+    "joint_score": {
+     "ThC pitch": 0.999,
+     "CTr pitch": 0.999
+    },
+    "pp_deg": {
+     "ThC pitch": 36.42,
+     "CTr pitch": 5.78
+    },
+    "offset_deg": {
+     "ThC pitch": -59.3,
+     "CTr pitch": -4.3
+    },
+    "loop_index": 0.058,
+    "fore_aft_mm": 0.299,
+    "vertical_mm": 0.839,
+    "ctr_vs_thc_deg": 30.8,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": 0.0,
+     "femur/tr flex": 31.5
+    },
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 0.0
+   },
+   {
+    "run": "DNg100 DNg100_L 3",
+    "mn_score": 0.6,
+    "mn_freq_hz": 14.7,
+    "active_mn": 5,
+    "leg": "R",
+    "joint_freq_hz": {
+     "ThC pitch": 14.7
+    },
+    "joint_score": {
+     "ThC pitch": 1.0
+    },
+    "pp_deg": {
+     "ThC pitch": 27.58
+    },
+    "offset_deg": {
+     "ThC pitch": -39.7
+    },
+    "loop_index": -0.001,
+    "fore_aft_mm": 0.075,
+    "vertical_mm": 0.615,
+    "ctr_vs_thc_deg": null,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": -0.0,
+     "coxa stance": 94.8
+    },
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 0.0
+   },
+   {
+    "run": "DNg100 DNg100_R 0",
+    "mn_score": 0.869,
+    "mn_freq_hz": 11.8,
+    "active_mn": 8,
+    "leg": "L",
+    "joint_freq_hz": {
+     "ThC pitch": 11.8,
+     "CTr pitch": 11.8
+    },
+    "joint_score": {
+     "ThC pitch": 0.999,
+     "CTr pitch": 0.999
+    },
+    "pp_deg": {
+     "ThC pitch": 38.65,
+     "CTr pitch": 15.59
+    },
+    "offset_deg": {
+     "ThC pitch": -16.5,
+     "CTr pitch": -10.4
+    },
+    "loop_index": 0.088,
+    "fore_aft_mm": 0.357,
+    "vertical_mm": 1.039,
+    "ctr_vs_thc_deg": 34.6,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": -0.0,
+     "coxa stance": 82.2,
+     "femur/tr flex": 8.8
+    },
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 0.0
+   },
+   {
+    "run": "DNg100 DNg100_R 1",
+    "mn_score": 1.0,
+    "mn_freq_hz": 11.4,
+    "active_mn": 8,
+    "leg": "L",
+    "joint_freq_hz": {
+     "ThC pitch": 11.4,
+     "CTr pitch": 11.4
+    },
+    "joint_score": {
+     "ThC pitch": 1.0,
+     "CTr pitch": 1.0
+    },
+    "pp_deg": {
+     "ThC pitch": 52.34,
+     "CTr pitch": 40.17
+    },
+    "offset_deg": {
+     "ThC pitch": -35.2,
+     "CTr pitch": -25.7
+    },
+    "loop_index": 0.046,
+    "fore_aft_mm": 0.614,
+    "vertical_mm": 1.608,
+    "ctr_vs_thc_deg": 24.7,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": -0.0,
+     "coxa stance": 75.8,
+     "femur/tr flex": 11.9
+    },
+    "other_leg_largest_pp_deg": 1.33,
+    "time_at_torque_cap": 0.0
+   },
+   {
+    "run": "DNg100 DNg100_R 2",
+    "mn_score": 1.0,
+    "mn_freq_hz": 14.1,
+    "active_mn": 8,
+    "leg": "L",
+    "joint_freq_hz": {
+     "ThC pitch": 14.1,
+     "CTr pitch": 14.1
+    },
+    "joint_score": {
+     "ThC pitch": 1.0,
+     "CTr pitch": 1.0
+    },
+    "pp_deg": {
+     "ThC pitch": 40.74,
+     "CTr pitch": 26.36
+    },
+    "offset_deg": {
+     "ThC pitch": -39.4,
+     "CTr pitch": -22.0
+    },
+    "loop_index": 0.086,
+    "fore_aft_mm": 0.394,
+    "vertical_mm": 1.226,
+    "ctr_vs_thc_deg": 36.9,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": -0.0,
+     "coxa stance": 78.6,
+     "femur/tr flex": 18.8
+    },
+    "other_leg_largest_pp_deg": 1.67,
+    "time_at_torque_cap": 0.0
+   },
+   {
+    "run": "DNg100 DNg100_R 3",
+    "mn_score": 0.994,
+    "mn_freq_hz": 10.9,
+    "active_mn": 7,
+    "leg": "L",
+    "joint_freq_hz": {
+     "ThC pitch": 10.9,
+     "CTr pitch": 10.9
+    },
+    "joint_score": {
+     "ThC pitch": 1.0,
+     "CTr pitch": 1.0
+    },
+    "pp_deg": {
+     "ThC pitch": 50.06,
+     "CTr pitch": 31.14
+    },
+    "offset_deg": {
+     "ThC pitch": -16.2,
+     "CTr pitch": -17.2
+    },
+    "loop_index": 0.1,
+    "fore_aft_mm": 0.448,
+    "vertical_mm": 1.502,
+    "ctr_vs_thc_deg": 35.2,
+    "module_vs_coxa_swing_deg": {
+     "coxa swing": 0.0,
+     "coxa stance": 84.0,
+     "femur/tr flex": 8.0
+    },
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 0.0
+   }
+  ],
+  "rewired": [
+   {
+    "run": "rewired DNg100_L 0",
+    "mn_score": 0.157,
+    "mn_freq_hz": 1.1,
+    "active_mn": 100,
+    "leg": "R",
+    "joint_freq_hz": {
+     "TiTa pitch": 0.9
+    },
+    "joint_score": {
+     "TiTa pitch": 0.625
+    },
+    "pp_deg": {
+     "TiTa pitch": 217.71
+    },
+    "offset_deg": {
+     "TiTa pitch": -27.1
+    },
+    "loop_index": 0.104,
+    "fore_aft_mm": 1.005,
+    "vertical_mm": 1.03,
+    "ctr_vs_thc_deg": null,
+    "module_vs_coxa_swing_deg": null,
+    "other_leg_largest_pp_deg": 165.67,
+    "time_at_torque_cap": 1.0
+   },
+   {
+    "run": "rewired DNg100_L 1",
+    "mn_score": 0.043,
+    "mn_freq_hz": 1.1,
+    "active_mn": 100,
+    "leg": "L",
+    "joint_freq_hz": {},
+    "joint_score": {},
+    "pp_deg": {},
+    "offset_deg": {},
+    "loop_index": null,
+    "fore_aft_mm": 0.0,
+    "vertical_mm": 0.0,
+    "ctr_vs_thc_deg": null,
+    "module_vs_coxa_swing_deg": null,
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 1.0
+   },
+   {
+    "run": "rewired DNg100_L 2",
+    "mn_score": 0.175,
+    "mn_freq_hz": 0.8,
+    "active_mn": 100,
+    "leg": "R",
+    "joint_freq_hz": {
+     "TiTa pitch": 1.5
+    },
+    "joint_score": {
+     "TiTa pitch": 0.553
+    },
+    "pp_deg": {
+     "TiTa pitch": 217.71
+    },
+    "offset_deg": {
+     "TiTa pitch": -34.7
+    },
+    "loop_index": 0.013,
+    "fore_aft_mm": 1.005,
+    "vertical_mm": 1.03,
+    "ctr_vs_thc_deg": null,
+    "module_vs_coxa_swing_deg": null,
+    "other_leg_largest_pp_deg": 167.86,
+    "time_at_torque_cap": 1.0
+   },
+   {
+    "run": "rewired DNg100_L 3",
+    "mn_score": 0.159,
+    "mn_freq_hz": 1.0,
+    "active_mn": 103,
+    "leg": "L",
+    "joint_freq_hz": {
+     "CTr pitch": 0.8
+    },
+    "joint_score": {
+     "CTr pitch": 0.87
+    },
+    "pp_deg": {
+     "CTr pitch": 167.87
+    },
+    "offset_deg": {
+     "CTr pitch": 25.9
+    },
+    "loop_index": 0.0,
+    "fore_aft_mm": 0.183,
+    "vertical_mm": 0.211,
+    "ctr_vs_thc_deg": -179.8,
+    "module_vs_coxa_swing_deg": null,
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 1.0
+   },
+   {
+    "run": "rewired DNg100_R 0",
+    "mn_score": 0.106,
+    "mn_freq_hz": 1.3,
+    "active_mn": 108,
+    "leg": "L",
+    "joint_freq_hz": {
+     "CTr pitch": 2.3
+    },
+    "joint_score": {
+     "CTr pitch": 0.182
+    },
+    "pp_deg": {
+     "CTr pitch": 168.19
+    },
+    "offset_deg": {
+     "CTr pitch": -35.1
+    },
+    "loop_index": -0.137,
+    "fore_aft_mm": 0.184,
+    "vertical_mm": 0.216,
+    "ctr_vs_thc_deg": -178.5,
+    "module_vs_coxa_swing_deg": null,
+    "other_leg_largest_pp_deg": 104.33,
+    "time_at_torque_cap": 1.0
+   },
+   {
+    "run": "rewired DNg100_R 1",
+    "mn_score": 0.132,
+    "mn_freq_hz": 1.3,
+    "active_mn": 106,
+    "leg": "R",
+    "joint_freq_hz": {
+     "TiTa pitch": 1.2
+    },
+    "joint_score": {
+     "TiTa pitch": 0.645
+    },
+    "pp_deg": {
+     "TiTa pitch": 217.71
+    },
+    "offset_deg": {
+     "TiTa pitch": -79.7
+    },
+    "loop_index": -0.0,
+    "fore_aft_mm": 1.005,
+    "vertical_mm": 1.03,
+    "ctr_vs_thc_deg": null,
+    "module_vs_coxa_swing_deg": null,
+    "other_leg_largest_pp_deg": 167.89,
+    "time_at_torque_cap": 1.0
+   },
+   {
+    "run": "rewired DNg100_R 2",
+    "mn_score": 0.127,
+    "mn_freq_hz": 1.3,
+    "active_mn": 106,
+    "leg": "L",
+    "joint_freq_hz": {
+     "CTr pitch": 0.7
+    },
+    "joint_score": {
+     "CTr pitch": 0.313
+    },
+    "pp_deg": {
+     "CTr pitch": 167.88
+    },
+    "offset_deg": {
+     "CTr pitch": 82.9
+    },
+    "loop_index": 0.004,
+    "fore_aft_mm": 0.183,
+    "vertical_mm": 0.212,
+    "ctr_vs_thc_deg": -179.7,
+    "module_vs_coxa_swing_deg": null,
+    "other_leg_largest_pp_deg": 97.33,
+    "time_at_torque_cap": 1.0
+   },
+   {
+    "run": "rewired DNg100_R 3",
+    "mn_score": 0.094,
+    "mn_freq_hz": 1.4,
+    "active_mn": 106,
+    "leg": "L",
+    "joint_freq_hz": {},
+    "joint_score": {},
+    "pp_deg": {},
+    "offset_deg": {},
+    "loop_index": null,
+    "fore_aft_mm": 0.0,
+    "vertical_mm": 0.0,
+    "ctr_vs_thc_deg": null,
+    "module_vs_coxa_swing_deg": null,
+    "other_leg_largest_pp_deg": 0.0,
+    "time_at_torque_cap": 1.0
+   }
+  ]
+ },
+ "seconds": 329
+}
