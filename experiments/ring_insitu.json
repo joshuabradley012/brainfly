@@ -1,0 +1,676 @@
+{
+ "question": "Exploratory, not pre-registered: does slow homeostasis, run in place, give the whole resting brain a fly-like bump?\n\nring_fit3.py fitted the head-direction ring's class gains in its 460-neuron sub-network, and with\nring_homeostasis.py's slow homeostasis the ring alone behaves like a fly's compass. Inside the whole brain\n(ring_whole.py) it keeps a fly-like bump but favors half the ring. 30 coarse rounds of homeostasis in place\nmade that worse, while the sub-network needed 80 slow rounds (ring_homeostasis.py --slow). This runs the\nsub-network's slow schedule in place, in the brain that tastes and escapes (taste_escape.py's), and then\nmeasures the bump as rung 4 now scores it.\nModel: taste_escape.py's brain (escape_at_rest2.py's model, rung 1's sugar route keeping rung 1's settings;\nits calibrated biases), plus ring_fit3.py's ring as ring_whole.py puts it in. That means the class gains on every\nsynapse between two of the 460 ring neurons, their excitatory edges through the 500 ms slow current, the depression\non the ring's excitatory outputs, and the fitted group biases. Each ring neuron also keeps its offset from\nring_homeostasis.py --slow --fit ring_fit3, less its mean input from outside the ring at rest, neuron by\nneuron. The ring stays out of the rate calibration.\nProcedure: calibrate the rest of the brain (4 rounds at k = 1 mV, 4 at 0.5) with the ring's biases\nuncorrected. Then correct them for outside input (from a 2-s resting run) and run 4 more rounds at 0.5.\nThen 80 rounds of homeostasis in place, each round 16 fresh runs (2 batches of 8) of 40 s after 1 s to settle.\nEvery neuron of the ring's six types moves its offset by at most 0.2 mV, by ln((target + 0.5) /\n(rate + 0.5)), toward its type's rate in ring_fit3.py's fit. Its rate is averaged over rounds, each new round\nweighted 0.3. The offsets are saved every 10 rounds (experiments/ring_insitu/offsets.npz).\nMeasured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, imaged). That gives the\nBUMP measures with bump_motion's position entropy and drift, the rates of the ring's groups and the measured\ntypes, the brain's mean rate and hot neurons, and FC (reported).\n\n    python experiments/ring_insitu.py            (writes experiments/ring_insitu.json and ring_insitu/offsets.npz)\n",
+ "calibration": {
+  "round": 4,
+  "mean_hz_own": 1.643,
+  "over_100hz": 0,
+  "groups_within_2x": 0.9997
+ },
+ "homeostasis": [
+  {
+   "round": 1,
+   "position_entropy": 0.849,
+   "drift_D": 0.0574,
+   "epg_hz": 2.14,
+   "epg_rate_cv": 0.547
+  },
+  {
+   "round": 2,
+   "position_entropy": 0.814,
+   "drift_D": 0.0379,
+   "epg_hz": 2.32,
+   "epg_rate_cv": 0.689
+  },
+  {
+   "round": 3,
+   "position_entropy": 0.667,
+   "drift_D": 0.0138,
+   "epg_hz": 2.43,
+   "epg_rate_cv": 0.915
+  },
+  {
+   "round": 4,
+   "position_entropy": 0.677,
+   "drift_D": 0.0103,
+   "epg_hz": 2.42,
+   "epg_rate_cv": 0.825
+  },
+  {
+   "round": 5,
+   "position_entropy": 0.949,
+   "drift_D": 0.0271,
+   "epg_hz": 2.32,
+   "epg_rate_cv": 0.232
+  },
+  {
+   "round": 6,
+   "position_entropy": 0.885,
+   "drift_D": 0.0246,
+   "epg_hz": 2.31,
+   "epg_rate_cv": 0.434
+  },
+  {
+   "round": 7,
+   "position_entropy": 0.731,
+   "drift_D": 0.0089,
+   "epg_hz": 2.31,
+   "epg_rate_cv": 0.701
+  },
+  {
+   "round": 8,
+   "position_entropy": 0.873,
+   "drift_D": 0.0105,
+   "epg_hz": 2.37,
+   "epg_rate_cv": 0.312
+  },
+  {
+   "round": 9,
+   "position_entropy": 0.891,
+   "drift_D": 0.0085,
+   "epg_hz": 2.42,
+   "epg_rate_cv": 0.283
+  },
+  {
+   "round": 10,
+   "position_entropy": 0.893,
+   "drift_D": 0.0226,
+   "epg_hz": 2.48,
+   "epg_rate_cv": 0.426
+  },
+  {
+   "round": 11,
+   "position_entropy": 0.905,
+   "drift_D": 0.0212,
+   "epg_hz": 2.49,
+   "epg_rate_cv": 0.35
+  },
+  {
+   "round": 12,
+   "position_entropy": 0.912,
+   "drift_D": 0.0173,
+   "epg_hz": 2.44,
+   "epg_rate_cv": 0.213
+  },
+  {
+   "round": 13,
+   "position_entropy": 0.88,
+   "drift_D": 0.0198,
+   "epg_hz": 2.42,
+   "epg_rate_cv": 0.419
+  },
+  {
+   "round": 14,
+   "position_entropy": 0.844,
+   "drift_D": 0.0198,
+   "epg_hz": 2.44,
+   "epg_rate_cv": 0.322
+  },
+  {
+   "round": 15,
+   "position_entropy": 0.917,
+   "drift_D": 0.0179,
+   "epg_hz": 2.54,
+   "epg_rate_cv": 0.402
+  },
+  {
+   "round": 16,
+   "position_entropy": 0.941,
+   "drift_D": 0.0185,
+   "epg_hz": 2.52,
+   "epg_rate_cv": 0.135
+  },
+  {
+   "round": 17,
+   "position_entropy": 0.961,
+   "drift_D": 0.0203,
+   "epg_hz": 2.57,
+   "epg_rate_cv": 0.193
+  },
+  {
+   "round": 18,
+   "position_entropy": 0.874,
+   "drift_D": 0.0136,
+   "epg_hz": 2.5,
+   "epg_rate_cv": 0.41
+  },
+  {
+   "round": 19,
+   "position_entropy": 0.915,
+   "drift_D": 0.0156,
+   "epg_hz": 2.56,
+   "epg_rate_cv": 0.183
+  },
+  {
+   "round": 20,
+   "position_entropy": 0.961,
+   "drift_D": 0.0258,
+   "epg_hz": 2.58,
+   "epg_rate_cv": 0.22
+  },
+  {
+   "round": 21,
+   "position_entropy": 0.942,
+   "drift_D": 0.0229,
+   "epg_hz": 2.55,
+   "epg_rate_cv": 0.202
+  },
+  {
+   "round": 22,
+   "position_entropy": 0.953,
+   "drift_D": 0.0221,
+   "epg_hz": 2.63,
+   "epg_rate_cv": 0.153
+  },
+  {
+   "round": 23,
+   "position_entropy": 0.941,
+   "drift_D": 0.0205,
+   "epg_hz": 2.6,
+   "epg_rate_cv": 0.134
+  },
+  {
+   "round": 24,
+   "position_entropy": 0.929,
+   "drift_D": 0.0194,
+   "epg_hz": 2.6,
+   "epg_rate_cv": 0.275
+  },
+  {
+   "round": 25,
+   "position_entropy": 0.961,
+   "drift_D": 0.0269,
+   "epg_hz": 2.67,
+   "epg_rate_cv": 0.157
+  },
+  {
+   "round": 26,
+   "position_entropy": 0.786,
+   "drift_D": 0.0193,
+   "epg_hz": 2.7,
+   "epg_rate_cv": 0.587
+  },
+  {
+   "round": 27,
+   "position_entropy": 0.843,
+   "drift_D": 0.0186,
+   "epg_hz": 2.61,
+   "epg_rate_cv": 0.538
+  },
+  {
+   "round": 28,
+   "position_entropy": 0.945,
+   "drift_D": 0.017,
+   "epg_hz": 2.62,
+   "epg_rate_cv": 0.325
+  },
+  {
+   "round": 29,
+   "position_entropy": 0.9,
+   "drift_D": 0.0155,
+   "epg_hz": 2.71,
+   "epg_rate_cv": 0.224
+  },
+  {
+   "round": 30,
+   "position_entropy": 0.947,
+   "drift_D": 0.0159,
+   "epg_hz": 2.71,
+   "epg_rate_cv": 0.194
+  },
+  {
+   "round": 31,
+   "position_entropy": 0.833,
+   "drift_D": 0.0217,
+   "epg_hz": 2.8,
+   "epg_rate_cv": 0.628
+  },
+  {
+   "round": 32,
+   "position_entropy": 0.657,
+   "drift_D": 0.0121,
+   "epg_hz": 2.57,
+   "epg_rate_cv": 0.79
+  },
+  {
+   "round": 33,
+   "position_entropy": 0.961,
+   "drift_D": 0.0186,
+   "epg_hz": 2.71,
+   "epg_rate_cv": 0.129
+  },
+  {
+   "round": 34,
+   "position_entropy": 0.928,
+   "drift_D": 0.0228,
+   "epg_hz": 2.74,
+   "epg_rate_cv": 0.293
+  },
+  {
+   "round": 35,
+   "position_entropy": 0.944,
+   "drift_D": 0.0165,
+   "epg_hz": 2.74,
+   "epg_rate_cv": 0.227
+  },
+  {
+   "round": 36,
+   "position_entropy": 0.897,
+   "drift_D": 0.0184,
+   "epg_hz": 2.73,
+   "epg_rate_cv": 0.281
+  },
+  {
+   "round": 37,
+   "position_entropy": 0.921,
+   "drift_D": 0.0233,
+   "epg_hz": 2.77,
+   "epg_rate_cv": 0.347
+  },
+  {
+   "round": 38,
+   "position_entropy": 0.935,
+   "drift_D": 0.0163,
+   "epg_hz": 2.75,
+   "epg_rate_cv": 0.341
+  },
+  {
+   "round": 39,
+   "position_entropy": 0.781,
+   "drift_D": 0.0253,
+   "epg_hz": 2.69,
+   "epg_rate_cv": 0.66
+  },
+  {
+   "round": 40,
+   "position_entropy": 0.877,
+   "drift_D": 0.013,
+   "epg_hz": 2.7,
+   "epg_rate_cv": 0.44
+  },
+  {
+   "round": 41,
+   "position_entropy": 0.908,
+   "drift_D": 0.0196,
+   "epg_hz": 2.84,
+   "epg_rate_cv": 0.441
+  },
+  {
+   "round": 42,
+   "position_entropy": 0.729,
+   "drift_D": 0.0153,
+   "epg_hz": 2.89,
+   "epg_rate_cv": 0.799
+  },
+  {
+   "round": 43,
+   "position_entropy": 0.928,
+   "drift_D": 0.0146,
+   "epg_hz": 2.81,
+   "epg_rate_cv": 0.367
+  },
+  {
+   "round": 44,
+   "position_entropy": 0.901,
+   "drift_D": 0.0202,
+   "epg_hz": 2.76,
+   "epg_rate_cv": 0.435
+  },
+  {
+   "round": 45,
+   "position_entropy": 0.913,
+   "drift_D": 0.0102,
+   "epg_hz": 2.81,
+   "epg_rate_cv": 0.363
+  },
+  {
+   "round": 46,
+   "position_entropy": 0.917,
+   "drift_D": 0.0128,
+   "epg_hz": 2.76,
+   "epg_rate_cv": 0.259
+  },
+  {
+   "round": 47,
+   "position_entropy": 0.874,
+   "drift_D": 0.0109,
+   "epg_hz": 2.75,
+   "epg_rate_cv": 0.31
+  },
+  {
+   "round": 48,
+   "position_entropy": 0.949,
+   "drift_D": 0.0128,
+   "epg_hz": 2.82,
+   "epg_rate_cv": 0.11
+  },
+  {
+   "round": 49,
+   "position_entropy": 0.932,
+   "drift_D": 0.0231,
+   "epg_hz": 2.78,
+   "epg_rate_cv": 0.307
+  },
+  {
+   "round": 50,
+   "position_entropy": 0.926,
+   "drift_D": 0.0183,
+   "epg_hz": 2.8,
+   "epg_rate_cv": 0.165
+  },
+  {
+   "round": 51,
+   "position_entropy": 0.94,
+   "drift_D": 0.0173,
+   "epg_hz": 2.89,
+   "epg_rate_cv": 0.306
+  },
+  {
+   "round": 52,
+   "position_entropy": 0.932,
+   "drift_D": 0.0185,
+   "epg_hz": 2.87,
+   "epg_rate_cv": 0.348
+  },
+  {
+   "round": 53,
+   "position_entropy": 0.942,
+   "drift_D": 0.013,
+   "epg_hz": 2.8,
+   "epg_rate_cv": 0.183
+  },
+  {
+   "round": 54,
+   "position_entropy": 0.861,
+   "drift_D": 0.0178,
+   "epg_hz": 2.86,
+   "epg_rate_cv": 0.511
+  },
+  {
+   "round": 55,
+   "position_entropy": 0.929,
+   "drift_D": 0.0154,
+   "epg_hz": 2.83,
+   "epg_rate_cv": 0.136
+  },
+  {
+   "round": 56,
+   "position_entropy": 0.939,
+   "drift_D": 0.0123,
+   "epg_hz": 2.83,
+   "epg_rate_cv": 0.129
+  },
+  {
+   "round": 57,
+   "position_entropy": 0.923,
+   "drift_D": 0.0216,
+   "epg_hz": 2.86,
+   "epg_rate_cv": 0.226
+  },
+  {
+   "round": 58,
+   "position_entropy": 0.93,
+   "drift_D": 0.0178,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.297
+  },
+  {
+   "round": 59,
+   "position_entropy": 0.919,
+   "drift_D": 0.0144,
+   "epg_hz": 2.86,
+   "epg_rate_cv": 0.396
+  },
+  {
+   "round": 60,
+   "position_entropy": 0.895,
+   "drift_D": 0.0168,
+   "epg_hz": 2.79,
+   "epg_rate_cv": 0.406
+  },
+  {
+   "round": 61,
+   "position_entropy": 0.868,
+   "drift_D": 0.0156,
+   "epg_hz": 2.82,
+   "epg_rate_cv": 0.495
+  },
+  {
+   "round": 62,
+   "position_entropy": 0.959,
+   "drift_D": 0.0079,
+   "epg_hz": 2.84,
+   "epg_rate_cv": 0.184
+  },
+  {
+   "round": 63,
+   "position_entropy": 0.87,
+   "drift_D": 0.0172,
+   "epg_hz": 2.8,
+   "epg_rate_cv": 0.474
+  },
+  {
+   "round": 64,
+   "position_entropy": 0.922,
+   "drift_D": 0.0203,
+   "epg_hz": 2.84,
+   "epg_rate_cv": 0.366
+  },
+  {
+   "round": 65,
+   "position_entropy": 0.964,
+   "drift_D": 0.0138,
+   "epg_hz": 2.86,
+   "epg_rate_cv": 0.11
+  },
+  {
+   "round": 66,
+   "position_entropy": 0.801,
+   "drift_D": 0.0153,
+   "epg_hz": 2.99,
+   "epg_rate_cv": 0.696
+  },
+  {
+   "round": 67,
+   "position_entropy": 0.952,
+   "drift_D": 0.0229,
+   "epg_hz": 2.9,
+   "epg_rate_cv": 0.184
+  },
+  {
+   "round": 68,
+   "position_entropy": 0.966,
+   "drift_D": 0.021,
+   "epg_hz": 2.87,
+   "epg_rate_cv": 0.104
+  },
+  {
+   "round": 69,
+   "position_entropy": 0.901,
+   "drift_D": 0.0221,
+   "epg_hz": 2.83,
+   "epg_rate_cv": 0.488
+  },
+  {
+   "round": 70,
+   "position_entropy": 0.926,
+   "drift_D": 0.0131,
+   "epg_hz": 2.86,
+   "epg_rate_cv": 0.242
+  },
+  {
+   "round": 71,
+   "position_entropy": 0.962,
+   "drift_D": 0.0208,
+   "epg_hz": 2.87,
+   "epg_rate_cv": 0.186
+  },
+  {
+   "round": 72,
+   "position_entropy": 0.939,
+   "drift_D": 0.0165,
+   "epg_hz": 2.89,
+   "epg_rate_cv": 0.264
+  },
+  {
+   "round": 73,
+   "position_entropy": 0.945,
+   "drift_D": 0.0148,
+   "epg_hz": 2.91,
+   "epg_rate_cv": 0.19
+  },
+  {
+   "round": 74,
+   "position_entropy": 0.941,
+   "drift_D": 0.021,
+   "epg_hz": 2.85,
+   "epg_rate_cv": 0.189
+  },
+  {
+   "round": 75,
+   "position_entropy": 0.972,
+   "drift_D": 0.0184,
+   "epg_hz": 2.9,
+   "epg_rate_cv": 0.067
+  },
+  {
+   "round": 76,
+   "position_entropy": 0.897,
+   "drift_D": 0.0168,
+   "epg_hz": 2.84,
+   "epg_rate_cv": 0.228
+  },
+  {
+   "round": 77,
+   "position_entropy": 0.944,
+   "drift_D": 0.0176,
+   "epg_hz": 2.89,
+   "epg_rate_cv": 0.271
+  },
+  {
+   "round": 78,
+   "position_entropy": 0.876,
+   "drift_D": 0.0194,
+   "epg_hz": 2.92,
+   "epg_rate_cv": 0.403
+  },
+  {
+   "round": 79,
+   "position_entropy": 0.826,
+   "drift_D": 0.0222,
+   "epg_hz": 2.92,
+   "epg_rate_cv": 0.529
+  },
+  {
+   "round": 80,
+   "position_entropy": 0.908,
+   "drift_D": 0.0157,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.246
+  }
+ ],
+ "BUMP": true,
+ "bump": {
+  "L": {
+   "strength": 0.703,
+   "shuffle_p99": 0.368,
+   "run_positions_deg": [
+    -114.6,
+    -174.7,
+    106.6,
+    -41.1,
+    165.4,
+    -80.5,
+    105.1,
+    -89.3
+   ],
+   "resultant": 0.31
+  },
+  "R": {
+   "strength": 0.682,
+   "shuffle_p99": 0.384,
+   "run_positions_deg": [
+    100.5,
+    164.9,
+    -113.8,
+    -28.3,
+    -171.8,
+    46.7,
+    -119.3,
+    72.4
+   ],
+   "resultant": 0.159
+  }
+ },
+ "bump_motion": {
+  "position_entropy": 0.964,
+  "position_histogram": [
+   0.022,
+   0.066,
+   0.065,
+   0.05,
+   0.076,
+   0.078,
+   0.107,
+   0.098,
+   0.053,
+   0.042,
+   0.018,
+   0.06,
+   0.12,
+   0.062,
+   0.05,
+   0.034
+  ],
+  "drift_D_rad2_per_s": 0.0193,
+  "MOVES_LIKE_A_FLY": true
+ },
+ "RATE": true,
+ "mean_hz_own": 1.653,
+ "over_100hz_own": 0.0,
+ "ring_group_hz": {
+  "EPG": 2.9,
+  "PEN_a": 4.45,
+  "PEN_b": 13.42,
+  "PEG": 0.88,
+  "Delta7": 0.66,
+  "ER": 2.32,
+  "ExR": 9.72
+ },
+ "measured_types": {
+  "MBON11": {
+   "target_hz": 37.2,
+   "hz": 37.24
+  },
+  "MBON12": {
+   "target_hz": 21.5,
+   "hz": 21.58
+  },
+  "MBON13": {
+   "target_hz": 16.5,
+   "hz": 16.49
+  },
+  "MBON14": {
+   "target_hz": 15.5,
+   "hz": 15.6
+  },
+  "MBON17": {
+   "target_hz": 13.4,
+   "hz": 13.43
+  },
+  "MBON18": {
+   "target_hz": 10.9,
+   "hz": 10.86
+  },
+  "PPL101": {
+   "target_hz": 20.1,
+   "hz": 20.29
+  },
+  "PEN_a(PEN1)": {
+   "target_hz": 3.9,
+   "hz": 4.45
+  }
+ },
+ "r": 0.451,
+ "r_independent": 0.421,
+ "seconds": 30872
+}
