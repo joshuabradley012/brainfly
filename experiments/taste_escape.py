@@ -120,6 +120,57 @@ def taste_trial(s: eyes.Setup, drive: list, seed: int) -> dict:
     return {"rest": rest, "driven": driven, "late": late}
 
 
+def taste_tests(t: eyes.Setup, quiet_seed: int = 79, seeds: tuple = (21, 22, 23, 24, 25, 26)) -> dict:
+    """QUIET and the taste tests (SUGAR, RESPONSE, BITTER, IR94E, STABLE) in a 30-fly setup whose biases are set, as
+    this test ran them: QUIET's rest from quiet_seed, the six taste conditions from seeds."""
+    b = t.brain
+    out = {}
+    own = ~t.fixed
+    mn9L, mn9R = b.cells(["MN9"], "L"), b.cells(["MN9"], "R")
+    b.reset(quiet_seed)
+    b.set_release(t.ol.neurons, t.silent)
+    b.advance(int(round(1.0 / b.dt)))
+    c = np.stack([b.advance(int(round(1.0 / b.dt))) for _ in range(10)])        # seconds x flies x neurons
+    bouts = float((c[:, :, mn9L].sum(2) > 20).mean())
+    mean, var = c.mean((0, 1)), c.var(0).mean(0)
+    fano = np.where(mean > 0.5, var / np.maximum(mean, 1e-9), np.nan)
+    out["rest"] = {"own_mean_hz": round(float(mean[own].mean()), 3), "own_over_100hz": int((mean[own] > 100).sum()),
+                   "bursting_fano_over_10": int(np.nansum(fano[own] > 10)), "mn9_L_hz": round(float(mean[mn9L].mean()), 2),
+                   "mn9_L_bout_share": round(bouts, 4), "dsog1_hz": round(float(mean[b.cells(DSOG1)].mean()), 2)}
+    out["QUIET"] = bool(bouts <= 0.05)
+    print("rest:", out["rest"], "QUIET", out["QUIET"], flush=True)
+
+    cells = {k: b.cells(v, "L") for k, v in SETS.items()}
+    undriven = own.copy()
+    undriven[np.concatenate(list(cells.values()))] = False
+    run = lambda names, rate=100.0, seed=seeds[0]: taste_trial(t, [(cells[k], rate) for k in names], seed)
+    conds = {"sugar": run(["sugar"], seed=seeds[0]), "sugar 10 Hz": run(["sugar"], 10.0, seed=seeds[1]), "sugar+bitter": run(["sugar", "bitter"], seed=seeds[2]),
+             "sugar+ir94e": run(["sugar", "ir94e"], seed=seeds[3]), "water": run(["water"], seed=seeds[4]),
+             "premotor 50 Hz": taste_trial(t, [(b.cells(PREMOTOR, "L"), 50.0)], seeds[5])}
+    rise = {k: x["driven"][:, mn9L].mean(1) - x["rest"][:, mn9L].mean(1) for k, x in conds.items()}
+    t_sugar = rise["sugar"].mean() / (rise["sugar"].std(ddof=1) / np.sqrt(TASTE_TRIALS))
+    cut = lambda k: 1 - rise[k].mean() / rise["sugar"].mean() if rise["sugar"].mean() > 0 else 0.0
+    sug = conds["sugar"]
+    hot = float((sug["driven"][:, undriven].mean(0) > 100).mean())
+    rest_mean, late_mean = float(sug["rest"][:, own].mean()), float(sug["late"][:, own].mean())
+    out["taste"] = {
+        "rise_hz": {k: round(float(x.mean()), 2) for k, x in rise.items()},
+        "rise_sem_hz": {k: round(float(x.std(ddof=1) / np.sqrt(len(x))), 2) for k, x in rise.items()},
+        "mn9_L_hz": {k: {"rest": round(float(x["rest"][:, mn9L].mean()), 2), "driven": round(float(x["driven"][:, mn9L].mean()), 2)} for k, x in conds.items()},
+        "mn9_R_hz": {k: {"rest": round(float(x["rest"][:, mn9R].mean()), 2), "driven": round(float(x["driven"][:, mn9R].mean()), 2)} for k, x in conds.items()},
+        "t_sugar": round(float(t_sugar), 1), "bitter_cut": round(float(cut("sugar+bitter")), 3), "t_bitter": round(welch(rise["sugar"], rise["sugar+bitter"]), 1),
+        "ir94e_cut": round(float(cut("sugar+ir94e")), 3), "t_ir94e": round(welch(rise["sugar"], rise["sugar+ir94e"]), 1),
+        "undriven_over_100hz": round(hot, 5), "brain_rest_hz": round(rest_mean, 3), "brain_late_hz": round(late_mean, 3)}
+    tr = out["taste"]
+    out["SUGAR"] = bool(rise["sugar"].mean() >= 10 and t_sugar >= 4)
+    out["RESPONSE"] = bool(rise["sugar 10 Hz"].mean() <= 0.25 * rise["sugar"].mean())
+    out["BITTER"] = bool(cut("sugar+bitter") >= 0.25 and tr["t_bitter"] >= 4)
+    out["IR94E"] = bool(cut("sugar+ir94e") >= 0.25 and tr["t_ir94e"] >= 4)
+    out["STABLE"] = bool(hot <= 0.001 and abs(late_mean - rest_mean) <= 0.2 * rest_mean)
+    print("taste:", tr["rise_hz"], {k: out[k] for k in ("SUGAR", "RESPONSE", "BITTER", "IR94E", "STABLE")}, flush=True)
+    return out
+
+
 def main() -> None:
     t0 = time.perf_counter()
     attempt1.network = escape2.network                  # eyes_at_rest.Setup builds the test's network
@@ -144,51 +195,8 @@ def main() -> None:
     eyes.TRIALS = TASTE_TRIALS
     t, _ = build(None, seed=6)
     t.bias = s.bias.copy()
-    b = t.brain
-    b.set_bias(t.bias[t.gid])
-    own = ~t.fixed
-    mn9L, mn9R = b.cells(["MN9"], "L"), b.cells(["MN9"], "R")
-    b.reset(79)
-    b.set_release(t.ol.neurons, t.silent)
-    b.advance(int(round(1.0 / b.dt)))
-    c = np.stack([b.advance(int(round(1.0 / b.dt))) for _ in range(10)])        # seconds x flies x neurons
-    bouts = float((c[:, :, mn9L].sum(2) > 20).mean())
-    mean, var = c.mean((0, 1)), c.var(0).mean(0)
-    fano = np.where(mean > 0.5, var / np.maximum(mean, 1e-9), np.nan)
-    results["rest"] = {"own_mean_hz": round(float(mean[own].mean()), 3), "own_over_100hz": int((mean[own] > 100).sum()),
-                       "bursting_fano_over_10": int(np.nansum(fano[own] > 10)), "mn9_L_hz": round(float(mean[mn9L].mean()), 2),
-                       "mn9_L_bout_share": round(bouts, 4), "dsog1_hz": round(float(mean[b.cells(DSOG1)].mean()), 2)}
-    results["QUIET"] = bool(bouts <= 0.05)
-    print("rest:", results["rest"], "QUIET", results["QUIET"], flush=True)
-
-    cells = {k: b.cells(v, "L") for k, v in SETS.items()}
-    undriven = own.copy()
-    undriven[np.concatenate(list(cells.values()))] = False
-    run = lambda names, rate=100.0, seed=21: taste_trial(t, [(cells[k], rate) for k in names], seed)
-    conds = {"sugar": run(["sugar"], seed=21), "sugar 10 Hz": run(["sugar"], 10.0, seed=22), "sugar+bitter": run(["sugar", "bitter"], seed=23),
-             "sugar+ir94e": run(["sugar", "ir94e"], seed=24), "water": run(["water"], seed=25),
-             "premotor 50 Hz": taste_trial(t, [(b.cells(PREMOTOR, "L"), 50.0)], 26)}
-    rise = {k: x["driven"][:, mn9L].mean(1) - x["rest"][:, mn9L].mean(1) for k, x in conds.items()}
-    t_sugar = rise["sugar"].mean() / (rise["sugar"].std(ddof=1) / np.sqrt(TASTE_TRIALS))
-    cut = lambda k: 1 - rise[k].mean() / rise["sugar"].mean() if rise["sugar"].mean() > 0 else 0.0
-    sug = conds["sugar"]
-    hot = float((sug["driven"][:, undriven].mean(0) > 100).mean())
-    rest_mean, late_mean = float(sug["rest"][:, own].mean()), float(sug["late"][:, own].mean())
-    results["taste"] = {
-        "rise_hz": {k: round(float(x.mean()), 2) for k, x in rise.items()},
-        "rise_sem_hz": {k: round(float(x.std(ddof=1) / np.sqrt(len(x))), 2) for k, x in rise.items()},
-        "mn9_L_hz": {k: {"rest": round(float(x["rest"][:, mn9L].mean()), 2), "driven": round(float(x["driven"][:, mn9L].mean()), 2)} for k, x in conds.items()},
-        "mn9_R_hz": {k: {"rest": round(float(x["rest"][:, mn9R].mean()), 2), "driven": round(float(x["driven"][:, mn9R].mean()), 2)} for k, x in conds.items()},
-        "t_sugar": round(float(t_sugar), 1), "bitter_cut": round(float(cut("sugar+bitter")), 3), "t_bitter": round(welch(rise["sugar"], rise["sugar+bitter"]), 1),
-        "ir94e_cut": round(float(cut("sugar+ir94e")), 3), "t_ir94e": round(welch(rise["sugar"], rise["sugar+ir94e"]), 1),
-        "undriven_over_100hz": round(hot, 5), "brain_rest_hz": round(rest_mean, 3), "brain_late_hz": round(late_mean, 3)}
-    tr = results["taste"]
-    results["SUGAR"] = bool(rise["sugar"].mean() >= 10 and t_sugar >= 4)
-    results["RESPONSE"] = bool(rise["sugar 10 Hz"].mean() <= 0.25 * rise["sugar"].mean())
-    results["BITTER"] = bool(cut("sugar+bitter") >= 0.25 and tr["t_bitter"] >= 4)
-    results["IR94E"] = bool(cut("sugar+ir94e") >= 0.25 and tr["t_ir94e"] >= 4)
-    results["STABLE"] = bool(hot <= 0.001 and abs(late_mean - rest_mean) <= 0.2 * rest_mean)
-    print("taste:", tr["rise_hz"], {k: results[k] for k in ("SUGAR", "RESPONSE", "BITTER", "IR94E", "STABLE")}, flush=True)
+    t.brain.set_bias(t.bias[t.gid])
+    results.update(taste_tests(t))
     OUT.write_text(json.dumps(results, indent=1))
 
     eyes.TRIALS = 8

@@ -21,6 +21,11 @@ weighted 0.3. The offsets are saved every 10 rounds (experiments/ring_insitu/off
 Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, imaged). That gives the
 BUMP measures with bump_motion's position entropy and drift, the rates of the ring's groups and the measured
 types, the brain's mean rate and hot neurons, and FC (reported).
+Ran: BUMP and RATE hold. On each bridge side the bump's strength is 0.70 and 0.68 (shuffles' 99th percentiles 0.37
+and 0.38), resultants 0.31 and 0.16; its position entropy 0.96 and drift 0.019 rad^2/s move like a fly's; the brain's
+own mean rate is 1.65 Hz with no neuron over 100 Hz; resting FC r 0.45 against 0.42 for independent firing. (The
+measurement ran with the offsets from before the 80th round's step, which the saved offsets include; rung4_rest.py sets
+the final offsets before measuring.)
 
     python experiments/ring_insitu.py            (writes experiments/ring_insitu.json and ring_insitu/offsets.npz)
 """
@@ -50,13 +55,15 @@ FIT = "ring_fit3"
 ROUNDS, BATCHES, SECONDS, STEP, EMA = 80, 2, 40, 0.2, 0.3
 
 
-def main() -> None:
-    t0 = time.perf_counter()
-    HERE.mkdir(exist_ok=True)
+def build(rewiring: int | None = None, start_bias: np.ndarray | None = None, seed: int = 5) -> tuple[eyes.Setup, dict]:
+    """taste_escape.py's brain (rewired if asked) with the fitted ring, its group biases and each ring neuron's
+    homeostatic offset. Biases start from start_bias if given, else taste_escape/intact.npz for the intact network
+    and eyes_at_rest.Setup's own start (rest_calibration2.py's) for a rewired one. Returns the setup and the ring's
+    state."""
     fit = json.loads(Path(__file__).with_name(f"{FIT}.json").read_text())["best"]
     p = fit["params"]
     attempt1.network = escape2.network
-    M, scale, labels, types, superclass = escape2.network()
+    M, scale, labels, types, superclass = te.network_for(rewiring)
     te.use_route(te.sugar_route(M, scale, labels))          # the taste route's model and targets
     route_model = attempt2.model
 
@@ -67,8 +74,12 @@ def main() -> None:
         return spec, sets
     attempt2.model = model
     eyes.SUBNETWORK = ring_whole.subnetwork(p)
-    s = eyes.Setup(None, seed=5)
-    s.bias = np.load(te.HERE / "intact.npz")["bias"]
+    s = eyes.Setup(rewiring, seed=seed)
+    s.rewiring = rewiring
+    if start_bias is not None:
+        s.bias = start_bias.copy()
+    elif rewiring is None:
+        s.bias = np.load(te.HERE / "intact.npz")["bias"]
     b, types = s.brain, s.types
     ring, _ = ring_whole.ring_members(types)
     groups = ring_whole.group_of(types)
@@ -85,35 +96,45 @@ def main() -> None:
     group_bias = b.set_bias
     b.set_bias = lambda bias: group_bias(None if bias is None else np.asarray(bias) + extra)
     s.fixed |= ring
-    eyes.ROUNDS = [1.0] * 4 + [0.5] * 4
-    log = s.calibrate()
+    return s, {"fit": fit, "p": p, "ring": ring, "groups": groups, "homeo": homeo, "extra": extra}
 
-    # the ring's correction for its mean input from outside the ring, neuron by neuron
-    b.reset(3)
+
+def tune(s: eyes.Setup, st: dict, first_rounds: list, seed: int = 3) -> list:
+    """Calibrate the rest of the brain (first_rounds), correct the ring's offsets for its mean input from outside the
+    ring at rest (from a 2-s run from seed), neuron by neuron, and calibrate 4 more rounds at 0.5 mV."""
+    b, types, ring, extra = s.brain, s.types, st["ring"], st["extra"]
+    eyes.ROUNDS = first_rounds
+    log = s.calibrate()
+    b.reset(seed)
     b.set_release(s.ol.neurons, s.silent)
     b.set_bias(s.bias[s.gid])
     b.advance(int(round(1.0 / b.dt)))
     rate = b.advance(int(round(2.0 / b.dt))).mean(0) / 2.0
     f = np.array([q["depression"] for q in b.params])[b.cls]
     tau = np.array([q["recovery"] for q in b.params])[b.cls]
-    fast = eyes.SUBNETWORK(escape2.network()[0], types, np.asarray(b.superclass))[0].tocsr()
+    network = te.network_for(s.rewiring)[0]
+    fast = eyes.SUBNETWORK(network, types, np.asarray(b.superclass))[0].tocsr()
     ext = (fast @ np.where(ring, 0.0, rate / (1.0 + (1.0 - f) * rate * tau))) * b.scale * W_SYN * TAU
-    extra[:] = np.where(ring, homeo - ext, 0.0)
+    extra[:] = np.where(ring, st["homeo"] - ext, 0.0)
     eyes.ROUNDS = [0.5] * 4
-    log += s.calibrate()
+    return log + s.calibrate()
 
-    # slow homeostasis in place
+
+def homeostasis(s: eyes.Setup, st: dict, seed0: int, save: Path | None = None) -> list:
+    """ROUNDS rounds of slow homeostasis in place (ring_homeostasis.py --slow's schedule), moving each ring neuron's
+    offset toward its type's rate in the fit. Returns each round's bump motion and EPG rates."""
+    b, types, ring, extra, groups = s.brain, s.types, st["ring"], st["extra"], st["groups"]
     target = np.zeros(b.n)
-    for g, hz in fit["group_hz"].items():
+    for g, hz in st["fit"]["group_hz"].items():
         if g in groups and g not in ("ER", "ExR"):
             target[groups[g]] = hz
-    tune = ring & (target > 0)
+    tune_ = ring & (target > 0)
     epg, side, glom = attempt1.epgs(types)
     smooth, trace = None, []
     for k in range(ROUNDS):
         rate_k, windows = np.zeros(b.n), []
         for batch in range(BATCHES):
-            b.reset(2000 + 10 * k + batch)
+            b.reset(seed0 + 10 * k + batch)
             b.set_release(s.ol.neurons, s.silent)
             b.set_bias(s.bias[s.gid])
             b.advance(int(round(1.0 / b.dt)))
@@ -121,19 +142,26 @@ def main() -> None:
             rate_k += w.sum((0, 1)) / (SECONDS * eyes.TRIALS * BATCHES)
             windows.append(w[:, :, epg])
         smooth = rate_k if smooth is None else (1 - EMA) * smooth + EMA * rate_k
-        extra[:] = np.where(tune, extra + np.clip(STEP * np.log((target + 0.5) / (smooth + 0.5)), -STEP, STEP), extra)
+        extra[:] = np.where(tune_, extra + np.clip(STEP * np.log((target + 0.5) / (smooth + 0.5)), -STEP, STEP), extra)
         m = attempt1.bump_motion(np.concatenate(windows), side, glom)
         trace.append({"round": k + 1, "position_entropy": m["position_entropy"], "drift_D": m["drift_D_rad2_per_s"],
                       "epg_hz": round(float(rate_k[epg].mean()), 2), "epg_rate_cv": round(float(rate_k[epg].std() / max(rate_k[epg].mean(), 1e-9)), 3)})
         print(json.dumps(trace[-1]), flush=True)
-        if (k + 1) % 10 == 0:
-            np.savez_compressed(HERE / "offsets.npz", extra=extra, group_bias=s.bias, rounds=k + 1)
-    np.savez_compressed(HERE / "offsets.npz", extra=extra, group_bias=s.bias, rounds=ROUNDS)
+        if save is not None and (k + 1) % 10 == 0:
+            np.savez_compressed(save, extra=extra, group_bias=s.bias, rounds=k + 1)
+    if save is not None:
+        np.savez_compressed(save, extra=extra, group_bias=s.bias, rounds=ROUNDS)
+    return trace
 
-    # rung 4's protocol
+
+def measure(s: eyes.Setup, st: dict, seed: int, save: Path | None = None) -> dict:
+    """Rung 4's protocol (rest_calibration.run): BUMP with bump_motion, RATE, the ring's and measured types' rates, FC."""
+    b, types, groups = s.brain, s.types, st["groups"]
+    epg, side, glom = attempt1.epgs(types)
     weights = imaging.region_weights()
-    fc, rates, windows = attempt1.run(b, weights, epg, seed=1200)
-    np.savez_compressed(HERE / "measure.npz", fc=fc, rates=rates, windows=windows)
+    fc, rates, windows = attempt1.run(b, weights, epg, seed=seed)
+    if save is not None:
+        np.savez_compressed(save, fc=fc, rates=rates, windows=windows)
     own = ~s.fixed
     rate = rates.mean(0)
     bump = attempt1.bump(windows, side, glom, np.random.default_rng(7))
@@ -143,14 +171,22 @@ def main() -> None:
     r = lambda mat: round(float(np.corrcoef(target_pairs, pairs(mat))[0, 1]), 3)
     classic = all(bump[x]["strength"] >= attempt1.MIN_BUMP and bump[x]["strength"] > bump[x]["shuffle_p99"]
                   and bump[x]["resultant"] < attempt1.MAX_RESULTANT for x in "LR")
-    out = {"question": __doc__, "calibration": log[-1], "homeostasis": trace,
-           "BUMP": bool(classic and motion["MOVES_LIKE_A_FLY"]), "bump": bump, "bump_motion": motion,
-           "RATE": bool(rate[own].mean() <= attempt1.MAX_MEAN and (rate[own] > 100).mean() <= attempt1.MAX_HOT),
-           "mean_hz_own": round(float(rate[own].mean()), 3), "over_100hz_own": round(float((rate[own] > 100).mean()), 5),
-           "ring_group_hz": {g: round(float(rate[m].mean()), 2) for g, m in groups.items()},
-           "measured_types": {t: {"target_hz": v, "hz": round(float(rate[types == t].mean()), 2)} for t, v in attempt1.MEASURED.items()},
-           "r": r(fc), "r_independent": r(imaging.measurement_only(weights, variance=rate)),
-           "seconds": round(time.perf_counter() - t0)}
+    return {"BUMP": bool(classic and motion["MOVES_LIKE_A_FLY"]), "bump": bump, "bump_motion": motion,
+            "RATE": bool(rate[own].mean() <= attempt1.MAX_MEAN and (rate[own] > 100).mean() <= attempt1.MAX_HOT),
+            "mean_hz_own": round(float(rate[own].mean()), 3), "over_100hz_own": round(float((rate[own] > 100).mean()), 5),
+            "ring_group_hz": {g: round(float(rate[m].mean()), 2) for g, m in groups.items()},
+            "measured_types": {t: {"target_hz": v, "hz": round(float(rate[types == t].mean()), 2)} for t, v in attempt1.MEASURED.items()},
+            "r": r(fc), "r_independent": r(imaging.measurement_only(weights, variance=rate))}
+
+
+def main() -> None:
+    t0 = time.perf_counter()
+    HERE.mkdir(exist_ok=True)
+    s, st = build()
+    log = tune(s, st, [1.0] * 4 + [0.5] * 4)
+    trace = homeostasis(s, st, 2000, save=HERE / "offsets.npz")
+    m = measure(s, st, 1200, save=HERE / "measure.npz")
+    out = {"question": __doc__, "calibration": log[-1], "homeostasis": trace, **m, "seconds": round(time.perf_counter() - t0)}
     print(json.dumps({k: v for k, v in out.items() if k not in ("question", "homeostasis")}), flush=True)
     OUT.write_text(json.dumps(out, indent=1))
 

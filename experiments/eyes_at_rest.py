@@ -61,6 +61,7 @@ TRACE = ["LC4", "LPLC2", "DNp01"]
 SUBNETWORK = None      # (M, types, superclass) -> (M, slow, tau_slow), for later models; None here
 SYNAPSES = None        # (M, types, side) -> (M, gap, fast): curated electrical and fast synapses (sparse, mV, rows
                        # postsynaptic, as HybridBrain takes them), with the chemical edges they replace out of M
+CAL_SEED = 900         # calibration round r runs from seed CAL_SEED + r
 
 
 class Setup:
@@ -101,7 +102,7 @@ class Setup:
         goal = np.bincount(gid, weights=self.target * ~self.fixed, minlength=G) / np.maximum(free_n, 1)
         log = []
         for r, k in enumerate(ROUNDS):
-            b.reset(seed=900 + r)
+            b.reset(seed=CAL_SEED + r)
             b.set_release(self.ol.neurons, self.silent)
             b.set_bias(self.bias[gid])
             b.advance(int(round(1.0 / b.dt)))
