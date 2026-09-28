@@ -36,25 +36,31 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (September 2026)
 
-* **The fly jumps.** One spike in each jump motor neuron (TTMn) now launches NeuroMechFly off the ground.
-  The TTMn drives a twitch at each middle leg's coxa-trochanter joint, sized once so the launch speed
-  matches flies' 0.48 m/s. With nothing else tuned, the fly leaves the ground 5.8 ms after the giant fiber
-  spike (flies: about 7 ms), extending its legs in 4.1 ms (flies: 3.3 ms). But it launches steeply and
-  slightly backward (79°, where flies leave at about 45° forward) and pitches head-down. It jumps from its
-  walking pose, not a fly's pre-jump posture, and its tibia extension is scripted, since that muscle's motor
-  neuron isn't identified yet
-  ([`experiments/jump_calibration.py`](experiments/jump_calibration.py), exploratory). Next, the brain
-  drives it: a looming disk, the eyes, the giant fiber, its electrical synapse onto the TTMn, then the jump.
+* **The fly sees a looming disk and jumps, from its eyes to its legs.** A dark disk looms at the simulated fly.
+  flyvis's eyes carry it to the brain's looming detectors (LC4, LPLC2) and the giant fibers. Each giant fiber spike
+  crosses a curated electrical synapse to its own jump motor neuron (TTMn), and the TTMn's spikes drive
+  NeuroMechFly's jump muscles. In every one of 24 runs the giant fibers fired and the fly left the ground. But
+  few of these are good escapes. A loom on one side fires only that side's giant fiber, so the fly pushes off
+  with one middle leg and tumbles sideways at 0.2 m/s. The loom-evoked spikes come late, mostly 2-52 ms before
+  contact. And the resting giant fiber fires at about 0.1 Hz, where a fly's is silent, so a few flies jumped at
+  nothing ([`experiments/loom_jump.py`](experiments/loom_jump.py), exploratory).
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/jump-dark.svg">
-  <img src="assets/jump-light.svg" width="100%" alt="Animation: NeuroMechFly seen from its right side and from the front. After a giant fiber spike and one spike in each jump motor neuron, the jump muscles' twitch extends the middle legs (red) and the fly leaves the ground about 6 ms later. A timeline below marks the giant fiber spike, the TTMn spikes, the muscle activation and takeoff.">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/loom_jump-dark.svg">
+  <img src="assets/loom_jump-light.svg" width="100%" alt="Animation: a dark disk grows on the fly's right. The brain's right LC4 and LPLC2 rates climb over the last 100 ms before contact; the right giant fiber fires 52 ms before contact and the right jump motor neuron fires with it. NeuroMechFly then pushes off with its right middle leg and leaves the ground 47 ms before contact, at 0.2 m/s.">
 </picture>
 
-The escape jump in FlyGym from one spike in each TTMn, slowed down. `python assets/jump.py` redraws it
-from [`brainfly/jump.py`](brainfly/jump.py).
+One fly's escape from a loom on its right, the brain slowed 20 times and the jump 600 times.
+`python assets/loom_jump.py` redraws it.
 
-* **The nerve cord makes a walking rhythm.** Driving the descending neuron DNg100, which makes decapitated flies
+  In isolation, one spike in each TTMn launches the fly 5.8 ms after the giant fiber spike (flies: about 7 ms),
+  its legs extending in 4.1 ms (flies: 3.3 ms), with the jump muscle's strength set once from flies' 0.48 m/s
+  launch. It still jumps too steeply and slightly backward (79°, against about 45° forward), because it starts
+  from its walking pose, and its tibia extension is scripted
+  ([`experiments/jump_calibration.py`](experiments/jump_calibration.py), exploratory;
+  [`assets/jump.py`](assets/jump.py) draws [the two-legged jump](assets/jump-light.svg)).
+
+* **The nerve cord makes a walking rhythm, and it moves the legs.** Driving the descending neuron DNg100, which makes decapitated flies
   walk, now sets the front legs' motor neurons oscillating at 11.6-13.7 Hz, inside flies' 7-15 Hz stepping range.
   It does so in 61 of 64 runs with fresh parameters, and in none of 128 once the wiring is scrambled. brainfly
   builds the front legs' neuromere network (4,309 neurons) from its own copy of MaleCNS and runs Pugliese et al.'s
@@ -73,6 +79,20 @@ from [`brainfly/jump.py`](brainfly/jump.py).
 
 The front legs' motor neurons while DNg100 is driven (left), in a rewired network (middle), and every run's
 rhythm frequency against flies' stepping range (right). `python assets/rhythm.py` redraws it.
+
+  The rhythm now moves the body's legs. brainfly turns each front-leg motor neuron's rate into torque on the
+  joint its muscle works, with one gain set from a fly's step. In a tethered NeuroMechFly the front legs then swing
+  at the motor neurons' 11-15 Hz ([`brainfly/legs.py`](brainfly/legs.py),
+  [`experiments/vnc_legs.py`](experiments/vnc_legs.py), exploratory). They twitch rather than step: the swing and
+  stance motor neurons fire together, so the foot bobs up and down instead of tracing a loop. Each DNg100 moves
+  only the opposite leg.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/legs-dark.svg">
+  <img src="assets/legs-light.svg" width="100%" alt="Animation: NeuroMechFly tethered in the air, seen from its left side and from the front, its left front leg (red) swinging about 12 times a second under brainfly's nerve cord with the right DNg100 driven; the foot's path is a short line, not the loop of a fly's recorded step. Below, three motor neuron groups' rates and two joint angles oscillate together.">
+</picture>
+
+The nerve cord's rhythm moving the front legs, 25 times slower. `python assets/legs.py` redraws it.
 
 * **One brain now rests, escapes a looming threat, and tastes.** Rung 4's resting brain, given flyvis's
   eyes, passes rung 1's taste tests and a looming escape test at once. The test was pre-registered, run on
