@@ -128,9 +128,10 @@ def _integrate_uniform(n, ub, xb, adb, tonic, A, B, C, TH, VA, AA, a_xx, externa
 
 @numba.njit(cache=True)
 def _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs, a_xx, a_ss, theta, graded,
-                   external, tonic_on, adapt_on, slow, fired):
+                   external, tonic_on, adapt_on, slow, slow_in, fired):
     """One step of every neuron's membrane (the non-uniform case), listing in fired the ones over
-    threshold; returns how many. In its own function so the compiler optimises its loop alone."""
+    threshold; returns how many. In its own function so the compiler optimises its loop alone. Only neurons
+    with slow input (slow_in) carry a slow current; every other neuron's is always 0."""
     m = 0
     for i in range(n):
         c = cls[i]
@@ -141,7 +142,7 @@ def _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_a
             ui -= a_va[c] * adb[i]
             adb[i] = a_aa[c] * adb[i]
         xb[i] = a_xx * xb[i]
-        if slow:
+        if slow and slow_in[i]:
             ui += a_vs[c] * sb[i]
             sb[i] = a_ss * sb[i]
         ub[i] = ui
@@ -153,7 +154,7 @@ def _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_a
 
 @numba.njit(cache=True)
 def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs, a_xx, a_ss, theta,
-                      graded, tonic_on, adapt_on, slow, fired):
+                      graded, tonic_on, adapt_on, slow, slow_in, fired):
     """_integrate_all for only the neurons listed (none of them external)."""
     m = 0
     for q in range(len(listed)):
@@ -166,7 +167,7 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
             ui -= a_va[c] * adb[i]
             adb[i] = a_aa[c] * adb[i]
         xb[i] = a_xx * xb[i]
-        if slow:
+        if slow and slow_in[i]:
             ui += a_vs[c] * sb[i]
             sb[i] = a_ss * sb[i]
         ub[i] = ui
@@ -177,7 +178,7 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 
 
 @numba.njit(parallel=True, cache=True)
-def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
+def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
@@ -213,7 +214,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw, 
     fpend[b, slot, target]; like other input, a jump that arrives during the target's refractory period is
     lost. counts[b, i] gains each spike, and
     timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0; a recorded neuron's spike
-    (rec_pos[i] >= 0) also sets rec_out[b, k, rec_pos[i]]."""
+    (rec_pos[i] >= 0) also sets rec_out[b, k, rec_pos[i]]. Only the slow synapses' targets (stargets, flagged in
+    slow_in) ever carry a slow current, so only they are updated for it."""
     trials, n = u.shape
     slow = len(sw) > 0
     ng = len(g_list)
@@ -256,10 +258,10 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw, 
                 m = _integrate_uniform(n, ub, xb, adb, tonic, A, B, C, TH, VA, AA, a_xx, external, tonic_on, adapt_on, fired)
             elif skip_external:                # external neurons never fire and nothing reads their state: skipped
                 m = _integrate_listed(internal, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs,
-                                      a_xx, a_ss, theta, graded, tonic_on, adapt_on, slow, fired)
+                                      a_xx, a_ss, theta, graded, tonic_on, adapt_on, slow, slow_in, fired)
             else:
                 m = _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs,
-                                   a_xx, a_ss, theta, graded, external, tonic_on, adapt_on, slow, fired)
+                                   a_xx, a_ss, theta, graded, external, tonic_on, adapt_on, slow, slow_in, fired)
             for q in range(ng):
                 i = g_list[q]
                 r = 0.0 if silenced[i] else min(max(g_gain[q] * (ub[i] - g_at[q]), 0.0), g_max[q])
@@ -289,8 +291,9 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, gptr, gidx, gw, 
                     g = Rb[i] + E[i]
                     if g != 0.0:
                         xb[i] += g * dt
-            if slow:
-                for i in range(n):
+            if slow:                           # only the slow synapses' targets can have slow input due
+                for q in range(len(stargets)):
+                    i = stargets[q]
                     if srow[i] != 0.0:
                         sb[i] += srow[i]
                         srow[i] = 0.0
@@ -462,6 +465,9 @@ class HybridBrain:
         self.fdelay = max(1, int(round(fast_delay / self.dt)))
         S = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if slow is None else slow.tocsc()
         self.sptr, self.sidx, self._slow_counts = S.indptr, S.indices, S.data.astype(np.float32)
+        self.stargets = np.unique(S.indices).astype(np.int64)            # the slow synapses' targets
+        self.slow_in = np.zeros(self.n, np.bool_)
+        self.slow_in[self.stargets] = True
         self.w_syn = w_syn
         self.tau_slow = float(tau_slow)
         self.delay = int(round(T_DLY / self.dt))
@@ -606,7 +612,7 @@ class HybridBrain:
             rec_pos[record] = np.arange(len(record))
         external_on = bool(self.external_input.any())      # else only graded neurons' targets can get release
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights,
-                 self.sptr, self.sidx, self.slow_weights, self.gptr, self.gidx, self.gap_mv,
+                 self.sptr, self.sidx, self.slow_weights, self.stargets, self.slow_in, self.gptr, self.gidx, self.gap_mv,
                  self.fptr, self.fcomp, self.fast_mv, self.ftargets, self.fpending, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  k["a_xx"], k["a_ss"], k["theta"],
                  k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["uniform"],
