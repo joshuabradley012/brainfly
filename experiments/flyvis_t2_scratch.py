@@ -10,14 +10,19 @@ and task configuration (model 000's), a fresh initialisation (resting potentials
 others fixed by its config), 250,000 iterations of its flow task at batch 4, Adam with its learning rate stepping from
 5e-5 to 5e-6 in ten steps, its activity penalty (toward 5, weight 0.1, until iteration 150,000), plus
 flyvis_t2_pilot5.py's capped T2 penalty at weight 100, every other iteration at twice that. Checkpoints every
-2,500 iterations; the run resumes from the last one. The model goes to flyvis's results as flow/9100/000. Logged:
+2,500 iterations, every 500 from iteration 10,000 (so that a stop loses little); the run resumes from the last one. The model goes to flyvis's results as flow/9100/000. Logged:
 the flow loss, T2's flash responses and flyvis's validation error; no test of rung 3.
+With `control`, the same network from the same initialisation trains without the T2 penalty (flow/9101/000,
+flyvis_t2_scratch_control.json, validation error every 2,500 iterations): at 20,000 iterations the constrained run
+still predicted flow no better than zero, and this asks whether the constraint is what holds it back.
 
     python experiments/flyvis_t2_scratch.py            (writes experiments/flyvis_t2_scratch.json; resumable)
+    python experiments/flyvis_t2_scratch.py control    (writes experiments/flyvis_t2_scratch_control.json; resumable)
 """
 from __future__ import annotations
 
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -30,7 +35,9 @@ from flyvis_t2_pilot5 import penalty as capped_t2_penalty
 
 OUT = Path(__file__).with_suffix(".json")
 NAME, SEED, ITERS = "flow/9100/000", 9100, 250_000
-T2_WEIGHT, T2_EVERY, CHECKPOINT, EVAL_EVERY = 100.0, 2, 2_500, 10_000
+T2_WEIGHT, T2_EVERY, CHECKPOINT, EVAL_EVERY = 100.0, 2, 500, 10_000
+if sys.argv[1:] == ["control"]:                     # the same training without the T2 penalty
+    NAME, T2_WEIGHT, EVAL_EVERY, OUT = "flow/9101/000", 0.0, 2_500, OUT.with_name("flyvis_t2_scratch_control.json")
 
 
 def build():
@@ -103,7 +110,7 @@ def main() -> None:
                     net.stimulus.add_input(data["lum"].to(vt.DEVICE))
                     act = net(net.stimulus(), dt, state=state)
                     loss = task.loss(dec["flow"](act), data["flow"].to(vt.DEVICE), "flow")
-                    extra = (T2_EVERY * T2_WEIGHT / 1000.0) * capped_t2_penalty(net) if k % T2_EVERY == 0 else torch.zeros((), device=vt.DEVICE)
+                    extra = (T2_EVERY * T2_WEIGHT / 1000.0) * capped_t2_penalty(net) if k % T2_EVERY == 0 and T2_WEIGHT else torch.zeros((), device=vt.DEVICE)
                     (loss + extra).backward(retain_graph=True)
                     opt.step()
                     pen(activity=act, iteration=k)
