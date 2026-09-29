@@ -120,9 +120,13 @@ def tune(s: eyes.Setup, st: dict, first_rounds: list, seed: int = 3) -> list:
     return log + s.calibrate()
 
 
-def homeostasis(s: eyes.Setup, st: dict, seed0: int, save: Path | None = None) -> list:
+def homeostasis(s: eyes.Setup, st: dict, seed0: int, save: Path | None = None, resume: dict | None = None,
+                checkpoint=None) -> list:
     """ROUNDS rounds of slow homeostasis in place (ring_homeostasis.py --slow's schedule), moving each ring neuron's
-    offset toward its type's rate in the fit. Returns each round's bump motion and EPG rates."""
+    offset toward its type's rate in the fit. Returns each round's bump motion and EPG rates. resume ({"rounds",
+    "smooth", "trace"}, with the offsets already restored) continues an interrupted run: every round starts afresh from
+    its own seed, so the result is the same as an uninterrupted run's. checkpoint(rounds, smooth, trace), if given, is
+    called after every round."""
     b, types, ring, extra, groups = s.brain, s.types, st["ring"], st["extra"], st["groups"]
     target = np.zeros(b.n)
     for g, hz in st["fit"]["group_hz"].items():
@@ -130,8 +134,10 @@ def homeostasis(s: eyes.Setup, st: dict, seed0: int, save: Path | None = None) -
             target[groups[g]] = hz
     tune_ = ring & (target > 0)
     epg, side, glom = attempt1.epgs(types)
-    smooth, trace = None, []
-    for k in range(ROUNDS):
+    smooth, trace, start = None, [], 0
+    if resume is not None:
+        smooth, trace, start = resume["smooth"], list(resume["trace"]), int(resume["rounds"])
+    for k in range(start, ROUNDS):
         rate_k, windows = np.zeros(b.n), []
         for batch in range(BATCHES):
             b.reset(seed0 + 10 * k + batch)
@@ -149,6 +155,8 @@ def homeostasis(s: eyes.Setup, st: dict, seed0: int, save: Path | None = None) -
         print(json.dumps(trace[-1]), flush=True)
         if save is not None and (k + 1) % 10 == 0:
             np.savez_compressed(save, extra=extra, group_bias=s.bias, rounds=k + 1)
+        if checkpoint is not None:
+            checkpoint(k + 1, smooth, trace)
     if save is not None:
         np.savez_compressed(save, extra=extra, group_bias=s.bias, rounds=ROUNDS)
     return trace

@@ -42,7 +42,8 @@ Reported: resting FC against the flies' (r), against the same neurons firing ind
 and the measured types' rates; RATE without the ring (as ring_insitu.py reported it); each homeostasis round's bump
 motion; the rewired networks' RATE and bump measures.
 
-    python experiments/rung4_rest.py intact           (also rewired-1 and rewired-2: each writes rung4_rest/<condition>.json)
+    python experiments/rung4_rest.py intact           (also rewired-1 and rewired-2: each writes rung4_rest/<condition>.json;
+                                                       rerun after an interruption to resume)
     python experiments/rung4_rest.py verdict          (writes experiments/rung4_rest.json)
 """
 from __future__ import annotations
@@ -73,13 +74,30 @@ LOWER = ("REST", "RELAY", "SIDE", "ESCAPE", "QUIET", "SUGAR", "RESPONSE", "BITTE
 
 def prepare(name: str) -> tuple[eyes.Setup, dict, list, list]:
     """Steps 1-4 of the procedure for one condition: the setup, the ring's state, the calibration log and the
-    homeostasis trace. The offsets are saved to rung4_rest/<condition>_offsets.npz."""
+    homeostasis trace. The offsets are saved to rung4_rest/<condition>_offsets.npz. The calibrated biases, offsets and
+    homeostasis so far are kept after every round in rung4_rest/<condition>_state.npz, from which an interrupted run
+    resumes with the same result."""
     c = CONDITIONS[name]
     eyes.CAL_SEED = CAL_SEED
     s, st = ring_insitu.build(c["rewiring"], seed=c["brain"])
-    rounds = FIRST_ROUNDS if c["rewiring"] is None else te.ROUNDS + FIRST_ROUNDS
-    log = ring_insitu.tune(s, st, rounds, seed=OUTSIDE_SEED)
-    trace = ring_insitu.homeostasis(s, st, c["homeostasis"], save=HERE / f"{name}_offsets.npz")
+    state, resume = HERE / f"{name}_state.npz", None
+    if state.exists():
+        z = np.load(state)
+        s.bias, st["extra"][:] = z["group_bias"].copy(), z["extra"]
+        log = json.loads(str(z["log"]))
+        resume = {"rounds": int(z["rounds"]), "smooth": z["smooth"] if int(z["rounds"]) else None,
+                  "trace": json.loads(str(z["trace"]))}
+        print("resuming after round", resume["rounds"], flush=True)
+    else:
+        rounds = FIRST_ROUNDS if c["rewiring"] is None else te.ROUNDS + FIRST_ROUNDS
+        log = ring_insitu.tune(s, st, rounds, seed=OUTSIDE_SEED)
+
+    def keep(k: int, smooth, trace: list) -> None:
+        np.savez(state, group_bias=s.bias, extra=st["extra"], smooth=np.zeros(0) if smooth is None else smooth, rounds=k,
+                 trace=json.dumps(trace), log=json.dumps(log))
+    if resume is None:
+        keep(0, None, [])
+    trace = ring_insitu.homeostasis(s, st, c["homeostasis"], save=HERE / f"{name}_offsets.npz", resume=resume, checkpoint=keep)
     s.brain.set_bias(s.bias[s.gid])                       # the final round's offsets
     return s, st, log, trace
 
