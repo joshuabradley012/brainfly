@@ -121,12 +121,13 @@ def tune(s: eyes.Setup, st: dict, first_rounds: list, seed: int = 3) -> list:
 
 
 def homeostasis(s: eyes.Setup, st: dict, seed0: int, save: Path | None = None, resume: dict | None = None,
-                checkpoint=None) -> list:
+                checkpoint=None, steps=None) -> list:
     """ROUNDS rounds of slow homeostasis in place (ring_homeostasis.py --slow's schedule), moving each ring neuron's
     offset toward its type's rate in the fit. Returns each round's bump motion and EPG rates. resume ({"rounds",
     "smooth", "trace"}, with the offsets already restored) continues an interrupted run: every round starts afresh from
     its own seed, so the result is the same as an uninterrupted run's. checkpoint(rounds, smooth, trace), if given, is
-    called after every round."""
+    called after every round. steps, if given, lists each round's step (mV, the gain and the cap on each offset's move)
+    in place of ROUNDS rounds of STEP."""
     b, types, ring, extra, groups = s.brain, s.types, st["ring"], st["extra"], st["groups"]
     target = np.zeros(b.n)
     for g, hz in st["fit"]["group_hz"].items():
@@ -137,7 +138,8 @@ def homeostasis(s: eyes.Setup, st: dict, seed0: int, save: Path | None = None, r
     smooth, trace, start = None, [], 0
     if resume is not None:
         smooth, trace, start = resume["smooth"], list(resume["trace"]), int(resume["rounds"])
-    for k in range(start, ROUNDS):
+    for k in range(start, ROUNDS if steps is None else len(steps)):
+        step = STEP if steps is None else steps[k]
         rate_k, windows = np.zeros(b.n), []
         for batch in range(BATCHES):
             b.reset(seed0 + 10 * k + batch)
@@ -148,7 +150,7 @@ def homeostasis(s: eyes.Setup, st: dict, seed0: int, save: Path | None = None, r
             rate_k += w.sum((0, 1)) / (SECONDS * eyes.TRIALS * BATCHES)
             windows.append(w[:, :, epg])
         smooth = rate_k if smooth is None else (1 - EMA) * smooth + EMA * rate_k
-        extra[:] = np.where(tune_, extra + np.clip(STEP * np.log((target + 0.5) / (smooth + 0.5)), -STEP, STEP), extra)
+        extra[:] = np.where(tune_, extra + np.clip(step * np.log((target + 0.5) / (smooth + 0.5)), -step, step), extra)
         m = attempt1.bump_motion(np.concatenate(windows), side, glom)
         trace.append({"round": k + 1, "position_entropy": m["position_entropy"], "drift_D": m["drift_D_rad2_per_s"],
                       "epg_hz": round(float(rate_k[epg].mean()), 2), "epg_rate_cv": round(float(rate_k[epg].std() / max(rate_k[epg].mean(), 1e-9)), 3)})
