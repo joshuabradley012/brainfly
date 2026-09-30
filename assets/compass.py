@@ -9,7 +9,8 @@ EPG activity by wedge in experiments/ring_insitu/compass.npz. The figure shows t
 median rate of the 8. Left: the ellipsoid body's 16 wedges, each lit by its EPGs' spikes in 200-ms frames, over 40 s
 of that run at 5 times real time. Right: the same run's EPG activity by wedge over 120 s (a kymograph), with the 40 s
 on the left bracketed; below it, where the bump sat over every window of rung 4's measurement, before homeostasis in
-place (ring_whole.py --homeostasis: 8 runs of 60 s) and after (ring_insitu.py: 8 runs of 300 s).
+place (ring_whole.py --homeostasis: 8 runs of 60 s), after it (ring_insitu.py: 8 runs of 300 s), and after the same
+procedure run again from the start on fresh seeds (rung4_rest.py's intact brain, pre-registered: 8 runs of 300 s).
 """
 from __future__ import annotations
 
@@ -84,7 +85,7 @@ def sector(k: int) -> str:
     return f"M{p(R0, a0)}L{p(R1, a0)}A{R1} {R1} 0 0 1 {p(R1, a1)}L{p(R0, a1)}A{R0} {R0} 0 0 0 {p(R0, a0)}Z"
 
 
-def figure(theme: str, act: np.ndarray, d: float, before: dict, after: dict) -> str:
+def figure(theme: str, act: np.ndarray, d: float, panels: list) -> str:
     from scipy.ndimage import gaussian_filter1d
     c = THEMES[theme]
     frames_act, kymo = gaussian_filter1d(act, 1.0, axis=0, mode="nearest"), gaussian_filter1d(act, 1.5, axis=0, mode="nearest")
@@ -123,19 +124,23 @@ def figure(theme: str, act: np.ndarray, d: float, before: dict, after: dict) -> 
     out.append(f'<path class="head" d="M{kx(SHOW_FROM):.1f} {KY0}V{KY1}" stroke="{c["ink"]}" stroke-width="1.3"/>')
     out.append(text(KX0, KY1 + 40, f"This run drifts at D = {d:.3f} rad²/s; flies' bumps in darkness, about 0.003–0.04.", "note"))
 
-    # where the bump sat, before and after homeostasis in place
-    hw = (KX1 - HX0 - 40) / 2
-    top = max(max(before["hist"]), max(after["hist"]))
-    for j, (h, x0) in enumerate(((before, HX0), (after, HX0 + hw + 40))):
-        out.append(text(x0, HY0 - 16, h["title"], "val"))
+    # where the bump sat: before homeostasis in place, after it, and after it again on fresh seeds
+    gap = 30
+    hw = (KX1 - HX0 - gap * (len(panels) - 1)) / len(panels)
+    top = max(max(h["hist"]) for h in panels)
+    for j, h in enumerate(panels):
+        x0 = HX0 + j * (hw + gap)
+        out.append(text(x0, HY0 - 30, h["title"], "val"))
+        out.append(text(x0, HY0 - 14, h["subtitle"], "tick"))
         bw = hw / 16
         for k, v in enumerate(h["hist"]):
             y = HY1 - (HY1 - HY0) * v / top
-            out.append(f'<rect x="{x0 + k * bw + 1:.1f}" y="{y:.1f}" width="{bw - 2:.1f}" height="{HY1 - y:.1f}" '
-                       f'fill="{c["red"] if j else c["muted"]}"/>')
+            out.append(f'<rect x="{x0 + k * bw + 0.8:.1f}" y="{y:.1f}" width="{bw - 1.6:.1f}" height="{HY1 - y:.1f}" '
+                       f'fill="{c["red"] if h["even"] else c["muted"]}"/>')
         out.append(f'<line x1="{x0}" y1="{HY1}" x2="{x0 + hw}" y2="{HY1}" stroke="{c["rule"]}"/>')
-        out.append(text(x0, HY1 + 18, "share of time at each of the 16 wedges", "tick"))
-        out.append(text(x0, HY1 + 34, h["note"], "tick"))
+        out.append(text(x0, HY1 + 18, h["note"], "tick"))
+    out.append(text(HX0, HY1 + 38, "Each: the share of time the bump spent at each of the 16 wedges; rung 4 asks a position "
+                    "entropy of at least 0.9.", "tick"))
 
     loop = SHOW / SPEED + 1.0
     pct = lambda t: 100 * t / loop
@@ -179,14 +184,17 @@ def main() -> None:
     run = int(np.argsort(d)[len(d) // 2])                         # the run with the median drift
     whole = json.loads((ROOT / "experiments" / "ring_whole" / "ring_fit3_homeostasis.json").read_text())
     insitu = json.loads((ROOT / "experiments" / "ring_insitu.json").read_text())
-    before = {"title": "Before homeostasis in place", "hist": whole["position_histogram"],
-              "note": f"favors half the ring (position entropy {whole['position_entropy']:.2f})"}
-    after = {"title": "After 80 rounds in place", "hist": insitu["bump_motion"]["position_histogram"],
-             "note": f"visits every heading (entropy {insitu['bump_motion']['position_entropy']:.2f}; rung 4 asks 0.9)"}
+    fresh = json.loads((ROOT / "experiments" / "rung4_rest" / "intact.json").read_text())["bump_motion"]
+    panels = [{"title": "Before homeostasis", "subtitle": "in place (exploratory)", "hist": whole["position_histogram"],
+               "note": f"favors half the ring (entropy {whole['position_entropy']:.2f})", "even": False},
+              {"title": "After 80 rounds", "subtitle": "in place (exploratory; shown above)", "hist": insitu["bump_motion"]["position_histogram"],
+               "note": f"visits every heading (entropy {insitu['bump_motion']['position_entropy']:.2f})", "even": True},
+              {"title": "Again, on fresh seeds", "subtitle": "rung 4's third attempt (pre-registered)", "hist": fresh["position_histogram"],
+               "note": f"favors one side (entropy {fresh['position_entropy']:.2f}): fails", "even": False}]
     print("drift per run", np.round(d, 4), "showing run", run)
     for theme in THEMES:
         path = OUT / f"compass-{theme}.svg"
-        path.write_text(figure(theme, act[run], float(d[run]), before, after))
+        path.write_text(figure(theme, act[run], float(d[run]), panels))
         print(f"{path} ({path.stat().st_size / 1e3:.0f} kB)")
 
 
