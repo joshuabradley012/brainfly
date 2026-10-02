@@ -14,6 +14,11 @@ seeds 9000 + 10k and 9001 + 10k), each round's step falling linearly from 0.2 to
 after each of the 40 rounds kept alongside.
 Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, seed 9500), as rung4_rest.py scores
 it, once with the final offsets and once with the averaged ones.
+Ran: annealing evened the ring out, and with the averaged offsets BUMP passes. The bump's strength is 0.71 and 0.70
+(shuffles' 99th percentiles 0.38), the resultants are 0.42 and 0.40, the position entropy is 0.93 (from 0.79), and D is
+0.015 rad^2/s. With the final round's offsets the position entropy is also 0.93, but one side's resultant is 0.78, so
+BUMP misses. RATE holds either way (1.66 Hz, nothing over 100 Hz). This is one measurement from one brain; eight runs
+give the resultant test a few percent chance of failing even for a perfectly even ring.
 
     python experiments/ring_anneal.py            (writes experiments/ring_anneal.json; resumes after an interruption)
 """

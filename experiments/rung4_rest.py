@@ -130,18 +130,20 @@ def rest(s: eyes.Setup, st: dict, seed: int) -> dict:
             "fc_r": r(fc), "fc_r_independent": r(imaging.measurement_only(weights, variance=rate))}
 
 
-def lower_rungs(s: eyes.Setup, st: dict) -> dict:
-    """The rungs below at rest: taste_escape.py's looming tests, then its taste tests with 30 flies of the same brain."""
-    v = eyes.loom_tests(s, 1.0, seed=LOOM_SEED)
+def lower_rungs(s: eyes.Setup, st: dict, loom_seed: int = LOOM_SEED, taste_brain: int = TASTE_BRAIN,
+                quiet_seed: int = QUIET_SEED, taste_seeds: tuple = TASTE_SEEDS) -> dict:
+    """The rungs below at rest: taste_escape.py's looming tests, then its taste tests with 30 flies of the same brain
+    (this test's seeds unless given)."""
+    v = eyes.loom_tests(s, 1.0, seed=loom_seed)
     eyes.show("escape, gain 1", v)
     out = {"looming": {k: v[k] for k in ("rest_hz", "own_mean_hz", "own_over_100hz", "relay", "side", "escape", "trace_hz")}}
     out.update({k: v[k] for k in ("REST", "RELAY", "SIDE", "ESCAPE")})
     eyes.TRIALS = te.TASTE_TRIALS
-    t, tst = ring_insitu.build(None, start_bias=s.bias, seed=TASTE_BRAIN)
+    t, tst = ring_insitu.build(None, start_bias=s.bias, seed=taste_brain)
     eyes.TRIALS = 8
     tst["extra"][:] = st["extra"]
     t.brain.set_bias(t.bias[t.gid])
-    out.update(te.taste_tests(t, quiet_seed=QUIET_SEED, seeds=TASTE_SEEDS))
+    out.update(te.taste_tests(t, quiet_seed=quiet_seed, seeds=taste_seeds))
     return out
 
 
