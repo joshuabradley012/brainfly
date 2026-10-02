@@ -20,11 +20,16 @@ entropy is 0.37, and the bump barely drifts (D = 0.002 rad^2/s, under flies' ran
 0.2 mV steps and no smoothing over rounds, wherever the bump settled, the next round's corrections deepened the pin
 rather than removing it. RATE holds (1.66 Hz).
 
+With `gentle`, the steps are a quarter the size (0.05 mV) and each neuron's rate is smoothed over rounds (each new
+round weighted 0.3, as ring_insitu.homeostasis), against the windup that pinned the bump (writes ring_longruns_gentle).
+
     python experiments/ring_longruns.py            (writes experiments/ring_longruns.json; resumes after an interruption)
+    python experiments/ring_longruns.py gentle     (writes experiments/ring_longruns_gentle.json; resumes likewise)
 """
 from __future__ import annotations
 
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -38,6 +43,9 @@ import rung4_rest as r4
 OUT = Path(__file__).with_suffix(".json")
 HERE = Path(__file__).with_suffix("")
 ROUNDS, SEED, MEASURE = 10, 9800, 9900
+STEP, EMA = 0.2, 1.0                                   # mV; the weight of each new round in a neuron's smoothed rate
+if sys.argv[1:] == ["gentle"]:
+    OUT, HERE, STEP, EMA, SEED, MEASURE = OUT.with_name("ring_longruns_gentle.json"), HERE.with_name("ring_longruns_gentle"), 0.05, 0.3, 9820, 9920
 
 
 def main() -> None:
@@ -63,18 +71,19 @@ def main() -> None:
     wedge = np.where(side == "R", (2 * glom) % 16, (19 - 2 * glom) % 16)
     from brainfly import imaging
     weights = imaging.region_weights()
+    smooth = np.load(state)["smooth"] if state.exists() and "smooth" in np.load(state) else None
     for k in range(first, ROUNDS):
         b.set_bias(s.bias[s.gid])
         _, rates, windows = attempt1.run(b, weights, epg, seed=SEED + k)
         rate = rates.mean(0)
-        step = ring_insitu.STEP
-        st["extra"][:] = np.where(tune, st["extra"] + np.clip(step * np.log((target + 0.5) / (rate + 0.5)), -step, step), st["extra"])
+        smooth = rate if smooth is None else (1 - EMA) * smooth + EMA * rate
+        st["extra"][:] = np.where(tune, st["extra"] + np.clip(STEP * np.log((target + 0.5) / (smooth + 0.5)), -STEP, STEP), st["extra"])
         m = attempt1.bump_motion(windows, side, glom)
         wedge_rate = np.array([rate[epg][wedge == w].mean() for w in range(16)])
         trace.append({"round": k + 1, "position_entropy": m["position_entropy"], "drift_D": m["drift_D_rad2_per_s"],
                       "epg_hz": round(float(rate[epg].mean()), 2), "wedge_rate_cv": round(float(wedge_rate.std() / wedge_rate.mean()), 3)})
         print(json.dumps(trace[-1]), flush=True)
-        np.savez(state, extra=st["extra"], rounds=k + 1, trace=json.dumps(trace))
+        np.savez(state, extra=st["extra"], rounds=k + 1, trace=json.dumps(trace), smooth=smooth)
     b.set_bias(s.bias[s.gid])
     out = {"question": __doc__, "rounds": trace, "measured": r4.rest(s, st, MEASURE), "seconds": round(time.perf_counter() - t0)}
     m = out["measured"]
