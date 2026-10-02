@@ -13,6 +13,10 @@ Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2
 ring_landscape.py's per-wedge occupancy, strength and EPG rates, and the brain's mean rate. The same brain with its
 loops scored position entropy 0.92 and 0.96 on two measurements (resultants 0.64 and 0.71; 0.42 and 0.61), wedge
 rates' CV 0.27.
+Ran: no. With the loops cut the bump still favors the same region, spending 44% of its time at wedges 11-13 (wedge
+rates' CV 0.42). Its position entropy is 0.895 and its resultants 0.50 and 0.56, so BUMP fails, on entropy. Nor does the
+ring's input from outside explain the region: across wedges, the mean and the variance of the EPGs' outside input
+correlate weakly with where the bump lingers (r = 0.14 and 0.12; ring_inputs.py).
 
     python experiments/ring_loops.py            (writes experiments/ring_loops.json)
 """

@@ -1,0 +1,111 @@
+{
+ "question": "Exploratory analysis, not pre-registered: does the ring's input from outside explain where the bump lingers?\n\nring_loops.py found the bump's favored region (wedges 11-13) survives cutting the ring's loops through the rest of the\nbrain. What remains from outside is the ring's input. Its mean is corrected neuron by neuron (ring_insitu.tune), but\nits fluctuations are not, and an EPG with more or busier outside partners gets noisier input. This computes, for each\nEPG, the mean and a Poisson variance proxy (the sum of w^2 r) of its input from neurons outside the ring, with each\ninput's depression at its rate, from ring_insitu.py's resting rates (ring_insitu/measure.npz) and rung4_anneal.py's\nbrain. Averaged by wedge, each is correlated with ring_landscape.py's occupancy (where attempt 4's bump spends its time).\n\n    python experiments/ring_inputs.py            (writes experiments/ring_inputs.json)\n",
+ "occupancy": [
+  0.044,
+  0.061,
+  0.053,
+  0.043,
+  0.046,
+  0.027,
+  0.031,
+  0.074,
+  0.063,
+  0.046,
+  0.045,
+  0.085,
+  0.164,
+  0.119,
+  0.057,
+  0.04
+ ],
+ "by_wedge": {
+  "mean": {
+   "values": [
+    41.22,
+    31.82,
+    30.12,
+    43.44,
+    40.69,
+    34.15,
+    26.02,
+    37.29,
+    34.55,
+    35.22,
+    42.16,
+    49.74,
+    38.28,
+    38.54,
+    45.22,
+    45.99
+   ],
+   "cv": 0.159,
+   "r_with_occupancy": 0.137
+  },
+  "variance": {
+   "values": [
+    374.49,
+    306.09,
+    241.16,
+    416.64,
+    407.21,
+    270.48,
+    202.33,
+    294.66,
+    420.68,
+    296.4,
+    398.93,
+    529.01,
+    360.79,
+    352.55,
+    426.76,
+    538.97
+   ],
+   "cv": 0.251,
+   "r_with_occupancy": 0.119
+  },
+  "excitatory": {
+   "values": [
+    45.75,
+    41.47,
+    36.38,
+    49.12,
+    48.91,
+    41.47,
+    33.69,
+    42.02,
+    49.2,
+    44.01,
+    46.33,
+    56.21,
+    46.71,
+    45.67,
+    49.12,
+    57.57
+   ],
+   "cv": 0.131,
+   "r_with_occupancy": 0.161
+  },
+  "inhibitory": {
+   "values": [
+    4.53,
+    9.66,
+    6.26,
+    5.67,
+    8.22,
+    7.31,
+    7.66,
+    4.72,
+    14.64,
+    8.79,
+    4.18,
+    6.47,
+    8.42,
+    7.14,
+    3.9,
+    11.58
+   ],
+   "cv": 0.371,
+   "r_with_occupancy": 0.05
+  }
+ }
+}
