@@ -83,6 +83,13 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   corrections deepened the pin.
 
 <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/compass_attempts-dark.svg">
+  <img src="assets/compass_attempts-light.svg" width="100%" alt="Five histograms of where the head-direction bump sat over the ellipsoid body's 16 wedges in rung 4's measurement. Exploratory run: even, entropy 0.96, passes. Attempt 3 on fresh seeds: lopsided, entropy 0.79, fails. The same brain after annealed homeostasis: even again, entropy 0.93, passes. Attempt 4 on fresh seeds: nearly even, entropy 0.92, but resultants 0.64 and 0.70, fails. Homeostasis on long runs: one tall spike, the bump pinned in one place, fails.">
+</picture>
+
+Where the bump sat in each run, from the saved results: passing runs in red, failing ones in grey. `python assets/compass_attempts.py` redraws it.
+
+<picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/compass-dark.svg">
   <img src="assets/compass-light.svg" width="100%" alt="Left: the ellipsoid body drawn as a ring of 16 wedges; a bump of activity several wedges wide lights them in red and wanders slowly around the ring. Right: a kymograph of the same run over 120 seconds, wedge against time, showing one band of activity that holds its heading and drifts about 90 degrees. Below: three histograms of where the bump sat over the 16 wedges. Before homeostasis in place it favors half the ring; after 80 rounds in the exploratory run it visits every wedge; after the same procedure on fresh seeds, in rung 4's third attempt, it favors one side again.">
 </picture>
