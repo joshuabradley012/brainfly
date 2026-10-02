@@ -13,6 +13,12 @@ moves by 0.2 ln((target + 0.5) / (rate + 0.5)) mV, at most 0.2 mV, toward its ty
 on its rate over that round (as ring_insitu.homeostasis, without the smoothing over rounds).
 Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, seed 9900) as rung4_rest.py scores
 it, with the final offsets; and each round's bump measures and the spread of its wedges' EPG rates.
+Ran: no, it pinned the bump. After the first round (position entropy 0.91, wedge rates' CV 0.34), each round's runs
+settled more and more on one region. From round 5 the entropy was 0.39-0.56 and the wedge rates' CV about 1. In the
+final measurement every run holds the bump within about 10 degrees of one heading (resultants 0.998), the position
+entropy is 0.37, and the bump barely drifts (D = 0.002 rad^2/s, under flies' range). With rates from long runs, full
+0.2 mV steps and no smoothing over rounds, wherever the bump settled, the next round's corrections deepened the pin
+rather than removing it. RATE holds (1.66 Hz).
 
     python experiments/ring_longruns.py            (writes experiments/ring_longruns.json; resumes after an interruption)
 """

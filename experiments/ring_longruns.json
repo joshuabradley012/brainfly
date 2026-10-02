@@ -1,0 +1,186 @@
+{
+ "question": "Exploratory, not pre-registered: does homeostasis that measures rates over long runs even out the bump's long-run\nlandscape?\n\nrung4_anneal.py (attempt 4, pre-registered) failed only on BUMP: its bump visits every heading, but runs still settle\naround one region (resultants 0.64 and 0.71). ring_landscape.py found why. Over rung 4's 300-s runs, the bump spends\n2.5 times longer than average at its favored wedges, and their EPGs fire twice as fast as elsewhere (4.2 against\n2.1 Hz). So the homeostasis never equalized their rates over long runs. It measures rates in 40-s runs from fresh\nstarts, where where the bump starts matters more than where it slowly drifts to. Here the homeostasis measures rates\nin runs as long as the test's.\nModel: rung4_anneal.py's intact brain with its averaged offsets (rung4_anneal/intact_state.npz).\nProcedure: 10 rounds, each 8 fresh runs of 300 s after 2 s (round k from seed 9800 + k). Every ring neuron's offset\nmoves by 0.2 ln((target + 0.5) / (rate + 0.5)) mV, at most 0.2 mV, toward its type's rate in ring_fit3.py's fit,\non its rate over that round (as ring_insitu.homeostasis, without the smoothing over rounds).\nMeasured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, seed 9900) as rung4_rest.py scores\nit, with the final offsets; and each round's bump measures and the spread of its wedges' EPG rates.\n\n    python experiments/ring_longruns.py            (writes experiments/ring_longruns.json; resumes after an interruption)\n",
+ "rounds": [
+  {
+   "round": 1,
+   "position_entropy": 0.914,
+   "drift_D": 0.011,
+   "epg_hz": 2.96,
+   "wedge_rate_cv": 0.337
+  },
+  {
+   "round": 2,
+   "position_entropy": 0.706,
+   "drift_D": 0.0091,
+   "epg_hz": 2.98,
+   "wedge_rate_cv": 0.831
+  },
+  {
+   "round": 3,
+   "position_entropy": 0.602,
+   "drift_D": 0.0067,
+   "epg_hz": 3.0,
+   "wedge_rate_cv": 0.911
+  },
+  {
+   "round": 4,
+   "position_entropy": 0.582,
+   "drift_D": 0.0061,
+   "epg_hz": 3.17,
+   "wedge_rate_cv": 1.002
+  },
+  {
+   "round": 5,
+   "position_entropy": 0.392,
+   "drift_D": 0.0021,
+   "epg_hz": 2.92,
+   "wedge_rate_cv": 1.009
+  },
+  {
+   "round": 6,
+   "position_entropy": 0.496,
+   "drift_D": 0.0033,
+   "epg_hz": 3.22,
+   "wedge_rate_cv": 1.026
+  },
+  {
+   "round": 7,
+   "position_entropy": 0.446,
+   "drift_D": 0.0033,
+   "epg_hz": 3.14,
+   "wedge_rate_cv": 1.061
+  },
+  {
+   "round": 8,
+   "position_entropy": 0.559,
+   "drift_D": 0.0063,
+   "epg_hz": 3.02,
+   "wedge_rate_cv": 0.91
+  },
+  {
+   "round": 9,
+   "position_entropy": 0.537,
+   "drift_D": 0.0051,
+   "epg_hz": 3.36,
+   "wedge_rate_cv": 1.041
+  },
+  {
+   "round": 10,
+   "position_entropy": 0.541,
+   "drift_D": 0.0065,
+   "epg_hz": 3.05,
+   "wedge_rate_cv": 0.908
+  }
+ ],
+ "measured": {
+  "RATE": true,
+  "BUMP": false,
+  "mean_hz": 1.663,
+  "over_100hz": 0.0,
+  "without_ring": {
+   "mean_hz": 1.656,
+   "over_100hz": 0.0
+  },
+  "bump": {
+   "L": {
+    "strength": 0.762,
+    "shuffle_p99": 0.502,
+    "run_positions_deg": [
+     124.2,
+     117.5,
+     122.1,
+     125.8,
+     127.2,
+     127.6,
+     120.6,
+     125.9
+    ],
+    "resultant": 0.998
+   },
+   "R": {
+    "strength": 0.749,
+    "shuffle_p99": 0.488,
+    "run_positions_deg": [
+     -143.1,
+     -135.5,
+     -141.8,
+     -145.3,
+     -146.8,
+     -146.5,
+     -138.9,
+     -145.1
+    ],
+    "resultant": 0.998
+   }
+  },
+  "bump_motion": {
+   "position_entropy": 0.374,
+   "position_histogram": [
+    0.002,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.001,
+    0.003,
+    0.029,
+    0.385,
+    0.524,
+    0.047,
+    0.005,
+    0.003
+   ],
+   "drift_D_rad2_per_s": 0.002,
+   "MOVES_LIKE_A_FLY": false
+  },
+  "ring_group_hz": {
+   "EPG": 3.22,
+   "PEN_a": 5.13,
+   "PEN_b": 13.54,
+   "PEG": 0.79,
+   "Delta7": 0.73,
+   "ER": 2.3,
+   "ExR": 9.54
+  },
+  "measured_types": {
+   "MBON11": {
+    "target_hz": 37.2,
+    "hz": 37.22
+   },
+   "MBON12": {
+    "target_hz": 21.5,
+    "hz": 21.7
+   },
+   "MBON13": {
+    "target_hz": 16.5,
+    "hz": 16.65
+   },
+   "MBON14": {
+    "target_hz": 15.5,
+    "hz": 15.48
+   },
+   "MBON17": {
+    "target_hz": 13.4,
+    "hz": 13.46
+   },
+   "MBON18": {
+    "target_hz": 10.9,
+    "hz": 10.84
+   },
+   "PPL101": {
+    "target_hz": 20.1,
+    "hz": 20.0
+   },
+   "PEN_a(PEN1)": {
+    "target_hz": 3.9,
+    "hz": 5.13
+   }
+  },
+  "fc_r": 0.44,
+  "fc_r_independent": 0.422
+ },
+ "seconds": 9464
+}
