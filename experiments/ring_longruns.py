@@ -22,6 +22,9 @@ rather than removing it. RATE holds (1.66 Hz).
 
 With `gentle`, the steps are a quarter the size (0.05 mV) and each neuron's rate is smoothed over rounds (each new
 round weighted 0.3, as ring_insitu.homeostasis), against the windup that pinned the bump (writes ring_longruns_gentle).
+Ran (gentle): stable, but no better. Each round's position entropy stayed between 0.84 and 0.96, with no pinning. In
+the final measurement the entropy is 0.94 and D is 0.015 rad^2/s, but the runs still lean toward wedges 7-8 and 11-12
+(resultants 0.67 and 0.69), so BUMP misses as attempt 4 did.
 
     python experiments/ring_longruns.py            (writes experiments/ring_longruns.json; resumes after an interruption)
     python experiments/ring_longruns.py gentle     (writes experiments/ring_longruns_gentle.json; resumes likewise)
