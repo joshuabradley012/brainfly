@@ -12,6 +12,8 @@ others fixed by its config), 250,000 iterations of its flow task at batch 4, Ada
 flyvis_t2_pilot5.py's capped T2 penalty at weight 100, every other iteration at twice that. Checkpoints every
 2,500 iterations, every 500 from iteration 10,000 (so that a stop loses little); the run resumes from the last one. The model goes to flyvis's results as flow/9100/000. Logged:
 the flow loss, T2's flash responses and flyvis's validation error; no test of rung 3.
+With `noaug`, it also trains without flyvis's data augmentation (flow/9102/000, flyvis_t2_scratch_noaug.json,
+validation every 1,000 iterations), to see whether augmentation is what keeps it from learning.
 With `control`, the same network from the same initialisation trains without the T2 penalty (flow/9101/000,
 flyvis_t2_scratch_control.json, validation error every 2,500 iterations): at 20,000 iterations the constrained run
 still predicted flow no better than zero, and this asks whether the constraint is what holds it back.
@@ -38,6 +40,10 @@ NAME, SEED, ITERS = "flow/9100/000", 9100, 250_000
 T2_WEIGHT, T2_EVERY, CHECKPOINT, EVAL_EVERY = 100.0, 2, 500, 10_000
 if sys.argv[1:] == ["control"]:                     # the same training without the T2 penalty
     NAME, T2_WEIGHT, EVAL_EVERY, OUT = "flow/9101/000", 0.0, 2_500, OUT.with_name("flyvis_t2_scratch_control.json")
+AUGMENT = True
+if sys.argv[1:] == ["noaug"]:                       # without the T2 penalty or data augmentation
+    NAME, T2_WEIGHT, CHECKPOINT, EVAL_EVERY, AUGMENT = "flow/9102/000", 0.0, 500, 1_000, False
+    OUT = OUT.with_name("flyvis_t2_scratch_noaug.json")
 
 
 def build():
@@ -97,7 +103,7 @@ def main() -> None:
     net.train()
     for d in dec.values():
         d.train()
-    with task.dataset.augmentation(True):
+    with task.dataset.augmentation(AUGMENT):
         while k < ITERS:
             with vt.on(vt.DEVICE), torch.no_grad():
                 state = net.steady_state(t_pre=0.5, dt=dt, batch_size=task.batch_size, value=0.5)
