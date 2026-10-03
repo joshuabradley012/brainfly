@@ -19,6 +19,11 @@ lowered by the mean of its real input from outside the ring, and that input kept
 Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, seed 9970, as ring_attribution.py):
 the BUMP measures, ring_landscape.py's per-wedge occupancy and EPG rates, the ring groups' rates, the brain's mean
 rate, and the quieted types' rates. ring_attribution.py's all: position entropy 0.85, resultants 0.72 and 0.78.
+Ran: neither. Without the EPGs' inhibitory input from outside the ring, the lean stays (position entropy 0.85,
+resultants 0.97 and 0.94). With the 76 types that inhibit the EPGs quieted (they settled at 1.07 Hz rather than 0.5
+after 8 rounds), it barely eases (0.89; 0.70 and 0.72). So the 2 Hz default isn't what sets the lean, and the EPGs'
+inhibitory input isn't needed for it. Across ring_attribution.py and these runs, the ring is even with no outside
+input and leans with any substantial share of it, its mean cancelled or not.
 
     python experiments/ring_quiet.py epg-inhibition     (writes experiments/ring_quiet/epg-inhibition.json)
     python experiments/ring_quiet.py quiet              (writes experiments/ring_quiet/quiet.json)
