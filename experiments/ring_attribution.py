@@ -15,6 +15,9 @@ every synapse from outside the ring onto them is removed. Conditions: none (the 
 loops cut at the ring's input), all, and each of EPG, PEN_a, PEN_b, PEG, Delta7, ER and ExR alone.
 Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, seed 9970, the same for every
 condition): the BUMP measures, ring_landscape.py's per-wedge occupancy and EPG rates, and the ring groups' rates.
+A condition ending in -fit (none-fit, all-fit) gives the ring's neurons the parameters ring_fit.py fitted them with
+(ring_insitu.build's fit_params): in the whole brain they reset 5 mV below rest, as rest_calibration2.py set for
+every neuron, but the ring was fitted resetting to rest, and three ExR types depress by the brain's class rule.
 
     python experiments/ring_attribution.py <condition>   (writes experiments/ring_attribution/<condition>.json)
     python experiments/ring_attribution.py summary       (writes experiments/ring_attribution.json)
@@ -42,7 +45,7 @@ from shiu_rewiring import W_SYN
 OUT = Path(__file__).with_suffix(".json")
 HERE = Path(__file__).with_suffix("")
 GROUPS = ("EPG", "PEN_a", "PEN_b", "PEG", "Delta7", "ER", "ExR")
-CONDITIONS = ("none", "all") + GROUPS
+CONDITIONS = ("none", "all") + GROUPS + ("none-fit", "all-fit")
 SEED = 9970
 _subnetwork = ring_whole.subnetwork
 
@@ -74,12 +77,13 @@ def partly_cut(condition: str):
     return make
 
 
-def run(condition: str) -> None:
+def run(name: str) -> None:
     t0 = time.perf_counter()
     HERE.mkdir(exist_ok=True)
+    condition, fit = name.removesuffix("-fit"), name.endswith("-fit")
     p = json.loads(Path(__file__).with_name(f"{ring_insitu.FIT}.json").read_text())["best"]["params"]
     ring_whole.subnetwork = partly_cut(condition)
-    s, st = ring_insitu.build(None, seed=r4a.CONDITIONS["intact"]["brain"])
+    s, st = ring_insitu.build(None, seed=r4a.CONDITIONS["intact"]["brain"], fit_params=fit)
     b, ring = s.brain, st["ring"]
     s.bias = np.load(r4a.HERE / "intact_state.npz")["group_bias"].copy()
     rates = np.load(Path(__file__).with_name("ring_insitu") / "measure.npz")["rates"].mean(0)
@@ -93,16 +97,16 @@ def run(condition: str) -> None:
     epg, side, glom = attempt1.epgs(s.types)
     _, r_runs, windows = attempt1.run(b, imaging.region_weights(), epg, seed=SEED)
     r = r_runs.mean(0)
-    out = {"condition": condition, "seed": SEED, **ring_landscape.landscape(windows, r_runs[:, epg], side, glom),
+    out = {"condition": name, "seed": SEED, **ring_landscape.landscape(windows, r_runs[:, epg], side, glom),
            "ring_group_hz": {g: round(float(r[m].mean()), 2) for g, m in st["groups"].items()},
            "real_input_neurons": int(real.sum()), "seconds": round(time.perf_counter() - t0)}
     bump = out["bump"]
     out["BUMP"] = bool(all(bump[x]["strength"] >= attempt1.MIN_BUMP and bump[x]["strength"] > bump[x]["shuffle_p99"]
                            and bump[x]["resultant"] < attempt1.MAX_RESULTANT for x in "LR") and out["bump_motion"]["MOVES_LIKE_A_FLY"])
-    print(condition, json.dumps({k: out[k] for k in ("BUMP", "wedge_rate_cv", "ring_group_hz")}),
+    print(name, json.dumps({k: out[k] for k in ("BUMP", "wedge_rate_cv", "ring_group_hz")}),
           json.dumps({x: (bump[x]["strength"], bump[x]["shuffle_p99"], bump[x]["resultant"]) for x in "LR"}),
           json.dumps({k: v for k, v in out["bump_motion"].items() if k != "position_histogram"}), flush=True)
-    (HERE / f"{condition}.json").write_text(json.dumps(out, indent=1))
+    (HERE / f"{name}.json").write_text(json.dumps(out, indent=1))
 
 
 def summary() -> None:

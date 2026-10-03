@@ -55,11 +55,13 @@ FIT = "ring_fit3"
 ROUNDS, BATCHES, SECONDS, STEP, EMA = 80, 2, 40, 0.2, 0.3
 
 
-def build(rewiring: int | None = None, start_bias: np.ndarray | None = None, seed: int = 5) -> tuple[eyes.Setup, dict]:
+def build(rewiring: int | None = None, start_bias: np.ndarray | None = None, seed: int = 5,
+          fit_params: bool = False) -> tuple[eyes.Setup, dict]:
     """taste_escape.py's brain (rewired if asked) with the fitted ring, its group biases and each ring neuron's
     homeostatic offset. Biases start from start_bias if given, else taste_escape/intact.npz for the intact network
-    and eyes_at_rest.Setup's own start (rest_calibration2.py's) for a rewired one. Returns the setup and the ring's
-    state."""
+    and eyes_at_rest.Setup's own start (rest_calibration2.py's) for a rewired one. With fit_params, the ring's neurons
+    keep the parameters ring_fit.py fitted them with: they reset to rest rather than 5 mV below it, and only the ring's
+    excitatory outputs depress. Returns the setup and the ring's state."""
     fit = json.loads(Path(__file__).with_name(f"{FIT}.json").read_text())["best"]
     p = fit["params"]
     attempt1.network = escape2.network
@@ -69,6 +71,12 @@ def build(rewiring: int | None = None, start_bias: np.ndarray | None = None, see
 
     def model(types, superclass):
         spec, sets = route_model(types, superclass)
+        if fit_params:                                     # the ring as ring_fit.Ring builds it, after everything else
+            sets = dict(sets or {})
+            sets["ring_fit"] = np.flatnonzero(ring_whole.ring_members(np.asarray(types).astype(str))[0])
+            spec["ring_fit"] = {"reset": 0.0, "depression": 1.0, "recovery": 1.0}
+            for t in ring_er.EXC:                          # re-added below, after the ring's set
+                spec.pop(t, None)
         for t in ring_er.EXC:
             spec[t] = {"depression": p["dep_f"], "recovery": p["dep_tau"]}
         return spec, sets
