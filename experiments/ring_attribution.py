@@ -17,7 +17,8 @@ Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2
 condition): the BUMP measures, ring_landscape.py's per-wedge occupancy and EPG rates, and the ring groups' rates.
 A condition allbut:<types> (comma-separated) keeps every ring neuron's real outside input except from neurons of those
 types, which is removed, and lowers the offsets only by the mean of the input that remains (allbut:LPsP,LAL184: the
-four neurons that give the EPGs 80% of their outside input).
+four neurons that give the EPGs 80% of their outside input). allbut:inhibitory and allbut:excitatory remove every
+outside neuron of that sign instead.
 A condition ending in -fit (none-fit, all-fit) gives the ring's neurons the parameters ring_fit.py fitted them with
 (ring_insitu.build's fit_params): in the whole brain they reset 5 mV below rest, as rest_calibration2.py set for
 every neuron, but the ring was fitted resetting to rest, and three ExR types depress by the brain's class rule.
@@ -29,8 +30,9 @@ on the resultants (0.65 and 0.62; 0.77 and 0.68). Four neurons give the EPGs 80%
 LAL184, excitatory, at the 2 Hz default target. Removing them changes nothing (0.86; 0.82 and 0.86), so the lean comes
 from the remaining fifth, which includes inhibitory inputs from FB and LAL types spread very unevenly over the wedges
 (wedge CV 0.9-2.6). With the ring's fitted parameters, the ring alone does even better (0.94; 0.10 and 0.02), but
-with all outside input the lean is worse (0.69; 0.99 and 0.98), so that mismatch isn't the cause. One measurement per
-condition.
+with all outside input the lean is worse (0.69; 0.99 and 0.98), so that mismatch isn't the cause. Split by sign, the
+ring's inhibitory outside input alone gives the whole lean (0.84; 0.74 and 0.81; wedge rates' CV 0.54), and its
+excitatory outside input alone a weaker one (0.89; 0.69 and 0.58; CV 0.43). One measurement per condition.
 
     python experiments/ring_attribution.py <condition>   (writes experiments/ring_attribution/<condition>.json)
     python experiments/ring_attribution.py summary       (writes experiments/ring_attribution.json)
@@ -72,10 +74,16 @@ def real_mask(types: np.ndarray, condition: str) -> np.ndarray:
     return keep
 
 
-def removed_inputs(types: np.ndarray, condition: str) -> np.ndarray:
-    """For allbut:<types>, the presynaptic neurons whose synapses onto the ring are removed; else none."""
-    named = condition.split(":", 1)[1].split(",") if condition.startswith("allbut:") else []
-    return np.isin(np.asarray(types).astype(str), named)
+def removed_inputs(types: np.ndarray, condition: str, M=None) -> np.ndarray:
+    """For allbut:<types>, the presynaptic neurons whose synapses onto the ring are removed (allbut:inhibitory or
+    allbut:excitatory: every outside neuron of that sign, from its synapses' sign in M, rows postsynaptic); else none."""
+    if not condition.startswith("allbut:"):
+        return np.zeros(len(types), bool)
+    named = condition.split(":", 1)[1]
+    if named in ("inhibitory", "excitatory"):
+        sign = np.asarray(M.sum(axis=0)).ravel()
+        return sign < 0 if named == "inhibitory" else sign > 0
+    return np.isin(np.asarray(types).astype(str), named.split(","))
 
 
 def partly_cut(condition: str):
@@ -90,7 +98,7 @@ def partly_cut(condition: str):
             coo = M.tocoo()
             if condition.startswith("allbut:"):
                 cut_rows = ring
-                keep = ~(ring[coo.row] & removed_inputs(types, condition)[coo.col])
+                keep = ~(ring[coo.row] & ~ring[coo.col] & removed_inputs(types, condition, M)[coo.col])
             else:
                 cut_rows = ring & ~real_mask(types, condition)
                 keep = ~(cut_rows[coo.row] & ~ring[coo.col])       # rows postsynaptic, columns presynaptic
@@ -113,7 +121,7 @@ def run(name: str) -> None:
     f = np.array([q["depression"] for q in b.params])[b.cls]
     tau = np.array([q["recovery"] for q in b.params])[b.cls]
     full = _subnetwork(p)(te.network_for(None)[0], s.types, np.asarray(b.superclass))[0].tocsr()
-    kept = ~ring & ~removed_inputs(s.types, condition)
+    kept = ~ring & ~removed_inputs(s.types, condition, full)
     mean_in = (full @ np.where(kept, rates / (1.0 + (1.0 - f) * rates * tau), 0.0)) * b.scale * W_SYN * TAU
     real = real_mask(s.types, condition)
     st["extra"][:] = np.where(ring, st["homeo"] - np.where(real, mean_in, 0.0), 0.0)
