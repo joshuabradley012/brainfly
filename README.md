@@ -83,9 +83,21 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   corrections deepened the pin. Nor is the favored region carried by loops through the rest of the brain: cutting every
   synapse from the ring onto the rest of the brain leaves it in place
   ([`experiments/ring_loops.py`](experiments/ring_loops.py)). And the EPGs' input from outside the ring, its mean or its
-  fluctuations, doesn't line up with it ([`experiments/ring_inputs.py`](experiments/ring_inputs.py)). Its source is still
-  open, and gentler long-run homeostasis (quarter-size steps, smoothed rates) holds the bump steady without evening it
-  out: position entropy 0.94, resultants 0.67 and 0.69.
+  fluctuations, doesn't line up with it ([`experiments/ring_inputs.py`](experiments/ring_inputs.py)). Gentler long-run homeostasis
+  (quarter-size steps, smoothed rates) holds the bump steady without evening it out: position entropy 0.94, resultants
+  0.67 and 0.69.
+
+  An attribution experiment then traced the lean
+  ([`experiments/ring_attribution.py`](experiments/ring_attribution.py)). With the ring's offsets as in the ring
+  alone, each ring cell type's real input from outside the ring was given back one type at a time.
+  - **No outside input:** the ring inside the whole brain passes BUMP (position entropy 0.92, resultants 0.41 and 0.43).
+  - **All outside input:** it fails (0.85; 0.72 and 0.78).
+  - **The EPGs' outside input alone:** it fails as badly (0.83; 0.93 and 0.82).
+  - **Each other type's alone:** the bump stays fly-like or near it.
+
+  Two LPsP and two LAL184 neurons give the EPGs 80% of that input, but removing them changes nothing. So the lean comes
+  from the remaining fifth, which includes small inhibitory inputs from fan-shaped body and LAL neurons spread very
+  unevenly over the wedges.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/compass_attempts-dark.svg">
@@ -629,6 +641,7 @@ a sign that the approach is broken."
 | `experiments/ring_loops.py` | Exploratory, not pre-registered: is the whole-brain bump's favored region carried by loops through the rest of the brain? Attempt 4's brain with every synapse from a ring neuron onto the rest removed | No. The bump still spends 44% of its time at wedges 11-13 (wedge rates' CV 0.42), with position entropy 0.895 and resultants 0.50 and 0.56. |
 | `experiments/ring_inputs.py` | Exploratory analysis: does the ring's input from outside explain where the bump lingers? | No. Across wedges, the mean and variance of the EPGs' outside input correlate weakly with occupancy (r = 0.14 and 0.12). |
 | `experiments/ring_isolated.py` | Exploratory, not pre-registered: does the bump even out when the ring's outside input is replaced by its mean, as a constant? | No. It favors wedges 0-2 and 11-12 and almost never visits 3-7 (position entropy 0.88, resultants 0.38 and 0.53). The offsets attempt 4's homeostasis settled on, tuned to the ring's real input, are part of the landscape. |
+| `experiments/ring_attribution.py` | Exploratory, not pre-registered: which ring cell type's input from outside the ring makes the whole-brain bump lean? The ring with the ring alone's offsets, given back its real outside input one type at a time (the rest removed, offsets corrected for the mean of what remains) | The EPGs'. With no outside input the bump passes BUMP (entropy 0.92; resultants 0.41, 0.43); with all of it, it fails (0.85; 0.72, 0.78); with only the EPGs', it fails as badly (0.83; 0.93, 0.82). PEN_b, PEG, ER and ExR alone pass; PEN_a and Delta7 alone miss narrowly on the resultants. Without the two LPsP and two LAL184 neurons, 80% of the EPGs' outside input, nothing changes (0.86; 0.82, 0.86). One measurement per condition. |
 | `experiments/rest_hot.py` | Exploratory, not pre-registered: which neurons does that calibration leave over 100 Hz, and why? | On a fresh start, 44 neurons, all but one in the central brain: lateral-horn, SLP and antennal-lobe loops, three-quarters of whose excitatory drive comes from each other. None of their groups has its bias at the floor. Several were silent while the calibration ran, so it raised their biases, even to the +20 mV ceiling. |
 | `experiments/vnc/relay.py` | Do commands from the brain reach the motor neurons? | No. Walking, steering, escape and backward commands, each driven at 26 Hz, move no pool of motor neurons (neck, front, middle or hind segment, either side) by more than 0.17 Hz. Earlier calibrations with the inherited code, since retired, found the same: raising the nerve cord's gain and drive, or amplifying just the relay, let commands through only by driving the motor neurons at rest, and 2–5 ms steps didn't help. |
 

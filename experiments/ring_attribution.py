@@ -15,9 +15,22 @@ every synapse from outside the ring onto them is removed. Conditions: none (the 
 loops cut at the ring's input), all, and each of EPG, PEN_a, PEN_b, PEG, Delta7, ER and ExR alone.
 Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, seed 9970, the same for every
 condition): the BUMP measures, ring_landscape.py's per-wedge occupancy and EPG rates, and the ring groups' rates.
+A condition allbut:<types> (comma-separated) keeps every ring neuron's real outside input except from neurons of those
+types, which is removed, and lowers the offsets only by the mean of the input that remains (allbut:LPsP,LAL184: the
+four neurons that give the EPGs 80% of their outside input).
 A condition ending in -fit (none-fit, all-fit) gives the ring's neurons the parameters ring_fit.py fitted them with
 (ring_insitu.build's fit_params): in the whole brain they reset 5 mV below rest, as rest_calibration2.py set for
 every neuron, but the ring was fitted resetting to rest, and three ExR types depress by the brain's class rule.
+Ran: the ring's outside input makes the bump lean, and the EPGs' share does nearly all of it. With no real outside
+input the ring inside the whole brain passes BUMP: position entropy 0.92, resultants 0.41 and 0.43. With all of it,
+it fails (0.85; 0.72 and 0.78), and with only the EPGs' it fails as badly (0.83; 0.93 and 0.82). Each other type's
+outside input alone leaves the bump fly-like or near it: PEN_b, PEG, ER and ExR pass, and PEN_a and Delta7 miss only
+on the resultants (0.65 and 0.62; 0.77 and 0.68). Four neurons give the EPGs 80% of that input: two LPsP and two
+LAL184, excitatory, at the 2 Hz default target. Removing them changes nothing (0.86; 0.82 and 0.86), so the lean comes
+from the remaining fifth, which includes inhibitory inputs from FB and LAL types spread very unevenly over the wedges
+(wedge CV 0.9-2.6). With the ring's fitted parameters, the ring alone does even better (0.94; 0.10 and 0.02), but
+with all outside input the lean is worse (0.69; 0.99 and 0.98), so that mismatch isn't the cause. One measurement per
+condition.
 
     python experiments/ring_attribution.py <condition>   (writes experiments/ring_attribution/<condition>.json)
     python experiments/ring_attribution.py summary       (writes experiments/ring_attribution.json)
@@ -54,23 +67,33 @@ def real_mask(types: np.ndarray, condition: str) -> np.ndarray:
     """The ring neurons that keep their real input from outside the ring."""
     groups = ring_whole.group_of(types)
     keep = np.zeros(len(types), bool)
-    for g in (GROUPS if condition == "all" else () if condition == "none" else (condition,)):
+    for g in (GROUPS if condition in ("all",) or condition.startswith("allbut:") else () if condition == "none" else (condition,)):
         keep[groups[g]] = True
     return keep
 
 
+def removed_inputs(types: np.ndarray, condition: str) -> np.ndarray:
+    """For allbut:<types>, the presynaptic neurons whose synapses onto the ring are removed; else none."""
+    named = condition.split(":", 1)[1].split(",") if condition.startswith("allbut:") else []
+    return np.isin(np.asarray(types).astype(str), named)
+
+
 def partly_cut(condition: str):
     """ring_whole.subnetwork(p), then every synapse from outside the ring onto a ring neuron outside the condition's
-    types removed."""
+    types removed (for allbut:<types>, every synapse onto the ring from those types)."""
     def make(p):
         inner = _subnetwork(p)
 
         def apply(M, types, superclass):
             M, slow, tau_slow = inner(M, types, superclass)
             ring, _ = ring_whole.ring_members(types)
-            cut_rows = ring & ~real_mask(types, condition)
             coo = M.tocoo()
-            keep = ~(cut_rows[coo.row] & ~ring[coo.col])           # rows postsynaptic, columns presynaptic
+            if condition.startswith("allbut:"):
+                cut_rows = ring
+                keep = ~(ring[coo.row] & removed_inputs(types, condition)[coo.col])
+            else:
+                cut_rows = ring & ~real_mask(types, condition)
+                keep = ~(cut_rows[coo.row] & ~ring[coo.col])       # rows postsynaptic, columns presynaptic
             print(f"{condition}: removed {int((~keep).sum())} entries onto {int(cut_rows.sum())} ring neurons", flush=True)
             return sparse.csr_matrix((coo.data[keep], (coo.row[keep], coo.col[keep])), shape=coo.shape), slow, tau_slow
         return apply
@@ -90,7 +113,8 @@ def run(name: str) -> None:
     f = np.array([q["depression"] for q in b.params])[b.cls]
     tau = np.array([q["recovery"] for q in b.params])[b.cls]
     full = _subnetwork(p)(te.network_for(None)[0], s.types, np.asarray(b.superclass))[0].tocsr()
-    mean_in = (full @ np.where(ring, 0.0, rates / (1.0 + (1.0 - f) * rates * tau))) * b.scale * W_SYN * TAU
+    kept = ~ring & ~removed_inputs(s.types, condition)
+    mean_in = (full @ np.where(kept, rates / (1.0 + (1.0 - f) * rates * tau), 0.0)) * b.scale * W_SYN * TAU
     real = real_mask(s.types, condition)
     st["extra"][:] = np.where(ring, st["homeo"] - np.where(real, mean_in, 0.0), 0.0)
     b.set_bias(s.bias[s.gid])
@@ -106,7 +130,7 @@ def run(name: str) -> None:
     print(name, json.dumps({k: out[k] for k in ("BUMP", "wedge_rate_cv", "ring_group_hz")}),
           json.dumps({x: (bump[x]["strength"], bump[x]["shuffle_p99"], bump[x]["resultant"]) for x in "LR"}),
           json.dumps({k: v for k, v in out["bump_motion"].items() if k != "position_histogram"}), flush=True)
-    (HERE / f"{name}.json").write_text(json.dumps(out, indent=1))
+    (HERE / f"{name.replace(':', '_').replace(',', '_')}.json").write_text(json.dumps(out, indent=1))
 
 
 def summary() -> None:
