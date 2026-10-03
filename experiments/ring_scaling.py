@@ -20,6 +20,12 @@ Measured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2
 with the final factors and with the averaged ones: the BUMP measures, ring_landscape.py's per-wedge occupancy and EPG
 rates, the ring groups' rates, and the spread of the factors. ring_attribution.py's all, before any scaling: position
 entropy 0.85, resultants 0.72 and 0.78.
+Ran: yes, with the averaged factors, by the widest margins yet. The position entropy is 0.98, the resultants 0.27 and
+0.36, the wedge rates' CV 0.09 (from 0.53), the bump's strength 0.67 and 0.65 against shuffles' 0.36, and D = 0.030
+rad^2/s, inside flies' range. With the final round's factors the entropy is 0.94, but one resultant is 0.73, so BUMP
+misses, as with ring_anneal.py's final offsets. The EPGs scaled their outside excitatory input by a median of 2.0
+(0.46-2.7 across EPGs), and their inhibitory input by the inverse. One measurement from one brain, on the seed
+ring_attribution.py used.
 
     python experiments/ring_scaling.py            (writes experiments/ring_scaling.json; resumes after an interruption)
 """

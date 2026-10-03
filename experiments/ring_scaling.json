@@ -1,0 +1,806 @@
+{
+ "question": "Exploratory, not pre-registered: can homeostatic synaptic scaling of the ring neurons' outside input even out the\nwhole-brain bump?\n\nThe head-direction ring's bump is even with no input from outside the ring and leans with any substantial share of it,\nwhether or not that input's mean is cancelled (ring_attribution.py, ring_quiet.py). Homeostasis on each ring neuron's\nexcitability (an offset, as in ring_insitu.py) can match mean rates but leaves the size of each neuron's input\nfluctuations as the connectome gives it. Synaptic scaling (Turrigiano 2008) changes that too. A neuron that fires too\nmuch scales its excitatory synapses down and its inhibitory synapses up; one that fires too little does the opposite.\nHere each ring neuron scales only its synapses from outside the ring.\nModel: ring_attribution.py's \"all\" condition. That is ring_insitu.py's brain (brain seed 9) with rung4_anneal.py's\ncalibrated group biases, every ring neuron's offset from ring_homeostasis.py --slow --fit ring_fit3 lowered by the\nmean of its real outside input, and that input kept. Each ring neuron i then gets a factor g_i (from 1) that\nmultiplies its excitatory synapses from outside the ring and divides its inhibitory ones.\nProcedure: 40 rounds, each 2 batches of 8 fresh runs of 40 s after 1 s (round k from seeds 13000 + 10k and\n13001 + 10k). Each round, every neuron of the ring's tuned types (ring_insitu.homeostasis's: all but ER and ExR) moves\nln g_i by -step ln((rate + 0.5) / (target + 0.5)), at most step, toward its type's rate in ring_fit3.py's fit. Its rate\nis smoothed over rounds (each new round weighted 0.3), and the step falls linearly from 0.2 to 0.02. The offsets don't\nchange. The mean of ln g over the 40 rounds is kept alongside.\nMeasured: rung 4's protocol (rest_calibration.run: 8 fresh runs of 300 s after 2 s, seed 9970, as ring_attribution.py)\nwith the final factors and with the averaged ones: the BUMP measures, ring_landscape.py's per-wedge occupancy and EPG\nrates, the ring groups' rates, and the spread of the factors. ring_attribution.py's all, before any scaling: position\nentropy 0.85, resultants 0.72 and 0.78.\n\n    python experiments/ring_scaling.py            (writes experiments/ring_scaling.json; resumes after an interruption)\n",
+ "rounds": [
+  {
+   "round": 1,
+   "position_entropy": 0.778,
+   "drift_D": 0.026,
+   "epg_hz": 2.13,
+   "epg_rate_cv": 0.66,
+   "g_range": [
+    0.835,
+    1.221
+   ]
+  },
+  {
+   "round": 2,
+   "position_entropy": 0.841,
+   "drift_D": 0.0166,
+   "epg_hz": 2.32,
+   "epg_rate_cv": 0.608,
+   "g_range": [
+    0.73,
+    1.43
+   ]
+  },
+  {
+   "round": 3,
+   "position_entropy": 0.772,
+   "drift_D": 0.0257,
+   "epg_hz": 2.29,
+   "epg_rate_cv": 0.657,
+   "g_range": [
+    0.661,
+    1.666
+   ]
+  },
+  {
+   "round": 4,
+   "position_entropy": 0.791,
+   "drift_D": 0.0191,
+   "epg_hz": 2.33,
+   "epg_rate_cv": 0.656,
+   "g_range": [
+    0.621,
+    1.803
+   ]
+  },
+  {
+   "round": 5,
+   "position_entropy": 0.816,
+   "drift_D": 0.0232,
+   "epg_hz": 2.32,
+   "epg_rate_cv": 0.594,
+   "g_range": [
+    0.602,
+    1.857
+   ]
+  },
+  {
+   "round": 6,
+   "position_entropy": 0.9,
+   "drift_D": 0.0239,
+   "epg_hz": 2.32,
+   "epg_rate_cv": 0.511,
+   "g_range": [
+    0.594,
+    1.868
+   ]
+  },
+  {
+   "round": 7,
+   "position_entropy": 0.985,
+   "drift_D": 0.0294,
+   "epg_hz": 2.3,
+   "epg_rate_cv": 0.185,
+   "g_range": [
+    0.586,
+    1.888
+   ]
+  },
+  {
+   "round": 8,
+   "position_entropy": 0.94,
+   "drift_D": 0.0219,
+   "epg_hz": 2.23,
+   "epg_rate_cv": 0.309,
+   "g_range": [
+    0.569,
+    1.962
+   ]
+  },
+  {
+   "round": 9,
+   "position_entropy": 0.95,
+   "drift_D": 0.0397,
+   "epg_hz": 2.25,
+   "epg_rate_cv": 0.297,
+   "g_range": [
+    0.551,
+    2.018
+   ]
+  },
+  {
+   "round": 10,
+   "position_entropy": 0.932,
+   "drift_D": 0.0237,
+   "epg_hz": 2.24,
+   "epg_rate_cv": 0.301,
+   "g_range": [
+    0.53,
+    2.1
+   ]
+  },
+  {
+   "round": 11,
+   "position_entropy": 0.897,
+   "drift_D": 0.0175,
+   "epg_hz": 2.26,
+   "epg_rate_cv": 0.41,
+   "g_range": [
+    0.507,
+    2.174
+   ]
+  },
+  {
+   "round": 12,
+   "position_entropy": 0.864,
+   "drift_D": 0.0232,
+   "epg_hz": 2.25,
+   "epg_rate_cv": 0.474,
+   "g_range": [
+    0.481,
+    2.288
+   ]
+  },
+  {
+   "round": 13,
+   "position_entropy": 0.956,
+   "drift_D": 0.0407,
+   "epg_hz": 2.28,
+   "epg_rate_cv": 0.164,
+   "g_range": [
+    0.461,
+    2.39
+   ]
+  },
+  {
+   "round": 14,
+   "position_entropy": 0.942,
+   "drift_D": 0.0177,
+   "epg_hz": 2.32,
+   "epg_rate_cv": 0.218,
+   "g_range": [
+    0.445,
+    2.497
+   ]
+  },
+  {
+   "round": 15,
+   "position_entropy": 0.882,
+   "drift_D": 0.0241,
+   "epg_hz": 2.38,
+   "epg_rate_cv": 0.509,
+   "g_range": [
+    0.438,
+    2.571
+   ]
+  },
+  {
+   "round": 16,
+   "position_entropy": 0.861,
+   "drift_D": 0.0298,
+   "epg_hz": 2.39,
+   "epg_rate_cv": 0.535,
+   "g_range": [
+    0.437,
+    2.644
+   ]
+  },
+  {
+   "round": 17,
+   "position_entropy": 0.902,
+   "drift_D": 0.02,
+   "epg_hz": 2.34,
+   "epg_rate_cv": 0.478,
+   "g_range": [
+    0.44,
+    2.818
+   ]
+  },
+  {
+   "round": 18,
+   "position_entropy": 0.907,
+   "drift_D": 0.0159,
+   "epg_hz": 2.29,
+   "epg_rate_cv": 0.377,
+   "g_range": [
+    0.435,
+    2.934
+   ]
+  },
+  {
+   "round": 19,
+   "position_entropy": 0.949,
+   "drift_D": 0.0249,
+   "epg_hz": 2.31,
+   "epg_rate_cv": 0.174,
+   "g_range": [
+    0.431,
+    3.055
+   ]
+  },
+  {
+   "round": 20,
+   "position_entropy": 0.937,
+   "drift_D": 0.0315,
+   "epg_hz": 2.29,
+   "epg_rate_cv": 0.278,
+   "g_range": [
+    0.424,
+    3.128
+   ]
+  },
+  {
+   "round": 21,
+   "position_entropy": 0.906,
+   "drift_D": 0.0345,
+   "epg_hz": 2.31,
+   "epg_rate_cv": 0.31,
+   "g_range": [
+    0.414,
+    3.165
+   ]
+  },
+  {
+   "round": 22,
+   "position_entropy": 0.975,
+   "drift_D": 0.0285,
+   "epg_hz": 2.33,
+   "epg_rate_cv": 0.179,
+   "g_range": [
+    0.405,
+    3.2
+   ]
+  },
+  {
+   "round": 23,
+   "position_entropy": 0.961,
+   "drift_D": 0.0246,
+   "epg_hz": 2.31,
+   "epg_rate_cv": 0.182,
+   "g_range": [
+    0.398,
+    3.23
+   ]
+  },
+  {
+   "round": 24,
+   "position_entropy": 0.944,
+   "drift_D": 0.025,
+   "epg_hz": 2.33,
+   "epg_rate_cv": 0.214,
+   "g_range": [
+    0.39,
+    3.247
+   ]
+  },
+  {
+   "round": 25,
+   "position_entropy": 0.967,
+   "drift_D": 0.0185,
+   "epg_hz": 2.39,
+   "epg_rate_cv": 0.288,
+   "g_range": [
+    0.387,
+    3.3
+   ]
+  },
+  {
+   "round": 26,
+   "position_entropy": 0.783,
+   "drift_D": 0.0161,
+   "epg_hz": 2.43,
+   "epg_rate_cv": 0.668,
+   "g_range": [
+    0.388,
+    3.415
+   ]
+  },
+  {
+   "round": 27,
+   "position_entropy": 0.966,
+   "drift_D": 0.0164,
+   "epg_hz": 2.39,
+   "epg_rate_cv": 0.139,
+   "g_range": [
+    0.389,
+    3.522
+   ]
+  },
+  {
+   "round": 28,
+   "position_entropy": 0.95,
+   "drift_D": 0.0305,
+   "epg_hz": 2.39,
+   "epg_rate_cv": 0.277,
+   "g_range": [
+    0.39,
+    3.633
+   ]
+  },
+  {
+   "round": 29,
+   "position_entropy": 0.95,
+   "drift_D": 0.0138,
+   "epg_hz": 2.36,
+   "epg_rate_cv": 0.275,
+   "g_range": [
+    0.39,
+    3.728
+   ]
+  },
+  {
+   "round": 30,
+   "position_entropy": 0.941,
+   "drift_D": 0.0343,
+   "epg_hz": 2.33,
+   "epg_rate_cv": 0.241,
+   "g_range": [
+    0.389,
+    3.785
+   ]
+  },
+  {
+   "round": 31,
+   "position_entropy": 0.974,
+   "drift_D": 0.0625,
+   "epg_hz": 2.37,
+   "epg_rate_cv": 0.167,
+   "g_range": [
+    0.389,
+    3.849
+   ]
+  },
+  {
+   "round": 32,
+   "position_entropy": 0.974,
+   "drift_D": 0.0516,
+   "epg_hz": 2.35,
+   "epg_rate_cv": 0.141,
+   "g_range": [
+    0.388,
+    3.905
+   ]
+  },
+  {
+   "round": 33,
+   "position_entropy": 0.921,
+   "drift_D": 0.0198,
+   "epg_hz": 2.36,
+   "epg_rate_cv": 0.296,
+   "g_range": [
+    0.386,
+    3.93
+   ]
+  },
+  {
+   "round": 34,
+   "position_entropy": 0.925,
+   "drift_D": 0.0295,
+   "epg_hz": 2.36,
+   "epg_rate_cv": 0.202,
+   "g_range": [
+    0.384,
+    3.952
+   ]
+  },
+  {
+   "round": 35,
+   "position_entropy": 0.959,
+   "drift_D": 0.0193,
+   "epg_hz": 2.37,
+   "epg_rate_cv": 0.167,
+   "g_range": [
+    0.383,
+    3.974
+   ]
+  },
+  {
+   "round": 36,
+   "position_entropy": 0.969,
+   "drift_D": 0.0365,
+   "epg_hz": 2.38,
+   "epg_rate_cv": 0.19,
+   "g_range": [
+    0.382,
+    4.002
+   ]
+  },
+  {
+   "round": 37,
+   "position_entropy": 0.977,
+   "drift_D": 0.0309,
+   "epg_hz": 2.37,
+   "epg_rate_cv": 0.073,
+   "g_range": [
+    0.381,
+    4.027
+   ]
+  },
+  {
+   "round": 38,
+   "position_entropy": 0.949,
+   "drift_D": 0.0314,
+   "epg_hz": 2.39,
+   "epg_rate_cv": 0.258,
+   "g_range": [
+    0.38,
+    4.053
+   ]
+  },
+  {
+   "round": 39,
+   "position_entropy": 0.98,
+   "drift_D": 0.028,
+   "epg_hz": 2.41,
+   "epg_rate_cv": 0.154,
+   "g_range": [
+    0.379,
+    4.074
+   ]
+  },
+  {
+   "round": 40,
+   "position_entropy": 0.944,
+   "drift_D": 0.0216,
+   "epg_hz": 2.36,
+   "epg_rate_cv": 0.207,
+   "g_range": [
+    0.378,
+    4.086
+   ]
+  }
+ ],
+ "measured": {
+  "final": {
+   "bump": {
+    "L": {
+     "strength": 0.645,
+     "shuffle_p99": 0.356,
+     "run_positions_deg": [
+      26.7,
+      -35.9,
+      120.4,
+      -18.2,
+      -40.3,
+      129.8,
+      -19.5,
+      122.5
+     ],
+     "resultant": 0.359
+    },
+    "R": {
+     "strength": 0.645,
+     "shuffle_p99": 0.351,
+     "run_positions_deg": [
+      -68.0,
+      -33.9,
+      -130.9,
+      -34.5,
+      -32.4,
+      -130.3,
+      -52.5,
+      -132.2
+     ],
+     "resultant": 0.73
+    }
+   },
+   "bump_motion": {
+    "position_entropy": 0.942,
+    "position_histogram": [
+     0.089,
+     0.152,
+     0.108,
+     0.055,
+     0.035,
+     0.034,
+     0.048,
+     0.03,
+     0.022,
+     0.031,
+     0.033,
+     0.06,
+     0.127,
+     0.082,
+     0.046,
+     0.049
+    ],
+    "drift_D_rad2_per_s": 0.0232,
+    "MOVES_LIKE_A_FLY": true
+   },
+   "occupancy": [
+    0.089,
+    0.152,
+    0.108,
+    0.055,
+    0.035,
+    0.034,
+    0.048,
+    0.03,
+    0.022,
+    0.031,
+    0.033,
+    0.06,
+    0.127,
+    0.082,
+    0.046,
+    0.049
+   ],
+   "strength_at_hz": [
+    2.33,
+    2.26,
+    2.26,
+    2.25,
+    2.28,
+    2.45,
+    2.43,
+    2.46,
+    2.51,
+    2.41,
+    2.51,
+    2.49,
+    2.55,
+    2.52,
+    2.49,
+    2.31
+   ],
+   "wedge_mean_rate_hz": [
+    3.13,
+    3.08,
+    2.84,
+    2.57,
+    2.22,
+    1.87,
+    1.6,
+    1.5,
+    1.57,
+    1.71,
+    2.06,
+    2.47,
+    2.73,
+    2.94,
+    3.05,
+    3.22
+   ],
+   "wedge_rate_cv": 0.249,
+   "occupancy_vs_strength_r": -0.256,
+   "occupancy_vs_rate_r": 0.66,
+   "epgs_per_wedge": [
+    4,
+    2,
+    2,
+    4,
+    2,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    2
+   ],
+   "ring_group_hz": {
+    "EPG": 2.48,
+    "PEN_a": 4.53,
+    "PEN_b": 12.69,
+    "PEG": 1.0,
+    "Delta7": 0.62,
+    "ER": 2.27,
+    "ExR": 9.39
+   },
+   "g_by_group": {
+    "EPG": [
+     0.378,
+     2.649,
+     4.086
+    ],
+    "PEN_a": [
+     0.735,
+     0.914,
+     1.12
+    ],
+    "PEN_b": [
+     1.272,
+     1.454,
+     1.625
+    ],
+    "PEG": [
+     0.395,
+     0.718,
+     0.941
+    ],
+    "Delta7": [
+     0.595,
+     1.352,
+     1.768
+    ],
+    "ER": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "ExR": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "BUMP": false
+  },
+  "averaged": {
+   "bump": {
+    "L": {
+     "strength": 0.666,
+     "shuffle_p99": 0.355,
+     "run_positions_deg": [
+      163.8,
+      151.8,
+      -52.0,
+      -29.8,
+      135.1,
+      -135.3,
+      -20.6,
+      -160.5
+     ],
+     "resultant": 0.27
+    },
+    "R": {
+     "strength": 0.653,
+     "shuffle_p99": 0.355,
+     "run_positions_deg": [
+      -156.0,
+      -157.3,
+      2.0,
+      -56.6,
+      -151.5,
+      129.3,
+      -35.5,
+      -168.2
+     ],
+     "resultant": 0.357
+    }
+   },
+   "bump_motion": {
+    "position_entropy": 0.984,
+    "position_histogram": [
+     0.049,
+     0.083,
+     0.086,
+     0.06,
+     0.075,
+     0.043,
+     0.049,
+     0.044,
+     0.055,
+     0.072,
+     0.057,
+     0.076,
+     0.104,
+     0.07,
+     0.039,
+     0.038
+    ],
+    "drift_D_rad2_per_s": 0.0304,
+    "MOVES_LIKE_A_FLY": true
+   },
+   "occupancy": [
+    0.049,
+    0.083,
+    0.086,
+    0.06,
+    0.075,
+    0.043,
+    0.049,
+    0.044,
+    0.055,
+    0.072,
+    0.057,
+    0.076,
+    0.104,
+    0.07,
+    0.039,
+    0.038
+   ],
+   "strength_at_hz": [
+    2.18,
+    2.2,
+    2.22,
+    2.25,
+    2.23,
+    2.31,
+    2.32,
+    2.38,
+    2.44,
+    2.41,
+    2.46,
+    2.45,
+    2.45,
+    2.41,
+    2.34,
+    2.3
+   ],
+   "wedge_mean_rate_hz": [
+    2.25,
+    2.12,
+    2.07,
+    2.29,
+    2.3,
+    2.14,
+    1.97,
+    2.18,
+    2.32,
+    2.44,
+    2.57,
+    2.79,
+    2.58,
+    2.41,
+    2.44,
+    2.43
+   ],
+   "wedge_rate_cv": 0.088,
+   "occupancy_vs_strength_r": 0.084,
+   "occupancy_vs_rate_r": 0.218,
+   "epgs_per_wedge": [
+    4,
+    2,
+    2,
+    4,
+    2,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    2
+   ],
+   "ring_group_hz": {
+    "EPG": 2.41,
+    "PEN_a": 4.69,
+    "PEN_b": 12.69,
+    "PEG": 1.01,
+    "Delta7": 0.61,
+    "ER": 2.25,
+    "ExR": 9.42
+   },
+   "g_by_group": {
+    "EPG": [
+     0.456,
+     1.957,
+     2.671
+    ],
+    "PEN_a": [
+     0.788,
+     0.939,
+     1.086
+    ],
+    "PEN_b": [
+     1.155,
+     1.315,
+     1.436
+    ],
+    "PEG": [
+     0.465,
+     0.782,
+     0.994
+    ],
+    "Delta7": [
+     0.68,
+     1.23,
+     1.493
+    ],
+    "ER": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "ExR": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "BUMP": true
+  }
+ },
+ "seconds": 6389
+}

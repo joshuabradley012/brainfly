@@ -101,7 +101,17 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   But neither of two follow-ups removed the lean
   ([`experiments/ring_quiet.py`](experiments/ring_quiet.py)): removing the EPGs' inhibitory outside input entirely,
   or lowering the resting rate of the 76 cell types that inhibit them. Across these runs, the ring is even with no
-  outside input and leans with any substantial share of it, its mean cancelled or not.
+  outside input and leans with any substantial share of it, its mean cancelled or not. An offset can cancel the mean of
+  a neuron's outside input but not its fluctuations, and neurons with bigger outside fluctuations behave differently.
+
+  **Synaptic scaling evens it out.** Synaptic scaling (Turrigiano 2008) is the homeostasis that changes those
+  fluctuations too: a neuron firing too much scales its excitatory synapses down and its inhibitory ones up. Each ring
+  neuron did that to its synapses from outside the ring over 40 rounds, with steps shrinking and the factors averaged.
+  The bump then passes rung 4's test by the widest margins yet: position entropy 0.98, resultants 0.27 and 0.36, the
+  wedges' rates nearly equal (CV 0.09, from 0.53), drift D = 0.030 rad²/s
+  ([`experiments/ring_scaling.py`](experiments/ring_scaling.py), exploratory). The EPGs scaled their outside
+  excitatory input by a median of 2. This is one measurement from one brain; a pre-registered test on fresh seeds
+  comes next.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/compass_attempts-dark.svg">
@@ -647,6 +657,7 @@ a sign that the approach is broken."
 | `experiments/ring_isolated.py` | Exploratory, not pre-registered: does the bump even out when the ring's outside input is replaced by its mean, as a constant? | No. It favors wedges 0-2 and 11-12 and almost never visits 3-7 (position entropy 0.88, resultants 0.38 and 0.53). The offsets attempt 4's homeostasis settled on, tuned to the ring's real input, are part of the landscape. |
 | `experiments/ring_attribution.py` | Exploratory, not pre-registered: which ring cell type's input from outside the ring makes the whole-brain bump lean? The ring with the ring alone's offsets, given back its real outside input one type at a time (the rest removed, offsets corrected for the mean of what remains) | The EPGs'. With no outside input the bump passes BUMP (entropy 0.92; resultants 0.41, 0.43); with all of it, it fails (0.85; 0.72, 0.78); with only the EPGs', it fails as badly (0.83; 0.93, 0.82). PEN_b, PEG, ER and ExR alone pass; PEN_a and Delta7 alone miss narrowly on the resultants. Without the two LPsP and two LAL184 neurons, 80% of the EPGs' outside input, nothing changes (0.86; 0.82, 0.86). The ring's inhibitory outside input alone gives the whole lean (0.84; 0.74, 0.81); its excitatory input alone a weaker one (0.89; 0.69, 0.58). One measurement per condition. |
 | `experiments/ring_quiet.py` | Exploratory, not pre-registered: does the lean come from the EPGs' inhibitory outside input, or from the 2 Hz default target of the unmeasured neurons that give it? | Neither. Without the EPGs' inhibitory outside input the lean stays (entropy 0.85; resultants 0.97, 0.94). With the 76 types that inhibit the EPGs quieted to 1.07 Hz, it barely eases (0.89; 0.70, 0.72). |
+| `experiments/ring_scaling.py` | Exploratory, not pre-registered: can homeostatic synaptic scaling of the ring neurons' outside input even out the whole-brain bump? Each ring neuron scales its excitatory synapses from outside the ring down, and its inhibitory ones up, when it fires above its type's rate, over 40 rounds with steps falling from 0.2 to 0.02 (log units) | Yes, with the averaged factors, by the widest margins yet: position entropy 0.98, resultants 0.27 and 0.36, wedge rates' CV 0.09 (from 0.53), D = 0.030 rad²/s. With the final round's factors one resultant misses (0.73). The EPGs scaled their outside excitatory input by a median of 2.0. One measurement. |
 | `experiments/rest_hot.py` | Exploratory, not pre-registered: which neurons does that calibration leave over 100 Hz, and why? | On a fresh start, 44 neurons, all but one in the central brain: lateral-horn, SLP and antennal-lobe loops, three-quarters of whose excitatory drive comes from each other. None of their groups has its bias at the floor. Several were silent while the calibration ran, so it raised their biases, even to the +20 mV ceiling. |
 | `experiments/vnc/relay.py` | Do commands from the brain reach the motor neurons? | No. Walking, steering, escape and backward commands, each driven at 26 Hz, move no pool of motor neurons (neck, front, middle or hind segment, either side) by more than 0.17 Hz. Earlier calibrations with the inherited code, since retired, found the same: raising the nerve cord's gain and drive, or amplifying just the relay, let commands through only by driving the motor neurons at rest, and 2–5 ms steps didn't help. |
 
