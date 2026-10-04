@@ -34,101 +34,86 @@ it runs: it has to match data from real flies, and it has to **stop working when
 scrambled**. The plan, the evidence behind it, and a diagnosis of what has gone wrong so far are in
 the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
-## Where it stands (September 2026)
+## Where it stands (October 2026)
 
-* **Rung 4's third and fourth attempts fail on the compass, the fourth narrowly, and pass everything else.** A fly's head-direction cells (EPGs)
-  carry a bump of activity that marks its heading, and it persists in darkness. No published model gets that bump from
-  synapse counts times one weight, and neither did brainfly's resting brain until the ring was fixed in three steps:
-  1. The ring neurons went in. They give the EPGs 75% of their input, as flat inhibition, and the first attempt had
-     left them out ([notes](research_notes/Rung%204%20resting%20state%20data/head_direction_models.md)).
-  2. CMA-ES fitted per-class gains in the ring's own 460-neuron circuit.
-  3. Each ring neuron got slow homeostasis (Renart et al. 2003).
+* **Rung 4 passes: the brain that tastes and escapes also rests like a fly, compass included.** A fly's
+  head-direction cells (EPGs) carry a bump of activity that marks its heading and persists in darkness. No published
+  model gets that bump from synapse counts times one weight. Rung 4's fifth attempt, pre-registered and run from the
+  start on fresh seeds, passes all 13 of its tests
+  ([`experiments/rung4_scaling.py`](experiments/rung4_scaling.py)):
+  - **the compass:** the bump is as strong as a fly's (0.67 and 0.66 on the bridge's two sides, against 0.37 and 0.36
+    for shuffled labels). It settles in different places in different runs (resultants 0.38 and 0.47, under the 0.6
+    limit), visits every heading (position entropy 0.96), and drifts at D = 0.019 rad²/s, inside flies' 0.003–0.04 in
+    darkness;
+  - **rest:** a mean of 1.66 Hz with nothing over 100 Hz, every measured cell type within 2% of its rate except PEN_a in
+    the ring (4.7 Hz, against 3.9), and 99.97% of calibrated groups within a factor of 2 of their targets;
+  - **the looming escape:** the loomed side's giant fiber rises 28 Hz while the other side stays put;
+  - **rung 1's taste:** sugar raises the proboscis motor neuron MN9 by 20 Hz (t = 18), bitter and Ir94e veto it
+    (cutting the rise by 113% and 89%), and MN9 rests quietly with no spontaneous extensions;
+  - **scrambled wiring:** two degree-preserving rewirings put through the same procedure rest just as well (1.62 and
+    1.63 Hz) but carry no bump. Its strength (0.08–0.10) stays below shuffled labels' (0.12–0.14), and what pattern
+    there is drifts at D = 0.7–1.2 rad²/s, far outside flies' range.
 
-  Alone, the ring then held a fly-like bump ([`experiments/ring_fit3.py`](experiments/ring_fit3.py)), but inside the
-  whole brain it favored half the ring. In an exploratory run, the homeostasis run inside the whole brain for long
-  enough (80 rounds of 16 runs of 40 s, each ring neuron nudging its own excitability toward its type's rate by at
-  most 0.2 mV a round) flattened the ring. The bump visited every heading (position entropy 0.96) and drifted at
-  D = 0.019 rad²/s, inside flies' 0.003–0.04 in darkness ([`experiments/ring_insitu.py`](experiments/ring_insitu.py),
-  exploratory; the figure below).
+  What made the difference is how each ring neuron adapts to the rest of the brain. The ring was fitted on its own:
+  CMA-ES over per-class gains in its 460-neuron circuit, including the ring neurons that give the EPGs 75% of their
+  input as flat inhibition ([notes](research_notes/Rung%204%20resting%20state%20data/head_direction_models.md)), and
+  slow homeostasis on each neuron's excitability (Renart et al. 2003). Alone it held a fly-like bump
+  ([`experiments/ring_fit3.py`](experiments/ring_fit3.py)), but inside the whole brain the bump leaned toward part of
+  the ring. Attempts 3 and 4 ran the homeostasis in place, with constant and then shrinking steps
+  ([`experiments/rung4_rest.py`](experiments/rung4_rest.py), [`experiments/rung4_anneal.py`](experiments/rung4_anneal.py)).
+  Both passed every test but the compass: their bumps favored one region (position entropy 0.79 and resultants 0.91;
+  then 0.92, with resultants 0.64 and 0.71). Measuring over runs as long as the test's pinned the bump in one place
+  instead ([`experiments/ring_longruns.py`](experiments/ring_longruns.py)), and loops through the rest of the brain
+  turned out not to cause the lean ([`experiments/ring_loops.py`](experiments/ring_loops.py)). An attribution
+  experiment traced it to the ring's input from outside the ring
+  ([`experiments/ring_attribution.py`](experiments/ring_attribution.py)). With none of that input, the ring inside
+  the whole brain is even; with any substantial share, it leans, even with the input's mean cancelled
+  ([`experiments/ring_quiet.py`](experiments/ring_quiet.py)). An offset on each neuron cancels the mean of its outside
+  input but not its fluctuations, which differ from neuron to neuron. Synaptic scaling (Turrigiano 2008) changes
+  both: a neuron firing too much scales its excitatory synapses down and its inhibitory ones up. Each ring neuron did
+  that to its synapses from outside the ring over 40 rounds, with shrinking steps and the factors averaged. In an
+  exploratory run the bump evened out by the widest margins yet
+  ([`experiments/ring_scaling.py`](experiments/ring_scaling.py)), and the fifth attempt reproduced it on fresh seeds.
+  The EPGs ended up scaling their outside excitatory input by a median of 1.9 (0.5–2.7 across EPGs), and their
+  inhibitory input by the inverse.
 
-  Rung 4's third pre-registered attempt reran that procedure from the start on fresh seeds
-  ([`experiments/rung4_rest.py`](experiments/rung4_rest.py)). The bump came out as strong as a fly's (0.73, against
-  0.41 for shuffled labels) and drifted at a fly's rate (D = 0.0095 rad²/s). But it favored one side of the ring: in all 8
-  runs it settled within about 45° of the same heading (resultants 0.91, over the 0.6 limit), and the position entropy was 0.79, under
-  the 0.9 rung 4 asks. The exploratory run's even ring was one outcome of the homeostasis, not what it reliably
-  produces. Everything else passed on fresh seeds:
-  - **rest:** a mean of 1.66 Hz with nothing over 100 Hz, and every measured cell type within 1% of its rate except
-    PEN_a in the ring (4.8 Hz, against 3.9);
-  - **the looming escape:** the loomed side's giant fiber rises 26–28 Hz while the other side stays put;
-  - **rung 1's taste:** sugar raises the proboscis motor neuron MN9 by 22 Hz, bitter and Ir94e veto it, and MN9 rests
-    quietly.
-
-  Two rewired brains put through the same procedure rest just as well, but have no bump at all (strength 0.12, the same
-  as shuffled labels). With a constant step, the homeostasis keeps the offsets random-walking, so the ring a run ends
-  with is partly luck. Shrinking the steps lets it settle. Continuing that brain for 40 rounds with the step falling
-  from 0.2 to 0.02 mV evened its ring out (position entropy 0.79 to 0.93). With the offsets averaged over those rounds,
-  the bump passed rung 4's test ([`experiments/ring_anneal.py`](experiments/ring_anneal.py), exploratory).
-
-  Rung 4's fourth attempt added both to the procedure and ran it all from the start on new seeds
-  ([`experiments/rung4_anneal.py`](experiments/rung4_anneal.py), pre-registered). It came closer but failed again.
-  The bump visits every heading (position entropy 0.92) and drifts at D = 0.018 rad²/s. But runs still settle around
-  one region more often than chance allows (resultants 0.64 and 0.71, over the 0.6 limit). Rates, the escape and taste
-  passed again. A diagnostic found why ([`experiments/ring_landscape.py`](experiments/ring_landscape.py)). Over the
-  test's 300-s runs, the bump spends 2.5 times longer than average at its favored wedges, and their EPGs fire twice as
-  fast as elsewhere (4.2 against 2.1 Hz). The homeostasis measures rates in 40-s runs from fresh starts, where where
-  the bump starts matters more than where it slowly drifts to. So it never sees, and never evens out, the slow pull
-  that 300-s runs reveal. Letting the homeostasis measure over runs as long as the test's made things worse, though.
-  Within five rounds it pinned the bump in one place: every run then held it within about 10° of one heading
-  ([`experiments/ring_longruns.py`](experiments/ring_longruns.py), exploratory). Wherever the bump settled, the next
-  corrections deepened the pin. Nor is the favored region carried by loops through the rest of the brain: cutting every
-  synapse from the ring onto the rest of the brain leaves it in place
-  ([`experiments/ring_loops.py`](experiments/ring_loops.py)). And the EPGs' input from outside the ring, its mean or its
-  fluctuations, doesn't line up with it ([`experiments/ring_inputs.py`](experiments/ring_inputs.py)). Gentler long-run homeostasis
-  (quarter-size steps, smoothed rates) holds the bump steady without evening it out: position entropy 0.94, resultants
-  0.67 and 0.69.
-
-  An attribution experiment then traced the lean
-  ([`experiments/ring_attribution.py`](experiments/ring_attribution.py)). With the ring's offsets as in the ring
-  alone, each ring cell type's real input from outside the ring was given back one type at a time.
-  - **No outside input:** the ring inside the whole brain passes BUMP (position entropy 0.92, resultants 0.41 and 0.43).
-  - **All outside input:** it fails (0.85; 0.72 and 0.78).
-  - **The EPGs' outside input alone:** it fails as badly (0.83; 0.93 and 0.82).
-  - **Each other type's alone:** the bump stays fly-like or near it.
-
-  Two LPsP and two LAL184 neurons give the EPGs 80% of that input, but removing them changes nothing. So the lean comes
-  from the remaining fifth. Split by sign, the ring's inhibitory outside input alone gives the whole lean (position
-  entropy 0.84, resultants 0.74 and 0.81), and its excitatory outside input alone a weaker one (0.89; 0.69 and 0.58).
-  But neither of two follow-ups removed the lean
-  ([`experiments/ring_quiet.py`](experiments/ring_quiet.py)): removing the EPGs' inhibitory outside input entirely,
-  or lowering the resting rate of the 76 cell types that inhibit them. Across these runs, the ring is even with no
-  outside input and leans with any substantial share of it, its mean cancelled or not. An offset can cancel the mean of
-  a neuron's outside input but not its fluctuations, and neurons with bigger outside fluctuations behave differently.
-
-  **Synaptic scaling evens it out.** Synaptic scaling (Turrigiano 2008) is the homeostasis that changes those
-  fluctuations too: a neuron firing too much scales its excitatory synapses down and its inhibitory ones up. Each ring
-  neuron did that to its synapses from outside the ring over 40 rounds, with steps shrinking and the factors averaged.
-  The bump then passes rung 4's test by the widest margins yet: position entropy 0.98, resultants 0.27 and 0.36, the
-  wedges' rates nearly equal (CV 0.09, from 0.53), drift D = 0.030 rad²/s
-  ([`experiments/ring_scaling.py`](experiments/ring_scaling.py), exploratory). The EPGs scaled their outside
-  excitatory input by a median of 2. This is one measurement from one brain; a pre-registered test on fresh seeds
-  comes next.
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/compass_attempts-dark.svg">
-  <img src="assets/compass_attempts-light.svg" width="100%" alt="Five histograms of where the head-direction bump sat over the ellipsoid body's 16 wedges in rung 4's measurement. Exploratory run: even, entropy 0.96, passes. Attempt 3 on fresh seeds: lopsided, entropy 0.79, fails. The same brain after annealed homeostasis: even again, entropy 0.93, passes. Attempt 4 on fresh seeds: nearly even, entropy 0.92, but resultants 0.64 and 0.70, fails. Homeostasis on long runs: one tall spike, the bump pinned in one place, fails.">
-</picture>
-
-Where the bump sat in each run, from the saved results: passing runs in red, failing ones in grey. `python assets/compass_attempts.py` redraws it.
+  The ring's evenness is tuned for rather than predicted, since the homeostasis steers each ring neuron toward its
+  type's rate. What the test shows is that the procedure gives a fly-like compass from new seeds, keeps the rest of
+  the brain and the rungs below working, and needs the connectome's ring wiring. Resting functional connectivity is
+  reported, not tested (r = 0.45 with flies' imaging, against 0.42 for independent firing); it waits for rung 9's
+  brain-wide state ([below](#the-ladder)).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/compass-dark.svg">
-  <img src="assets/compass-light.svg" width="100%" alt="Left: the ellipsoid body drawn as a ring of 16 wedges; a bump of activity several wedges wide lights them in red and wanders slowly around the ring. Right: a kymograph of the same run over 120 seconds, wedge against time, showing one band of activity that holds its heading and drifts about 90 degrees. Below: three histograms of where the bump sat over the 16 wedges. Before homeostasis in place it favors half the ring; after 80 rounds in the exploratory run it visits every wedge; after the same procedure on fresh seeds, in rung 4's third attempt, it favors one side again.">
+  <img src="assets/compass-light.svg" width="100%" alt="Left: the ellipsoid body drawn as a ring of 16 wedges; a bump of activity several wedges wide lights them in red and wanders slowly around the ring. Right: a kymograph of the same run over 120 seconds, wedge against time: one band of activity holds near one heading for about a minute, then drifts about 180 degrees over the next. Below: three histograms of where the bump sat over the 16 wedges in rung 4's pre-registered attempts on fresh seeds: lopsided in the third (entropy 0.79), leaning in the fourth (resultant 0.70), and even in the fifth (entropy 0.96, resultant 0.47), which passes.">
 </picture>
 
-The exploratory run's resting brain with no cue, at 5 times real time. Left: the ellipsoid body's 16 wedges, lit by
-their EPGs. Right: the same run over two minutes. Below: where the bump sat before homeostasis in place, after it in the
-exploratory run, and after the same procedure on fresh seeds, in rung 4's third attempt, which favored one side again.
-`python assets/compass.py` redraws it.
+The brain that passed rung 4, resting with no cue, at 5 times real time. Left: the ellipsoid body's 16 wedges, lit by
+their EPGs. Right: the same run over two minutes. Below: where the bump sat in rung 4's three pre-registered attempts
+on fresh seeds; the fifth is the brain above. `python assets/compass.py` redraws it.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/compass_attempts-dark.svg">
+  <img src="assets/compass_attempts-light.svg" width="100%" alt="Seven histograms of where the head-direction bump sat over the ellipsoid body's 16 wedges in rung 4's measurement. Exploratory run: even, entropy 0.96, passes. Attempt 3 on fresh seeds: lopsided, entropy 0.79, fails. The same brain after annealed homeostasis: even again, entropy 0.93, passes. Attempt 4 on fresh seeds: nearly even, entropy 0.92, but resultants 0.64 and 0.70, fails. Homeostasis on long runs: one tall spike, the bump pinned in one place, fails. Synaptic scaling of the ring's outside synapses: even, entropy 0.98, passes. Attempt 5 on fresh seeds with synaptic scaling: even, entropy 0.96, resultants 0.38 and 0.47, passes.">
+</picture>
+
+Where the bump sat in each run on the way, from the saved results: passing runs in red, failing ones in grey.
+`python assets/compass_attempts.py` redraws it.
+
+* **Training flyvis from scratch: the network learns only through a trained readout.** Rung 3 needs an eye whose T2
+  answers darkening without losing its motion directions or polarities, and fine-tuning trained models has failed
+  three ways (the looming entry below). So brainfly trains a flyvis network from scratch with T2's response to darkening
+  as a constraint ([`experiments/flyvis_t2_scratch.py`](experiments/flyvis_t2_scratch.py)). T2 took on the response
+  early, but in 118,000 iterations the network never predicted flow better than predicting none (validation error
+  5.77; flyvis's fully trained model 000 reaches 5.14). Nor did a run without the constraint, one without data
+  augmentation, or flyvis's own trainer run from scratch on a rented NVIDIA GPU (its validation loss fell 0.5% in
+  3,612 iterations). On one fixed batch, the fresh network learns when model 000's trained decoder reads it (5% in
+  600 iterations, and speeding up) but not through flyvis's initial decoder, whose weights all start at 0.001 (0.9%;
+  [`experiments/flyvis_learning.py`](experiments/flyvis_learning.py)). Starting from model 000's decoder and training
+  it along didn't help over 27,500 iterations. The run now going holds model 000's decoder fixed and trains on
+  batches of 16 for a quarter of the steps (`fast`), on a rented RTX 4090. That box turned out slow: it starts each
+  small GPU operation in 60–200 µs, where 5–10 µs is usual, so it trains no faster than the Mac's GPU (3.4 s per
+  iteration, against 3.0). Its first validation, at iteration 2,500, will show whether the network learns the task.
 
 * **Rung 6 passes: the giant fiber relays to the jump and flight muscles like a fly's.** A connectome can't show
   electrical synapses, so brainfly adds the giant fiber's from the literature. They are one-way junctions onto its own
@@ -372,7 +357,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/ladder-dark.svg">
-  <img src="assets/ladder-light.svg" width="100%" alt="A ladder of nine rungs, from 1 at the bottom to 9 at the top. Rung 1, validated baseline, passed. Rungs 2 (signs and modulators), 3 (eye and optic lobe) and 4 (central brain at rest) are in progress, with what is done marked in red. Rung 7, body and muscles, is started. Rungs 5, 6, 8 and 9 are not started.">
+  <img src="assets/ladder-light.svg" width="100%" alt="A ladder of nine rungs, from 1 at the bottom to 9 at the top. Rungs 1 (validated baseline), 2 (signs and modulators), 4 (central brain at rest) and 6 (gap junctions and proprioception) passed. Rungs 3 (eye and optic lobe) and 5 (nerve cord) are in progress, with what is done marked in red. Rung 7, body and muscles, is started. Rungs 8 and 9 are not started.">
 </picture>
 
 `python assets/ladder.py` redraws it from the experiments' saved verdicts.
@@ -382,7 +367,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 | 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **passed** on the sixth attempt (pre-registered, fresh seeds, null gated on scrambled wiring): stable, MN9 follows the sugar rate, bitter and Ir94e suppress it, and rewiring abolishes the route. It survives weight shuffles, so the route rests on which neurons connect |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | **passed** (pre-registered, fresh seeds): rung 1 still passes with 260 transmitter signs corrected to their hemilineage's, and scrambled wiring lets sugar drive MN9 in 1 of 100 degree-preserving and 0 of 100 class-preserving rewirings (Shiu's null: 1 of 100). Glutamate's inhibitory sign is essential; the monoamines' removal from fast excitation changes nothing |
 | 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: flyvis on its own terms gets all 16 T4/T5 directions right, drives LPLC2 and the giant fiber, and carries a rotating drum to the steering neuron DNa02 with the right sign. With a flyvis model whose T2 responds to decrements, looming drives LC4 too, at peaks of 26 Hz, but that model gets 29 of 32 contrast polarities right, one short, and T5a's direction wrong. None of flyvis's 8 models with such a T2 gets more than 29. A first trained model (006 fine-tuned for T2) kept 31 polarities but lost 10 of the 16 directions. A second (000 with only T2 changed) kept every direction and made LC4 answer looms, but flipped two polarities and cost LPLC2 its looming response |
-| 4. Central brain | per-type properties and gains that let the whole brain rest like a fly's | a mean rate of 4 Hz or less with nothing running away; a head-direction bump like a fly's (above shuffled labels, settling in different places in different runs, visiting every heading, and drifting as slowly as a fly's in darkness); the rungs below still passing at rest | in progress: four pre-registered attempts failed. The last two, on fresh seeds, rest at every measured rate with nothing running away and keep rung 1's taste and the looming escape passing. Their bumps are as strong as a fly's and drift at a fly's rate, but favor one region of the ring: position entropy 0.79 in the third, 0.92 in the fourth (with annealed homeostasis), whose resultants of 0.64 and 0.71 still miss the 0.6 limit. FC is now the ladder's final hurdle (below) |
+| 4. Central brain | per-type properties and gains that let the whole brain rest like a fly's; homeostasis in the head-direction ring | a mean rate of 4 Hz or less with nothing running away; a head-direction bump like a fly's (above shuffled labels, settling in different places in different runs, visiting every heading, and drifting as slowly as a fly's in darkness); the rungs below still passing at rest | **passed** on the fifth attempt (pre-registered, fresh seeds, null gated on scrambled wiring): it rests at every measured rate with nothing running away, keeps rung 1's taste and the looming escape, and holds a fly-like bump (strength 0.67 against shuffles' 0.37, position entropy 0.96, resultants 0.38 and 0.47, D = 0.019 rad²/s) once each ring neuron scales its synapses from outside the ring. Two rewired brains rest as well, with no bump. FC is now the ladder's final hurdle (below) |
 | 5. Nerve cord | Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons, strong descending drive | DNg100 and DNb08 produce 7–15 Hz leg rhythms | failed once: on brainfly's own front-leg network, DNg100 drives 11.6-13.7 Hz leg rhythms that scrambled wiring abolishes, but DNb08's one rhythm runs at 18 Hz |
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | passed: 0.9 ms to the jump muscle and 1.4 to the flight muscle; the flight branch follows 40% of 250 Hz trains, as flies' does; without the gap junctions, neither branch answers. Leg sensors aren't in yet |
 | 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | started: NeuroMechFly walks under a walking controller that the brain steers through DNa02, and jumps from spikes of its jump motor neurons through a twitch-shaped torque. No muscle model yet: FlyGym's musculoskeletal front leg (FlyMimic) pushes a fly's force probe 40 times more weakly than a fly's tibia flexor does |
@@ -601,7 +586,8 @@ a sign that the approach is broken."
 | `experiments/rung6_relay.py` | Pre-registered: does the resting brain relay giant fiber spikes like a fly, and does removing the electrical synapses act like *shakB²*? | **Pass**, all ten criteria. Latencies 0.9 and 1.4 ms; 100% and 40% following at 250 Hz; no spontaneous spikes; without junctions, no response at all; rewired, looms rarely reach the relay. |
 | `experiments/loom_jump.py` | Exploratory, not pre-registered: the whole chain from a looming disk to NeuroMechFly's jump | Every fly takes off, but a side loom drives one giant fiber and one leg (a 0.2 m/s sideways tumble), loom-evoked spikes come 2-52 ms before contact, and a spontaneously firing giant fiber makes a few flies jump at nothing. |
 | `experiments/vnc_legs.py` | Exploratory, not pre-registered: does the nerve cord's rhythm move NeuroMechFly's front legs? | Yes, at 11-15 Hz, but they twitch rather than step: swing and stance motor neurons fire together. Each DNg100 moves the opposite leg. |
-| `experiments/flyvis_t2_scratch.py` | Exploratory, not pre-registered: a flyvis model trained from scratch with T2's response to darkening as a constraint | Paused at iteration 53,500 of 250,000; it resumes from its checkpoint. T2 answers both flashes from iteration 2,500. The validation error sat at the level of predicting no flow (5.774) through 30,000 iterations (5.773-5.776), then was 5.765 at 40,000 and 5.757 at 50,000, perhaps the first sign of learning. A control trained from the same start without the T2 penalty (`control`, paused at 24,000) was no better by 22,500 (5.755-5.793), so the constraint isn't what held it back. flyvis's own pipeline check (its tutorial trains on one batch) lowers the loss here by 2% in 1,000 iterations, close to the tutorial's 3%. So the pipeline learns, and training from scratch is slow to show on the validation set. |
+| `experiments/flyvis_t2_scratch.py` | Exploratory, not pre-registered: a flyvis model trained from scratch with T2's response to darkening as a constraint | Not learning so far. The main run, paused at 118,000 of 250,000 iterations, never predicted flow better than predicting none (validation error 5.768-5.775 from 80,000 to 110,000; predicting none, 5.774; model 000, 5.137), though T2 answered both flashes from iteration 2,500. Neither did `control` (no T2 penalty, paused at 24,000), `noaug` (no data augmentation; even the training loss stayed flat for 5,000), `decoder000` (model 000's decoder as a trainable start; 5.76-5.79 through 27,500), nor flyvis's own trainer from scratch on a rented RTX 4090 (`flow/9200/000`: validation loss 1,212.6 to 1,206.2 in 3,612 iterations). `fast` (model 000's decoder held fixed, batches of 16 for 62,500 iterations, learning rate 1e-4 to 1e-5) is running on that GPU. |
+| `experiments/flyvis_learning.py` | Exploratory, not pre-registered: which part learns when flyvis trains from scratch here? Six 600-iteration runs of Adam on one fixed batch, augmentation off, from flyvis_t2_scratch.py's fresh network | The network learns through a trained decoder but not through flyvis's initial one. The network alone, read by the initial decoder (constant weights of 0.001), lowers the loss 0.9%; read by model 000's trained decoder, held fixed, 5.0% and still speeding up. The decoder alone lowers it 2.8%. Network and decoder together, which can fit one batch: 9.7% at learning rate 1e-5, 2.9% at 5e-5, 15.4% at 5e-5 with flyvis's activity penalty. |
 | `experiments/rung5_vnc.py` | Pre-registered: does brainfly's nerve cord, by Pugliese et al.'s recipe, turn DNg100 and DNb08 into 7-15 Hz leg rhythms, with scrambled wiring abolishing them? | **Fail**, on DNb08 only. Each DNg100 drives rhythms in 30 and 31 of 32 runs (13.7 and 11.6 Hz), and two rewired networks in none of 128. One DNb08 neuron drives a rhythm in 10 of 16 runs but at 18.2 Hz; the other three in at most 1. |
 | `experiments/leg_probe.py` | Exploratory, not pre-registered: does FlyMimic's front-leg tibia flexor push a force probe as hard as a fly's? | No, by a factor of about 40. With flies' probe (0.2234 µN/µm, 417 µm from the joint; Azevedo et al. 2020), full activation gives 2.0-2.3 µN. A fly's whole muscle gives close to 100 µN, and one fast motor neuron spike about 9 µN. The muscle's 68 µN maximum acts through a 15 µm moment arm; it would need about 3 mN. The extensor pushes 17-28 µN. |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension match flies; the launch is steep and slightly backward (79°), head-down, and 1.7 times too hard upward, from the walking pose. One TTMn alone gives a weak, tumbling launch. |
@@ -616,6 +602,7 @@ a sign that the approach is broken."
 | `experiments/rest_calibration2.py` | Rung 4, attempt 2, pre-registered: attempt 1 plus the per-type properties that stop recurrent loops from running away (a reset 5 mV below rest, thresholds of 10 mV for projection and lateral-horn neurons and 16 for Kenyon cells, and short-term depression at every cholinergic synapse, from ORN-to-PN measurements), calibrated from a fresh start every round | **Fail** on FC and the bump; the rate passes. The calibration now carries over: in fresh runs 99.99% of groups are within a factor of 2 of their targets, the mean is 1.7 Hz, no neuron passes 100 Hz, and every measured type is within 3% of its literature rate. FC improves from attempt 1's 0.20 to r = 0.38, but the same neurons firing independently would give 0.40, and two degree-preserving rewirings, which now rest too, give 0.50 and 0.49. The largest errors are pairs the model ties together far more than flies do: the antennal lobe and lateral horn with the mushroom-body calyx (projection neurons), and the ellipsoid body with the gall and bridge. The bump is 0.25-0.27 strong, above shuffled labels (0.18-0.19), but in the same place in all 8 runs. With every unmeasured target at 1 or 4 Hz, r is 0.44 or 0.39. |
 | `experiments/rung4_rest.py` | Rung 4, attempt 3, pre-registered: with the head-direction ring fitted and each ring neuron's slow homeostasis run in place (ring_insitu.py's procedure, from the start on fresh seeds), does the brain that tastes and escapes rest like a fly's? | **Fail** on BUMP; the other twelve criteria pass. RATE holds: a mean of 1.66 Hz, nothing over 100 Hz, 99.98% of calibrated groups within a factor of 2. The bump is strong (0.73, against shuffles' 0.41) and drifts at D = 0.0095 rad²/s. But all 8 runs settle within about 45° of one heading (resultants 0.91), and the position entropy is 0.79. Taste and the looming escape pass at rest: MN9 +22 Hz under sugar (t = 30), bitter and Ir94e cut that by 107% and 92%, no spontaneous bouts, the giant fiber +26-28 Hz. Two degree-preserving rewirings through the same procedure rest at 1.6 Hz with no bump (strength 0.12, shuffles 0.12). Resting FC r = 0.45, against 0.42 for independent firing and 0.46-0.47 for the rewirings (reported). It ran in two stretches, about 14 hours in all with battery pauses, resuming exactly where it stopped. |
 | `experiments/rung4_anneal.py` | Rung 4, attempt 4, pre-registered: attempt 3's procedure plus 40 annealed rounds of homeostasis (step 0.2 to 0.02 mV) with the offsets averaged over them, from the start on new seeds | **Fail** on BUMP. The intact brain's other eleven tests pass, so the rewired brains didn't run, as registered. RATE holds (1.66 Hz, nothing over 100 Hz). The bump's strength is 0.70 and 0.71 (shuffles 0.38), its position entropy 0.92 and D = 0.018 rad²/s, but the resultants are 0.64 and 0.71. Taste passes (MN9 +21 Hz, bitter and Ir94e veto it, no spontaneous bouts), and so does the looming escape (giant fiber +26-28 Hz). |
+| `experiments/rung4_scaling.py` | Rung 4, attempt 5, pre-registered: attempt 3's procedure with each ring neuron's synapses from outside the ring under homeostatic synaptic scaling (40 annealed rounds, the factors averaged), from the start on new seeds | **Pass**, all thirteen criteria. RATE holds: 1.66 Hz, nothing over 100 Hz, 99.97% of calibrated groups within a factor of 2. BUMP: strength 0.67 and 0.66 (shuffles 0.37 and 0.36), resultants 0.38 and 0.47, position entropy 0.96, D = 0.019 rad²/s. Taste: MN9 +20 Hz under sugar (t = 18), bitter and Ir94e cut that by 113% and 89%, no spontaneous bouts. Escape: the loomed side's giant fiber +28 Hz. NULL: two degree-preserving rewirings through the same procedure rest at 1.62-1.63 Hz with no bump (strength 0.08-0.10, shuffles 0.12-0.14). The EPGs scaled their outside excitatory input by a median of 1.9 (0.5-2.7). Resting FC r = 0.45, against 0.42 for independent firing (reported). The rewired brains ran in two stretches, resuming where they stopped. |
 | `experiments/rest_measurement.py` | Exploratory, not pre-registered: how much of the flies' resting FC does the measurement explain before any dynamics? | Most of it. Weighting each neuron's activity by its synapses in a region, as brainfly.imaging does, independent firing matches the flies at r = 0.38; weighting neurons more evenly raises that to 0.50–0.56, and adding one slow signal that every neuron shares, sized to the flies' overall correlation, to 0.69 (presence weighting). That beats the count of shared neurons (0.65), with no network and no wiring beyond which regions each neuron reaches. What it leaves barely follows how strongly regions are wired together (partial r 0.13 once shared neurons are accounted for), and attempt 2's network-made correlations don't follow it at all (−0.02). At 66 regions and 1.2 Hz, the flies' resting FC mostly shows which regions share neurons plus a brain-wide signal, so it can say little about the wiring's dynamics. |
 | `experiments/eyes_at_rest.py` | Pre-registered: does the resting brain see? rest_calibration2.py's brain with flyvis's eyes (model 001), recalibrated with the eyes open at grey, under eyepath_native.py's looms | **Fail**, on the escape neuron alone. The brain stays at rest (1.6 Hz, nothing over 100 Hz) and at every gain a loom drives the loomed side's LC4 by 17–61 Hz and LPLC2 by 14–51 Hz, with the other side unmoved (t up to 400). But the giant fiber rises only 2–4 Hz, short of 3 Hz for the right-side loom, and doesn't grow with the gain. An exploratory rerun without the short-term depression on LC4's and LPLC2's outputs, the rest unchanged, gives the loomed side's giant fiber 48–61 Hz at gain 1 and passes every test: depression taken from one synapse (ORN to PN) and applied to every cholinergic synapse caps what a fast input can pass on at about 5 spikes a second. A drum drives the HS cells with the right direction selectivity but never the steering neuron DNa02, calibrated to a standing fly's near silence. |
 | `experiments/escape_at_rest.py` | Pre-registered: does the resting brain escape with short-term depression set by synapse class from the literature (measured values on ORNs, projection neurons and Kenyon cells; mild, 0.5-s depression on other central cholinergic neurons; none on sensory relays, visual projection neurons or descending neurons)? | **Fail**, on the resting state. The escape relay works: at gain 3 a loom raises the loomed side's giant fiber 78–83 Hz, at gain 10 by 98–111 Hz, with the other side unmoved. But on a grey screen the left LPLC2 (28 Hz), LC4 (8 Hz) and giant fiber (28 Hz) already run while the right ones stay silent: freed from depression, the LPLC2 cells' excitation of one another ignites by itself, in some flies, so REST fails at every gain. Sugar still barely moves MN9 (+1.9 Hz). |

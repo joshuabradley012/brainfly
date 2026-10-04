@@ -5,7 +5,8 @@
 Each panel: the share of rung 4's measurement windows (8 runs of 300 s) that the bump spent at each of the ellipsoid
 body's 16 wedges, with the position entropy and the two bridge sides' resultants. Rung 4 asks an entropy of at least
 0.9 and resultants under 0.6 (with a strong bump that drifts at a fly's rate). From the saved results of
-ring_insitu.py, rung4_rest.py, ring_anneal.py (averaged offsets), rung4_anneal.py and ring_longruns.py.
+ring_insitu.py, rung4_rest.py, ring_anneal.py (averaged offsets), rung4_anneal.py, ring_longruns.py, ring_scaling.py
+(averaged factors) and rung4_scaling.py.
 """
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ THEMES = {  # as in assets/compass.py
     "dark": dict(ink="#e6edf3", muted="#9198a1", rule="#3d444d", red="#e5533f", paper="#0d1117"),
 }
 W, H = 1120, 300
-X0, PW, GAP, Y0, Y1 = 24, 196, 22, 120, 210
+X0, PW, GAP, Y0, Y1 = 24, 132, 20, 126, 210
 
 
 def load(path: str, *keys: str) -> dict:
@@ -31,11 +32,13 @@ def load(path: str, *keys: str) -> dict:
 
 
 def panels() -> list[dict]:
-    rows = [("Exploratory run", "80 rounds in place", load("ring_insitu.json")),
-            ("Attempt 3", "the same, fresh seeds (pre-registered)", load("rung4_rest/intact.json")),
-            ("Annealed", "attempt 3's brain, 40 more rounds", load("ring_anneal.json", "measured", "averaged")),
-            ("Attempt 4", "annealed, fresh seeds (pre-registered)", load("rung4_anneal/intact.json")),
-            ("Long runs", "attempt 4's brain, 10 rounds of 300 s", load("ring_longruns.json", "measured"))]
+    rows = [("Exploratory run", ("80 rounds of offset", "homeostasis in place"), load("ring_insitu.json")),
+            ("Attempt 3", ("the same, fresh seeds", "pre-registered"), load("rung4_rest/intact.json")),
+            ("Annealed", ("attempt 3's brain,", "40 more rounds"), load("ring_anneal.json", "measured", "averaged")),
+            ("Attempt 4", ("annealed, fresh seeds", "pre-registered"), load("rung4_anneal/intact.json")),
+            ("Long runs", ("attempt 4's brain,", "10 rounds of 300 s"), load("ring_longruns.json", "measured")),
+            ("Synaptic scaling", ("outside synapses scaled,", "40 rounds"), load("ring_scaling.json", "measured", "averaged")),
+            ("Attempt 5", ("scaling, fresh seeds", "pre-registered"), load("rung4_scaling/intact.json"))]
     out = []
     for title, sub, m in rows:
         motion, bump = m["bump_motion"], m["bump"]
@@ -56,8 +59,9 @@ def figure(theme: str, ps: list[dict]) -> str:
     top = max(max(p["hist"]) for p in ps)
     for j, p in enumerate(ps):
         x0 = X0 + j * (PW + GAP)
-        out.append(text(x0, Y0 - 34, p["title"], "val"))
-        out.append(text(x0, Y0 - 18, p["sub"], "tick"))
+        out.append(text(x0, Y0 - 44, p["title"], "val"))
+        out.append(text(x0, Y0 - 28, p["sub"][0], "tick"))
+        out.append(text(x0, Y0 - 14, p["sub"][1], "tick"))
         bw = PW / 16
         for k, v in enumerate(p["hist"]):
             y = Y1 - (Y1 - Y0) * v / top
@@ -78,9 +82,10 @@ def figure(theme: str, ps: list[dict]) -> str:
     .pass {{ font-size: 12px; font-weight: 600; fill: {c["red"]}; }}
     .fail {{ font-size: 12px; font-weight: 600; fill: {c["muted"]}; }}
     """
-    title = ("Where the simulated fly's head-direction bump sat over rung 4's measurement in five runs: even in the exploratory "
-             "run, lopsided on fresh seeds, even again after annealed homeostasis, nearly even in the fourth attempt, and "
-             "pinned in one place by homeostasis on long runs")
+    title = ("Where the simulated fly's head-direction bump sat over rung 4's measurement in seven runs: even in the exploratory "
+             "run, lopsided on fresh seeds, even again after annealed homeostasis, nearly even in the fourth attempt, pinned "
+             "in one place by homeostasis on long runs, and even with synaptic scaling, both exploratory and in the fifth "
+             "attempt, which passes")
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")

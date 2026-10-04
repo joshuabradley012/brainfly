@@ -36,9 +36,9 @@ def verdict(name: str, *keys: str):
 def rungs() -> list[dict]:
     """Each rung: its name, status, and marks (done, text)."""
     lower = ("REST", "RELAY", "SIDE", "ESCAPE", "QUIET", "SUGAR", "RESPONSE", "BITTER", "IR94E", "STABLE")
-    rung4 = [(bool(verdict("rung4_anneal", "RATE")), "rests at the measured rates, nothing runs away"),
-             (all(verdict("rung4_anneal", k) for k in lower), "taste and escape still pass at rest"),
-             (bool(verdict("rung4_anneal", "BUMP")), "a head-direction bump that moves like a fly's")]
+    rung4 = [(bool(verdict("rung4_scaling", "RATE")), "rests at the measured rates, nothing runs away"),
+             (all(verdict("rung4_scaling", k) for k in lower), "taste and escape still pass at rest"),
+             (bool(verdict("rung4_scaling", "BUMP")), "a head-direction bump that moves like a fly's")]
     return [
         {"name": "Validated baseline", "status": "passed" if verdict("shiu_rewiring", "pass") else "in progress",
          "marks": [(True, "sugar drives the proboscis motor neuron; bitter suppresses it; rewiring abolishes it")]},
@@ -49,7 +49,7 @@ def rungs() -> list[dict]:
          "marks": [(True, "16/16 motion directions"),
                    (bool(verdict("eyepath_native_t2", "confirm", "pass")), "looming reaches LC4, LPLC2, giant fiber"),
                    (bool(verdict("rung3_verdict", "POLARITY")), "30 of 32 polarities")]},
-        {"name": "Central brain at rest", "status": "passed" if verdict("rung4_anneal", "pass") else "in progress",
+        {"name": "Central brain at rest", "status": "passed" if verdict("rung4_scaling", "pass") else "in progress",
          "marks": rung4},
         {"name": "Nerve cord", "status": "passed" if verdict("rung5_vnc", "pass") else "in progress",
          "marks": [(bool(verdict("rung5_vnc", "DNG100")), "DNg100 drives 7-15 Hz leg rhythms; scrambled wiring doesn't"),

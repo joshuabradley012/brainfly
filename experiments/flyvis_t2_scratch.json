@@ -1970,6 +1970,36 @@
    "t2_off_mean": 1.501,
    "T2": false,
    "seconds": 88601
+  },
+  {
+   "iteration": 117000,
+   "flow_loss": 1300.53,
+   "t2_penalty": 0.037,
+   "t2_on": 0.177,
+   "t2_off": 0.395,
+   "t2_off_mean": 1.627,
+   "T2": true,
+   "seconds": 445
+  },
+  {
+   "iteration": 117500,
+   "flow_loss": 1283.98,
+   "t2_penalty": 0.0,
+   "t2_on": 0.329,
+   "t2_off": 0.199,
+   "t2_off_mean": 1.552,
+   "T2": true,
+   "seconds": 805
+  },
+  {
+   "iteration": 118000,
+   "flow_loss": 1295.7,
+   "t2_penalty": 0.0,
+   "t2_on": 0.603,
+   "t2_off": 0.008,
+   "t2_off_mean": 1.369,
+   "T2": false,
+   "seconds": 1020
   }
  ],
  "evals": [

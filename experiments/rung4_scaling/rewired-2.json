@@ -1,0 +1,603 @@
+{
+ "condition": "rewired-2",
+ "seeds": {
+  "rewiring": 2,
+  "brain": 62,
+  "scaling": 16000,
+  "measure": 6202
+ },
+ "calibration": {
+  "round": 4,
+  "mean_hz_own": 1.651,
+  "over_100hz": 0,
+  "groups_within_2x": 0.9997
+ },
+ "scaling": [
+  {
+   "round": 1,
+   "position_entropy": 0.785,
+   "drift_D": 0.2942,
+   "epg_hz": 26.33,
+   "epg_rate_cv": 0.079,
+   "g_range": [
+    0.819,
+    0.848
+   ]
+  },
+  {
+   "round": 2,
+   "position_entropy": 0.753,
+   "drift_D": 0.161,
+   "epg_hz": 24.98,
+   "epg_rate_cv": 0.083,
+   "g_range": [
+    0.673,
+    0.723
+   ]
+  },
+  {
+   "round": 3,
+   "position_entropy": 0.739,
+   "drift_D": 0.1828,
+   "epg_hz": 23.57,
+   "epg_rate_cv": 0.087,
+   "g_range": [
+    0.556,
+    0.619
+   ]
+  },
+  {
+   "round": 4,
+   "position_entropy": 0.682,
+   "drift_D": 0.0294,
+   "epg_hz": 22.11,
+   "epg_rate_cv": 0.095,
+   "g_range": [
+    0.462,
+    0.534
+   ]
+  },
+  {
+   "round": 5,
+   "position_entropy": 0.659,
+   "drift_D": 0.1079,
+   "epg_hz": 20.52,
+   "epg_rate_cv": 0.106,
+   "g_range": [
+    0.385,
+    0.475
+   ]
+  },
+  {
+   "round": 6,
+   "position_entropy": 0.678,
+   "drift_D": 0.1257,
+   "epg_hz": 18.82,
+   "epg_rate_cv": 0.119,
+   "g_range": [
+    0.323,
+    0.429
+   ]
+  },
+  {
+   "round": 7,
+   "position_entropy": 0.693,
+   "drift_D": 0.1349,
+   "epg_hz": 17.04,
+   "epg_rate_cv": 0.136,
+   "g_range": [
+    0.272,
+    0.392
+   ]
+  },
+  {
+   "round": 8,
+   "position_entropy": 0.681,
+   "drift_D": 0.0791,
+   "epg_hz": 15.17,
+   "epg_rate_cv": 0.156,
+   "g_range": [
+    0.23,
+    0.364
+   ]
+  },
+  {
+   "round": 9,
+   "position_entropy": 0.668,
+   "drift_D": 0.2068,
+   "epg_hz": 13.28,
+   "epg_rate_cv": 0.181,
+   "g_range": [
+    0.195,
+    0.342
+   ]
+  },
+  {
+   "round": 10,
+   "position_entropy": 0.695,
+   "drift_D": 0.0068,
+   "epg_hz": 11.37,
+   "epg_rate_cv": 0.214,
+   "g_range": [
+    0.167,
+    0.324
+   ]
+  },
+  {
+   "round": 11,
+   "position_entropy": 0.69,
+   "drift_D": 0.1719,
+   "epg_hz": 9.5,
+   "epg_rate_cv": 0.246,
+   "g_range": [
+    0.143,
+    0.31
+   ]
+  },
+  {
+   "round": 12,
+   "position_entropy": 0.723,
+   "drift_D": 0.175,
+   "epg_hz": 7.8,
+   "epg_rate_cv": 0.28,
+   "g_range": [
+    0.123,
+    0.298
+   ]
+  },
+  {
+   "round": 13,
+   "position_entropy": 0.748,
+   "drift_D": 0.1628,
+   "epg_hz": 6.18,
+   "epg_rate_cv": 0.324,
+   "g_range": [
+    0.106,
+    0.289
+   ]
+  },
+  {
+   "round": 14,
+   "position_entropy": 0.761,
+   "drift_D": 0.1077,
+   "epg_hz": 4.88,
+   "epg_rate_cv": 0.351,
+   "g_range": [
+    0.093,
+    0.282
+   ]
+  },
+  {
+   "round": 15,
+   "position_entropy": 0.848,
+   "drift_D": 0.3033,
+   "epg_hz": 3.79,
+   "epg_rate_cv": 0.357,
+   "g_range": [
+    0.081,
+    0.276
+   ]
+  },
+  {
+   "round": 16,
+   "position_entropy": 0.892,
+   "drift_D": 0.6455,
+   "epg_hz": 2.98,
+   "epg_rate_cv": 0.331,
+   "g_range": [
+    0.071,
+    0.271
+   ]
+  },
+  {
+   "round": 17,
+   "position_entropy": 0.936,
+   "drift_D": 0.9772,
+   "epg_hz": 2.48,
+   "epg_rate_cv": 0.275,
+   "g_range": [
+    0.063,
+    0.272
+   ]
+  },
+  {
+   "round": 18,
+   "position_entropy": 0.983,
+   "drift_D": 0.8037,
+   "epg_hz": 2.13,
+   "epg_rate_cv": 0.2,
+   "g_range": [
+    0.055,
+    0.275
+   ]
+  },
+  {
+   "round": 19,
+   "position_entropy": 0.991,
+   "drift_D": 0.9846,
+   "epg_hz": 1.96,
+   "epg_rate_cv": 0.147,
+   "g_range": [
+    0.049,
+    0.278
+   ]
+  },
+  {
+   "round": 20,
+   "position_entropy": 0.994,
+   "drift_D": 1.3795,
+   "epg_hz": 1.9,
+   "epg_rate_cv": 0.096,
+   "g_range": [
+    0.044,
+    0.281
+   ]
+  },
+  {
+   "round": 21,
+   "position_entropy": 0.996,
+   "drift_D": 1.8751,
+   "epg_hz": 1.89,
+   "epg_rate_cv": 0.082,
+   "g_range": [
+    0.04,
+    0.283
+   ]
+  },
+  {
+   "round": 22,
+   "position_entropy": 0.991,
+   "drift_D": 1.5316,
+   "epg_hz": 1.95,
+   "epg_rate_cv": 0.091,
+   "g_range": [
+    0.036,
+    0.285
+   ]
+  },
+  {
+   "round": 23,
+   "position_entropy": 0.991,
+   "drift_D": 1.3728,
+   "epg_hz": 2.05,
+   "epg_rate_cv": 0.085,
+   "g_range": [
+    0.032,
+    0.287
+   ]
+  },
+  {
+   "round": 24,
+   "position_entropy": 0.991,
+   "drift_D": 1.9669,
+   "epg_hz": 2.15,
+   "epg_rate_cv": 0.089,
+   "g_range": [
+    0.029,
+    0.289
+   ]
+  },
+  {
+   "round": 25,
+   "position_entropy": 0.992,
+   "drift_D": 1.5281,
+   "epg_hz": 2.28,
+   "epg_rate_cv": 0.091,
+   "g_range": [
+    0.027,
+    0.29
+   ]
+  },
+  {
+   "round": 26,
+   "position_entropy": 0.992,
+   "drift_D": 1.3942,
+   "epg_hz": 2.39,
+   "epg_rate_cv": 0.079,
+   "g_range": [
+    0.025,
+    0.292
+   ]
+  },
+  {
+   "round": 27,
+   "position_entropy": 0.99,
+   "drift_D": 1.8316,
+   "epg_hz": 2.49,
+   "epg_rate_cv": 0.079,
+   "g_range": [
+    0.023,
+    0.293
+   ]
+  },
+  {
+   "round": 28,
+   "position_entropy": 0.994,
+   "drift_D": 1.4722,
+   "epg_hz": 2.58,
+   "epg_rate_cv": 0.068,
+   "g_range": [
+    0.021,
+    0.294
+   ]
+  },
+  {
+   "round": 29,
+   "position_entropy": 0.991,
+   "drift_D": 1.5803,
+   "epg_hz": 2.67,
+   "epg_rate_cv": 0.059,
+   "g_range": [
+    0.02,
+    0.295
+   ]
+  },
+  {
+   "round": 30,
+   "position_entropy": 0.992,
+   "drift_D": 1.8666,
+   "epg_hz": 2.72,
+   "epg_rate_cv": 0.051,
+   "g_range": [
+    0.018,
+    0.296
+   ]
+  },
+  {
+   "round": 31,
+   "position_entropy": 0.993,
+   "drift_D": 1.51,
+   "epg_hz": 2.77,
+   "epg_rate_cv": 0.041,
+   "g_range": [
+    0.017,
+    0.297
+   ]
+  },
+  {
+   "round": 32,
+   "position_entropy": 0.996,
+   "drift_D": 1.192,
+   "epg_hz": 2.8,
+   "epg_rate_cv": 0.043,
+   "g_range": [
+    0.016,
+    0.298
+   ]
+  },
+  {
+   "round": 33,
+   "position_entropy": 0.998,
+   "drift_D": 1.4402,
+   "epg_hz": 2.84,
+   "epg_rate_cv": 0.034,
+   "g_range": [
+    0.016,
+    0.298
+   ]
+  },
+  {
+   "round": 34,
+   "position_entropy": 0.993,
+   "drift_D": 0.7776,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.033,
+   "g_range": [
+    0.015,
+    0.298
+   ]
+  },
+  {
+   "round": 35,
+   "position_entropy": 0.996,
+   "drift_D": 1.6182,
+   "epg_hz": 2.88,
+   "epg_rate_cv": 0.03,
+   "g_range": [
+    0.014,
+    0.298
+   ]
+  },
+  {
+   "round": 36,
+   "position_entropy": 0.995,
+   "drift_D": 1.1641,
+   "epg_hz": 2.89,
+   "epg_rate_cv": 0.03,
+   "g_range": [
+    0.014,
+    0.299
+   ]
+  },
+  {
+   "round": 37,
+   "position_entropy": 0.996,
+   "drift_D": 1.8351,
+   "epg_hz": 2.91,
+   "epg_rate_cv": 0.028,
+   "g_range": [
+    0.013,
+    0.299
+   ]
+  },
+  {
+   "round": 38,
+   "position_entropy": 0.997,
+   "drift_D": 0.8301,
+   "epg_hz": 2.9,
+   "epg_rate_cv": 0.032,
+   "g_range": [
+    0.013,
+    0.299
+   ]
+  },
+  {
+   "round": 39,
+   "position_entropy": 0.996,
+   "drift_D": 1.1444,
+   "epg_hz": 2.92,
+   "epg_rate_cv": 0.027,
+   "g_range": [
+    0.013,
+    0.299
+   ]
+  },
+  {
+   "round": 40,
+   "position_entropy": 0.996,
+   "drift_D": 1.3915,
+   "epg_hz": 2.92,
+   "epg_rate_cv": 0.024,
+   "g_range": [
+    0.012,
+    0.299
+   ]
+  }
+ ],
+ "factors_by_group": {
+  "EPG": [
+   0.098,
+   0.123,
+   0.246
+  ],
+  "PEN_a": [
+   0.058,
+   0.066,
+   0.082
+  ],
+  "PEN_b": [
+   0.089,
+   0.126,
+   0.178
+  ],
+  "PEG": [
+   0.057,
+   0.057,
+   0.069
+  ],
+  "Delta7": [
+   0.091,
+   0.203,
+   0.313
+  ],
+  "ER": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "ExR": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ "RATE": true,
+ "BUMP": false,
+ "mean_hz": 1.622,
+ "over_100hz": 0.0,
+ "without_ring": {
+  "mean_hz": 1.614,
+  "over_100hz": 0.0
+ },
+ "bump": {
+  "L": {
+   "strength": 0.083,
+   "shuffle_p99": 0.129,
+   "run_positions_deg": [
+    -134.1,
+    -130.6,
+    -134.6,
+    -132.8,
+    -130.9,
+    -131.3,
+    -127.7,
+    -133.0
+   ],
+   "resultant": 0.999
+  },
+  "R": {
+   "strength": 0.093,
+   "shuffle_p99": 0.13,
+   "run_positions_deg": [
+    -101.6,
+    -104.7,
+    -107.7,
+    -105.6,
+    -104.3,
+    -107.2,
+    -105.6,
+    -102.0
+   ],
+   "resultant": 0.999
+  }
+ },
+ "bump_motion": {
+  "position_entropy": 0.952,
+  "position_histogram": [
+   0.113,
+   0.117,
+   0.091,
+   0.068,
+   0.049,
+   0.041,
+   0.033,
+   0.031,
+   0.023,
+   0.028,
+   0.031,
+   0.045,
+   0.052,
+   0.07,
+   0.09,
+   0.118
+  ],
+  "drift_D_rad2_per_s": 1.2173,
+  "MOVES_LIKE_A_FLY": false
+ },
+ "ring_group_hz": {
+  "EPG": 5.74,
+  "PEN_a": 13.91,
+  "PEN_b": 22.87,
+  "PEG": 10.36,
+  "Delta7": 0.89,
+  "ER": 0.91,
+  "ExR": 0.04
+ },
+ "measured_types": {
+  "MBON11": {
+   "target_hz": 37.2,
+   "hz": 37.0
+  },
+  "MBON12": {
+   "target_hz": 21.5,
+   "hz": 21.38
+  },
+  "MBON13": {
+   "target_hz": 16.5,
+   "hz": 16.56
+  },
+  "MBON14": {
+   "target_hz": 15.5,
+   "hz": 15.54
+  },
+  "MBON17": {
+   "target_hz": 13.4,
+   "hz": 13.35
+  },
+  "MBON18": {
+   "target_hz": 10.9,
+   "hz": 11.04
+  },
+  "PPL101": {
+   "target_hz": 20.1,
+   "hz": 20.16
+  },
+  "PEN_a(PEN1)": {
+   "target_hz": 3.9,
+   "hz": 13.91
+  }
+ },
+ "fc_r": 0.458,
+ "fc_r_independent": 0.417,
+ "seconds": 2466
+}

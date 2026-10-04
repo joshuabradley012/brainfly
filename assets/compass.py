@@ -2,15 +2,16 @@
 
     python assets/compass.py       # writes assets/compass-light.svg and assets/compass-dark.svg
 
-ring_insitu.py's brain: taste_escape.py's resting brain with ring_fit3.py's head-direction ring in it and each ring
-neuron's offset from 80 rounds of slow homeostasis in place (experiments/ring_insitu/offsets.npz). One batch of 8 fresh
-runs of 120 s at grey, after 2 s to settle; the first run builds the brain (~5 min) and simulates (~10 min), and caches
-EPG activity by wedge in experiments/ring_insitu/compass.npz. The figure shows the run whose bump drifts at the
-median rate of the 8. Left: the ellipsoid body's 16 wedges, each lit by its EPGs' spikes in 200-ms frames, over 40 s
-of that run at 5 times real time. Right: the same run's EPG activity by wedge over 120 s (a kymograph), with the 40 s
-on the left bracketed; below it, where the bump sat over every window of rung 4's measurement, before homeostasis in
-place (ring_whole.py --homeostasis: 8 runs of 60 s), after it (ring_insitu.py: 8 runs of 300 s), and after the same
-procedure run again from the start on fresh seeds (rung4_rest.py's intact brain, pre-registered: 8 runs of 300 s).
+The brain that passed rung 4 (rung4_scaling.py's intact brain, attempt 5): taste_escape.py's resting brain with
+ring_fit3.py's head-direction ring in it, each ring neuron's offset from ring_insitu.tune, and its synapses from outside
+the ring scaled by its averaged factor (experiments/rung4_scaling/intact_state.npz). One batch of 8 fresh runs of 120 s
+at grey, after 2 s to settle; the first run builds the brain (~5 min) and simulates (~10 min), and caches EPG activity
+by wedge in experiments/rung4_scaling/compass.npz. The figure shows the run whose bump drifts at the median rate of
+the 8. Left: the ellipsoid body's 16 wedges, each lit by its EPGs' spikes in 200-ms frames, over 40 s of that run at 5
+times real time. Right: the same run's EPG activity by wedge over 120 s (a kymograph), with the 40 s on the left
+bracketed; below it, where the bump sat over every window of rung 4's measurement (8 runs of 300 s) in its three
+pre-registered attempts on fresh seeds: rung4_rest.py (offset homeostasis), rung4_anneal.py (annealed offsets) and
+rung4_scaling.py (synaptic scaling, the brain shown).
 """
 from __future__ import annotations
 
@@ -28,13 +29,13 @@ from loom import png  # noqa: E402
 from rest import text  # noqa: E402
 
 OUT = Path(__file__).parent
-CACHE = ROOT / "experiments" / "ring_insitu" / "compass.npz"
+CACHE = ROOT / "experiments" / "rung4_scaling" / "compass.npz"
 FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif"
 THEMES = {  # as in assets/sees.py
     "light": dict(ink="#1f2328", muted="#59636e", rule="#d1d9e0", red="#b8322a", paper="#ffffff"),
     "dark": dict(ink="#e6edf3", muted="#9198a1", rule="#3d444d", red="#e5533f", paper="#0d1117"),
 }
-W, H = 1120, 560
+W, H = 1120, 580
 SECONDS, BIN, SEED = 120, 0.2, 31                   # run length and frame (s), the batch's seed
 SHOW_FROM, SHOW, SPEED = 40.0, 40.0, 5.0            # the animated stretch and its speed-up
 CX, CY, R0, R1 = 230, 290, 78, 160
@@ -50,11 +51,9 @@ def wedges(side: np.ndarray, glom: np.ndarray) -> np.ndarray:
 def simulate() -> np.ndarray:
     """EPG spikes per wedge in each BIN, per EPG: (runs, bins, 16) in Hz."""
     import rest_calibration as attempt1
-    import ring_insitu
+    import rung4_scaling
 
-    saved = np.load(ROOT / "experiments" / "ring_insitu" / "offsets.npz")
-    s, st = ring_insitu.build(start_bias=saved["group_bias"])
-    st["extra"][:] = saved["extra"]
+    s = rung4_scaling.prepare("intact")[0]                # the saved state: biases, offsets, averaged factors
     b = s.brain
     epg, side, glom = attempt1.epgs(s.types)
     wedge = wedges(side, glom)
@@ -124,7 +123,7 @@ def figure(theme: str, act: np.ndarray, d: float, panels: list) -> str:
     out.append(f'<path class="head" d="M{kx(SHOW_FROM):.1f} {KY0}V{KY1}" stroke="{c["ink"]}" stroke-width="1.3"/>')
     out.append(text(KX0, KY1 + 40, f"This run drifts at D = {d:.3f} rad²/s; flies' bumps in darkness, about 0.003–0.04.", "note"))
 
-    # where the bump sat: before homeostasis in place, after it, and after it again on fresh seeds
+    # where the bump sat in rung 4's three pre-registered attempts
     gap = 30
     hw = (KX1 - HX0 - gap * (len(panels) - 1)) / len(panels)
     top = max(max(h["hist"]) for h in panels)
@@ -139,8 +138,9 @@ def figure(theme: str, act: np.ndarray, d: float, panels: list) -> str:
                        f'fill="{c["red"] if h["even"] else c["muted"]}"/>')
         out.append(f'<line x1="{x0}" y1="{HY1}" x2="{x0 + hw}" y2="{HY1}" stroke="{c["rule"]}"/>')
         out.append(text(x0, HY1 + 18, h["note"], "tick"))
-    out.append(text(HX0, HY1 + 38, "Each: the share of time the bump spent at each of the 16 wedges; rung 4 asks a position "
-                    "entropy of at least 0.9.", "tick"))
+        out.append(text(x0, HY1 + 32, h["verdict"], "tick"))
+    out.append(text(HX0, HY1 + 54, "Each: the share of time at each of the 16 wedges over 8 runs of 300 s on fresh seeds;", "tick"))
+    out.append(text(HX0, HY1 + 68, "rung 4 asks an entropy of at least 0.9 and resultants under 0.6.", "tick"))
 
     loop = SHOW / SPEED + 1.0
     pct = lambda t: 100 * t / loop
@@ -167,8 +167,8 @@ def figure(theme: str, act: np.ndarray, d: float, panels: list) -> str:
                        {pct(SHOW / SPEED) + 0.01:.2f}%, 100% {{ opacity: 0; }} }}
     """
     title = ("The fly connectome's head-direction ring inside the whole simulated resting brain: a bump of activity in the "
-             "ellipsoid body holds a heading with no cue and wanders slowly, visiting every heading once each ring neuron's "
-             "excitability has adapted in place")
+             "ellipsoid body holds a heading with no cue and wanders slowly, visiting every heading once each ring neuron "
+             "has scaled its synapses from outside the ring")
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")
@@ -182,15 +182,15 @@ def main() -> None:
         np.savez_compressed(CACHE, act=act, seed=SEED, bin=BIN)
     d = drift(act)
     run = int(np.argsort(d)[len(d) // 2])                         # the run with the median drift
-    whole = json.loads((ROOT / "experiments" / "ring_whole" / "ring_fit3_homeostasis.json").read_text())
-    insitu = json.loads((ROOT / "experiments" / "ring_insitu.json").read_text())
-    fresh = json.loads((ROOT / "experiments" / "rung4_rest" / "intact.json").read_text())["bump_motion"]
-    panels = [{"title": "Before homeostasis", "subtitle": "in place (exploratory)", "hist": whole["position_histogram"],
-               "note": f"favors half the ring (entropy {whole['position_entropy']:.2f})", "even": False},
-              {"title": "After 80 rounds", "subtitle": "in place (exploratory; shown above)", "hist": insitu["bump_motion"]["position_histogram"],
-               "note": f"visits every heading (entropy {insitu['bump_motion']['position_entropy']:.2f})", "even": True},
-              {"title": "Again, on fresh seeds", "subtitle": "rung 4's third attempt (pre-registered)", "hist": fresh["position_histogram"],
-               "note": f"favors one side (entropy {fresh['position_entropy']:.2f}): fails", "even": False}]
+    load = lambda name: json.loads((ROOT / "experiments" / name / "intact.json").read_text())
+    panels = []
+    for name, title, subtitle, verdict in (("rung4_rest", "Attempt 3", "offsets in place", "favors one side: fails"),
+                                           ("rung4_anneal", "Attempt 4", "annealed offsets", "leans: fails"),
+                                           ("rung4_scaling", "Attempt 5", "scaled synapses (above)", "even: passes")):
+        m = load(name)
+        res = max(m["bump"][x]["resultant"] for x in "LR")
+        panels.append({"title": title, "subtitle": subtitle, "hist": m["bump_motion"]["position_histogram"], "even": bool(m["BUMP"]),
+                       "note": f"entropy {m['bump_motion']['position_entropy']:.2f}, resultant {res:.2f}", "verdict": verdict})
     print("drift per run", np.round(d, 4), "showing run", run)
     for theme in THEMES:
         path = OUT / f"compass-{theme}.svg"
