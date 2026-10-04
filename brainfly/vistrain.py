@@ -67,7 +67,7 @@ def on(dev: torch.device):
     if dev.type != "cpu":
         torch.tensor = as32
         torch.from_numpy = lambda x: from_numpy(x.astype(np.float32) if x.dtype == np.float64 else x)
-        torch.Generator = lambda *a, **k: generator(device=dev)
+    torch.Generator = lambda *a, **k: generator(device=dev)  # flyvis asks for the device it chose on import (CUDA if any)
     flyvis.device = decoder.device = dev
     torch.set_default_device(dev)
     try:
