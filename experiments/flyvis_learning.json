@@ -1,0 +1,221 @@
+{
+ "question": "Exploratory, not pre-registered: why does flyvis's training from scratch never learn here?\n\nflyvis_t2_scratch.py trained a flyvis network from scratch (with T2's response to darkening as a constraint) for\n116,500 iterations, and a control without the constraint for 24,000. Neither's validation error moved from that of\npredicting no flow (5.774). Without data augmentation (noaug) even the training loss stayed flat for 5,000 iterations.\nflyvis's own pipeline check, training on one batch, does lower the loss. These checks ask which part learns.\nEach: one fixed training batch, augmentation off, 600 iterations of Adam from flyvis_t2_scratch.py's fresh network (seed\n9100), reporting the loss every 100 iterations and the loss of predicting no flow on that batch.\n  a  network and decoder, learning rate 1e-5 (flyvis's tutorial)\n  b  network and decoder, 5e-5 (flyvis's starting rate)\n  c  as b, with flyvis's activity penalty stepping the resting potentials after every update, as the full loop does\n  d  only the network, the decoder frozen at its initialisation (flyvis's: constant weights of 0.001)\n  e  only the decoder, the network frozen\n  f  only the network, read by flyvis's trained decoder from model 000, frozen\n\n    python experiments/flyvis_learning.py a ... f      (each writes flyvis_learning/<variant>.json)\n    python experiments/flyvis_learning.py summary      (writes experiments/flyvis_learning.json)\n",
+ "variants": {
+  "a": {
+   "variant": "a",
+   "zero_prediction": 311.37,
+   "losses": [
+    [
+     0,
+     316.8
+    ],
+    [
+     100,
+     311.57
+    ],
+    [
+     200,
+     308.02
+    ],
+    [
+     300,
+     303.18
+    ],
+    [
+     400,
+     295.18
+    ],
+    [
+     500,
+     289.14
+    ],
+    [
+     599,
+     286.13
+    ]
+   ],
+   "drop": 0.0968,
+   "below_zero_prediction": 0.081
+  },
+  "b": {
+   "variant": "b",
+   "zero_prediction": 975.64,
+   "losses": [
+    [
+     0,
+     978.15
+    ],
+    [
+     100,
+     971.72
+    ],
+    [
+     200,
+     968.23
+    ],
+    [
+     300,
+     966.82
+    ],
+    [
+     400,
+     963.78
+    ],
+    [
+     500,
+     959.07
+    ],
+    [
+     599,
+     950.24
+    ]
+   ],
+   "drop": 0.0285,
+   "below_zero_prediction": 0.026
+  },
+  "c": {
+   "variant": "c",
+   "zero_prediction": 769.16,
+   "losses": [
+    [
+     0,
+     775.08
+    ],
+    [
+     100,
+     746.03
+    ],
+    [
+     200,
+     715.56
+    ],
+    [
+     300,
+     693.38
+    ],
+    [
+     400,
+     675.93
+    ],
+    [
+     500,
+     663.79
+    ],
+    [
+     599,
+     655.73
+    ]
+   ],
+   "drop": 0.154,
+   "below_zero_prediction": 0.1475
+  },
+  "d": {
+   "variant": "d",
+   "zero_prediction": 639.36,
+   "losses": [
+    [
+     0,
+     642.04
+    ],
+    [
+     100,
+     640.8
+    ],
+    [
+     200,
+     636.58
+    ],
+    [
+     300,
+     636.38
+    ],
+    [
+     400,
+     636.27
+    ],
+    [
+     500,
+     636.14
+    ],
+    [
+     599,
+     636.22
+    ]
+   ],
+   "drop": 0.0091,
+   "below_zero_prediction": 0.0049
+  },
+  "e": {
+   "variant": "e",
+   "zero_prediction": 1156.32,
+   "losses": [
+    [
+     0,
+     1163.81
+    ],
+    [
+     100,
+     1135.96
+    ],
+    [
+     200,
+     1132.89
+    ],
+    [
+     300,
+     1132.05
+    ],
+    [
+     400,
+     1131.5
+    ],
+    [
+     500,
+     1131.07
+    ],
+    [
+     599,
+     1130.73
+    ]
+   ],
+   "drop": 0.0284,
+   "below_zero_prediction": 0.0221
+  },
+  "f": {
+   "variant": "f",
+   "zero_prediction": 1652.12,
+   "losses": [
+    [
+     0,
+     1652.84
+    ],
+    [
+     100,
+     1636.57
+    ],
+    [
+     200,
+     1632.3
+    ],
+    [
+     300,
+     1625.16
+    ],
+    [
+     400,
+     1608.89
+    ],
+    [
+     500,
+     1581.31
+    ],
+    [
+     599,
+     1569.93
+    ]
+   ],
+   "drop": 0.0502,
+   "below_zero_prediction": 0.0497
+  }
+ }
+}

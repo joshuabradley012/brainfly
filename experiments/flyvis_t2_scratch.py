@@ -12,6 +12,10 @@ others fixed by its config), 250,000 iterations of its flow task at batch 4, Ada
 flyvis_t2_pilot5.py's capped T2 penalty at weight 100, every other iteration at twice that. Checkpoints every
 2,500 iterations, every 500 from iteration 10,000 (so that a stop loses little); the run resumes from the last one. The model goes to flyvis's results as flow/9100/000. Logged:
 the flow loss, T2's flash responses and flyvis's validation error; no test of rung 3.
+With `decoder000`, the T2-constrained run starts its decoder from model 000's trained readout (still trained). The
+network itself starts fresh as before. flyvis_learning.py found that the network learns through a competent decoder but
+not through flyvis's initial one, which starts at constant weights of 0.001 (flow/9103/000,
+flyvis_t2_scratch_decoder000.json, validation every 2,500 iterations).
 With `noaug`, it also trains without flyvis's data augmentation (flow/9102/000, flyvis_t2_scratch_noaug.json,
 validation every 1,000 iterations), to see whether augmentation is what keeps it from learning.
 With `control`, the same network from the same initialisation trains without the T2 penalty (flow/9101/000,
@@ -40,7 +44,10 @@ NAME, SEED, ITERS = "flow/9100/000", 9100, 250_000
 T2_WEIGHT, T2_EVERY, CHECKPOINT, EVAL_EVERY = 100.0, 2, 500, 10_000
 if sys.argv[1:] == ["control"]:                     # the same training without the T2 penalty
     NAME, T2_WEIGHT, EVAL_EVERY, OUT = "flow/9101/000", 0.0, 2_500, OUT.with_name("flyvis_t2_scratch_control.json")
-AUGMENT = True
+AUGMENT, DECODER_FROM = True, None
+if sys.argv[1:] == ["decoder000"]:                  # the T2-constrained run, its decoder starting from model 000's
+    NAME, CHECKPOINT, EVAL_EVERY, DECODER_FROM = "flow/9103/000", 500, 2_500, "flow/0000/000"
+    OUT = OUT.with_name("flyvis_t2_scratch_decoder000.json")
 if sys.argv[1:] == ["noaug"]:                       # without the T2 penalty or data augmentation
     NAME, T2_WEIGHT, CHECKPOINT, EVAL_EVERY, AUGMENT = "flow/9102/000", 0.0, 500, 1_000, False
     OUT = OUT.with_name("flyvis_t2_scratch_noaug.json")
@@ -61,6 +68,8 @@ def build():
         net = Network(**config.to_dict())
     task = vt.sintel(view)
     dec = init_decoder(view.dir.config.task.decoder, net.connectome)
+    if DECODER_FROM is not None:                          # a trained readout to learn through (flyvis_learning.py, f)
+        dec = vt.load(DECODER_FROM, torch.device("cpu"))[2]
     for d in dec.values():
         d.to(vt.DEVICE)
         for m in d.modules():
