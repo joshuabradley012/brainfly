@@ -10,7 +10,7 @@
 #   HOST=root@1.2.3.4 scripts/gpu/flyvis.sh pull [RUN]        # bring its checkpoint and .json home
 #   HOST=root@1.2.3.4 scripts/gpu/flyvis.sh stop [RUN]
 #
-# RUN is main (flow/9100/000), control (9101), noaug (9102) or decoder000 (9103), as in flyvis_t2_scratch.py.
+# RUN is main (flow/9100/000), control (9101), noaug (9102), decoder000 (9103) or fast (9104), as in flyvis_t2_scratch.py.
 # Env: HOST (required), PORT (22; RunPod and Vast give other ports), KEY (an ssh identity file, optional).
 # One run lives in one place at a time: start and pull refuse while this Mac is training the same run, since the two
 # copies would write diverging checkpoints. Delete the box in the provider's console when the run is home; it bills
@@ -32,7 +32,8 @@ case "$RUN" in
   control) ID=9101; JSON=flyvis_t2_scratch_control.json; ARG=control ;;
   noaug) ID=9102; JSON=flyvis_t2_scratch_noaug.json; ARG=noaug ;;
   decoder000) ID=9103; JSON=flyvis_t2_scratch_decoder000.json; ARG=decoder000 ;;
-  *) echo "unknown run $RUN (main, control, noaug, decoder000)" >&2; exit 2 ;;
+  fast) ID=9104; JSON=flyvis_t2_scratch_fast.json; ARG=fast ;;
+  *) echo "unknown run $RUN (main, control, noaug, decoder000, fast)" >&2; exit 2 ;;
 esac
 LOCAL_DATA=${FLY_DATA:-$HOME/fly-data}
 RESULT=flyvis/results/flow/$ID/000

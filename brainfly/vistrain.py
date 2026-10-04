@@ -8,7 +8,7 @@ tensors. The validation error matches flyvis's published values on either device
 first when there is one, as on a rented box (scripts/gpu/flyvis.sh); $BRAINFLY_DEVICE overrides the choice.
 
     load(model)                   a flyvis network and its flow decoder, on the GPU when there is one
-    sintel(view)                  flyvis's training task (MultiTaskSintel flow, its train/validation split)
+    sintel(view, **overrides)     flyvis's training task (MultiTaskSintel flow, its train/validation split)
     flash_responses(net, "T2")    the central cell's response to a full-field ON and OFF flash, differentiably
     flash_peaks(net, "T2")        their peaks, as flyvis_screen.py measures them
     central_flash_responses(net)  every type's central cell's flash responses at once
@@ -93,11 +93,12 @@ def load(model: str = "flow/0000/000", dev: torch.device = DEVICE):
     return view, net, dec
 
 
-def sintel(view):
-    """flyvis's training task for `view`'s config: Sintel flow, flyvis's original train/validation split."""
+def sintel(view, **overrides):
+    """flyvis's training task for `view`'s config: Sintel flow, flyvis's original train/validation split. `overrides`
+    replace entries of the task's config (batch_size, n_iters)."""
     from flyvis.task.tasks import Task
     config = {k: v for k, v in view.dir.config.task.to_dict().items() if k not in ("type", "task_weight")}
-    return Task(**config, task_weights=None, original_split=True)
+    return Task(**{**config, **overrides}, task_weights=None, original_split=True)
 
 
 def _cells(net) -> list[str]:

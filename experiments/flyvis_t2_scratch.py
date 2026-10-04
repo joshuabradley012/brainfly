@@ -21,9 +21,16 @@ validation every 1,000 iterations), to see whether augmentation is what keeps it
 With `control`, the same network from the same initialisation trains without the T2 penalty (flow/9101/000,
 flyvis_t2_scratch_control.json, validation error every 2,500 iterations): at 20,000 iterations the constrained run
 still predicted flow no better than zero, and this asks whether the constraint is what holds it back.
+With `fast`, the T2-constrained run reads its fresh network through model 000's trained decoder held fixed (in
+evaluation mode, outside the optimizer), as in flyvis_learning.py's f. decoder000, with that decoder trainable, still
+predicted no better than zero after 27,500 iterations. It trains on batches of 16 for 62,500 iterations, the same
+number of samples in a quarter of the steps. Its learning rate steps from 1e-4 to 1e-5 over those iterations (Adam's
+square-root scaling for four times the batch), and the activity penalty stops at iteration 37,500, the same share of
+the run (flow/9104/000, flyvis_t2_scratch_fast.json, validation every 2,500 iterations).
 
     python experiments/flyvis_t2_scratch.py            (writes experiments/flyvis_t2_scratch.json; resumable)
     python experiments/flyvis_t2_scratch.py control    (writes experiments/flyvis_t2_scratch_control.json; resumable)
+    python experiments/flyvis_t2_scratch.py fast       (writes experiments/flyvis_t2_scratch_fast.json; resumable)
 """
 from __future__ import annotations
 
@@ -44,10 +51,14 @@ NAME, SEED, ITERS = "flow/9100/000", 9100, 250_000
 T2_WEIGHT, T2_EVERY, CHECKPOINT, EVAL_EVERY = 100.0, 2, 500, 10_000
 if sys.argv[1:] == ["control"]:                     # the same training without the T2 penalty
     NAME, T2_WEIGHT, EVAL_EVERY, OUT = "flow/9101/000", 0.0, 2_500, OUT.with_name("flyvis_t2_scratch_control.json")
-AUGMENT, DECODER_FROM = True, None
+AUGMENT, DECODER_FROM, FREEZE_DECODER, BATCH, LR, PENALTY_STOP = True, None, False, 4, 5e-5, 150_000
 if sys.argv[1:] == ["decoder000"]:                  # the T2-constrained run, its decoder starting from model 000's
     NAME, CHECKPOINT, EVAL_EVERY, DECODER_FROM = "flow/9103/000", 500, 2_500, "flow/0000/000"
     OUT = OUT.with_name("flyvis_t2_scratch_decoder000.json")
+if sys.argv[1:] == ["fast"]:                        # model 000's decoder held fixed; batches of 16, a quarter of the steps
+    NAME, ITERS, BATCH, LR, PENALTY_STOP = "flow/9104/000", 62_500, 16, 1e-4, 37_500
+    EVAL_EVERY, DECODER_FROM, FREEZE_DECODER = 2_500, "flow/0000/000", True
+    OUT = OUT.with_name("flyvis_t2_scratch_fast.json")
 if sys.argv[1:] == ["noaug"]:                       # without the T2 penalty or data augmentation
     NAME, T2_WEIGHT, CHECKPOINT, EVAL_EVERY, AUGMENT = "flow/9102/000", 0.0, 500, 1_000, False
     OUT = OUT.with_name("flyvis_t2_scratch_noaug.json")
@@ -66,7 +77,7 @@ def build():
     config.node_config.bias.seed = SEED
     with vt.on(vt.DEVICE):
         net = Network(**config.to_dict())
-    task = vt.sintel(view)
+    task = vt.sintel(view, batch_size=BATCH, n_iters=ITERS)  # the scheduler spreads its steps over n_iters
     dec = init_decoder(view.dir.config.task.decoder, net.connectome)
     if DECODER_FROM is not None:                          # a trained readout to learn through (flyvis_learning.py, f)
         dec = vt.load(DECODER_FROM, torch.device("cpu"))[2]
@@ -75,13 +86,14 @@ def build():
         for m in d.modules():
             if hasattr(m, "mask"):
                 m.mask = m.mask.float().to(vt.DEVICE)
+        d.requires_grad_(not FREEZE_DECODER)
     with vt.on(vt.DEVICE):
-        opt = torch.optim.Adam([{"params": net.parameters(), "lr": 5e-5}] +
-                               [{"params": d.parameters(), "lr": 5e-5} for d in dec.values()])
-        pen = Penalty(Namespace(activity_penalty=Namespace(activity_baseline=5.0, activity_penalty=0.1, stop_iter=150_000,
+        opt = torch.optim.Adam([{"params": net.parameters(), "lr": LR}] +
+                               [{"params": d.parameters(), "lr": LR} for d in dec.values() if not FREEZE_DECODER])
+        pen = Penalty(Namespace(activity_penalty=Namespace(activity_baseline=5.0, activity_penalty=0.1, stop_iter=PENALTY_STOP,
                                                            below_baseline_penalty_weight=1.0, above_baseline_penalty_weight=0.1),
                                 optim="SGD"), net)
-    step = lambda: Namespace(function="stepwise", start=5e-5, stop=5e-6, steps=10)
+    step = lambda: Namespace(function="stepwise", start=LR, stop=LR / 10, steps=10)
     sched = HyperParamScheduler(Namespace(lr_net=step(), lr_dec=step(), lr_pen=step(),
                                           dt=Namespace(function="stepwise", start=0.02, stop=0.02, steps=10)),
                                 net, task, opt, pen)
@@ -111,7 +123,7 @@ def main() -> None:
     dt, t0, flow, t2p = task.dataset.dt, time.perf_counter(), [], []
     net.train()
     for d in dec.values():
-        d.train()
+        d.train(not FREEZE_DECODER)                       # a fixed decoder reads without dropout
     with task.dataset.augmentation(AUGMENT):
         while k < ITERS:
             with vt.on(vt.DEVICE), torch.no_grad():
@@ -144,7 +156,7 @@ def main() -> None:
                         log["evals"].append({"iteration": k, "val_epe": round(vt.validation_epe(net, dec, task), 4)})
                         net.train()
                         for d in dec.values():
-                            d.train()
+                            d.train(not FREEZE_DECODER)
                     folder.joinpath("chkpts").mkdir(parents=True, exist_ok=True)
                     torch.save({"network": net.state_dict(), "decoder": {t: d.state_dict() for t, d in dec.items()},
                                 "optim": opt.state_dict(), "penalty": {key: o.state_dict() for key, o in pen.optimizers.items()},
@@ -153,7 +165,8 @@ def main() -> None:
                     print(json.dumps(log["trace"][-1]), json.dumps(log["evals"][-1]) if log["evals"] else "", flush=True)
             sched(k)                                      # flyvis steps its schedule between epochs
     epe = vt.validation_epe(net, dec, task)
-    vt.save(net, dec, NAME, note={"experiment": "experiments/flyvis_t2_scratch.py", "iterations": ITERS, "seed": SEED}, val_epe=epe)
+    vt.save(net, dec, NAME, note={"experiment": "experiments/flyvis_t2_scratch.py", "iterations": ITERS, "seed": SEED,
+                                   "batch_size": BATCH, "decoder_from": DECODER_FROM, "decoder_fixed": FREEZE_DECODER}, val_epe=epe)
     log["end"] = {**t2_measures(net), "val_epe": round(epe, 4)}
     OUT.write_text(json.dumps(log, indent=1))
     print("end:", json.dumps(log["end"]), flush=True)

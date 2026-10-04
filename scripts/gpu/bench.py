@@ -3,7 +3,7 @@
 Builds the same network, task and optimizer as experiments/flyvis_t2_scratch.py (for the given run), trains a fresh
 copy in memory for a few hundred iterations, and reports seconds per iteration after a warm-up. Nothing is saved.
 
-    python scripts/gpu/bench.py [main|control|noaug|decoder000] [iterations]
+    python scripts/gpu/bench.py [main|control|noaug|decoder000|fast] [iterations]
 """
 from __future__ import annotations
 
