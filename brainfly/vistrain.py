@@ -4,7 +4,8 @@ flyvis (Lappalainen et al. 2024) fits its connectome-constrained optic lobe (bra
 report optic flow in Sintel movies. flyvis runs on CUDA or the CPU. On a Mac's CPU one training iteration takes
 about 3 s, and flyvis trains each model for 250,000. Here the same network runs on Apple's GPU (MPS), about 7x
 faster (0.46 s per iteration on an M4 Pro), after working around the places where flyvis builds float64 or CPU
-tensors. The validation error matches flyvis's published values on either device.
+tensors. The validation error matches flyvis's published values on either device. An NVIDIA GPU (CUDA) is used
+first when there is one, as on a rented box (scripts/gpu/flyvis.sh); $BRAINFLY_DEVICE overrides the choice.
 
     load(model)                   a flyvis network and its flow decoder, on the GPU when there is one
     sintel(view)                  flyvis's training task (MultiTaskSintel flow, its train/validation split)
@@ -34,7 +35,16 @@ from .data import DATA
 os.environ.setdefault("FLYVIS_ROOT_DIR", str(DATA / "flyvis"))
 import torch  # noqa: E402
 
-DEVICE = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+def _device() -> torch.device:
+    """$BRAINFLY_DEVICE if set, else an NVIDIA GPU, else Apple's GPU, else the CPU."""
+    if os.environ.get("BRAINFLY_DEVICE"):
+        return torch.device(os.environ["BRAINFLY_DEVICE"])
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    return torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+
+
+DEVICE = _device()
 N_OMMATIDIA = 721                   # flyvis's lattice, extent 15
 
 
@@ -102,8 +112,12 @@ def central(net, cell: str) -> int:
 @lru_cache(maxsize=8)
 def _flashes(dt: float, t_pre: float, t_flash: float, radius: int) -> np.ndarray:
     from flyvis.datasets.flashes import render_flash
-    with on(torch.device("cpu")):                     # flyvis renders on the CPU
+    # flyvis's renderer takes its device as a default argument, fixed when flyvis is imported: CUDA if there is one,
+    # else the CPU (flyvis doesn't use Apple's GPU)
+    dev = torch.device("cuda") if DEVICE.type == "cuda" else torch.device("cpu")
+    with on(dev):
         x = [render_flash(N_OMMATIDIA, i, 0.5, t_flash, t_pre, dt, (0, 1), radius) for i in (1.0, 0.0)]
+    x = [v.detach().cpu().numpy() if torch.is_tensor(v) else np.asarray(v) for v in x]
     return np.stack(x)[:, :, None].astype(np.float32)
 
 

@@ -1,0 +1,127 @@
+{
+ "question": "Exploratory, not pre-registered: train a flyvis model from scratch with T2's response to darkening as a constraint\nfrom the start.\n\nFine-tuning a trained flyvis model to give T2 its OFF response failed three ways: all parameters (rung3_t2.py) broke\nmotion direction; T2 alone (rung3_t2_local.py) flipped two polarities and cost LPLC2 its looming response, as T2's new\nactivity spread into the OFF-motion pathway; freeing T2's outputs too (flyvis_t2_pilot7.py) didn't converge. A\nnetwork trained with the constraint from the start can adapt everything else around it, as in the 8 of flyvis's 50\nmodels whose T2 came out answering both flashes by chance. flyvis's own training here, on Apple's GPU: its network\nand task configuration (model 000's), a fresh initialisation (resting potentials drawn with seed 9100, flyvis's\nothers fixed by its config), 250,000 iterations of its flow task at batch 4, Adam with its learning rate stepping from\n5e-5 to 5e-6 in ten steps, its activity penalty (toward 5, weight 0.1, until iteration 150,000), plus\nflyvis_t2_pilot5.py's capped T2 penalty at weight 100, every other iteration at twice that. Checkpoints every\n2,500 iterations, every 500 from iteration 10,000 (so that a stop loses little); the run resumes from the last one. The model goes to flyvis's results as flow/9100/000. Logged:\nthe flow loss, T2's flash responses and flyvis's validation error; no test of rung 3.\nWith `noaug`, it also trains without flyvis's data augmentation (flow/9102/000, flyvis_t2_scratch_noaug.json,\nvalidation every 1,000 iterations), to see whether augmentation is what keeps it from learning.\nWith `control`, the same network from the same initialisation trains without the T2 penalty (flow/9101/000,\nflyvis_t2_scratch_control.json, validation error every 2,500 iterations): at 20,000 iterations the constrained run\nstill predicted flow no better than zero, and this asks whether the constraint is what holds it back.\n\n    python experiments/flyvis_t2_scratch.py            (writes experiments/flyvis_t2_scratch.json; resumable)\n    python experiments/flyvis_t2_scratch.py control    (writes experiments/flyvis_t2_scratch_control.json; resumable)\n",
+ "trace": [
+  {
+   "iteration": 500,
+   "flow_loss": 1054.55,
+   "t2_penalty": 0.0,
+   "t2_on": 0.002,
+   "t2_off": 0.149,
+   "t2_off_mean": 0.042,
+   "T2": false,
+   "seconds": 429
+  },
+  {
+   "iteration": 1000,
+   "flow_loss": 1089.34,
+   "t2_penalty": 0.0,
+   "t2_on": 9.516,
+   "t2_off": 26.575,
+   "t2_off_mean": 14.068,
+   "T2": true,
+   "seconds": 836
+  },
+  {
+   "iteration": 1500,
+   "flow_loss": 1060.37,
+   "t2_penalty": 0.0,
+   "t2_on": 0.044,
+   "t2_off": 27.294,
+   "t2_off_mean": 8.196,
+   "T2": false,
+   "seconds": 1132
+  },
+  {
+   "iteration": 2000,
+   "flow_loss": 1061.73,
+   "t2_penalty": 0.0,
+   "t2_on": 7.099,
+   "t2_off": 46.605,
+   "t2_off_mean": 8.036,
+   "T2": false,
+   "seconds": 1530
+  },
+  {
+   "iteration": 2500,
+   "flow_loss": 1058.41,
+   "t2_penalty": 0.0,
+   "t2_on": 12.947,
+   "t2_off": 51.777,
+   "t2_off_mean": 15.284,
+   "T2": false,
+   "seconds": 1934
+  },
+  {
+   "iteration": 3000,
+   "flow_loss": 1083.27,
+   "t2_penalty": 0.0,
+   "t2_on": -3.206,
+   "t2_off": 17.806,
+   "t2_off_mean": 0.398,
+   "T2": false,
+   "seconds": 2297
+  },
+  {
+   "iteration": 3500,
+   "flow_loss": 1059.05,
+   "t2_penalty": 0.0,
+   "t2_on": 3.938,
+   "t2_off": 30.504,
+   "t2_off_mean": 7.239,
+   "T2": false,
+   "seconds": 631
+  },
+  {
+   "iteration": 4000,
+   "flow_loss": 1072.41,
+   "t2_penalty": 0.0,
+   "t2_on": -4.087,
+   "t2_off": 18.384,
+   "t2_off_mean": 3.377,
+   "T2": false,
+   "seconds": 921
+  },
+  {
+   "iteration": 4500,
+   "flow_loss": 1058.51,
+   "t2_penalty": 0.0,
+   "t2_on": 2.012,
+   "t2_off": 22.825,
+   "t2_off_mean": 5.399,
+   "T2": false,
+   "seconds": 1211
+  },
+  {
+   "iteration": 5000,
+   "flow_loss": 1061.16,
+   "t2_penalty": 0.0,
+   "t2_on": 0.512,
+   "t2_off": 16.687,
+   "t2_off_mean": 4.029,
+   "T2": false,
+   "seconds": 1501
+  }
+ ],
+ "evals": [
+  {
+   "iteration": 1000,
+   "val_epe": 5.877
+  },
+  {
+   "iteration": 2000,
+   "val_epe": 5.7827
+  },
+  {
+   "iteration": 3000,
+   "val_epe": 5.7498
+  },
+  {
+   "iteration": 4000,
+   "val_epe": 5.8193
+  },
+  {
+   "iteration": 5000,
+   "val_epe": 5.84
+  }
+ ]
+}
