@@ -82,7 +82,7 @@ EOF
     echo "follow it: HOST=$HOST scripts/gpu/flyvis.sh status $RUN"
     ;;
   status)
-    ssh_box "pgrep -af 'flyvis_t2_scratch.py' || echo 'not running'; tail -n ${LINES:-5} \$HOME/fly.ai/flyvis_$RUN.log"
+    ssh_box "pgrep -af '[f]lyvis_t2_scratch.py' || echo 'not running'; tail -n ${LINES:-5} \$HOME/fly.ai/flyvis_$RUN.log"
     ;;
   pull)
     if running_here; then echo "this Mac is training $RUN; pulling would overwrite its checkpoint" >&2; exit 1; fi
@@ -92,9 +92,9 @@ EOF
     mkdir -p remote-out; "${RSYNC[@]}" "$HOST:fly.ai/flyvis_$RUN.log" remote-out/ 2>/dev/null || true
     echo "pulled $RUN; it resumes here from the same checkpoint"
     ;;
-  stop)
-    if [ -z "$ARG" ]; then ssh_box "pkill -f 'flyvis_t2_scratch.py *\$' && echo stopped || echo 'not running'"
-    else ssh_box "pkill -f 'flyvis_t2_scratch.py $ARG' && echo stopped || echo 'not running'"; fi
+  stop)   # [f]: the pattern mustn't match the remote shell running pkill, whose command line contains it
+    if [ -z "$ARG" ]; then ssh_box "pkill -f '[f]lyvis_t2_scratch.py *\$' && echo stopped || echo 'not running'"
+    else ssh_box "pkill -f '[f]lyvis_t2_scratch.py $ARG' && echo stopped || echo 'not running'"; fi
     ;;
   *) echo "unknown command $CMD" >&2; exit 2 ;;
 esac

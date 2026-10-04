@@ -30,8 +30,24 @@ def sync():
         torch.mps.synchronize()
 
 
+def launch_us(n: int = 5000) -> float:
+    """Microseconds per tiny GPU operation after a warm-up. Training is thousands of these per iteration, so a box
+    that launches them slowly trains slowly whatever its GPU (healthy NVIDIA boxes: 5-10 us; the RunPod 4090 of
+    October 2026: 60-200)."""
+    z = torch.zeros(1000, device=vt.DEVICE)
+    for _ in range(n):
+        z.add_(1)
+    sync()
+    t = time.perf_counter()
+    for _ in range(n):
+        z.add_(1)
+    sync()
+    return (time.perf_counter() - t) / n * 1e6
+
+
 def main() -> None:
     print(f"device {vt.DEVICE}" + (f" ({torch.cuda.get_device_name()})" if vt.DEVICE.type == "cuda" else ""), flush=True)
+    print(f"{launch_us():.0f} us per tiny GPU operation (healthy NVIDIA boxes: 5-10)", flush=True)
     view, net, dec, task, opt, pen, sched = s.build()
     sched(0)
     dt, k, warm, t0 = task.dataset.dt, 0, min(20, iters // 5), None
