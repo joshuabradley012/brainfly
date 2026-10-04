@@ -78,7 +78,7 @@ def main() -> None:
     import flyvis
     chkpt = flyvis.results_dir / s.NAME / "chkpts" / "scratch_last.pt"
     done = torch.load(chkpt, map_location="cpu", weights_only=False)["iteration"] if chkpt.exists() else 0
-    print(f"{per:.3f} s per iteration over {iters - warm} iterations (Apple M4 Pro GPU: 0.46)")
+    print(f"{per:.3f} s per iteration over {iters - warm} iterations (Apple M4 Pro GPU, idle: main 0.73, fast 2.4-2.8)")
     print(f"a full {s.ITERS:,}-iteration run: {s.ITERS * per / 3600:.1f} h; this run's checkpoint is at {done:,}, "
           f"so about {(s.ITERS - done) * per / 3600:.1f} h to go, plus validation passes")
 

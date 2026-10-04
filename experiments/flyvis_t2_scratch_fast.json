@@ -30,7 +30,32 @@
    "t2_off_mean": 1.35,
    "T2": true,
    "seconds": 5051
+  },
+  {
+   "iteration": 2000,
+   "flow_loss": 1297.61,
+   "t2_penalty": 0.0,
+   "t2_on": 0.949,
+   "t2_off": 1.187,
+   "t2_off_mean": 1.357,
+   "T2": true,
+   "seconds": 1379
+  },
+  {
+   "iteration": 2500,
+   "flow_loss": 1300.18,
+   "t2_penalty": 0.0,
+   "t2_on": 0.949,
+   "t2_off": 1.187,
+   "t2_off_mean": 1.361,
+   "T2": true,
+   "seconds": 2593
   }
  ],
- "evals": []
+ "evals": [
+  {
+   "iteration": 2500,
+   "val_epe": 5.7772
+  }
+ ]
 }
