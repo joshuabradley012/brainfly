@@ -714,7 +714,15 @@ prebuilt copy of its brain files (~260 MB). Add `[gpu]` for CuPy on an NVIDIA GP
 Runs of hours go to throwaway Hetzner Cloud boxes. `scripts/remote/image.sh` bakes a snapshot with
 every dependency and the data. `JOBS=jobs.txt SERVER_TYPES="cpx62 cpx32" scripts/remote/run.sh`
 spreads a file of commands over the boxes, one queue for all, brings back what the jobs changed under
-`experiments/`, and deletes the boxes. Rung 4's attempts ran that way, five conditions at once.
+`experiments/`, and deletes the boxes. Rung 4's early attempts ran that way, five conditions at once.
+
+flyvis training goes to a rented NVIDIA GPU: any Linux box with CUDA you can SSH into (RunPod, Vast.ai, Lambda).
+`HOST=root@1.2.3.4 PORT=22 scripts/gpu/flyvis.sh setup` copies the repository and flyvis's data up and fetches
+Sintel there. Then `bench RUN` times an iteration, `start RUN` moves a run's checkpoint up and resumes it, and
+`status`, `pull` and `stop` follow it, bring it home and end it (RUN names a mode of
+`experiments/flyvis_t2_scratch.py`). `scripts/gpu/breakdown.py` splits an iteration's time into data, forward pass,
+backward pass and penalties. Time a box before moving a run there. Each training step is thousands of small GPU
+operations, so a box that launches them slowly can lose to a laptop.
 
 The inherited model, looming on the left:
 
