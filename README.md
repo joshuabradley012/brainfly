@@ -120,7 +120,7 @@ Where the bump sat in each run on the way, from the saved results: passing runs 
   softplus is flat, so it read the network as almost nothing and passed back a ninth of the gradient. The run now going
   (`fastbn`) keeps the decoder's weights fixed but normalizes each batch by its own statistics. On one batch, that let
   the network learn 13% in 600 iterations, against 5%. It runs on the Mac's GPU, about two days for the run, with a
-  validation every 2,500 iterations. A rented RTX 4090 was tried first and turned out slow: it started each tiny GPU
+  validation every 2,500 iterations; the first, at 2,500, is 5.789, no better than predicting no flow. A rented RTX 4090 was tried first and turned out slow: it started each tiny GPU
   operation in 60–200 µs, where the Mac's GPU takes 3, so it trained no faster than the Mac.
 
 * **Rung 6 passes: the giant fiber relays to the jump and flight muscles like a fly's.** A connectome can't show
