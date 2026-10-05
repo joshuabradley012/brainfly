@@ -27,10 +27,16 @@ predicted no better than zero after 27,500 iterations. It trains on batches of 1
 number of samples in a quarter of the steps. Its learning rate steps from 1e-4 to 1e-5 over those iterations (Adam's
 square-root scaling for four times the batch), and the activity penalty stops at iteration 37,500, the same share of
 the run (flow/9104/000, flyvis_t2_scratch_fast.json, validation every 2,500 iterations).
+With `fastbn`, as `fast`, but the fixed decoder's batch norm normalizes each training batch by its own statistics
+(flow/9105/000, flyvis_t2_scratch_fastbn.json). `fast` stayed at the error of predicting no flow through 7,500
+iterations. flyvis_readout.py found its decoder, normalizing by model 000's statistics, holding 81% of its softplus
+units where the softplus is flat, and the gradient on the network 9 times smaller than with the batch's own
+statistics. On one batch (flyvis_learning.py), the network learned 13% in 600 iterations that way, against 5%.
 
     python experiments/flyvis_t2_scratch.py            (writes experiments/flyvis_t2_scratch.json; resumable)
     python experiments/flyvis_t2_scratch.py control    (writes experiments/flyvis_t2_scratch_control.json; resumable)
     python experiments/flyvis_t2_scratch.py fast       (writes experiments/flyvis_t2_scratch_fast.json; resumable)
+    python experiments/flyvis_t2_scratch.py fastbn     (writes experiments/flyvis_t2_scratch_fastbn.json; resumable)
 """
 from __future__ import annotations
 
@@ -51,14 +57,16 @@ NAME, SEED, ITERS = "flow/9100/000", 9100, 250_000
 T2_WEIGHT, T2_EVERY, CHECKPOINT, EVAL_EVERY = 100.0, 2, 500, 10_000
 if sys.argv[1:] == ["control"]:                     # the same training without the T2 penalty
     NAME, T2_WEIGHT, EVAL_EVERY, OUT = "flow/9101/000", 0.0, 2_500, OUT.with_name("flyvis_t2_scratch_control.json")
-AUGMENT, DECODER_FROM, FREEZE_DECODER, BATCH, LR, PENALTY_STOP = True, None, False, 4, 5e-5, 150_000
+AUGMENT, DECODER_FROM, FREEZE_DECODER, BATCH, LR, PENALTY_STOP, BN_BATCH = True, None, False, 4, 5e-5, 150_000, False
 if sys.argv[1:] == ["decoder000"]:                  # the T2-constrained run, its decoder starting from model 000's
     NAME, CHECKPOINT, EVAL_EVERY, DECODER_FROM = "flow/9103/000", 500, 2_500, "flow/0000/000"
     OUT = OUT.with_name("flyvis_t2_scratch_decoder000.json")
-if sys.argv[1:] == ["fast"]:                        # model 000's decoder held fixed; batches of 16, a quarter of the steps
+if sys.argv[1:] in (["fast"], ["fastbn"]):          # model 000's decoder held fixed; batches of 16, a quarter of the steps
     NAME, ITERS, BATCH, LR, PENALTY_STOP = "flow/9104/000", 62_500, 16, 1e-4, 37_500
     EVAL_EVERY, DECODER_FROM, FREEZE_DECODER = 2_500, "flow/0000/000", True
     OUT = OUT.with_name("flyvis_t2_scratch_fast.json")
+if sys.argv[1:] == ["fastbn"]:                      # its batch norm on each batch's own statistics
+    NAME, BN_BATCH, OUT = "flow/9105/000", True, OUT.with_name("flyvis_t2_scratch_fastbn.json")
 if sys.argv[1:] == ["noaug"]:                       # without the T2 penalty or data augmentation
     NAME, T2_WEIGHT, CHECKPOINT, EVAL_EVERY, AUGMENT = "flow/9102/000", 0.0, 500, 1_000, False
     OUT = OUT.with_name("flyvis_t2_scratch_noaug.json")
@@ -100,6 +108,17 @@ def build():
     return view, net, dec, task, opt, pen, sched
 
 
+def train_mode(net, dec) -> None:
+    """The network training; a fixed decoder reads without dropout, its batch norm on each batch's statistics if
+    BN_BATCH (a trainable decoder trains as flyvis's does)."""
+    net.train()
+    for d in dec.values():
+        d.train(not FREEZE_DECODER)
+        for m in d.modules():
+            if BN_BATCH and isinstance(m, torch.nn.BatchNorm2d):
+                m.train()
+
+
 def main() -> None:
     import flyvis
     view, net, dec, task, opt, pen, sched = build()
@@ -121,9 +140,7 @@ def main() -> None:
     np.random.seed((SEED + k) % 2**32)
     sched(k)
     dt, t0, flow, t2p = task.dataset.dt, time.perf_counter(), [], []
-    net.train()
-    for d in dec.values():
-        d.train(not FREEZE_DECODER)                       # a fixed decoder reads without dropout
+    train_mode(net, dec)
     with task.dataset.augmentation(AUGMENT):
         while k < ITERS:
             with vt.on(vt.DEVICE), torch.no_grad():
@@ -154,9 +171,7 @@ def main() -> None:
                     flow, t2p = [], []
                     if k % EVAL_EVERY == 0 or k == ITERS:
                         log["evals"].append({"iteration": k, "val_epe": round(vt.validation_epe(net, dec, task), 4)})
-                        net.train()
-                        for d in dec.values():
-                            d.train(not FREEZE_DECODER)
+                        train_mode(net, dec)
                     folder.joinpath("chkpts").mkdir(parents=True, exist_ok=True)
                     torch.save({"network": net.state_dict(), "decoder": {t: d.state_dict() for t, d in dec.items()},
                                 "optim": opt.state_dict(), "penalty": {key: o.state_dict() for key, o in pen.optimizers.items()},
@@ -166,7 +181,8 @@ def main() -> None:
             sched(k)                                      # flyvis steps its schedule between epochs
     epe = vt.validation_epe(net, dec, task)
     vt.save(net, dec, NAME, note={"experiment": "experiments/flyvis_t2_scratch.py", "iterations": ITERS, "seed": SEED,
-                                   "batch_size": BATCH, "decoder_from": DECODER_FROM, "decoder_fixed": FREEZE_DECODER}, val_epe=epe)
+                                   "batch_size": BATCH, "decoder_from": DECODER_FROM, "decoder_fixed": FREEZE_DECODER,
+                                   "decoder_batch_norm_on_batch_statistics": BN_BATCH}, val_epe=epe)
     log["end"] = {**t2_measures(net), "val_epe": round(epe, 4)}
     OUT.write_text(json.dumps(log, indent=1))
     print("end:", json.dumps(log["end"]), flush=True)

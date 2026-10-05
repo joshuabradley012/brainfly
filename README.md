@@ -100,23 +100,28 @@ on fresh seeds; the fifth is the brain above. `python assets/compass.py` redraws
 Where the bump sat in each run on the way, from the saved results: passing runs in red, failing ones in grey.
 `python assets/compass_attempts.py` redraws it.
 
-* **Training flyvis from scratch: the network learns only through a trained readout.** Rung 3 needs an eye whose T2
-  answers darkening without losing its motion directions or polarities, and fine-tuning trained models has failed
-  three ways (the looming entry below). So brainfly trains a flyvis network from scratch with T2's response to darkening
-  as a constraint ([`experiments/flyvis_t2_scratch.py`](experiments/flyvis_t2_scratch.py)). T2 took on the response
-  early, but in 118,000 iterations the network never predicted flow better than predicting none (validation error
-  5.77; flyvis's fully trained model 000 reaches 5.14). Nor did a run without the constraint, one without data
-  augmentation, or flyvis's own trainer run from scratch on a rented NVIDIA GPU (its validation loss fell 0.5% in
-  3,612 iterations). On one fixed batch, the fresh network learns when model 000's trained decoder reads it (5% in
-  600 iterations, and speeding up) but not through flyvis's initial decoder, whose weights all start at 0.001 (0.9%;
-  [`experiments/flyvis_learning.py`](experiments/flyvis_learning.py)). Starting from model 000's decoder and training
-  it along didn't help over 27,500 iterations. The run now going holds model 000's decoder fixed and trains on
-  batches of 16 for a quarter of the steps (`fast`). It started on a rented RTX 4090 that turned out slow: it started
-  each tiny GPU operation in 60–200 µs, where the Mac's GPU takes 3, so it trained no faster than the Mac (3.4 s per
-  iteration, against 2.7). The run moved to the Mac at iteration 1,500, about two days from the end. Its first two
-  validations, at iterations 2,500 and 5,000 (80,000 samples), show no learning yet: 5.777, the same as predicting no
-  flow. flyvis's own models [generalized only after about 250,000 iterations](https://pmc.ncbi.nlm.nih.gov/articles/PMC11525180/)
-  at batch 4, a million samples, so it continues.
+* **Training flyvis from scratch: the readout was starving the network.** Rung 3 needs an eye whose T2 answers
+  darkening without losing its motion directions or polarities, and fine-tuning trained models failed three ways (the
+  looming entry below). So brainfly trains a flyvis network from scratch with T2's response to darkening as a
+  constraint ([`experiments/flyvis_t2_scratch.py`](experiments/flyvis_t2_scratch.py)). T2 took on the response early,
+  but in 118,000 iterations the network never predicted flow better than predicting none (validation error 5.77;
+  flyvis's fully trained model 000 reaches 5.14). Nor did a run without the constraint, one without data augmentation,
+  or flyvis's own trainer run from scratch on a rented NVIDIA GPU (its validation loss fell 0.5% in 3,612 iterations).
+  flyvis's own models [generalized only after about 250,000 iterations](https://pmc.ncbi.nlm.nih.gov/articles/PMC11525180/).
+
+  On one fixed batch, the fresh network learns when model 000's trained decoder reads it (5% in 600 iterations) but not
+  through flyvis's initial decoder, whose weights all start at 0.001 (0.9%;
+  [`experiments/flyvis_learning.py`](experiments/flyvis_learning.py)). So a run held model 000's decoder fixed and
+  trained on batches of 16 for a quarter of the steps (`fast`). It too stayed at 5.777 through 7,500 iterations
+  (120,000 samples), constant to the fourth decimal. The network was alive, and training had made it answer the
+  stimulus about as much as model 000 does; the decoder was what failed
+  ([`experiments/flyvis_readout.py`](experiments/flyvis_readout.py)). It normalizes its input by model 000's activity
+  statistics, and the new network's activity had drifted far from them. 81% of its softplus units then sat where the
+  softplus is flat, so it read the network as almost nothing and passed back a ninth of the gradient. The run now going
+  (`fastbn`) keeps the decoder's weights fixed but normalizes each batch by its own statistics. On one batch, that let
+  the network learn 13% in 600 iterations, against 5%. It runs on the Mac's GPU, about two days for the run, with a
+  validation every 2,500 iterations. A rented RTX 4090 was tried first and turned out slow: it started each tiny GPU
+  operation in 60–200 µs, where the Mac's GPU takes 3, so it trained no faster than the Mac.
 
 * **Rung 6 passes: the giant fiber relays to the jump and flight muscles like a fly's.** A connectome can't show
   electrical synapses, so brainfly adds the giant fiber's from the literature. They are one-way junctions onto its own
@@ -589,8 +594,9 @@ a sign that the approach is broken."
 | `experiments/rung6_relay.py` | Pre-registered: does the resting brain relay giant fiber spikes like a fly, and does removing the electrical synapses act like *shakB²*? | **Pass**, all ten criteria. Latencies 0.9 and 1.4 ms; 100% and 40% following at 250 Hz; no spontaneous spikes; without junctions, no response at all; rewired, looms rarely reach the relay. |
 | `experiments/loom_jump.py` | Exploratory, not pre-registered: the whole chain from a looming disk to NeuroMechFly's jump | Every fly takes off, but a side loom drives one giant fiber and one leg (a 0.2 m/s sideways tumble), loom-evoked spikes come 2-52 ms before contact, and a spontaneously firing giant fiber makes a few flies jump at nothing. |
 | `experiments/vnc_legs.py` | Exploratory, not pre-registered: does the nerve cord's rhythm move NeuroMechFly's front legs? | Yes, at 11-15 Hz, but they twitch rather than step: swing and stance motor neurons fire together. Each DNg100 moves the opposite leg. |
-| `experiments/flyvis_t2_scratch.py` | Exploratory, not pre-registered: a flyvis model trained from scratch with T2's response to darkening as a constraint | Not learning so far. The main run, paused at 118,000 of 250,000 iterations, never predicted flow better than predicting none (validation error 5.768-5.775 from 80,000 to 110,000; predicting none, 5.774; model 000, 5.137), though T2 answered both flashes from iteration 2,500. Neither did `control` (no T2 penalty, paused at 24,000), `noaug` (no data augmentation; even the training loss stayed flat for 5,000), `decoder000` (model 000's decoder as a trainable start; 5.76-5.79 through 27,500), nor flyvis's own trainer from scratch on a rented RTX 4090 (`flow/9200/000`: validation loss 1,212.6 to 1,206.2 in 3,612 iterations). `fast` (model 000's decoder held fixed, batches of 16 for 62,500 iterations, learning rate 1e-4 to 1e-5) ran 1,500 iterations there and continues on the Mac's GPU; validation error 5.777 at 2,500 and 5,000 iterations, training loss flat at 1,290-1,306. |
-| `experiments/flyvis_learning.py` | Exploratory, not pre-registered: which part learns when flyvis trains from scratch here? Six 600-iteration runs of Adam on one fixed batch, augmentation off, from flyvis_t2_scratch.py's fresh network | The network learns through a trained decoder but not through flyvis's initial one. The network alone, read by the initial decoder (constant weights of 0.001), lowers the loss 0.9%; read by model 000's trained decoder, held fixed, 5.0% and still speeding up. The decoder alone lowers it 2.8%. Network and decoder together, which can fit one batch: 9.7% at learning rate 1e-5, 2.9% at 5e-5, 15.4% at 5e-5 with flyvis's activity penalty. |
+| `experiments/flyvis_t2_scratch.py` | Exploratory, not pre-registered: a flyvis model trained from scratch with T2's response to darkening as a constraint | Not learning so far. The main run, paused at 118,000 of 250,000 iterations, never predicted flow better than predicting none (validation error 5.768-5.775 from 80,000 to 110,000; predicting none, 5.774; model 000, 5.137), though T2 answered both flashes from iteration 2,500. Neither did `control` (no T2 penalty, paused at 24,000), `noaug` (no data augmentation; even the training loss stayed flat for 5,000), `decoder000` (model 000's decoder as a trainable start; 5.76-5.79 through 27,500), nor flyvis's own trainer from scratch on a rented RTX 4090 (`flow/9200/000`: validation loss 1,212.6 to 1,206.2 in 3,612 iterations). `fast` (model 000's decoder held fixed, batches of 16 for 62,500 iterations, learning rate 1e-4 to 1e-5) stayed at 5.777 at 2,500, 5,000 and 7,500 iterations (training loss flat at 1,286-1,311), stopped there: its decoder was saturated (flyvis_readout.py). `fastbn` (the same, with the decoder's batch norm on each batch's own statistics) is running on the Mac's GPU. |
+| `experiments/flyvis_learning.py` | Exploratory, not pre-registered: which part learns when flyvis trains from scratch here? Six 600-iteration runs of Adam on one fixed batch, augmentation off, from flyvis_t2_scratch.py's fresh network | The network learns through a trained decoder but not through flyvis's initial one. The network alone, read by the initial decoder (constant weights of 0.001), lowers the loss 0.9%; read by model 000's trained decoder, held fixed, 5.0% and still speeding up. The decoder alone lowers it 2.8%. Network and decoder together, which can fit one batch: 9.7% at learning rate 1e-5, 2.9% at 5e-5, 15.4% at 5e-5 with flyvis's activity penalty. Read by that fixed decoder with its batch norm on each batch's own statistics, the network lowers the loss 13.0% (a different random batch). |
+| `experiments/flyvis_readout.py` | Exploratory, not pre-registered: why didn't `fast` learn through model 000's fixed decoder? Activity and readout on 4 validation clips; the decoder's softplus inputs and the gradient on the network | The network is alive; the decoder starved it. Training made the fresh network answer the stimulus (median temporal SD 0.0004 fresh, 0.18 in fast, 0.19 in main, 0.29 in model 000), with 97% of nodes active half the time. Normalizing by model 000's statistics, the decoder held 81% of its softplus inputs below -4 (mean -128) and read the network as almost nothing (0.009, against 2.2 for model 000). Normalized by the clip's own statistics, none, and the gradient on the network is 9 times larger. |
 | `experiments/rung5_vnc.py` | Pre-registered: does brainfly's nerve cord, by Pugliese et al.'s recipe, turn DNg100 and DNb08 into 7-15 Hz leg rhythms, with scrambled wiring abolishing them? | **Fail**, on DNb08 only. Each DNg100 drives rhythms in 30 and 31 of 32 runs (13.7 and 11.6 Hz), and two rewired networks in none of 128. One DNb08 neuron drives a rhythm in 10 of 16 runs but at 18.2 Hz; the other three in at most 1. |
 | `experiments/leg_probe.py` | Exploratory, not pre-registered: does FlyMimic's front-leg tibia flexor push a force probe as hard as a fly's? | No, by a factor of about 40. With flies' probe (0.2234 µN/µm, 417 µm from the joint; Azevedo et al. 2020), full activation gives 2.0-2.3 µN. A fly's whole muscle gives close to 100 µN, and one fast motor neuron spike about 9 µN. The muscle's 68 µN maximum acts through a 15 µm moment arm; it would need about 3 mN. The extensor pushes 17-28 µN. |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension match flies; the launch is steep and slightly backward (79°), head-down, and 1.7 times too hard upward, from the walking pose. One TTMn alone gives a weak, tumbling launch. |

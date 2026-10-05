@@ -1,5 +1,5 @@
 {
- "question": "Exploratory, not pre-registered: why does flyvis's training from scratch never learn here?\n\nflyvis_t2_scratch.py trained a flyvis network from scratch (with T2's response to darkening as a constraint) for\n116,500 iterations, and a control without the constraint for 24,000. Neither's validation error moved from that of\npredicting no flow (5.774). Without data augmentation (noaug) even the training loss stayed flat for 5,000 iterations.\nflyvis's own pipeline check, training on one batch, does lower the loss. These checks ask which part learns.\nEach: one fixed training batch, augmentation off, 600 iterations of Adam from flyvis_t2_scratch.py's fresh network (seed\n9100), reporting the loss every 100 iterations and the loss of predicting no flow on that batch.\n  a  network and decoder, learning rate 1e-5 (flyvis's tutorial)\n  b  network and decoder, 5e-5 (flyvis's starting rate)\n  c  as b, with flyvis's activity penalty stepping the resting potentials after every update, as the full loop does\n  d  only the network, the decoder frozen at its initialisation (flyvis's: constant weights of 0.001)\n  e  only the decoder, the network frozen\n  f  only the network, read by flyvis's trained decoder from model 000, frozen\n\n    python experiments/flyvis_learning.py a ... f      (each writes flyvis_learning/<variant>.json)\n    python experiments/flyvis_learning.py summary      (writes experiments/flyvis_learning.json)\n",
+ "question": "Exploratory, not pre-registered: why does flyvis's training from scratch never learn here?\n\nflyvis_t2_scratch.py trained a flyvis network from scratch (with T2's response to darkening as a constraint) for\n116,500 iterations, and a control without the constraint for 24,000. Neither's validation error moved from that of\npredicting no flow (5.774). Without data augmentation (noaug) even the training loss stayed flat for 5,000 iterations.\nflyvis's own pipeline check, training on one batch, does lower the loss. These checks ask which part learns.\nEach: one fixed training batch, augmentation off, 600 iterations of Adam from flyvis_t2_scratch.py's fresh network (seed\n9100), reporting the loss every 100 iterations and the loss of predicting no flow on that batch.\n  a  network and decoder, learning rate 1e-5 (flyvis's tutorial)\n  b  network and decoder, 5e-5 (flyvis's starting rate)\n  c  as b, with flyvis's activity penalty stepping the resting potentials after every update, as the full loop does\n  d  only the network, the decoder frozen at its initialisation (flyvis's: constant weights of 0.001)\n  e  only the decoder, the network frozen\n  f  only the network, read by flyvis's trained decoder from model 000, frozen\n  g  as f, but the decoder's batch norm normalizes each batch by its own statistics (its weights still fixed).\n     flyvis_readout.py found f's decoder, on model 000's statistics, holding most of its softplus units where the\n     softplus is flat.\n\n    python experiments/flyvis_learning.py a ... g      (each writes flyvis_learning/<variant>.json)\n    python experiments/flyvis_learning.py summary      (writes experiments/flyvis_learning.json)\n",
  "variants": {
   "a": {
    "variant": "a",
@@ -216,6 +216,42 @@
    ],
    "drop": 0.0502,
    "below_zero_prediction": 0.0497
+  },
+  "g": {
+   "variant": "g",
+   "zero_prediction": 785.27,
+   "losses": [
+    [
+     0,
+     798.3
+    ],
+    [
+     100,
+     775.06
+    ],
+    [
+     200,
+     767.28
+    ],
+    [
+     300,
+     761.21
+    ],
+    [
+     400,
+     744.61
+    ],
+    [
+     500,
+     712.54
+    ],
+    [
+     599,
+     694.31
+    ]
+   ],
+   "drop": 0.1303,
+   "below_zero_prediction": 0.1158
   }
  }
 }

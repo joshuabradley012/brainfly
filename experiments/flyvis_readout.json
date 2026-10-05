@@ -1,0 +1,72 @@
+{
+ "question": "Exploratory, not pre-registered: why didn't flyvis_t2_scratch.py's `fast` run learn through model 000's fixed decoder?\n\n`fast` trained a fresh flyvis network with T2's response to darkening as a constraint, read by model 000's trained\ndecoder held fixed. Its validation error stayed at the level of predicting no flow (5.777 at 2,500, 5,000 and 7,500\niterations), constant to the fourth decimal while the network's parameters kept changing. These checks ask whether the\nnetwork is alive and whether the decoder passes it a gradient.\n  activity  on flyvis's first 4 validation clips (no augmentation, 0.25 s of grey first): each network's mean\n            activity, the share of its nodes above zero at any time and for at least half the time, the median over\n            nodes of each node's standard deviation over time, the readout's size and the clips' endpoint error, for\n            the fresh network (seed 9100), fast's last checkpoint, main's last checkpoint (each read by its own\n            decoder; the fresh network by model 000's) and flyvis's trained model 000\n  gradient  on the first validation clip, for the fresh network and fast's checkpoint read by model 000's decoder:\n            the decoder's batch-norm outputs (its softplus inputs), the share of them below -4 (where the softplus is\n            flat) and the flow loss's gradient norm on the network's parameters, with the batch norm on model 000's\n            running statistics (as `fast` trained) and on the clip's own statistics\nRan: the networks are alive; the decoder starves them. Training made the fresh network answer the stimulus (median\ntemporal standard deviation 0.0004 fresh, 0.18 in fast, 0.19 in main, 0.29 in model 000), and nearly all of its nodes\nare active. But model 000's decoder, normalizing by model 000's statistics, reads fast's network as almost nothing\n(readout 0.009, against 2.2 for model 000): 81% of its softplus inputs sit below -4 (mean -128; -11 for the fresh\nnetwork). Normalized by the clip's own statistics, none do, and the gradient on the network is 9 times larger (1,499\nagainst 161). Main's trainable decoder reads its network a little (readout 0.29; error 16.79 on these clips, against\n16.89 for predicting no flow and 15.07 for model 000).\n\n    python experiments/flyvis_readout.py      (writes experiments/flyvis_readout.json; on the CPU)\n",
+ "zero_prediction_epe": 16.891,
+ "activity": {
+  "fresh": {
+   "epe": 16.8974,
+   "mean_activity": 0.5663,
+   "nodes_ever_active": 1.0,
+   "nodes_active_half_the_time": 1.0,
+   "median_temporal_std": 0.00035,
+   "readout_abs_mean": 0.0124
+  },
+  "fast at 7,500": {
+   "epe": 16.8966,
+   "mean_activity": 2.147,
+   "nodes_ever_active": 0.9858,
+   "nodes_active_half_the_time": 0.97,
+   "median_temporal_std": 0.18184,
+   "readout_abs_mean": 0.0092
+  },
+  "main at 118,000": {
+   "epe": 16.7894,
+   "mean_activity": 1.8561,
+   "nodes_ever_active": 0.9962,
+   "nodes_active_half_the_time": 0.9417,
+   "median_temporal_std": 0.19243,
+   "readout_abs_mean": 0.2899
+  },
+  "model 000": {
+   "epe": 15.0691,
+   "mean_activity": 0.4315,
+   "nodes_ever_active": 0.9466,
+   "nodes_active_half_the_time": 0.8099,
+   "median_temporal_std": 0.29154,
+   "readout_abs_mean": 2.2111
+  }
+ },
+ "gradient": [
+  {
+   "network": "fresh",
+   "batch_norm": "model 000's statistics",
+   "softplus_input_mean": -11.26,
+   "share_below_minus_4": 0.772,
+   "readout_abs_mean": 0.0124,
+   "gradient_norm": 117.7
+  },
+  {
+   "network": "fresh",
+   "batch_norm": "the clip's own statistics",
+   "softplus_input_mean": -0.26,
+   "share_below_minus_4": 0.0,
+   "readout_abs_mean": 0.1168,
+   "gradient_norm": 1025.8
+  },
+  {
+   "network": "fast at 7,500",
+   "batch_norm": "model 000's statistics",
+   "softplus_input_mean": -127.89,
+   "share_below_minus_4": 0.807,
+   "readout_abs_mean": 0.0092,
+   "gradient_norm": 161.3
+  },
+  {
+   "network": "fast at 7,500",
+   "batch_norm": "the clip's own statistics",
+   "softplus_input_mean": -0.26,
+   "share_below_minus_4": 0.0,
+   "readout_abs_mean": 0.1396,
+   "gradient_norm": 1498.8
+  }
+ ]
+}

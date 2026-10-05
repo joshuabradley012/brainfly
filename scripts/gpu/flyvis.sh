@@ -10,7 +10,8 @@
 #   HOST=root@1.2.3.4 scripts/gpu/flyvis.sh pull [RUN]        # bring its checkpoint and .json home
 #   HOST=root@1.2.3.4 scripts/gpu/flyvis.sh stop [RUN]
 #
-# RUN is main (flow/9100/000), control (9101), noaug (9102), decoder000 (9103) or fast (9104), as in flyvis_t2_scratch.py.
+# RUN is main (flow/9100/000), control (9101), noaug (9102), decoder000 (9103), fast (9104) or fastbn (9105), as in
+# flyvis_t2_scratch.py.
 # Env: HOST (required), PORT (22; RunPod and Vast give other ports), KEY (an ssh identity file, optional).
 # One run lives in one place at a time: start and pull refuse while this Mac is training the same run, since the two
 # copies would write diverging checkpoints. Delete the box in the provider's console when the run is home; it bills
@@ -33,7 +34,8 @@ case "$RUN" in
   noaug) ID=9102; JSON=flyvis_t2_scratch_noaug.json; ARG=noaug ;;
   decoder000) ID=9103; JSON=flyvis_t2_scratch_decoder000.json; ARG=decoder000 ;;
   fast) ID=9104; JSON=flyvis_t2_scratch_fast.json; ARG=fast ;;
-  *) echo "unknown run $RUN (main, control, noaug, decoder000, fast)" >&2; exit 2 ;;
+  fastbn) ID=9105; JSON=flyvis_t2_scratch_fastbn.json; ARG=fastbn ;;
+  *) echo "unknown run $RUN (main, control, noaug, decoder000, fast, fastbn)" >&2; exit 2 ;;
 esac
 LOCAL_DATA=${FLY_DATA:-$HOME/fly-data}
 RESULT=flyvis/results/flow/$ID/000
@@ -43,7 +45,7 @@ REMOTE_ENV="export FLY_DATA=\$HOME/fly-data FLYVIS_ROOT_DIR=\$HOME/fly-data/flyv
 
 running_here() {   # is this Mac training RUN right now?
   if [ -z "$ARG" ]; then pgrep -f "flyvis_t2_scratch.py *$" >/dev/null
-  else pgrep -f "flyvis_t2_scratch.py $ARG" >/dev/null; fi
+  else pgrep -f "flyvis_t2_scratch.py $ARG\$" >/dev/null; fi
 }
 
 case "$CMD" in
@@ -94,7 +96,7 @@ EOF
     ;;
   stop)   # [f]: the pattern mustn't match the remote shell running pkill, whose command line contains it
     if [ -z "$ARG" ]; then ssh_box "pkill -f '[f]lyvis_t2_scratch.py *\$' && echo stopped || echo 'not running'"
-    else ssh_box "pkill -f '[f]lyvis_t2_scratch.py $ARG' && echo stopped || echo 'not running'"; fi
+    else ssh_box "pkill -f '[f]lyvis_t2_scratch.py $ARG\$' && echo stopped || echo 'not running'"; fi
     ;;
   *) echo "unknown command $CMD" >&2; exit 2 ;;
 esac

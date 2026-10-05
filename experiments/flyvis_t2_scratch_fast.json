@@ -100,6 +100,56 @@
    "t2_off_mean": 1.389,
    "T2": true,
    "seconds": 9836
+  },
+  {
+   "iteration": 5500,
+   "flow_loss": 1295.7,
+   "t2_penalty": 0.0,
+   "t2_on": 0.956,
+   "t2_off": 1.177,
+   "t2_off_mean": 1.381,
+   "T2": true,
+   "seconds": 11034
+  },
+  {
+   "iteration": 6000,
+   "flow_loss": 1286.01,
+   "t2_penalty": 0.0,
+   "t2_on": 0.955,
+   "t2_off": 1.162,
+   "t2_off_mean": 1.382,
+   "T2": true,
+   "seconds": 12203
+  },
+  {
+   "iteration": 6500,
+   "flow_loss": 1299.39,
+   "t2_penalty": 0.0,
+   "t2_on": 0.939,
+   "t2_off": 1.12,
+   "t2_off_mean": 1.368,
+   "T2": true,
+   "seconds": 13373
+  },
+  {
+   "iteration": 7000,
+   "flow_loss": 1310.69,
+   "t2_penalty": 0.0,
+   "t2_on": 0.931,
+   "t2_off": 1.082,
+   "t2_off_mean": 1.361,
+   "T2": true,
+   "seconds": 14542
+  },
+  {
+   "iteration": 7500,
+   "flow_loss": 1302.58,
+   "t2_penalty": 0.0,
+   "t2_on": 0.901,
+   "t2_off": 0.936,
+   "t2_off_mean": 1.338,
+   "T2": true,
+   "seconds": 15712
   }
  ],
  "evals": [
@@ -110,6 +160,10 @@
   {
    "iteration": 5000,
    "val_epe": 5.7768
+  },
+  {
+   "iteration": 7500,
+   "val_epe": 5.777
   }
  ]
 }

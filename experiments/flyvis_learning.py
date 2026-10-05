@@ -12,8 +12,11 @@ Each: one fixed training batch, augmentation off, 600 iterations of Adam from fl
   d  only the network, the decoder frozen at its initialisation (flyvis's: constant weights of 0.001)
   e  only the decoder, the network frozen
   f  only the network, read by flyvis's trained decoder from model 000, frozen
+  g  as f, but the decoder's batch norm normalizes each batch by its own statistics (its weights still fixed).
+     flyvis_readout.py found f's decoder, on model 000's statistics, holding most of its softplus units where the
+     softplus is flat.
 
-    python experiments/flyvis_learning.py a ... f      (each writes flyvis_learning/<variant>.json)
+    python experiments/flyvis_learning.py a ... g      (each writes flyvis_learning/<variant>.json)
     python experiments/flyvis_learning.py summary      (writes experiments/flyvis_learning.json)
 """
 from __future__ import annotations
@@ -29,18 +32,18 @@ import flyvis_t2_scratch as fs
 
 OUT = Path(__file__).with_suffix(".json")
 HERE = Path(__file__).with_suffix("")
-VARIANTS = "abcdef"
+VARIANTS = "abcdefg"
 ITERS = 600
 
 
 def run(variant: str) -> None:
     HERE.mkdir(exist_ok=True)
     view, net, dec, task, opt, pen, sched = fs.build()
-    if variant == "f":
+    if variant in "fg":
         _, _, dec = vt.load("flow/0000/000", vt.DEVICE)
     if variant in "abc":
         params = [*net.parameters(), *[p for d in dec.values() for p in d.parameters()]]
-    elif variant in "df":
+    elif variant in "dfg":
         params = list(net.parameters())
     else:
         params = [p for d in dec.values() for p in d.parameters()]
@@ -51,7 +54,11 @@ def run(variant: str) -> None:
     dt = task.dataset.dt
     net.train()
     for d in dec.values():
-        d.eval() if variant == "f" else d.train()
+        d.eval() if variant in "fg" else d.train()
+        if variant == "g":
+            for m in d.modules():
+                if isinstance(m, torch.nn.BatchNorm2d):
+                    m.train()
     losses = []
     with vt.on(vt.DEVICE):
         lum, flow = data["lum"].to(vt.DEVICE), data["flow"].to(vt.DEVICE)
