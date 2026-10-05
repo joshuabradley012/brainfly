@@ -1,0 +1,57 @@
+{
+ "question": "Exploratory, not pre-registered: does flyvis_t2_scratch.py's T2 penalty still measure T2's flash responses in the\nnetwork it trains?\n\nThe penalty (flyvis_t2_pilot5.penalty) reads T2's response to a light and a dark flash as the change from 0.1 s of grey,\nstarting from the network's steady state (vistrain.flash_responses' defaults). flyvis_t2_scratch.py logs T2's peaks\nafter 1.0 s of grey instead. In the main run the logged flag went False in most checkpoints from iteration 80,000 on,\nwhile the penalty stayed near zero. Measured here, on the central T2 cell of flyvis's model 000 and of the main run's\nlast checkpoint: the flash responses (peaks and means over the penalty's 0.25 s window) after 0.1 s and after 1.0 s of\ngrey, and T2's activity at grey with no flash at all, from 0.05 to 3 s after the steady state (dt 0.01 s, the\npenalty's).\nRan: the penalty is fooled. In model 000, T2 rests steadily at 3.5 and answers light by 3.0 and dark by nothing, the\nsame after either wait. In the main run at 120,000 iterations T2 rests at about 48 and wanders on its own (46.9 to\n48.5 within the first second). After 0.1 s of grey that wander reads as equal answers to light and dark (peaks 3.2 and\n3.5, means 2.9 and 2.9), which satisfies the penalty; after 1.0 s T2 barely answers either (0.20 and -0.05). So the\nmain run's T2 lost its responses while the penalty saw none of it. A penalty that subtracts a grey run from the same\nstarting state would cancel the wander.\n\n    python experiments/t2_penalty_check.py      (writes experiments/t2_penalty_check.json; on the CPU)\n",
+ "dt": 0.01,
+ "window_s": 0.25,
+ "networks": {
+  "model 000": {
+   "after 0.1 s of grey": {
+    "peak_on": 2.963,
+    "peak_off": -0.054,
+    "mean_on": 2.006,
+    "mean_off": -2.164
+   },
+   "after 1.0 s of grey": {
+    "peak_on": 3.042,
+    "peak_off": 0.008,
+    "mean_on": 2.076,
+    "mean_off": -2.093
+   },
+   "grey_only": {
+    "0.05 s": 3.586,
+    "0.1 s": 3.534,
+    "0.6 s": 3.54,
+    "1.0 s": 3.544,
+    "3.0 s": 3.544,
+    "range_first_second": [
+     3.499,
+     3.623
+    ]
+   }
+  },
+  "main at 120,000": {
+   "after 0.1 s of grey": {
+    "peak_on": 3.214,
+    "peak_off": 3.539,
+    "mean_on": 2.936,
+    "mean_off": 2.926
+   },
+   "after 1.0 s of grey": {
+    "peak_on": 0.204,
+    "peak_off": -0.051,
+    "mean_on": -0.028,
+    "mean_off": -0.307
+   },
+   "grey_only": {
+    "0.05 s": 46.502,
+    "0.1 s": 48.191,
+    "0.6 s": 47.153,
+    "1.0 s": 47.884,
+    "3.0 s": 47.682,
+    "range_first_second": [
+     44.85,
+     50.09
+    ]
+   }
+  }
+ }
+}
