@@ -1,0 +1,1995 @@
+{
+ "question": "Exploratory, not pre-registered: rung3_001_pilot.py again, with stand-ins that match rung 3's measures more closely.\n\nrung3_001_pilot.py fine-tuned flyvis's model 001 to 30 of 32 polarities and 16 of 16 directions, both thinly: flyvis's\nindex put Tm2 at -0.007 and R3 still wrong, and T5a's direction selectivity in the eye was 0.02. Its polarity stand-in\ndisagreed with flyvis's index on R3. This pilot changes three things:\n  polarity   flyvis's own index: its Flashes movie (dt 0.005 s, radius 6, light and dark, each 1 s), starting from\n             the steady state after 1 s of grey and 0.25 s of the movie's grey lead-in, the central cells' activity\n             from one frame before the flash to the first frame after it, shifted by its minimum, (peak light - peak\n             dark) / (sum). On models 001 and rung3_001_pilot.py's result this matches flyvis's values for R3, R6, L2 and\n             Tm2 to the third decimal (with the full 1 s lead-in; shorter ones move L2 by about 0.01). Penalty relu(0.05 -\n             known sign x index) for the 32 known types, weight 1000.\n  direction  flyvis's MovingEdge as before (speed 19), plus OFF edges at speed 9.7 for the T5s, whose margin rises\n             from 0.2 to 0.35 (T4 keeps 0.2).\n  T2         from the polarity simulation, against a grey-only run from the same state (as before).\nEverything else as rung3_001_pilot.py: model 001, flyvis's flow task, Adam on network and decoder at 1e-5, the penalty\nevery fifth iteration at five times its weight, for 2,000 iterations, seed 0. Saved as flow/9012/000 and measured\nas rung 3 measures it (polarity, direction in the eye, T2, validation error).\n\n    python experiments/rung3_001_pilot2.py      (writes experiments/rung3_001_pilot2.json; the model to flyvis's results)\n",
+ "start": {
+  "polarity_correct": 29,
+  "polarity_wrong": [
+   "R3",
+   "L2",
+   "Tm2"
+  ],
+  "polarity_index": {
+   "R3": -0.08,
+   "R6": 0.03,
+   "L2": 0.269,
+   "L3": -0.096,
+   "T5a": -0.055,
+   "Tm2": 0.13
+  },
+  "t2_on": 1.244,
+  "t2_off": 2.774,
+  "directions_correct": 9,
+  "directions": {
+   "T5a at 19": {
+    "expected_is_max": false,
+    "r_expected": 0.025,
+    "r_best_other": 0.025
+   },
+   "T5b at 19": {
+    "expected_is_max": true,
+    "r_expected": 1.062,
+    "r_best_other": 0.887
+   },
+   "T5c at 19": {
+    "expected_is_max": true,
+    "r_expected": 1.585,
+    "r_best_other": 1.254
+   },
+   "T5d at 19": {
+    "expected_is_max": true,
+    "r_expected": 1.014,
+    "r_best_other": 0.969
+   },
+   "T4a at 19": {
+    "expected_is_max": true,
+    "r_expected": 2.391,
+    "r_best_other": 1.592
+   },
+   "T4b at 19": {
+    "expected_is_max": true,
+    "r_expected": 2.802,
+    "r_best_other": 0.532
+   },
+   "T4c at 19": {
+    "expected_is_max": true,
+    "r_expected": 2.58,
+    "r_best_other": 0.917
+   },
+   "T4d at 19": {
+    "expected_is_max": true,
+    "r_expected": 2.945,
+    "r_best_other": 1.5
+   },
+   "T5a at 9.7": {
+    "expected_is_max": false,
+    "r_expected": 0.025,
+    "r_best_other": 0.025
+   },
+   "T5b at 9.7": {
+    "expected_is_max": true,
+    "r_expected": 0.864,
+    "r_best_other": 0.714
+   },
+   "T5c at 9.7": {
+    "expected_is_max": true,
+    "r_expected": 1.226,
+    "r_best_other": 0.917
+   },
+   "T5d at 9.7": {
+    "expected_is_max": false,
+    "r_expected": 0.822,
+    "r_best_other": 0.848
+   }
+  },
+  "val_epe": 5.1964
+ },
+ "trace": [
+  {
+   "iteration": 100,
+   "flow_loss": 1278.43,
+   "penalty": 2257.1843,
+   "seconds": 179,
+   "parts": {
+    "polarity": 0.6135847568511963,
+    "direction": 4.8314290046691895,
+    "t2": 0.0
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.063,
+    "R6": 0.044,
+    "L2": 0.268,
+    "L3": -0.089,
+    "T5a": -0.057,
+    "Tm2": 0.126
+   },
+   "t2_on": 1.18,
+   "t2_off": 2.769,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.077,
+     "r_best_other": 0.073
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.034,
+     "r_best_other": 0.821
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.643,
+     "r_best_other": 1.239
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.04,
+     "r_best_other": 0.955
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.335,
+     "r_best_other": 1.503
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.834,
+     "r_best_other": 0.591
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.66,
+     "r_best_other": 0.889
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.882,
+     "r_best_other": 1.476
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.047,
+     "r_best_other": 0.034
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.86,
+     "r_best_other": 0.681
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 1.307,
+     "r_best_other": 0.952
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.876,
+     "r_best_other": 0.834
+    }
+   }
+  },
+  {
+   "iteration": 200,
+   "flow_loss": 1227.48,
+   "penalty": 1966.6023,
+   "seconds": 356,
+   "parts": {
+    "polarity": 0.5958190560340881,
+    "direction": 4.305637836456299,
+    "t2": 0.0
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.06,
+    "R6": 0.05,
+    "L2": 0.26,
+    "L3": -0.09,
+    "T5a": -0.066,
+    "Tm2": 0.125
+   },
+   "t2_on": 1.195,
+   "t2_off": 2.726,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.076,
+     "r_best_other": 0.054
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.035,
+     "r_best_other": 0.816
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.709,
+     "r_best_other": 1.268
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.066,
+     "r_best_other": 0.961
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.381,
+     "r_best_other": 1.541
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.832,
+     "r_best_other": 0.6
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.655,
+     "r_best_other": 0.901
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.877,
+     "r_best_other": 1.478
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.038,
+     "r_best_other": 0.019
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.88,
+     "r_best_other": 0.677
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 1.382,
+     "r_best_other": 0.993
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.911,
+     "r_best_other": 0.842
+    }
+   }
+  },
+  {
+   "iteration": 300,
+   "flow_loss": 1210.28,
+   "penalty": 1799.6772,
+   "seconds": 538,
+   "parts": {
+    "polarity": 0.5809414386749268,
+    "direction": 3.8114261627197266,
+    "t2": 0.0
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.054,
+    "R6": 0.05,
+    "L2": 0.261,
+    "L3": -0.087,
+    "T5a": -0.061,
+    "Tm2": 0.116
+   },
+   "t2_on": 1.101,
+   "t2_off": 2.678,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.106,
+     "r_best_other": 0.072
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.0,
+     "r_best_other": 0.772
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.704,
+     "r_best_other": 1.222
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.059,
+     "r_best_other": 0.934
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.404,
+     "r_best_other": 1.55
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.782,
+     "r_best_other": 0.575
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.64,
+     "r_best_other": 0.888
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.87,
+     "r_best_other": 1.465
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.065,
+     "r_best_other": 0.035
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.858,
+     "r_best_other": 0.625
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 1.384,
+     "r_best_other": 0.938
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.91,
+     "r_best_other": 0.814
+    }
+   }
+  },
+  {
+   "iteration": 400,
+   "flow_loss": 1224.35,
+   "penalty": 1602.755,
+   "seconds": 719,
+   "parts": {
+    "polarity": 0.5642538070678711,
+    "direction": 3.1290817260742188,
+    "t2": 0.0
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.044,
+    "R6": 0.05,
+    "L2": 0.266,
+    "L3": -0.085,
+    "T5a": -0.059,
+    "Tm2": 0.104
+   },
+   "t2_on": 1.082,
+   "t2_off": 2.562,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.132,
+     "r_best_other": 0.102
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.949,
+     "r_best_other": 0.695
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.602,
+     "r_best_other": 1.071
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.055,
+     "r_best_other": 0.889
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.401,
+     "r_best_other": 1.53
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.718,
+     "r_best_other": 0.52
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.628,
+     "r_best_other": 0.864
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.89,
+     "r_best_other": 1.482
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.106,
+     "r_best_other": 0.061
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.815,
+     "r_best_other": 0.558
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 1.306,
+     "r_best_other": 0.78
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.912,
+     "r_best_other": 0.782
+    }
+   }
+  },
+  {
+   "iteration": 500,
+   "flow_loss": 1199.51,
+   "penalty": 1369.3454,
+   "seconds": 899,
+   "parts": {
+    "polarity": 0.5500683188438416,
+    "direction": 2.3576934337615967,
+    "t2": 0.0
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.039,
+    "R6": 0.049,
+    "L2": 0.273,
+    "L3": -0.083,
+    "T5a": -0.052,
+    "Tm2": 0.088
+   },
+   "t2_on": 1.034,
+   "t2_off": 2.477,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.136,
+     "r_best_other": 0.089
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.877,
+     "r_best_other": 0.602
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.463,
+     "r_best_other": 0.905
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.038,
+     "r_best_other": 0.832
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.416,
+     "r_best_other": 1.527
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.69,
+     "r_best_other": 0.484
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.587,
+     "r_best_other": 0.837
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.959,
+     "r_best_other": 1.532
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.117,
+     "r_best_other": 0.059
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.752,
+     "r_best_other": 0.471
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 1.213,
+     "r_best_other": 0.615
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.9,
+     "r_best_other": 0.739
+    }
+   }
+  },
+  {
+   "iteration": 600,
+   "flow_loss": 1283.13,
+   "penalty": 1149.417,
+   "seconds": 1080,
+   "parts": {
+    "polarity": 0.5075652599334717,
+    "direction": 1.816699743270874,
+    "t2": 0.029698550701141357
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.016,
+    "R6": 0.079,
+    "L2": 0.266,
+    "L3": -0.091,
+    "T5a": -0.063,
+    "Tm2": 0.075
+   },
+   "t2_on": 0.891,
+   "t2_off": 2.273,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.118,
+     "r_best_other": 0.058
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.808,
+     "r_best_other": 0.511
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.339,
+     "r_best_other": 0.757
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.999,
+     "r_best_other": 0.752
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.402,
+     "r_best_other": 1.48
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.592,
+     "r_best_other": 0.457
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.575,
+     "r_best_other": 0.821
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.827,
+     "r_best_other": 1.414
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.1,
+     "r_best_other": 0.044
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.679,
+     "r_best_other": 0.39
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 1.135,
+     "r_best_other": 0.496
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.845,
+     "r_best_other": 0.667
+    }
+   }
+  },
+  {
+   "iteration": 700,
+   "flow_loss": 1210.76,
+   "penalty": 957.348,
+   "seconds": 1265,
+   "parts": {
+    "polarity": 0.4652169346809387,
+    "direction": 1.3647139072418213,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.017,
+    "R6": 0.115,
+    "L2": 0.262,
+    "L3": -0.098,
+    "T5a": -0.1,
+    "Tm2": 0.069
+   },
+   "t2_on": 0.826,
+   "t2_off": 2.054,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.139,
+     "r_best_other": 0.064
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.75,
+     "r_best_other": 0.439
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.216,
+     "r_best_other": 0.621
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.956,
+     "r_best_other": 0.666
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.413,
+     "r_best_other": 1.46
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.55,
+     "r_best_other": 0.445
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.59,
+     "r_best_other": 0.814
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.707,
+     "r_best_other": 1.303
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.124,
+     "r_best_other": 0.055
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.621,
+     "r_best_other": 0.334
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 1.059,
+     "r_best_other": 0.39
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.788,
+     "r_best_other": 0.585
+    }
+   }
+  },
+  {
+   "iteration": 800,
+   "flow_loss": 1221.48,
+   "penalty": 797.8343,
+   "seconds": 1448,
+   "parts": {
+    "polarity": 0.44436585903167725,
+    "direction": 0.9804823398590088,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.052,
+    "R6": 0.154,
+    "L2": 0.268,
+    "L3": -0.102,
+    "T5a": -0.122,
+    "Tm2": 0.074
+   },
+   "t2_on": 0.762,
+   "t2_off": 1.822,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.144,
+     "r_best_other": 0.062
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.694,
+     "r_best_other": 0.381
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.12,
+     "r_best_other": 0.507
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.894,
+     "r_best_other": 0.565
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.442,
+     "r_best_other": 1.473
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.582,
+     "r_best_other": 0.442
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.589,
+     "r_best_other": 0.798
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.683,
+     "r_best_other": 1.268
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.121,
+     "r_best_other": 0.059
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.562,
+     "r_best_other": 0.276
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 1.0,
+     "r_best_other": 0.287
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.719,
+     "r_best_other": 0.479
+    }
+   }
+  },
+  {
+   "iteration": 900,
+   "flow_loss": 1277.86,
+   "penalty": 665.1037,
+   "seconds": 1627,
+   "parts": {
+    "polarity": 0.4274952709674835,
+    "direction": 0.612302303314209,
+    "t2": 0.015871286392211914
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.053,
+    "R6": 0.158,
+    "L2": 0.255,
+    "L3": -0.114,
+    "T5a": -0.168,
+    "Tm2": 0.071
+   },
+   "t2_on": 0.653,
+   "t2_off": 1.66,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.176,
+     "r_best_other": 0.083
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.643,
+     "r_best_other": 0.326
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.012,
+     "r_best_other": 0.386
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.837,
+     "r_best_other": 0.477
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.41,
+     "r_best_other": 1.45
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.581,
+     "r_best_other": 0.45
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.595,
+     "r_best_other": 0.8
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.594,
+     "r_best_other": 1.188
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.149,
+     "r_best_other": 0.073
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.511,
+     "r_best_other": 0.223
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.929,
+     "r_best_other": 0.286
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.667,
+     "r_best_other": 0.394
+    }
+   }
+  },
+  {
+   "iteration": 1000,
+   "flow_loss": 1260.64,
+   "penalty": 597.7225,
+   "seconds": 1806,
+   "parts": {
+    "polarity": 0.4099477529525757,
+    "direction": 0.5035596489906311,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.055,
+    "R6": 0.159,
+    "L2": 0.235,
+    "L3": -0.13,
+    "T5a": -0.236,
+    "Tm2": 0.074
+   },
+   "t2_on": 0.737,
+   "t2_off": 1.569,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.228,
+     "r_best_other": 0.12
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.623,
+     "r_best_other": 0.297
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.908,
+     "r_best_other": 0.3
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.809,
+     "r_best_other": 0.408
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.401,
+     "r_best_other": 1.443
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.561,
+     "r_best_other": 0.508
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.612,
+     "r_best_other": 0.812
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.535,
+     "r_best_other": 1.151
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.2,
+     "r_best_other": 0.124
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.471,
+     "r_best_other": 0.201
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.845,
+     "r_best_other": 0.3
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.64,
+     "r_best_other": 0.33
+    }
+   }
+  },
+  {
+   "iteration": 1100,
+   "flow_loss": 1266.11,
+   "penalty": 577.6791,
+   "seconds": 1985,
+   "parts": {
+    "polarity": 0.37173476815223694,
+    "direction": 0.6417776346206665,
+    "t2": 0.01769179105758667
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.053,
+    "R6": 0.156,
+    "L2": 0.206,
+    "L3": -0.157,
+    "T5a": -0.295,
+    "Tm2": 0.065
+   },
+   "t2_on": 0.607,
+   "t2_off": 1.518,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.305,
+     "r_best_other": 0.18
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.639,
+     "r_best_other": 0.303
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.84,
+     "r_best_other": 0.26
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.795,
+     "r_best_other": 0.377
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.428,
+     "r_best_other": 1.484
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.557,
+     "r_best_other": 0.614
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.642,
+     "r_best_other": 0.86
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.455,
+     "r_best_other": 1.13
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.275,
+     "r_best_other": 0.18
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.459,
+     "r_best_other": 0.192
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.776,
+     "r_best_other": 0.26
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.629,
+     "r_best_other": 0.295
+    }
+   }
+  },
+  {
+   "iteration": 1200,
+   "flow_loss": 1258.5,
+   "penalty": 568.1897,
+   "seconds": 2164,
+   "parts": {
+    "polarity": 0.34003111720085144,
+    "direction": 0.6415504217147827,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.05,
+    "R6": 0.161,
+    "L2": 0.181,
+    "L3": -0.168,
+    "T5a": -0.324,
+    "Tm2": 0.056
+   },
+   "t2_on": 0.607,
+   "t2_off": 1.506,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.338,
+     "r_best_other": 0.206
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.677,
+     "r_best_other": 0.32
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.863,
+     "r_best_other": 0.245
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.798,
+     "r_best_other": 0.381
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.476,
+     "r_best_other": 1.539
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.53,
+     "r_best_other": 0.66
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.616,
+     "r_best_other": 0.882
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.382,
+     "r_best_other": 1.125
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.302,
+     "r_best_other": 0.196
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.476,
+     "r_best_other": 0.199
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.792,
+     "r_best_other": 0.245
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.625,
+     "r_best_other": 0.292
+    }
+   }
+  },
+  {
+   "iteration": 1300,
+   "flow_loss": 1294.36,
+   "penalty": 519.9933,
+   "seconds": 2345,
+   "parts": {
+    "polarity": 0.3113010823726654,
+    "direction": 0.5805772542953491,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.051,
+    "R6": 0.165,
+    "L2": 0.161,
+    "L3": -0.131,
+    "T5a": -0.352,
+    "Tm2": 0.049
+   },
+   "t2_on": 0.668,
+   "t2_off": 1.436,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.373,
+     "r_best_other": 0.225
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.703,
+     "r_best_other": 0.327
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.89,
+     "r_best_other": 0.231
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.792,
+     "r_best_other": 0.37
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.481,
+     "r_best_other": 1.546
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.509,
+     "r_best_other": 0.694
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.575,
+     "r_best_other": 0.889
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.326,
+     "r_best_other": 1.124
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.314,
+     "r_best_other": 0.198
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.492,
+     "r_best_other": 0.201
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.812,
+     "r_best_other": 0.231
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.62,
+     "r_best_other": 0.278
+    }
+   }
+  },
+  {
+   "iteration": 1400,
+   "flow_loss": 1277.34,
+   "penalty": 479.2593,
+   "seconds": 2526,
+   "parts": {
+    "polarity": 0.29312098026275635,
+    "direction": 0.5469242334365845,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.05,
+    "R6": 0.16,
+    "L2": 0.15,
+    "L3": -0.11,
+    "T5a": -0.373,
+    "Tm2": 0.041
+   },
+   "t2_on": 0.65,
+   "t2_off": 1.471,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.447,
+     "r_best_other": 0.272
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.732,
+     "r_best_other": 0.328
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.934,
+     "r_best_other": 0.225
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.791,
+     "r_best_other": 0.36
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.521,
+     "r_best_other": 1.598
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.48,
+     "r_best_other": 0.694
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.524,
+     "r_best_other": 0.89
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.285,
+     "r_best_other": 1.118
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.369,
+     "r_best_other": 0.228
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.528,
+     "r_best_other": 0.209
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.866,
+     "r_best_other": 0.225
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.626,
+     "r_best_other": 0.285
+    }
+   }
+  },
+  {
+   "iteration": 1500,
+   "flow_loss": 1267.03,
+   "penalty": 409.3587,
+   "seconds": 2706,
+   "parts": {
+    "polarity": 0.28360193967819214,
+    "direction": 0.31910440325737,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.049,
+    "R6": 0.157,
+    "L2": 0.145,
+    "L3": -0.141,
+    "T5a": -0.397,
+    "Tm2": 0.037
+   },
+   "t2_on": 0.656,
+   "t2_off": 1.405,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.434,
+     "r_best_other": 0.245
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.739,
+     "r_best_other": 0.325
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.935,
+     "r_best_other": 0.221
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.789,
+     "r_best_other": 0.345
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.532,
+     "r_best_other": 1.626
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.417,
+     "r_best_other": 0.693
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.441,
+     "r_best_other": 0.886
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.194,
+     "r_best_other": 1.085
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.339,
+     "r_best_other": 0.19
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.54,
+     "r_best_other": 0.203
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.872,
+     "r_best_other": 0.221
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.625,
+     "r_best_other": 0.269
+    }
+   }
+  },
+  {
+   "iteration": 1600,
+   "flow_loss": 1323.78,
+   "penalty": 363.6675,
+   "seconds": 2891,
+   "parts": {
+    "polarity": 0.2784275412559509,
+    "direction": 0.18986544013023376,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.049,
+    "R6": 0.155,
+    "L2": 0.141,
+    "L3": -0.163,
+    "T5a": -0.417,
+    "Tm2": 0.036
+   },
+   "t2_on": 0.67,
+   "t2_off": 1.405,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.482,
+     "r_best_other": 0.258
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.765,
+     "r_best_other": 0.328
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.966,
+     "r_best_other": 0.229
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.79,
+     "r_best_other": 0.337
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.546,
+     "r_best_other": 1.648
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.395,
+     "r_best_other": 0.701
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.375,
+     "r_best_other": 0.887
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.166,
+     "r_best_other": 1.084
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.378,
+     "r_best_other": 0.197
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.574,
+     "r_best_other": 0.216
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.917,
+     "r_best_other": 0.217
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.63,
+     "r_best_other": 0.273
+    }
+   }
+  },
+  {
+   "iteration": 1700,
+   "flow_loss": 1245.13,
+   "penalty": 311.3288,
+   "seconds": 3073,
+   "parts": {
+    "polarity": 0.2723347246646881,
+    "direction": 0.051215529441833496,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.05,
+    "R6": 0.156,
+    "L2": 0.136,
+    "L3": -0.196,
+    "T5a": -0.437,
+    "Tm2": 0.036
+   },
+   "t2_on": 0.666,
+   "t2_off": 1.331,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.475,
+     "r_best_other": 0.241
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.797,
+     "r_best_other": 0.338
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.998,
+     "r_best_other": 0.251
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.791,
+     "r_best_other": 0.323
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.538,
+     "r_best_other": 1.643
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.347,
+     "r_best_other": 0.703
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.319,
+     "r_best_other": 0.902
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.153,
+     "r_best_other": 1.098
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.367,
+     "r_best_other": 0.177
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.617,
+     "r_best_other": 0.23
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.953,
+     "r_best_other": 0.198
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.632,
+     "r_best_other": 0.263
+    }
+   }
+  },
+  {
+   "iteration": 1800,
+   "flow_loss": 1312.58,
+   "penalty": 270.4747,
+   "seconds": 3250,
+   "parts": {
+    "polarity": 0.26143717765808105,
+    "direction": 0.0,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.051,
+    "R6": 0.158,
+    "L2": 0.129,
+    "L3": -0.202,
+    "T5a": -0.445,
+    "Tm2": 0.032
+   },
+   "t2_on": 0.579,
+   "t2_off": 1.34,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.474,
+     "r_best_other": 0.223
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.823,
+     "r_best_other": 0.347
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.036,
+     "r_best_other": 0.301
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.802,
+     "r_best_other": 0.329
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.531,
+     "r_best_other": 1.654
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.324,
+     "r_best_other": 0.68
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.278,
+     "r_best_other": 0.898
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.116,
+     "r_best_other": 1.079
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.368,
+     "r_best_other": 0.175
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.643,
+     "r_best_other": 0.243
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.993,
+     "r_best_other": 0.197
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.641,
+     "r_best_other": 0.279
+    }
+   }
+  },
+  {
+   "iteration": 1900,
+   "flow_loss": 1282.72,
+   "penalty": 257.8266,
+   "seconds": 3428,
+   "parts": {
+    "polarity": 0.2507129907608032,
+    "direction": 0.0,
+    "t2": 0.002147495746612549
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.051,
+    "R6": 0.158,
+    "L2": 0.124,
+    "L3": -0.201,
+    "T5a": -0.455,
+    "Tm2": 0.027
+   },
+   "t2_on": 0.554,
+   "t2_off": 1.337,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.488,
+     "r_best_other": 0.23
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.82,
+     "r_best_other": 0.342
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 1.026,
+     "r_best_other": 0.29
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.812,
+     "r_best_other": 0.335
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.591,
+     "r_best_other": 1.71
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.337,
+     "r_best_other": 0.668
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.285,
+     "r_best_other": 0.911
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.187,
+     "r_best_other": 1.111
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.385,
+     "r_best_other": 0.183
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.638,
+     "r_best_other": 0.238
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.983,
+     "r_best_other": 0.204
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.647,
+     "r_best_other": 0.285
+    }
+   }
+  },
+  {
+   "iteration": 2000,
+   "flow_loss": 1320.98,
+   "penalty": 249.7711,
+   "seconds": 3608,
+   "parts": {
+    "polarity": 0.24466827511787415,
+    "direction": 0.00853690505027771,
+    "t2": 0.0
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.05,
+    "R6": 0.157,
+    "L2": 0.119,
+    "L3": -0.202,
+    "T5a": -0.462,
+    "Tm2": 0.025
+   },
+   "t2_on": 0.676,
+   "t2_off": 1.302,
+   "directions_correct": 12,
+   "directions": {
+    "T5a at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.483,
+     "r_best_other": 0.233
+    },
+    "T5b at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.812,
+     "r_best_other": 0.335
+    },
+    "T5c at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.999,
+     "r_best_other": 0.251
+    },
+    "T5d at 19": {
+     "expected_is_max": true,
+     "r_expected": 0.815,
+     "r_best_other": 0.329
+    },
+    "T4a at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.589,
+     "r_best_other": 1.706
+    },
+    "T4b at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.334,
+     "r_best_other": 0.681
+    },
+    "T4c at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.294,
+     "r_best_other": 0.924
+    },
+    "T4d at 19": {
+     "expected_is_max": true,
+     "r_expected": 2.182,
+     "r_best_other": 1.117
+    },
+    "T5a at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.383,
+     "r_best_other": 0.182
+    },
+    "T5b at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.631,
+     "r_best_other": 0.229
+    },
+    "T5c at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.964,
+     "r_best_other": 0.211
+    },
+    "T5d at 9.7": {
+     "expected_is_max": true,
+     "r_expected": 0.644,
+     "r_best_other": 0.28
+    }
+   }
+  }
+ ],
+ "end": {
+  "polarity_correct": 30,
+  "polarity_wrong": [
+   "L2",
+   "Tm2"
+  ],
+  "polarity_index": {
+   "R3": 0.05,
+   "R6": 0.157,
+   "L2": 0.119,
+   "L3": -0.202,
+   "T5a": -0.462,
+   "Tm2": 0.025
+  },
+  "t2_on": 0.676,
+  "t2_off": 1.302,
+  "directions_correct": 12,
+  "directions": {
+   "T5a at 19": {
+    "expected_is_max": true,
+    "r_expected": 0.483,
+    "r_best_other": 0.233
+   },
+   "T5b at 19": {
+    "expected_is_max": true,
+    "r_expected": 0.812,
+    "r_best_other": 0.335
+   },
+   "T5c at 19": {
+    "expected_is_max": true,
+    "r_expected": 0.999,
+    "r_best_other": 0.251
+   },
+   "T5d at 19": {
+    "expected_is_max": true,
+    "r_expected": 0.815,
+    "r_best_other": 0.329
+   },
+   "T4a at 19": {
+    "expected_is_max": true,
+    "r_expected": 2.589,
+    "r_best_other": 1.706
+   },
+   "T4b at 19": {
+    "expected_is_max": true,
+    "r_expected": 2.334,
+    "r_best_other": 0.681
+   },
+   "T4c at 19": {
+    "expected_is_max": true,
+    "r_expected": 2.294,
+    "r_best_other": 0.924
+   },
+   "T4d at 19": {
+    "expected_is_max": true,
+    "r_expected": 2.182,
+    "r_best_other": 1.117
+   },
+   "T5a at 9.7": {
+    "expected_is_max": true,
+    "r_expected": 0.383,
+    "r_best_other": 0.182
+   },
+   "T5b at 9.7": {
+    "expected_is_max": true,
+    "r_expected": 0.631,
+    "r_best_other": 0.229
+   },
+   "T5c at 9.7": {
+    "expected_is_max": true,
+    "r_expected": 0.964,
+    "r_best_other": 0.211
+   },
+   "T5d at 9.7": {
+    "expected_is_max": true,
+    "r_expected": 0.644,
+    "r_best_other": 0.28
+   }
+  },
+  "val_epe": 5.6178
+ },
+ "rung3": {
+  "t2": {
+   "t2_on": 0.702,
+   "t2_off": 1.565,
+   "T2": true
+  },
+  "polarity": {
+   "correct": 30,
+   "of": 32,
+   "wrong": [
+    "L2",
+    "Tm2"
+   ]
+  },
+  "direction": {
+   "correct": 14,
+   "wrong": [
+    "R T5a",
+    "L T5a"
+   ],
+   "dsi": {
+    "R T4a": 0.905,
+    "R T4b": 0.782,
+    "R T4c": 0.831,
+    "R T4d": 0.714,
+    "R T5a": 0.079,
+    "R T5b": 0.315,
+    "R T5c": 0.285,
+    "R T5d": 0.265,
+    "L T4a": 0.906,
+    "L T4b": 0.773,
+    "L T4c": 0.842,
+    "L T4d": 0.713,
+    "L T5a": 0.074,
+    "L T5b": 0.319,
+    "L T5c": 0.285,
+    "L T5d": 0.265
+   }
+  }
+ },
+ "seconds": 3679
+}

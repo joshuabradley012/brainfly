@@ -131,6 +131,21 @@ Where the bump sat in each run on the way, from the saved results: passing runs 
   state would cancel the wander. The two fixed-decoder runs, logged after a full second, kept T2's responses. A rented RTX 4090 was tried first and turned out slow: it started each tiny GPU
   operation in 60–200 µs, where the Mac's GPU takes 3, so it trained no faster than the Mac.
 
+* **Fine-tuning flyvis's model 001 for rung 3: close, but T5a's direction is fragile.** Model 001's T2 answers
+  darkening and its looming reaches LC4, but it misses rung 3 on 29 of 32 polarities and on T5a, which prefers no
+  direction. Fine-tuned on flyvis's flow task with penalties that protect what rung 3 measures (every known polarity,
+  every T4/T5 subtype's direction on flyvis's lattice, and T2's two responses read against a grey-only run), it reached
+  30 of 32 polarities and 16 of 16 directions in the eye, both thinly
+  ([`experiments/rung3_001_pilot.py`](experiments/rung3_001_pilot.py), exploratory). flyvis's own index put Tm2 at
+  -0.007. T5a's direction selectivity in the eye was 0.02, while on flyvis's lattice T5a still preferred the wrong
+  direction at the eye test's speed. A second pilot matched the polarity penalty to flyvis's index exactly and pushed
+  T5a harder ([`experiments/rung3_001_pilot2.py`](experiments/rung3_001_pilot2.py)). On the lattice T5a now prefers
+  front-to-back two to one, but in the eye 86% of its interior cells prefer back-to-front: 14 of 16. The validation
+  error rose to 5.62 (model 001: 5.20). The eye model tiles flyvis's filters onto the male eye's irregular columns,
+  and a weakly tuned cell like T5a behaves differently there than on flyvis's regular lattice. None of the lattice
+  stand-ins tried predicts it. Both rung 3 criteria the fine-tune passes are fitted, not predicted; looming would be
+  the real test.
+
 * **Rung 6 passes: the giant fiber relays to the jump and flight muscles like a fly's.** A connectome can't show
   electrical synapses, so brainfly adds the giant fiber's from the literature. They are one-way junctions onto its own
   jump motor neuron (TTMn) and onto PSI, whose fast synapse drives the flight motor neurons (DLMn). In the resting
