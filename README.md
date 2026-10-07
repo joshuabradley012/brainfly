@@ -36,6 +36,38 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **Rung 3 passes: an eye whose T2 answers darkening, with flies' motion directions and polarities.** Rung 3 asks
+  the eye for at least 30 of 32 known contrast polarities, the right direction in all 16 of the T4/T5 motion detector
+  subtypes across both eyes, and looming responses of tens of Hz in LC4 and LPLC2. A real T2 answers light turning
+  off as well as on (Keleş et al. 2020), and with flyvis's model 001, whose T2 does, looming reaches LC4. But 001 got
+  29 polarities, and its T5a preferred no direction. Fine-tuning 001 on flyvis's own flow task, with rung 3's direction
+  test and the known polarities in the loss, passes all three criteria on a fresh seed
+  ([`experiments/rung3_001.py`](experiments/rung3_001.py), pre-registered):
+  - **polarity:** 31 of 32, R3 and Tm2 crossing over; L2, left out of the loss, is still wrong;
+  - **direction:** 16 of 16 in both eyes, T5a now preferring front-to-back (DSI 0.21; model 001's preferred up);
+  - **looming:** a loom on either side drives the loomed side's LC4 and LPLC2 to peaks of 25–29 Hz, and the giant fiber
+    up by 8 Hz, while the other side stays put and they rest near silence (looming protocol confirmed at gain 1).
+
+  T2 still answers both flashes (1.4 and 3.0), and flyvis's validation error rose only from 5.20 to 5.27. Two of
+  the three criteria were fitted, not predicted: polarity and direction were in the loss, so passing them shows that
+  the fitting carried over to a new seed and to rung 3's exact measures. Looming played no part in training, so it
+  was the real test. The direction test is the difficult part. Rung 3 measures directions with flyvis's network tiled
+  onto the male eye's irregular columns (`FlyvisNative`), and T5a there didn't follow flyvis's own regular lattice.
+  Two pilots that protected directions on the lattice got T5a right in the eye by a hair in one and wrong in the
+  other ([`experiments/rung3_001_pilot.py`](experiments/rung3_001_pilot.py),
+  [`experiments/rung3_001_pilot2.py`](experiments/rung3_001_pilot2.py)). So brainfly now runs the tiled eye in
+  PyTorch with flyvis's own parameters ([`brainfly/eyetorch.py`](brainfly/eyetorch.py), within 0.0004 of
+  `FlyvisNative`), and the direction test itself went into the loss
+  ([`experiments/rung3_001_pilot3.py`](experiments/rung3_001_pilot3.py), the pilot this test repeats on a new seed).
+  T5a's responses in the eye are small, though: a sixth of the other T5s'.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/rung3-dark.svg">
+  <img src="assets/rung3-light.svg" width="100%" alt="Three panels. Left: T5a's response in the eye to dark edges moving front to back, back to front, up and down: model 001 (grey) answers all four about equally, slightly preferring up; the fine-tuned model (red) answers front to back most, down least. Middle: a scatter of the 32 known types' polarity index, signed so that the right polarity is positive, model 001 against fine-tuned: most points lie in the upper right; R3 and Tm2 move from left of the axis to above it; L2 stays wrong in both. Right: a loom on the left: the loomed side's LC4, LPLC2 and giant fiber rates rise sharply before contact, to peaks of 26, 26 and 44 Hz, while the other side's stay flat.">
+</picture>
+
+Model 001 against the fine-tuned eye on rung 3's three measures. `python assets/rung3.py` redraws it.
+
 * **Rung 4 passes: the brain that tastes and escapes also rests like a fly, compass included.** A fly's
   head-direction cells (EPGs) carry a bump of activity that marks its heading and persists in darkness. No published
   model gets that bump from synapse counts times one weight. Rung 4's fifth attempt, pre-registered and run from the
@@ -130,21 +162,6 @@ Where the bump sat in each run on the way, from the saved results: passing runs 
   still at the level of predicting no flow (5.780). A penalty that subtracts a grey run from the same starting
   state would cancel the wander. The two fixed-decoder runs, logged after a full second, kept T2's responses. A rented RTX 4090 was tried first and turned out slow: it started each tiny GPU
   operation in 60–200 µs, where the Mac's GPU takes 3, so it trained no faster than the Mac.
-
-* **Fine-tuning flyvis's model 001 for rung 3: close, but T5a's direction is fragile.** Model 001's T2 answers
-  darkening and its looming reaches LC4, but it misses rung 3 on 29 of 32 polarities and on T5a, which prefers no
-  direction. Fine-tuned on flyvis's flow task with penalties that protect what rung 3 measures (every known polarity,
-  every T4/T5 subtype's direction on flyvis's lattice, and T2's two responses read against a grey-only run), it reached
-  30 of 32 polarities and 16 of 16 directions in the eye, both thinly
-  ([`experiments/rung3_001_pilot.py`](experiments/rung3_001_pilot.py), exploratory). flyvis's own index put Tm2 at
-  -0.007. T5a's direction selectivity in the eye was 0.02, while on flyvis's lattice T5a still preferred the wrong
-  direction at the eye test's speed. A second pilot matched the polarity penalty to flyvis's index exactly and pushed
-  T5a harder ([`experiments/rung3_001_pilot2.py`](experiments/rung3_001_pilot2.py)). On the lattice T5a now prefers
-  front-to-back two to one, but in the eye 86% of its interior cells prefer back-to-front: 14 of 16. The validation
-  error rose to 5.62 (model 001: 5.20). The eye model tiles flyvis's filters onto the male eye's irregular columns,
-  and a weakly tuned cell like T5a behaves differently there than on flyvis's regular lattice. None of the lattice
-  stand-ins tried predicts it. Both rung 3 criteria the fine-tune passes are fitted, not predicted; looming would be
-  the real test.
 
 * **Rung 6 passes: the giant fiber relays to the jump and flight muscles like a fly's.** A connectome can't show
   electrical synapses, so brainfly adds the giant fiber's from the literature. They are one-way junctions onto its own
@@ -388,7 +405,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/ladder-dark.svg">
-  <img src="assets/ladder-light.svg" width="100%" alt="A ladder of nine rungs, from 1 at the bottom to 9 at the top. Rungs 1 (validated baseline), 2 (signs and modulators), 4 (central brain at rest) and 6 (gap junctions and proprioception) passed. Rungs 3 (eye and optic lobe) and 5 (nerve cord) are in progress, with what is done marked in red. Rung 7, body and muscles, is started. Rungs 8 and 9 are not started.">
+  <img src="assets/ladder-light.svg" width="100%" alt="A ladder of nine rungs, from 1 at the bottom to 9 at the top. Rungs 1 (validated baseline), 2 (signs and modulators), 3 (eye and optic lobe), 4 (central brain at rest) and 6 (gap junctions and proprioception) passed. Rung 5 (nerve cord) is in progress, with what is done marked in red. Rung 7, body and muscles, is started. Rungs 8 and 9 are not started.">
 </picture>
 
 `python assets/ladder.py` redraws it from the experiments' saved verdicts.
@@ -397,7 +414,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 |---|---|---|---|
 | 1. Validated baseline | Shiu et al.'s recipe on MaleCNS: raw synapse counts × one weight, silent at rest, 0.1 ms steps | sugar drives the proboscis motor neuron MN9, bitter and Ir94e inhibit it, the network stays stable, weight shuffles abolish it | **passed** on the sixth attempt (pre-registered, fresh seeds, null gated on scrambled wiring): stable, MN9 follows the sugar rate, bitter and Ir94e suppress it, and rewiring abolishes the route. It survives weight shuffles, so the route rests on which neurons connect |
 | 2. Signs and modulators | MaleCNS's consensus transmitters; dopamine, octopamine and serotonin taken out of fast excitation | rung 1 still passes and false positives stay near Shiu's 1% | **passed** (pre-registered, fresh seeds): rung 1 still passes with 260 transmitter signs corrected to their hemilineage's, and scrambled wiring lets sugar drive MN9 in 1 of 100 degree-preserving and 0 of 100 class-preserving rewirings (Shiu's null: 1 of 100). Glutamate's inhibitory sign is essential; the monoamines' removal from fast excitation changes nothing |
-| 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | in progress: flyvis on its own terms gets all 16 T4/T5 directions right, drives LPLC2 and the giant fiber, and carries a rotating drum to the steering neuron DNa02 with the right sign. With a flyvis model whose T2 responds to decrements, looming drives LC4 too, at peaks of 26 Hz, but that model gets 29 of 32 contrast polarities right, one short, and T5a's direction wrong. None of flyvis's 8 models with such a T2 gets more than 29. A first trained model (006 fine-tuned for T2) kept 31 polarities but lost 10 of the 16 directions. A second (000 with only T2 changed) kept every direction and made LC4 answer looms, but flipped two polarities and cost LPLC2 its looming response |
+| 3. Eye and optic lobe | a graded optic lobe with per-type parameters; the missing photoreceptor input filled in | contrast polarity for at least 30 of 32 cell types; T4/T5 direction selectivity; looming responses of tens of Hz | **passed** (pre-registered, fresh seed): flyvis's model 001, fine-tuned on its flow task with rung 3's direction test and the known polarities in the loss, gets 31 of 32 polarities and all 16 T4/T5 directions in both eyes, and a loom drives the loomed side's LC4 and LPLC2 to 25-29 Hz peaks. Its T2 answers light decrements as a real T2 does. Polarity and direction were fitted; looming was the test |
 | 4. Central brain | per-type properties and gains that let the whole brain rest like a fly's; homeostasis in the head-direction ring | a mean rate of 4 Hz or less with nothing running away; a head-direction bump like a fly's (above shuffled labels, settling in different places in different runs, visiting every heading, and drifting as slowly as a fly's in darkness); the rungs below still passing at rest | **passed** on the fifth attempt (pre-registered, fresh seeds, null gated on scrambled wiring): it rests at every measured rate with nothing running away, keeps rung 1's taste and the looming escape, and holds a fly-like bump (strength 0.67 against shuffles' 0.37, position entropy 0.96, resultants 0.38 and 0.47, D = 0.019 rad²/s) once each ring neuron scales its synapses from outside the ring. Two rewired brains rest as well, with no bump. FC is now the ladder's final hurdle (below) |
 | 5. Nerve cord | Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons, strong descending drive | DNg100 and DNb08 produce 7–15 Hz leg rhythms | failed once: on brainfly's own front-leg network, DNg100 drives 11.6-13.7 Hz leg rhythms that scrambled wiring abolishes, but DNb08's one rhythm runs at 18 Hz |
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | passed: 0.9 ms to the jump muscle and 1.4 to the flight muscle; the flight branch follows 40% of 250 Hz trains, as flies' does; without the gap junctions, neither branch answers. Leg sensors aren't in yet |
@@ -611,6 +628,10 @@ a sign that the approach is broken."
 | `experiments/rung3_t2.py` | Pre-registered: does model 006, fine-tuned so its T2 answers decrements, meet rung 3's criteria? | **Fail.** 31 of 32 polarities (pass), but only 6 of the 16 T4/T5 directions, and looms raise LC4 by under 1 Hz. The fine-tune reached far beyond T2, and 006 itself gets only 12 directions right. |
 | `experiments/flyvis_t2_pilot4.py`, `5`, `6` | Exploratory, not pre-registered: can fine-tuning only T2's own parameters and inputs give model 000's T2 a decrement response? | Yes, once T2's synapse onto itself stays fixed: freed, it lets T2 run away to flash responses in the hundreds. T2 then answers both flashes (1.9 and 0.9) and stays bounded. Because T2 is one of the flow decoder's inputs, the decoder has to be retrained with it; flyvis's validation error goes from 5.13 to 5.70. |
 | `experiments/rung3_t2_local.py` | Pre-registered: does model 000, with only its T2 fine-tuned, meet rung 3's criteria? | **Fail.** All 16 directions hold, and LC4 now answers looms (+8.2 Hz at gain 10, where 000's LC4 stays silent). But T5a and T5b flip polarity (28 of 32; 000 had 30, no margin), and LPLC2 loses the looming response it has with 000 (+0.7 Hz at gain 10, against +22.6), so no gain passes. Changing T2 trades LPLC2's looming response for LC4's. |
+| `experiments/rung3_001_pilot.py` | Exploratory, not pre-registered: can fine-tuning model 001 fix T5a's direction and a polarity while keeping its T2? Penalties protecting every polarity, every T4/T5 direction on flyvis's lattice, and T2 against a grey run | Closer, not robust: 30 of 32 polarities (Tm2 at -0.007 by flyvis's index) and 16 of 16 directions in the eye (T5a's DSI 0.02); validation error 5.31. |
+| `experiments/rung3_001_pilot2.py` | Exploratory, not pre-registered: the same with flyvis's polarity index matched exactly, edges at two speeds and a harder T5 margin | Worse: 30 of 32 (Tm2 wrong again) and 14 of 16, T5a wrong in the eye though right on the lattice (86% of its interior eye cells prefer back-to-front); validation error 5.62. No lattice stand-in tried predicts T5a in the eye. |
+| `experiments/rung3_001_pilot3.py` | Exploratory, not pre-registered: the same with the eye's own direction test in the loss (brainfly.eyetorch) and L2 left out of the polarity penalty | Works: 31 of 32 polarities, 16 of 16 directions (T5a's DSI 0.30), T2 answering both flashes, validation error 5.24. One seed; looming not measured. |
+| `experiments/rung3_001.py` | Rung 3, pre-registered: does model 001, fine-tuned by rung3_001_pilot3.py's procedure on a fresh seed, meet all of rung 3's criteria? | **Pass**, all three. POLARITY 31 of 32 (L2 wrong); DIRECTION 16 of 16 in both eyes (T5a 0.21, T5b-d 0.13-0.22, T4 0.70-0.93); LOOMING confirmed at gain 1: the loomed side's LC4 and LPLC2 peak at 25.4-28.9 Hz, the giant fiber rises 8 Hz, the far side stays put. T2 answers light (1.4) and dark (3.0); validation error 5.27 (model 001: 5.20). Polarity and direction were in the loss; looming wasn't. |
 | `experiments/vnc_rhythm.py` | Exploratory, not pre-registered: does Pugliese et al.'s male CNS nerve cord model, rerun in brainfly, give leg rhythms? | Yes for DNg100: rhythmic leg motor neurons at 12-13 Hz in 30 of 32 replicates, and none in a rewired network, where 96 motor neurons run away instead. At DNg100's drive, DNb08 is rhythmic in some replicates but fast (16-18 Hz); At their gentler drives, DNb08 hardly drives rhythm; one DNb08 neuron is rhythmic at 16 Hz (`vnc_rhythm_dnb08.py`). |
 | `experiments/vnc_own.py` | Exploratory, not pre-registered: does the rhythm survive on brainfly's own copy of the network? | Yes: brainfly's counts keep 99.8% of their connections, all with the same sign, and DNg100 is rhythmic in 16 of 16 replicates on each side (12-13 Hz). With brainfly's synapse-count size proxy in place of neuron volumes there is no rhythm: excitability has to scale with real size. |
 | `experiments/escape_relay.py` | Exploratory, not pre-registered: the constants rung 6's test fixes: quieting the jump and flight motor neurons at rest, the junction sizes, PSI's depression | The motor neurons had to be lowered 29-58 mV to stay silent against the resting nerve cord. Each now resets 5 mV below its own lowered rest; with the usual reset, the flight branch followed every spike whatever the depression. PSI's depression (0.22 left per spike, 20 ms recovery) gives 87% following at 100 Hz. |
@@ -840,6 +861,7 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/build.py`, `data.py` | building the brain files from MaleCNS v1.0, or fetching a prebuilt copy |
 | `brainfly/eye2d.py` | a 2-D compound eye: each photoreceptor looks in its measured direction, from a micro-CT eye map; looming disks and moving edges |
 | `brainfly/optic.py` | `FlyvisNative`: flyvis's own network tiled onto the male eye, feeding `FlyBrain`; `FlyvisOpticLobe`, the earlier port onto MaleCNS wiring |
+| `brainfly/eyetorch.py` | `FlyvisNative`'s eye in PyTorch, weighted by a flyvis model's own parameters so that rung 3's direction test can be trained on; within 0.0004 of the numpy version |
 | `brainfly/body.py` | NeuroMechFly (FlyGym 2.1) walking in a virtual-reality arena, and `Loop`, which steps eyes, optic lobe, brain and body together (`pip install "brainfly[body]"`) |
 | `brainfly/eyes.py` | the original 1-D eye, kept so the early eye experiments still run |
 | `experiments/shiu_*.py` | rung 1: the pre-registered attempts and the runaway follow-up, with results in `.json` next to them |

@@ -1,0 +1,411 @@
+{
+ "criteria": "Rung 3, pre-registered: does flyvis's model 001, fine-tuned with rung 3's direction test and the known polarities in\nits loss, meet all of rung 3's criteria on a fresh seed?\n\nrung3_verdict.py: model 001, whose T2 answers light decrements as a real T2 does (Keles et al. 2020) and with which\nlooming reaches LC4 (eyepath_native_t2.py), got 29 of 32 polarities and T5a's direction wrong. Two pre-registered\nfine-tunes that protected only T2 failed: model 006's broke directions and looming (rung3_t2.py), model 000's broke\npolarities and LPLC2's looming (rung3_t2_local.py). Exploratory pilots then fine-tuned 001 with rung 3's measures\nprotected. Protecting directions on flyvis's own lattice doesn't predict them in the eye, where rung 3 measures them\n(rung3_001_pilot.py, rung3_001_pilot2.py). brainfly.eyetorch puts the eye's own direction test into the loss, and\nrung3_001_pilot3.py (seed 0) then reached on rung 3's measures 31 of 32 polarities and 16 of 16 directions (T5a's\nDSI 0.30), with T2 answering both flashes and flyvis's validation error 5.24 (model 001: 5.20). Its looming wasn't\nmeasured.\nModel: rung3_001_pilot3.py's procedure exactly (rung3_001_pilot3.train), with seed 1 (the pilot used seed 0): model\n001; flyvis's flow task on augmented Sintel batches of 4; Adam on network and decoder at learning rate 1e-5 for 1,500\niterations. Every fourth iteration adds, at four times its weight:\n- the eye's own direction test through brainfly.eyetorch (right eye, dt 0.02 s; margins 0.1 for T5 and 0.2 for T4;\n  weight 300);\n- flyvis's flash response index for the 32 known types except L2 (margin 0.05, weight 500);\n- T2's answers to light and dark, each read against a grey run (weight 300).\nSaved as flyvis model flow/9014/000.\nTests, rung 3's criteria as rung3_verdict.py and rung3_t2.py read them:\n  POLARITY   flyvis's flash response index (rung3_verdict.polarity) has the known sign for at least 30 of the 32\n             types flyvis's ground truth gives one\n  DIRECTION  flyvis_native.py's direction-selectivity check with this model tiled onto the male eye (dt 0.002 s, both\n             eyes): all 8 T4/T5 subtypes prefer their expected direction in both eyes, 16 of 16\n  LOOMING    eyepath_native.py's protocol with this model: the gain sweep {0.3, 1, 3, 10} on seed 1 (6 flies), the\n             lowest gain passing REST, RELAY and SIDE confirmed on seed 2 (8 flies). In the confirmation, the fast loom\n             drives the loomed side's LC4 and LPLC2 to peaks of at least 20 Hz, for looms on either side. No\n             confirmed gain means no LOOMING.\nPass: all three.\nWhat it tests: POLARITY and DIRECTION are in the loss (the polarity index on flyvis's lattice; the direction test at\ndt 0.02 s in one eye). Passing them shows that the fitting carries over to a new seed and to rung 3's exact measures;\nit predicts nothing. LOOMING played no part in the fine-tune. It is the test of whether the fine-tuned eye still\ncarries a loom to LC4, LPLC2 and the giant fiber as a fly's does.\nReported: T2 as flyvis_screen.py measures it (trained on); flyvis's validation error; the T5s' responses in the eye;\nthe polarities that changed from model 001's.\n\n    python experiments/rung3_001.py            (writes experiments/rung3_001.json; the model to flyvis's results)\n",
+ "start": "flow/0000/001",
+ "model": "flow/9014/000",
+ "seed": 1,
+ "training": {
+  "val_epe_start": 5.1964,
+  "val_epe": 5.2749,
+  "stand_ins_at_end": {
+   "eye_correct": 8,
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "t2_on": 1.408,
+   "t2_off": 3.023
+  }
+ },
+ "t2": {
+  "t2_on": 1.405,
+  "t2_off": 3.044,
+  "T2": true
+ },
+ "polarity": {
+  "correct": 31,
+  "of": 32,
+  "wrong": [
+   "L2"
+  ],
+  "changed_from_001": {
+   "R3": {
+    "001": -0.08,
+    "now": 0.05,
+    "correct_now": true
+   },
+   "Tm2": {
+    "001": 0.128,
+    "now": -0.056,
+    "correct_now": true
+   }
+  },
+  "types": {
+   "R1": {
+    "fri": 0.472,
+    "known": 1,
+    "correct": true
+   },
+   "R2": {
+    "fri": 0.305,
+    "known": 1,
+    "correct": true
+   },
+   "R3": {
+    "fri": 0.05,
+    "known": 1,
+    "correct": true
+   },
+   "R4": {
+    "fri": 0.452,
+    "known": 1,
+    "correct": true
+   },
+   "R5": {
+    "fri": 0.446,
+    "known": 1,
+    "correct": true
+   },
+   "R6": {
+    "fri": 0.112,
+    "known": 1,
+    "correct": true
+   },
+   "R7": {
+    "fri": 0.179,
+    "known": 1,
+    "correct": true
+   },
+   "R8": {
+    "fri": 0.198,
+    "known": 1,
+    "correct": true
+   },
+   "L1": {
+    "fri": -0.277,
+    "known": -1,
+    "correct": true
+   },
+   "L2": {
+    "fri": 0.224,
+    "known": -1,
+    "correct": false
+   },
+   "L3": {
+    "fri": -0.066,
+    "known": -1,
+    "correct": true
+   },
+   "L4": {
+    "fri": -0.595,
+    "known": -1,
+    "correct": true
+   },
+   "L5": {
+    "fri": 0.276,
+    "known": 1,
+    "correct": true
+   },
+   "C3": {
+    "fri": 0.318,
+    "known": 1,
+    "correct": true
+   },
+   "CT1(Lo1)": {
+    "fri": -0.231,
+    "known": -1,
+    "correct": true
+   },
+   "CT1(M10)": {
+    "fri": 0.209,
+    "known": 1,
+    "correct": true
+   },
+   "Mi1": {
+    "fri": 0.301,
+    "known": 1,
+    "correct": true
+   },
+   "Mi4": {
+    "fri": 0.391,
+    "known": 1,
+    "correct": true
+   },
+   "Mi9": {
+    "fri": -0.239,
+    "known": -1,
+    "correct": true
+   },
+   "T4a": {
+    "fri": 0.181,
+    "known": 1,
+    "correct": true
+   },
+   "T4b": {
+    "fri": 0.143,
+    "known": 1,
+    "correct": true
+   },
+   "T4c": {
+    "fri": 0.233,
+    "known": 1,
+    "correct": true
+   },
+   "T4d": {
+    "fri": 0.179,
+    "known": 1,
+    "correct": true
+   },
+   "T5a": {
+    "fri": -0.065,
+    "known": -1,
+    "correct": true
+   },
+   "T5b": {
+    "fri": -0.167,
+    "known": -1,
+    "correct": true
+   },
+   "T5c": {
+    "fri": -0.312,
+    "known": -1,
+    "correct": true
+   },
+   "T5d": {
+    "fri": -0.308,
+    "known": -1,
+    "correct": true
+   },
+   "Tm1": {
+    "fri": -0.277,
+    "known": -1,
+    "correct": true
+   },
+   "Tm2": {
+    "fri": -0.056,
+    "known": -1,
+    "correct": true
+   },
+   "Tm3": {
+    "fri": 0.539,
+    "known": 1,
+    "correct": true
+   },
+   "Tm4": {
+    "fri": -0.113,
+    "known": -1,
+    "correct": true
+   },
+   "Tm9": {
+    "fri": -0.186,
+    "known": -1,
+    "correct": true
+   }
+  }
+ },
+ "POLARITY": true,
+ "direction_selectivity": {
+  "R T4a": {
+   "responses": {
+    "front-to-back": 1.698,
+    "back-to-front": 0.061,
+    "upward": 0.28,
+    "downward": 0.168
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.93,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "R T4b": {
+   "responses": {
+    "front-to-back": 0.241,
+    "back-to-front": 1.339,
+    "upward": 0.384,
+    "downward": 0.376
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.695,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "R T4c": {
+   "responses": {
+    "front-to-back": 0.347,
+    "back-to-front": 0.355,
+    "upward": 1.325,
+    "downward": 0.07
+   },
+   "preferred": "upward",
+   "dsi": 0.9,
+   "expected": "upward",
+   "correct": true
+  },
+  "R T4d": {
+   "responses": {
+    "front-to-back": 0.567,
+    "back-to-front": 0.238,
+    "upward": 0.061,
+    "downward": 1.29
+   },
+   "preferred": "downward",
+   "dsi": 0.91,
+   "expected": "downward",
+   "correct": true
+  },
+  "R T5a": {
+   "responses": {
+    "front-to-back": 0.074,
+    "back-to-front": 0.048,
+    "upward": 0.059,
+    "downward": 0.011
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.213,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "R T5b": {
+   "responses": {
+    "front-to-back": 0.532,
+    "back-to-front": 0.701,
+    "upward": 0.572,
+    "downward": 0.554
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.138,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "R T5c": {
+   "responses": {
+    "front-to-back": 0.83,
+    "back-to-front": 0.8,
+    "upward": 1.118,
+    "downward": 0.708
+   },
+   "preferred": "upward",
+   "dsi": 0.224,
+   "expected": "upward",
+   "correct": true
+  },
+  "R T5d": {
+   "responses": {
+    "front-to-back": 0.581,
+    "back-to-front": 0.568,
+    "upward": 0.552,
+    "downward": 0.709
+   },
+   "preferred": "downward",
+   "dsi": 0.125,
+   "expected": "downward",
+   "correct": true
+  },
+  "L T4a": {
+   "responses": {
+    "front-to-back": 1.702,
+    "back-to-front": 0.06,
+    "upward": 0.277,
+    "downward": 0.165
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.932,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "L T4b": {
+   "responses": {
+    "front-to-back": 0.24,
+    "back-to-front": 1.34,
+    "upward": 0.381,
+    "downward": 0.374
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.697,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "L T4c": {
+   "responses": {
+    "front-to-back": 0.342,
+    "back-to-front": 0.352,
+    "upward": 1.326,
+    "downward": 0.068
+   },
+   "preferred": "upward",
+   "dsi": 0.902,
+   "expected": "upward",
+   "correct": true
+  },
+  "L T4d": {
+   "responses": {
+    "front-to-back": 0.564,
+    "back-to-front": 0.234,
+    "upward": 0.061,
+    "downward": 1.293
+   },
+   "preferred": "downward",
+   "dsi": 0.91,
+   "expected": "downward",
+   "correct": true
+  },
+  "L T5a": {
+   "responses": {
+    "front-to-back": 0.075,
+    "back-to-front": 0.048,
+    "upward": 0.059,
+    "downward": 0.012
+   },
+   "preferred": "front-to-back",
+   "dsi": 0.212,
+   "expected": "front-to-back",
+   "correct": true
+  },
+  "L T5b": {
+   "responses": {
+    "front-to-back": 0.528,
+    "back-to-front": 0.698,
+    "upward": 0.568,
+    "downward": 0.55
+   },
+   "preferred": "back-to-front",
+   "dsi": 0.138,
+   "expected": "back-to-front",
+   "correct": true
+  },
+  "L T5c": {
+   "responses": {
+    "front-to-back": 0.829,
+    "back-to-front": 0.799,
+    "upward": 1.116,
+    "downward": 0.708
+   },
+   "preferred": "upward",
+   "dsi": 0.224,
+   "expected": "upward",
+   "correct": true
+  },
+  "L T5d": {
+   "responses": {
+    "front-to-back": 0.581,
+    "back-to-front": 0.568,
+    "upward": 0.552,
+    "downward": 0.709
+   },
+   "preferred": "downward",
+   "dsi": 0.125,
+   "expected": "downward",
+   "correct": true
+  }
+ },
+ "DIRECTION": true,
+ "looming_gain": 1.0,
+ "looming_peaks_hz": {
+  "fastL LC4 L": 26.0,
+  "fastL LPLC2 L": 25.9,
+  "fastR LC4 R": 28.9,
+  "fastR LPLC2 R": 25.4
+ },
+ "LOOMING": true,
+ "pass": true,
+ "seconds": 3458
+}
