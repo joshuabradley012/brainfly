@@ -1,0 +1,1387 @@
+{
+ "question": "Exploratory, not pre-registered: fine-tuning flyvis's model 001 with rung 3's direction test itself in the loss.\n\nrung3_001_pilot.py and rung3_001_pilot2.py protected T4/T5 directions on flyvis's own lattice, and T5a's direction in\nthe eye (FlyvisNative, the model tiled onto the male eye, where rung 3 measures it) came out right by 0.02 in one and\nwrong in the other. No lattice stand-in tried predicts T5a in the eye. brainfly.eyetorch now runs the eye's network in\nPyTorch with the flyvis model's own parameters (matching FlyvisNative within 0.0004), so the direction test can be\ntrained on directly.\nModel: flow/0000/001, fine-tuned with brainfly.vistrain.fine_tune (flyvis's flow task on augmented Sintel batches of 4,\nAdam on network and decoder, learning rate 1e-5, seed 0) for 1,500 iterations. Every fourth iteration adds, at four\ntimes its weight:\n  direction  flyvis_native.direction_selectivity's edges (40 deg/s, ON for T4, OFF for T5) across the right eye at\n             dt 0.02 s (where the test gives the same verdicts as at its 0.002), through brainfly.eyetorch. For each\n             T4/T5 subtype, the mean over its cells of each sweep's peak change of relu(V) from grey's rest, r_e for\n             its expected direction against each other direction r_o: relu(m - (r_e - r_o) / (r_e + r_o)), m 0.1 for\n             T5 and 0.2 for T4. Weight 300.\n  polarity   flyvis's flash response index exactly as rung3_001_pilot2.py computes it (Flashes at dt 0.005 s after a\n             0.25 s lead-in), relu(0.05 - known sign x index) for the 32 known types except L2, whose sign is far off\n             (+0.26) and whose push in pilot 2 came with the validation error rising to 5.62. Rung 3 asks 30: R3 and\n             Tm2, near zero in model 001, would make 31. Weight 500.\n  T2         from the same flashes against a grey-only run: relu(0.5 - on) + relu(0.5 - off) +\n             relu(0.4 max(on, off) - min(on, off)). Weight 300.\nLogged every 100 iterations: the losses, the eye's direction verdict (right eye, dt 0.02), the polarity count by the\nindex and T2. Saved as flow/9013/000; measured after training as rung 3 measures it (polarity, direction in both\neyes at dt 0.002, T2) with flyvis's validation error (model 001: 5.20).\n\n    python experiments/rung3_001_pilot3.py      (writes experiments/rung3_001_pilot3.json; the model to flyvis's results)\n",
+ "start": {
+  "eye_correct": 7,
+  "eye": {
+   "T4a": {
+    "correct": true,
+    "dsi_expected": 0.922,
+    "r_expected": 2.008,
+    "r_best_other": 0.405
+   },
+   "T4b": {
+    "correct": true,
+    "dsi_expected": 0.728,
+    "r_expected": 1.78,
+    "r_best_other": 0.593
+   },
+   "T4c": {
+    "correct": true,
+    "dsi_expected": 0.92,
+    "r_expected": 1.827,
+    "r_best_other": 0.533
+   },
+   "T4d": {
+    "correct": true,
+    "dsi_expected": 0.78,
+    "r_expected": 1.849,
+    "r_best_other": 0.762
+   },
+   "T5a": {
+    "correct": false,
+    "dsi_expected": 0.002,
+    "r_expected": 0.19,
+    "r_best_other": 0.211
+   },
+   "T5b": {
+    "correct": true,
+    "dsi_expected": 0.175,
+    "r_expected": 0.743,
+    "r_best_other": 0.699
+   },
+   "T5c": {
+    "correct": true,
+    "dsi_expected": 0.222,
+    "r_expected": 1.16,
+    "r_best_other": 0.91
+   },
+   "T5d": {
+    "correct": true,
+    "dsi_expected": 0.043,
+    "r_expected": 0.797,
+    "r_best_other": 0.743
+   }
+  },
+  "polarity_correct": 29,
+  "polarity_wrong": [
+   "R3",
+   "L2",
+   "Tm2"
+  ],
+  "polarity_index": {
+   "R3": -0.08,
+   "R6": 0.03,
+   "L2": 0.269,
+   "L3": -0.096,
+   "T5a": -0.055,
+   "Tm2": 0.13
+  },
+  "t2_on": 1.244,
+  "t2_off": 2.774,
+  "val_epe": 5.1964
+ },
+ "trace": [
+  {
+   "iteration": 100,
+   "flow_loss": 1277.74,
+   "penalty": 218.0113,
+   "seconds": 182,
+   "parts": {
+    "direction": 0.1501665711402893,
+    "polarity": 0.26733627915382385,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.931,
+     "r_expected": 1.909,
+     "r_best_other": 0.327
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.714,
+     "r_expected": 1.804,
+     "r_best_other": 0.656
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.921,
+     "r_expected": 1.816,
+     "r_best_other": 0.513
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.825,
+     "r_expected": 1.828,
+     "r_best_other": 0.778
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.199,
+     "r_expected": 0.143,
+     "r_best_other": 0.118
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.185,
+     "r_expected": 0.676,
+     "r_best_other": 0.598
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.244,
+     "r_expected": 1.095,
+     "r_best_other": 0.826
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.062,
+     "r_expected": 0.77,
+     "r_best_other": 0.684
+    }
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.051,
+    "R6": 0.052,
+    "L2": 0.266,
+    "L3": -0.084,
+    "T5a": -0.061,
+    "Tm2": 0.116
+   },
+   "t2_on": 1.234,
+   "t2_off": 2.76
+  },
+  {
+   "iteration": 200,
+   "flow_loss": 1226.85,
+   "penalty": 157.2803,
+   "seconds": 362,
+   "parts": {
+    "direction": 0.052296243607997894,
+    "polarity": 0.24678902328014374,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.929,
+     "r_expected": 1.898,
+     "r_best_other": 0.329
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.717,
+     "r_expected": 1.762,
+     "r_best_other": 0.626
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.92,
+     "r_expected": 1.768,
+     "r_best_other": 0.501
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.874,
+     "r_expected": 1.777,
+     "r_best_other": 0.745
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.276,
+     "r_expected": 0.16,
+     "r_best_other": 0.116
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.198,
+     "r_expected": 0.598,
+     "r_best_other": 0.493
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.245,
+     "r_expected": 1.002,
+     "r_best_other": 0.751
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.074,
+     "r_expected": 0.748,
+     "r_best_other": 0.644
+    }
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.037,
+    "R6": 0.059,
+    "L2": 0.256,
+    "L3": -0.079,
+    "T5a": -0.096,
+    "Tm2": 0.102
+   },
+   "t2_on": 1.244,
+   "t2_off": 2.729
+  },
+  {
+   "iteration": 300,
+   "flow_loss": 1208.51,
+   "penalty": 119.3554,
+   "seconds": 538,
+   "parts": {
+    "direction": 0.011787377297878265,
+    "polarity": 0.20115958154201508,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.932,
+     "r_expected": 1.857,
+     "r_best_other": 0.302
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.706,
+     "r_expected": 1.71,
+     "r_best_other": 0.606
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.918,
+     "r_expected": 1.718,
+     "r_best_other": 0.482
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.892,
+     "r_expected": 1.754,
+     "r_best_other": 0.73
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.232,
+     "r_expected": 0.157,
+     "r_best_other": 0.126
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.188,
+     "r_expected": 0.637,
+     "r_best_other": 0.521
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.244,
+     "r_expected": 1.044,
+     "r_best_other": 0.771
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.1,
+     "r_expected": 0.727,
+     "r_best_other": 0.606
+    }
+   },
+   "polarity_correct": 29,
+   "polarity_wrong": [
+    "R3",
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": -0.019,
+    "R6": 0.069,
+    "L2": 0.256,
+    "L3": -0.076,
+    "T5a": -0.082,
+    "Tm2": 0.081
+   },
+   "t2_on": 1.345,
+   "t2_off": 2.783
+  },
+  {
+   "iteration": 400,
+   "flow_loss": 1221.18,
+   "penalty": 88.0859,
+   "seconds": 709,
+   "parts": {
+    "direction": 0.0006155297160148621,
+    "polarity": 0.1487123966217041,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.933,
+     "r_expected": 1.827,
+     "r_best_other": 0.288
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.701,
+     "r_expected": 1.671,
+     "r_best_other": 0.594
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.917,
+     "r_expected": 1.668,
+     "r_best_other": 0.469
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.904,
+     "r_expected": 1.71,
+     "r_best_other": 0.716
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.284,
+     "r_expected": 0.125,
+     "r_best_other": 0.093
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.184,
+     "r_expected": 0.648,
+     "r_best_other": 0.53
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.235,
+     "r_expected": 1.119,
+     "r_best_other": 0.813
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.106,
+     "r_expected": 0.714,
+     "r_best_other": 0.585
+    }
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.005,
+    "R6": 0.085,
+    "L2": 0.246,
+    "L3": -0.073,
+    "T5a": -0.088,
+    "Tm2": 0.053
+   },
+   "t2_on": 1.312,
+   "t2_off": 2.864
+  },
+  {
+   "iteration": 500,
+   "flow_loss": 1196.0,
+   "penalty": 57.758,
+   "seconds": 880,
+   "parts": {
+    "direction": 0.0008281469345092773,
+    "polarity": 0.07916378974914551,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.934,
+     "r_expected": 1.776,
+     "r_best_other": 0.265
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.696,
+     "r_expected": 1.63,
+     "r_best_other": 0.581
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.915,
+     "r_expected": 1.597,
+     "r_best_other": 0.449
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.909,
+     "r_expected": 1.65,
+     "r_best_other": 0.707
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.257,
+     "r_expected": 0.094,
+     "r_best_other": 0.062
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.168,
+     "r_expected": 0.649,
+     "r_best_other": 0.532
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.22,
+     "r_expected": 1.179,
+     "r_best_other": 0.847
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.102,
+     "r_expected": 0.711,
+     "r_best_other": 0.582
+    }
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.045,
+    "R6": 0.117,
+    "L2": 0.235,
+    "L3": -0.071,
+    "T5a": -0.085,
+    "Tm2": 0.024
+   },
+   "t2_on": 1.266,
+   "t2_off": 2.925
+  },
+  {
+   "iteration": 600,
+   "flow_loss": 1276.52,
+   "penalty": 32.8398,
+   "seconds": 1051,
+   "parts": {
+    "direction": 0.016180336475372314,
+    "polarity": 0.05328650772571564,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.936,
+     "r_expected": 1.733,
+     "r_best_other": 0.253
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.683,
+     "r_expected": 1.563,
+     "r_best_other": 0.549
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.911,
+     "r_expected": 1.55,
+     "r_best_other": 0.436
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.91,
+     "r_expected": 1.597,
+     "r_best_other": 0.69
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.233,
+     "r_expected": 0.117,
+     "r_best_other": 0.095
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.17,
+     "r_expected": 0.689,
+     "r_best_other": 0.563
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.216,
+     "r_expected": 1.207,
+     "r_best_other": 0.871
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.113,
+     "r_expected": 0.707,
+     "r_best_other": 0.578
+    }
+   },
+   "polarity_correct": 30,
+   "polarity_wrong": [
+    "L2",
+    "Tm2"
+   ],
+   "polarity_index": {
+    "R3": 0.052,
+    "R6": 0.12,
+    "L2": 0.239,
+    "L3": -0.068,
+    "T5a": -0.062,
+    "Tm2": 0.003
+   },
+   "t2_on": 1.342,
+   "t2_off": 3.009
+  },
+  {
+   "iteration": 700,
+   "flow_loss": 1201.49,
+   "penalty": 21.7577,
+   "seconds": 1223,
+   "parts": {
+    "direction": 0.0,
+    "polarity": 0.028401745483279228,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.933,
+     "r_expected": 1.726,
+     "r_best_other": 0.262
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.68,
+     "r_expected": 1.518,
+     "r_best_other": 0.528
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.909,
+     "r_expected": 1.494,
+     "r_best_other": 0.421
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.912,
+     "r_expected": 1.545,
+     "r_best_other": 0.671
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.276,
+     "r_expected": 0.113,
+     "r_best_other": 0.08
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.174,
+     "r_expected": 0.697,
+     "r_best_other": 0.569
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.204,
+     "r_expected": 1.188,
+     "r_best_other": 0.876
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.114,
+     "r_expected": 0.714,
+     "r_best_other": 0.583
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.05,
+    "R6": 0.117,
+    "L2": 0.237,
+    "L3": -0.065,
+    "T5a": -0.061,
+    "Tm2": -0.022
+   },
+   "t2_on": 1.285,
+   "t2_off": 3.092
+  },
+  {
+   "iteration": 800,
+   "flow_loss": 1210.28,
+   "penalty": 10.8543,
+   "seconds": 1393,
+   "parts": {
+    "direction": 0.0003238767385482788,
+    "polarity": 0.0074072182178497314,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.933,
+     "r_expected": 1.704,
+     "r_best_other": 0.26
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.674,
+     "r_expected": 1.462,
+     "r_best_other": 0.499
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.907,
+     "r_expected": 1.451,
+     "r_best_other": 0.408
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.912,
+     "r_expected": 1.499,
+     "r_best_other": 0.659
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.199,
+     "r_expected": 0.113,
+     "r_best_other": 0.087
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.178,
+     "r_expected": 0.714,
+     "r_best_other": 0.582
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.197,
+     "r_expected": 1.18,
+     "r_best_other": 0.882
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.119,
+     "r_expected": 0.723,
+     "r_best_other": 0.592
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.05,
+    "R6": 0.115,
+    "L2": 0.237,
+    "L3": -0.062,
+    "T5a": -0.056,
+    "Tm2": -0.044
+   },
+   "t2_on": 1.348,
+   "t2_off": 3.14
+  },
+  {
+   "iteration": 900,
+   "flow_loss": 1264.58,
+   "penalty": 1.54,
+   "seconds": 1564,
+   "parts": {
+    "direction": 0.0025360658764839172,
+    "polarity": 0.0,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.932,
+     "r_expected": 1.738,
+     "r_best_other": 0.28
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.679,
+     "r_expected": 1.493,
+     "r_best_other": 0.527
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.908,
+     "r_expected": 1.455,
+     "r_best_other": 0.425
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.914,
+     "r_expected": 1.528,
+     "r_best_other": 0.659
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.242,
+     "r_expected": 0.081,
+     "r_best_other": 0.05
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.178,
+     "r_expected": 0.684,
+     "r_best_other": 0.554
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.192,
+     "r_expected": 1.139,
+     "r_best_other": 0.857
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.104,
+     "r_expected": 0.731,
+     "r_best_other": 0.601
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.053,
+    "R6": 0.117,
+    "L2": 0.231,
+    "L3": -0.062,
+    "T5a": -0.081,
+    "Tm2": -0.05
+   },
+   "t2_on": 1.421,
+   "t2_off": 3.149
+  },
+  {
+   "iteration": 1000,
+   "flow_loss": 1244.43,
+   "penalty": 0.5635,
+   "seconds": 1735,
+   "parts": {
+    "direction": 0.0,
+    "polarity": 0.0,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.933,
+     "r_expected": 1.728,
+     "r_best_other": 0.277
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.674,
+     "r_expected": 1.464,
+     "r_best_other": 0.508
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.907,
+     "r_expected": 1.428,
+     "r_best_other": 0.409
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.911,
+     "r_expected": 1.491,
+     "r_best_other": 0.652
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.29,
+     "r_expected": 0.111,
+     "r_best_other": 0.072
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.175,
+     "r_expected": 0.706,
+     "r_best_other": 0.574
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.201,
+     "r_expected": 1.167,
+     "r_best_other": 0.873
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.117,
+     "r_expected": 0.718,
+     "r_best_other": 0.585
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.053,
+    "R6": 0.116,
+    "L2": 0.236,
+    "L3": -0.062,
+    "T5a": -0.066,
+    "Tm2": -0.054
+   },
+   "t2_on": 1.464,
+   "t2_off": 3.154
+  },
+  {
+   "iteration": 1100,
+   "flow_loss": 1247.79,
+   "penalty": 0.0026,
+   "seconds": 1905,
+   "parts": {
+    "direction": 0.0,
+    "polarity": 0.00013159215450286865,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.932,
+     "r_expected": 1.723,
+     "r_best_other": 0.274
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.676,
+     "r_expected": 1.45,
+     "r_best_other": 0.49
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.907,
+     "r_expected": 1.423,
+     "r_best_other": 0.402
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.91,
+     "r_expected": 1.481,
+     "r_best_other": 0.652
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.221,
+     "r_expected": 0.112,
+     "r_best_other": 0.077
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.183,
+     "r_expected": 0.711,
+     "r_best_other": 0.579
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.207,
+     "r_expected": 1.197,
+     "r_best_other": 0.896
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.122,
+     "r_expected": 0.716,
+     "r_best_other": 0.585
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.05,
+    "R6": 0.114,
+    "L2": 0.238,
+    "L3": -0.062,
+    "T5a": -0.055,
+    "Tm2": -0.053
+   },
+   "t2_on": 1.45,
+   "t2_off": 3.15
+  },
+  {
+   "iteration": 1200,
+   "flow_loss": 1235.02,
+   "penalty": 0.0115,
+   "seconds": 2076,
+   "parts": {
+    "direction": 0.0,
+    "polarity": 0.0,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.932,
+     "r_expected": 1.739,
+     "r_best_other": 0.283
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.682,
+     "r_expected": 1.458,
+     "r_best_other": 0.488
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.906,
+     "r_expected": 1.433,
+     "r_best_other": 0.406
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.907,
+     "r_expected": 1.492,
+     "r_best_other": 0.652
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.216,
+     "r_expected": 0.106,
+     "r_best_other": 0.075
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.186,
+     "r_expected": 0.705,
+     "r_best_other": 0.572
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.208,
+     "r_expected": 1.187,
+     "r_best_other": 0.89
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.123,
+     "r_expected": 0.714,
+     "r_best_other": 0.584
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.051,
+    "R6": 0.115,
+    "L2": 0.237,
+    "L3": -0.062,
+    "T5a": -0.053,
+    "Tm2": -0.052
+   },
+   "t2_on": 1.428,
+   "t2_off": 3.13
+  },
+  {
+   "iteration": 1300,
+   "flow_loss": 1266.83,
+   "penalty": 0.0092,
+   "seconds": 2247,
+   "parts": {
+    "direction": 0.0,
+    "polarity": 0.0,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.931,
+     "r_expected": 1.751,
+     "r_best_other": 0.289
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.686,
+     "r_expected": 1.466,
+     "r_best_other": 0.488
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.906,
+     "r_expected": 1.443,
+     "r_best_other": 0.412
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.905,
+     "r_expected": 1.503,
+     "r_best_other": 0.653
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.22,
+     "r_expected": 0.108,
+     "r_best_other": 0.08
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.189,
+     "r_expected": 0.701,
+     "r_best_other": 0.568
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.21,
+     "r_expected": 1.181,
+     "r_best_other": 0.887
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.122,
+     "r_expected": 0.715,
+     "r_best_other": 0.584
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.051,
+    "R6": 0.114,
+    "L2": 0.236,
+    "L3": -0.063,
+    "T5a": -0.055,
+    "Tm2": -0.05
+   },
+   "t2_on": 1.401,
+   "t2_off": 3.123
+  },
+  {
+   "iteration": 1400,
+   "flow_loss": 1247.62,
+   "penalty": 0.0068,
+   "seconds": 2418,
+   "parts": {
+    "direction": 0.0,
+    "polarity": 0.0,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.931,
+     "r_expected": 1.743,
+     "r_best_other": 0.281
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.68,
+     "r_expected": 1.495,
+     "r_best_other": 0.512
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.908,
+     "r_expected": 1.444,
+     "r_best_other": 0.41
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.902,
+     "r_expected": 1.502,
+     "r_best_other": 0.656
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.242,
+     "r_expected": 0.108,
+     "r_best_other": 0.081
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.172,
+     "r_expected": 0.706,
+     "r_best_other": 0.572
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.21,
+     "r_expected": 1.168,
+     "r_best_other": 0.879
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.12,
+     "r_expected": 0.711,
+     "r_best_other": 0.58
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.052,
+    "R6": 0.116,
+    "L2": 0.234,
+    "L3": -0.063,
+    "T5a": -0.055,
+    "Tm2": -0.052
+   },
+   "t2_on": 1.351,
+   "t2_off": 3.123
+  },
+  {
+   "iteration": 1500,
+   "flow_loss": 1238.59,
+   "penalty": 0.7086,
+   "seconds": 2589,
+   "parts": {
+    "direction": 0.0005352497100830078,
+    "polarity": 0.008341968059539795,
+    "t2": 0.0
+   },
+   "eye_correct": 8,
+   "eye": {
+    "T4a": {
+     "correct": true,
+     "dsi_expected": 0.931,
+     "r_expected": 1.822,
+     "r_best_other": 0.329
+    },
+    "T4b": {
+     "correct": true,
+     "dsi_expected": 0.688,
+     "r_expected": 1.532,
+     "r_best_other": 0.53
+    },
+    "T4c": {
+     "correct": true,
+     "dsi_expected": 0.909,
+     "r_expected": 1.469,
+     "r_best_other": 0.437
+    },
+    "T4d": {
+     "correct": true,
+     "dsi_expected": 0.91,
+     "r_expected": 1.571,
+     "r_best_other": 0.652
+    },
+    "T5a": {
+     "correct": true,
+     "dsi_expected": 0.304,
+     "r_expected": 0.095,
+     "r_best_other": 0.051
+    },
+    "T5b": {
+     "correct": true,
+     "dsi_expected": 0.196,
+     "r_expected": 0.678,
+     "r_best_other": 0.543
+    },
+    "T5c": {
+     "correct": true,
+     "dsi_expected": 0.204,
+     "r_expected": 1.102,
+     "r_best_other": 0.836
+    },
+    "T5d": {
+     "correct": true,
+     "dsi_expected": 0.11,
+     "r_expected": 0.702,
+     "r_best_other": 0.575
+    }
+   },
+   "polarity_correct": 31,
+   "polarity_wrong": [
+    "L2"
+   ],
+   "polarity_index": {
+    "R3": 0.054,
+    "R6": 0.117,
+    "L2": 0.234,
+    "L3": -0.065,
+    "T5a": -0.077,
+    "Tm2": -0.042
+   },
+   "t2_on": 1.598,
+   "t2_off": 3.058
+  }
+ ],
+ "end": {
+  "eye_correct": 8,
+  "eye": {
+   "T4a": {
+    "correct": true,
+    "dsi_expected": 0.931,
+    "r_expected": 1.822,
+    "r_best_other": 0.329
+   },
+   "T4b": {
+    "correct": true,
+    "dsi_expected": 0.688,
+    "r_expected": 1.532,
+    "r_best_other": 0.53
+   },
+   "T4c": {
+    "correct": true,
+    "dsi_expected": 0.909,
+    "r_expected": 1.469,
+    "r_best_other": 0.437
+   },
+   "T4d": {
+    "correct": true,
+    "dsi_expected": 0.91,
+    "r_expected": 1.571,
+    "r_best_other": 0.652
+   },
+   "T5a": {
+    "correct": true,
+    "dsi_expected": 0.304,
+    "r_expected": 0.095,
+    "r_best_other": 0.051
+   },
+   "T5b": {
+    "correct": true,
+    "dsi_expected": 0.196,
+    "r_expected": 0.678,
+    "r_best_other": 0.543
+   },
+   "T5c": {
+    "correct": true,
+    "dsi_expected": 0.204,
+    "r_expected": 1.102,
+    "r_best_other": 0.836
+   },
+   "T5d": {
+    "correct": true,
+    "dsi_expected": 0.11,
+    "r_expected": 0.702,
+    "r_best_other": 0.575
+   }
+  },
+  "polarity_correct": 31,
+  "polarity_wrong": [
+   "L2"
+  ],
+  "polarity_index": {
+   "R3": 0.054,
+   "R6": 0.117,
+   "L2": 0.234,
+   "L3": -0.065,
+   "T5a": -0.077,
+   "Tm2": -0.042
+  },
+  "t2_on": 1.598,
+  "t2_off": 3.058,
+  "val_epe": 5.2439
+ },
+ "rung3": {
+  "t2": {
+   "t2_on": 1.603,
+   "t2_off": 3.086,
+   "T2": true
+  },
+  "polarity": {
+   "correct": 31,
+   "of": 32,
+   "wrong": [
+    "L2"
+   ],
+   "fri": {
+    "R3": 0.054,
+    "R6": 0.117,
+    "L2": 0.227,
+    "L3": -0.065,
+    "T5a": -0.078,
+    "Tm2": -0.043
+   }
+  },
+  "direction": {
+   "correct": 16,
+   "wrong": [],
+   "dsi": {
+    "R T4a": 0.933,
+    "R T4b": 0.676,
+    "R T4c": 0.904,
+    "R T4d": 0.92,
+    "R T5a": 0.309,
+    "R T5b": 0.168,
+    "R T5c": 0.191,
+    "R T5d": 0.104,
+    "L T4a": 0.935,
+    "L T4b": 0.678,
+    "L T4c": 0.906,
+    "L T4d": 0.919,
+    "L T5a": 0.3,
+    "L T5b": 0.169,
+    "L T5c": 0.191,
+    "L T5d": 0.104
+   },
+   "responses": {
+    "R T5a": {
+     "front-to-back": 0.092,
+     "back-to-front": 0.049,
+     "upward": 0.04,
+     "downward": 0.028
+    },
+    "R T5b": {
+     "front-to-back": 0.452,
+     "back-to-front": 0.635,
+     "upward": 0.505,
+     "downward": 0.476
+    },
+    "R T5c": {
+     "front-to-back": 0.791,
+     "back-to-front": 0.765,
+     "upward": 1.023,
+     "downward": 0.694
+    },
+    "R T5d": {
+     "front-to-back": 0.554,
+     "back-to-front": 0.517,
+     "upward": 0.541,
+     "downward": 0.667
+    },
+    "L T5a": {
+     "front-to-back": 0.091,
+     "back-to-front": 0.049,
+     "upward": 0.04,
+     "downward": 0.029
+    },
+    "L T5b": {
+     "front-to-back": 0.449,
+     "back-to-front": 0.632,
+     "upward": 0.501,
+     "downward": 0.473
+    },
+    "L T5c": {
+     "front-to-back": 0.791,
+     "back-to-front": 0.765,
+     "upward": 1.022,
+     "downward": 0.694
+    },
+    "L T5d": {
+     "front-to-back": 0.555,
+     "back-to-front": 0.517,
+     "upward": 0.541,
+     "downward": 0.667
+    }
+   }
+  }
+ },
+ "seconds": 2657
+}
