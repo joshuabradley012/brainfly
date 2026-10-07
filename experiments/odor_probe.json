@@ -1,0 +1,113 @@
+{
+ "question": "Exploratory, not pre-registered: does the brain that passed rung 4 carry an odor to the mushroom body as a fly's does?\n\nRung 9's first test pairs an odor with dopamine and asks that MBON-\u03b31pedc's response to it fall 80-90% (Hige et al.\n2015; research_notes/Rung 9 learning data/mushroom_body_plasticity.md). Before any plasticity, the odor itself has to\nreach MBON-\u03b31pedc (MBON11) through sparse Kenyon cell activity. In flies, an odor activates about 5-10% of Kenyon cells\n(Honegger et al. 2011; Lin et al. 2014), and MBON-\u03b31pedc fires about 57 Hz at an odor's onset against about 37 Hz at\nrest (Hige et al. 2015, research_notes/Rung 4 resting state data/adaptation.md).\nModel: rung4_scaling.py's intact brain (biases, ring offsets and factors from its saved state), 8 flies, flyvis's\nneurons silent at grey.\nOdors: an odor drives every olfactory receptor neuron of four glomeruli, on both antennae, at 100 Hz for 1 s. Odor A:\nDM1, DM2, DM3, DM4 (glomeruli that esters such as ethyl acetate drive); odor B: DL5, DA2, VA2, VM2. Each trial: 1 s to\nsettle, 1 s of rest, the odor's 1 s, then 1 s (seed 9400 for A, 9401 for B).\nMeasured: the driven glomeruli's uniglomerular projection neurons' rates; the Kenyon cells that rise by more than 5 Hz\nover rest (their share, by KC class, and the two odors' overlap); APL; MBON11 (MBON-\u03b31pedc>\u03b1/\u03b2), MBON01 (\u03b35\u03b2'2a) and\nMBON18 (\u03b12sc); PPL101 (PPL1-\u03b31pedc). Rest and odor rates, mean over flies.\n\n    python experiments/odor_probe.py           (writes experiments/odor_probe.json)\n",
+ "odors": {
+  "A": [
+   "DM1",
+   "DM2",
+   "DM3",
+   "DM4"
+  ],
+  "B": [
+   "DL5",
+   "DA2",
+   "VA2",
+   "VM2"
+  ]
+ },
+ "kc_total": 4064,
+ "conditions": {
+  "A": {
+   "pn_hz": [
+    3.25,
+    21.13
+   ],
+   "pn_count": 14,
+   "kc_share_responding": 0.0002,
+   "kc_by_class": {
+    "KCg-m": 0.0,
+    "KCg-d": 0.0,
+    "KCab": 0.0,
+    "KCab-p": 0.0,
+    "KCapbp-m": 0.0,
+    "KCapbp-ap1": 0.0,
+    "KCapbp-ap2": 0.0
+   },
+   "kc_hz": [
+    0.04,
+    0.07
+   ],
+   "read": {
+    "MBON11": [
+     37.12,
+     37.75
+    ],
+    "MBON01": [
+     2.19,
+     1.56
+    ],
+    "MBON18": [
+     11.19,
+     10.0
+    ],
+    "PPL101": [
+     20.5,
+     20.38
+    ],
+    "APL": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "B": {
+   "pn_hz": [
+    3.06,
+    31.62
+   ],
+   "pn_count": 17,
+   "kc_share_responding": 0.0,
+   "kc_by_class": {
+    "KCg-m": 0.0,
+    "KCg-d": 0.0,
+    "KCab": 0.0,
+    "KCab-p": 0.0,
+    "KCapbp-m": 0.0,
+    "KCapbp-ap1": 0.0,
+    "KCapbp-ap2": 0.0
+   },
+   "kc_hz": [
+    0.05,
+    0.13
+   ],
+   "read": {
+    "MBON11": [
+     37.62,
+     37.75
+    ],
+    "MBON01": [
+     2.5,
+     2.62
+    ],
+    "MBON18": [
+     11.19,
+     11.06
+    ],
+    "PPL101": [
+     19.38,
+     20.44
+    ],
+    "APL": [
+     0.0,
+     0.0
+    ]
+   }
+  }
+ },
+ "kc_overlap": {
+  "both": 0,
+  "A": 1,
+  "B": 0,
+  "jaccard": 0.0
+ },
+ "seconds": 31
+}
