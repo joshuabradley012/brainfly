@@ -457,7 +457,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | passed: 0.9 ms to the jump muscle and 1.4 to the flight muscle; the flight branch follows 40% of 250 Hz trains, as flies' does; without the gap junctions, neither branch answers. Leg sensors aren't in yet |
 | 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | started: NeuroMechFly walks under a walking controller that the brain steers through DNa02, and jumps from spikes of its jump motor neurons through a twitch-shaped torque. No muscle model yet: FlyGym's musculoskeletal front leg (FlyMimic) pushes a fly's force probe 40 times more weakly than a fly's tibia flexor does. Scaled to flies' force per spike, it also twitches 20 times too fast (its muscles activate in 0.1-0.4 ms), so its twitch can only be fitted |
 | 8. Flight, neck and song | wing power and steering, head pose, courtship song | saccades within about 10 wingbeats; song pulses about 35 ms apart | not started |
-| 9. State and learning | arousal, hunger, the mushroom body's dopamine learning rule | 80–90% depression after 1 s of odour paired with dopamine; and, as the final hurdle, held-out resting FC that beats independent firing and scrambled wiring once arousal gives the brain its brain-wide state | not started |
+| 9. State and learning | arousal, hunger, the mushroom body's dopamine learning rule | 80–90% depression after 1 s of odour paired with dopamine; and, as the final hurdle, held-out resting FC that beats independent firing and scrambled wiring once arousal gives the brain its brain-wide state | not started; groundwork: the plasticity data are in the notes, and the resting brain's mushroom body doesn't yet respond to odors (the Kenyon cells stay silent) |
 
 Resting FC moved from rung 4 to the end of the ladder on 27 September 2026. Shared neurons plus one brain-wide signal explain the flies' resting FC at r = 0.69 with no network at all ([`experiments/rest_measurement.py`](experiments/rest_measurement.py)). FC therefore mostly tests whether a model has the flies' brain-wide state, and a hand-added signal would pass it without testing the wiring. It becomes a real test once arousal, modeled from the connectome's own neuromodulatory neurons (rung 9), produces that state, and it is still compared with scrambled wiring. Until then every rung 4 attempt reports FC but doesn't pass or fail on it. On the same day, rung 4's bump test gained position entropy (at least 0.9) and a drift rate within flies' range (D of 0.003–0.04 rad²/s; `rest_calibration.bump_motion`), after a bump pinned in two places passed the old test ([`experiments/ring_heldout.py`](experiments/ring_heldout.py)).
 
@@ -802,7 +802,7 @@ pip install "brainfly[build] @ git+https://github.com/joshuabradley012/brainfly"
 `brainfly.eye2d` and `brainfly.optic` run on, and rdata, which reads the eye map behind
 `brainfly.eye2d`. The first of them to run downloads the tables (~1.1 GB) and caches the synapse
 counts. `[flyvis]` adds flyvis and PyTorch for `brainfly.optic`, which fetches flyvis's pretrained
-models (3.4 MB) on first use. `[body]` adds FlyGym and MuJoCo for `brainfly.body` (Python 3.12+). `FlyBrain` alone needs none of these: the first `FlyBrain()` fetches a
+models (3.4 MB) on first use and builds rung 3's fine-tuned eye from them. `[body]` adds FlyGym and MuJoCo for `brainfly.body` (Python 3.12+). `FlyBrain` alone needs none of these: the first `FlyBrain()` fetches a
 prebuilt copy of its brain files (~260 MB). Add `[gpu]` for CuPy on an NVIDIA GPU (CUDA 12). Set
 `FLY_DATA=/some/path` to keep the data somewhere other than `~/fly-data`.
 
@@ -901,15 +901,19 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/retina.py` | the photoreceptor input MaleCNS lost at the edge of its volume, imputed from the intact columns |
 | `brainfly/build.py`, `data.py` | building the brain files from MaleCNS v1.0, or fetching a prebuilt copy |
 | `brainfly/eye2d.py` | a 2-D compound eye: each photoreceptor looks in its measured direction, from a micro-CT eye map; looming disks and moving edges |
-| `brainfly/optic.py` | `FlyvisNative`: flyvis's own network tiled onto the male eye, feeding `FlyBrain`; `FlyvisOpticLobe`, the earlier port onto MaleCNS wiring |
+| `brainfly/optic.py` | `FlyvisNative`: flyvis's own network tiled onto the male eye, feeding `FlyBrain`, by default with rung 3's fine-tuned eye (`optic.EYE`); `FlyvisOpticLobe`, the earlier port onto MaleCNS wiring |
+| `brainfly/vistrain.py` | training flyvis's optic lobe on this machine (Apple's or an NVIDIA GPU) with brainfly's added constraints: loading, fine-tuning, flash responses, saving models into flyvis's results |
+| `brainfly/models/` | the fine-tuned flyvis model brainfly ships: rung 3's eye (49 KB), installed into flyvis's results on first use |
 | `brainfly/eyetorch.py` | `FlyvisNative`'s eye in PyTorch, weighted by a flyvis model's own parameters so that rung 3's direction test can be trained on; within 0.0004 of the numpy version |
 | `brainfly/odors.py` | odors from the DoOR database (consensus receptor responses, receptor-to-glomerulus map) as receptor neuron drives for `HybridBrain` |
 | `brainfly/body.py` | NeuroMechFly (FlyGym 2.1) walking in a virtual-reality arena, and `Loop`, which steps eyes, optic lobe, brain and body together (`pip install "brainfly[body]"`) |
+| `brainfly/legs.py`, `jump.py` | the body driven by the nerve cord: front-leg motor neuron rates as joint torques; the escape jump from jump motor neuron spikes |
 | `brainfly/eyes.py` | the original 1-D eye, kept so the early eye experiments still run |
 | `experiments/shiu_*.py` | rung 1: the pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
 | `experiments/rest_*.py` | rung 4: probes of the resting state, its functional connectivity against Turner et al.'s flies, and the pre-registered attempts |
 | `experiments/` (the rest) | the experiments on the inherited model, listed [above](#where-it-started) |
 | `scripts/remote/` | experiments on throwaway Hetzner Cloud boxes: `image.sh` bakes a snapshot with every dependency and the data, and `run.sh` runs a file of commands across boxes from one queue, brings back what they changed under `experiments/` and deletes the boxes |
+| `scripts/gpu/` | flyvis training on a rented NVIDIA GPU: `flyvis.sh` (setup, bench, start, status, pull, stop), `bench.py` (first line: how fast the box starts tiny GPU operations) and `breakdown.py` |
 | `assets/` | the logo and the figures (looming through the eyes, the optomotor loop, the ladder, the inherited model's loom), and the scripts that draw each from the saved results |
 | `tests/` | `python -m pytest`: both 0.1 ms kernels against Brian2, `FlyBrain`'s spikes against hashes recorded from the code behind every result, and the build against the release (`pip install "brainfly[test]"`) |
 
