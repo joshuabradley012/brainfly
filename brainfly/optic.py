@@ -301,6 +301,16 @@ def tile(columns: np.ndarray, origin: np.ndarray, f: dict):
     """flyvis's cells and synapses on MaleCNS columns (N, 2) of (hex1, hex2): one cell of each type
     per column, the sparse types on their sub-lattice through `origin`. Returns each cell's type,
     its column (an index into `columns`) and the weights (rows postsynaptic)."""
+    cell_type, cell_col, rows, cols, element, keys = tile_entries(columns, origin, f)
+    w = np.array([f["sign"][(s, t)] * f["strength"][(s, t)] * f["count"][(s, t, du, dv)] for s, t, du, dv in keys])
+    W = sparse.csr_matrix((w[element], (rows, cols)), shape=(len(cell_type),) * 2)
+    return cell_type, cell_col, W
+
+
+def tile_entries(columns: np.ndarray, origin: np.ndarray, f: dict):
+    """tile's cells and synapses before weighting: each cell's type and column, and per synapse its target and source
+    cell and its filter element (an index into keys, f["count"]'s keys in order). brainfly.eyetorch weights them with
+    a flyvis network's own parameters."""
     types = sorted(f["tau"])
     reach = int(np.abs(np.array([(k[2], k[3]) for k in f["count"]])).max()) * 2 + 1
     lo = columns.min(0) - reach
@@ -319,17 +329,16 @@ def tile(columns: np.ndarray, origin: np.ndarray, f: dict):
     cell_type, cell_col = np.array(cell_type), np.array(cell_col)
     of_type = {t: np.flatnonzero(cell_type == t) for t in types}
     index = {t: k for k, t in enumerate(types)}
-    rows, cols, vals = [], [], []
-    for (s, t, du, dv), n in f["count"].items():
+    keys = list(f["count"])
+    rows, cols, element = [], [], []
+    for k, (s, t, du, dv) in enumerate(keys):
         tgt = of_type[t]
         src = grid[index[s]][tuple((columns[cell_col[tgt]] + (du, du + dv) - lo).T)]
         ok = src >= 0
         rows.append(tgt[ok])
         cols.append(src[ok])
-        vals.append(np.full(int(ok.sum()), f["sign"][(s, t)] * f["strength"][(s, t)] * n))
-    W = sparse.csr_matrix((np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))),
-                          shape=(len(cell_type),) * 2)
-    return cell_type, cell_col, W
+        element.append(np.full(int(ok.sum()), k))
+    return cell_type, cell_col, np.concatenate(rows), np.concatenate(cols), np.concatenate(element), keys
 
 
 
