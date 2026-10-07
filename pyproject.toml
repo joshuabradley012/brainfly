@@ -38,6 +38,9 @@ brainfly = "brainfly.__main__:main"
 [tool.setuptools]
 packages = ["brainfly"]
 
+[tool.setuptools.package-data]
+brainfly = ["models/*/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 filterwarnings = ["ignore::DeprecationWarning:brian2.*"]

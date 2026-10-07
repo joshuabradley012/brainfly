@@ -26,7 +26,7 @@ from pathlib import Path
 import numpy as np
 
 from brainfly import FlyBrain
-from brainfly.optic import GRADED as OPTIC, FlyvisNative
+from brainfly.optic import GRADED as OPTIC, MODEL, FlyvisNative
 from eyepath import GRADED, SCENES as SCENES_1D
 from eyepath_fast import DT, REFRACTORY
 from eyepath_filled import N0, measure as measure_1d
@@ -41,7 +41,7 @@ GAIN, SEED, FLIES = 1.0, 2, 8
 def build(rewire: int):
     brain = FlyBrain(batch=FLIES, graded=OPTIC, dt=DT, refractory=REFRACTORY, rewire=rewire)
     brain.graded_gain, brain.graded_release = 0.15, 0.3
-    ol = FlyvisNative(brain, gain=GAIN)
+    ol = FlyvisNative(brain, model=MODEL, gain=GAIN)
     own = np.flatnonzero(~np.isin(brain.graded, ol.neurons))
     ct, sc = brain.cell_type.astype(str), brain.superclass.astype(str)
     dn_types = sorted({t for t in ct[sc == "descending_neuron"] if all(len(brain.cells([t], s)) for s in "LR")})

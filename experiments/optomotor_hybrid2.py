@@ -35,7 +35,7 @@ import numpy as np
 from brainfly import nulls
 from brainfly.data import DATA
 from brainfly.hybrid import HybridBrain, consensus_transmitters
-from brainfly.optic import FlyvisNative
+from brainfly.optic import MODEL, FlyvisNative
 from brainfly.shiu import counts, mcns_types
 from optomotor_hybrid import HS, OPTIC_DT, measure, scenes, signals, verdict
 from shiu_rewiring import W_SYN
@@ -76,7 +76,7 @@ def main() -> None:
     M, _ = no_sensory_input(M, meta["superclass"])
     scale = 1.0 / sizes(C)
     brain = HybridBrain(trials=1, w_syn=W_SYN, matrix=M, scale=scale, labels=labels)
-    ol = FlyvisNative(brain, dt=OPTIC_DT)
+    ol = FlyvisNative(brain, model=MODEL, dt=OPTIC_DT)
     outside = ~np.isin(meta["superclass"].astype(str), VISUAL)
     cells = {f"HS {s}": brain.cells(HS, s) for s in "LR"}
     cells.update({f"{t} {s}": brain.cells([t], s) for t in ("DNa02", "DNa01") for s in "LR"})

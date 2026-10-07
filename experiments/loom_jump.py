@@ -20,10 +20,12 @@ push; one fly launched with both legs, at 0.47 m/s. ("sides" lists the TTMns tha
 not only during the push.)
 
     python experiments/loom_jump.py            (writes experiments/loom_jump.json and loom_jump.npz)
+    python experiments/loom_jump.py rung3eye   (the same with rung 3's eye, brainfly.optic.EYE: loom_jump_rung3eye.json)
 """
 from __future__ import annotations
 
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -37,6 +39,9 @@ from brainfly.jump import Jump
 from eyepath_fast import FAST
 
 OUT = Path(__file__).with_suffix(".json")
+if sys.argv[1:] == ["rung3eye"]:                    # rung 3's eye in place of flyvis's model 001
+    from brainfly.optic import EYE
+    eyes.MODEL, OUT = EYE, OUT.with_name("loom_jump_rung3eye.json")
 SCENES = {"left": 70.0, "right": -70.0, "head-on": 0.0}
 CONTACT, BIN, SEED = FAST["contact"], 0.01, 8000
 JUMP_SECONDS, LEAD = 0.03, 0.002          # physics per jump, and how long before the first TTMn spike it starts

@@ -79,9 +79,10 @@ def on(dev: torch.device):
 
 def load(model: str = "flow/0000/000", dev: torch.device = DEVICE):
     """flyvis's `model` (a path under its results directory): (view, network, decoders), on `dev`."""
-    import flyvis
     from flyvis import NetworkView
-    view = NetworkView(flyvis.results_dir / model)
+
+    from .optic import ensure_model
+    view = NetworkView(ensure_model(model))
     with on(dev):
         net = view.init_network()
     dec = view.init_decoder()                         # built on the CPU (its hex mask is float64), then moved

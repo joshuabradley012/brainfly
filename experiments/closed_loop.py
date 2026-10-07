@@ -24,10 +24,12 @@ rates; LC4, LPLC2 and DNp01 spikes; distance walked. A change identical in every
 t = +/-inf when it isn't zero.
 
     python experiments/closed_loop.py            (writes experiments/closed_loop.json)
+    python experiments/closed_loop.py rung3eye   (the same with rung 3's eye, brainfly.optic.EYE: closed_loop_rung3eye.json)
 """
 from __future__ import annotations
 
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -35,11 +37,14 @@ import numpy as np
 
 from brainfly import FlyBrain
 from brainfly.body import Body, Drum, Loop
-from brainfly.optic import GRADED as OPTIC, FlyvisNative
+from brainfly.optic import EYE, GRADED as OPTIC, MODEL, FlyvisNative
 from eyepath_fast import DT, REFRACTORY
 from eyepath_native import rises, stat
 
 OUT = Path(__file__).with_name("closed_loop.json")
+EYE_MODEL = MODEL                                   # flyvis's model 000, as it first ran
+if sys.argv[1:] == ["rung3eye"]:                    # rung 3's eye instead
+    EYE_MODEL, OUT = EYE, OUT.with_name("closed_loop_rung3eye.json")
 FLIES = range(1, 9)
 SECONDS, BASELINE = 3.0, 0.5
 OPTIC_GAIN, STEER_GAIN = 1.0, 0.05
@@ -67,7 +72,7 @@ def main() -> None:
     t0 = time.perf_counter()
     brain = FlyBrain(batch=1, graded=OPTIC, dt=DT, refractory=REFRACTORY)
     brain.graded_gain, brain.graded_release = 0.15, 0.3
-    ol = FlyvisNative(brain, gain=OPTIC_GAIN)
+    ol = FlyvisNative(brain, model=EYE_MODEL, gain=OPTIC_GAIN)
     body = Body(control_dt=DT)
     flies = {}
     for seed in FLIES:

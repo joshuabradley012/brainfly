@@ -30,10 +30,12 @@ Sweep on seed 1 with 6 flies; the passing gain with the lowest value is re-run o
 and only that confirmation counts.
 
     python experiments/optomotor.py            (writes experiments/optomotor.json)
+    python experiments/optomotor.py rung3eye   (the same with rung 3's eye, brainfly.optic.EYE: optomotor_rung3eye.json)
 """
 from __future__ import annotations
 
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -41,13 +43,16 @@ import numpy as np
 
 from brainfly import FlyBrain
 from brainfly.eye2d import Grating
-from brainfly.optic import GRADED as OPTIC, FlyvisNative
+from brainfly.optic import EYE, GRADED as OPTIC, MODEL, FlyvisNative
 from eyepath import GRADED, SCENES as SCENES_1D, WARM
 from eyepath_fast import DT, REFRACTORY
 from eyepath_filled import N0, measure as measure_1d
 from eyepath_native import rises, stat
 
 OUT = Path(__file__).with_name("optomotor.json")
+EYE_MODEL = MODEL                                   # flyvis's model 000, as it first ran
+if sys.argv[1:] == ["rung3eye"]:                    # rung 3's eye instead
+    EYE_MODEL, OUT = EYE, OUT.with_name("optomotor_rung3eye.json")
 SECONDS = 2.0
 GAINS = [1.0, 3.0, 10.0]
 PERIOD, SPEED = 30.0, 40.0
@@ -114,7 +119,7 @@ def run_config(brain, ol, seed, rest_pop, rest_ref_hz, own, groups, dn_types) ->
 def build(batch: int):
     brain = FlyBrain(batch=batch, graded=OPTIC, dt=DT, refractory=REFRACTORY)
     brain.graded_gain, brain.graded_release = 0.15, 0.3
-    ol = FlyvisNative(brain)
+    ol = FlyvisNative(brain, model=EYE_MODEL)
     own = np.flatnonzero(~np.isin(brain.graded, ol.neurons))
     ct, sc = brain.cell_type.astype(str), brain.superclass.astype(str)
     dn_types = sorted({t for t in ct[sc == "descending_neuron"]

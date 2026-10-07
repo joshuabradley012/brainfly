@@ -1,0 +1,13 @@
+{
+ "source": "flow/0000/001",
+ "experiment": "experiments/rung3_001.py",
+ "lr": 1e-05,
+ "iterations": 1500,
+ "seed": 1,
+ "weights": {
+  "direction": 300.0,
+  "polarity": 500.0,
+  "t2": 300.0
+ },
+ "every": 4
+}

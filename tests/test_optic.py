@@ -7,17 +7,17 @@ import pytest
 
 from brainfly.data import has_data
 
-pytest.importorskip("flyvis")
+pytest.importorskip("brainfly.vistrain")         # before flyvis: it points flyvis at brainfly's data
 pytestmark = pytest.mark.skipif(not has_data(), reason="needs the network files: python -m brainfly download")
 
 
 @pytest.fixture(scope="module")
 def optic():
     from brainfly import FlyBrain
-    from brainfly.optic import GRADED, FlyvisNative
+    from brainfly.optic import GRADED, MODEL, FlyvisNative
 
     brain = FlyBrain(batch=1, graded=GRADED, dt=0.002, refractory=0.004)
-    return FlyvisNative(brain)
+    return FlyvisNative(brain, model=MODEL)
 
 
 def test_matvec_matches_scipy_bit_for_bit(optic):

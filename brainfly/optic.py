@@ -42,9 +42,12 @@ import numba
 import numpy as np
 from scipy import sparse
 
-from .data import ensure_data
+from .data import DATA, ensure_data
 
-MODEL = "flow/0000/000"
+MODEL = "flow/0000/000"     # flyvis's best published model; the inherited FlyvisOpticLobe's default
+EYE = "flow/9014/000"       # rung 3's eye: flyvis's model 001 fine-tuned with rung 3's direction test and the known
+                            # polarities in its loss (experiments/rung3_001.py); FlyvisNative's default
+SHIPPED = {EYE: "flow/0000/001"}   # fine-tuned models brainfly ships (brainfly/models), by the flyvis model each came from
 BACKGROUND = 0.5          # flyvis's grey
 # A FlyBrain graded set covering every flyvis type: the retina and optic lobe, plus TmY14, which
 # MaleCNS files under visual projection neurons.
@@ -53,18 +56,37 @@ R16 = ["R1", "R2", "R3", "R4", "R5", "R6"]
 RENAME = {"Lai": "Am", "TmY9a": "TmY9", "TmY9b": "TmY9", "TmY9q": "TmY9", "TmY9q__perp": "TmY9"}
 
 
-def _network(model: str, data: Path):
-    """flyvis's pretrained network (downloading the models first if needed)."""
+def ensure_model(model: str, data: Path | str | None = None) -> Path:
+    """A flyvis model's folder under flyvis's results, fetching flyvis's pretrained models if needed. A fine-tuned
+    model brainfly ships (SHIPPED) is built from the model it came from, with its checkpoint from brainfly/models."""
+    data = DATA if data is None else Path(data)                 # flyvis's models only; not brainfly's network files
     os.environ.setdefault("FLYVIS_ROOT_DIR", str(data / "flyvis"))
     import flyvis
-    from flyvis import NetworkView
 
-    if not (flyvis.results_dir / model).exists():             # flyvis doesn't fetch its own pretrained models
+    folder = flyvis.results_dir / model
+    if folder.exists():
+        return folder
+    source = SHIPPED.get(model, model)
+    if not (flyvis.results_dir / source).exists():            # flyvis doesn't fetch its own pretrained models
         import subprocess
         import sys
         subprocess.run([sys.executable, "-m", "flyvis_cli.download_pretrained_models", "--skip_large_files"],
                        check=True)
-    return NetworkView(flyvis.results_dir / model).init_network(checkpoint="best")
+    if model in SHIPPED:
+        import shutil
+        shipped = Path(__file__).with_name("models") / model.replace("/", "_")
+        shutil.copytree(flyvis.results_dir / source, folder, ignore=shutil.ignore_patterns("__cache__"))
+        for name in ("best_chkpt", "validation_loss.h5", "brainfly.json"):
+            shutil.copy(shipped / name, folder / name)
+        shutil.copy(shipped / "best_chkpt", folder / "chkpts" / "chkpt_00000")
+    return folder
+
+
+def _network(model: str, data: Path):
+    """flyvis's pretrained network (downloading or installing the model first if needed)."""
+    from flyvis import NetworkView
+
+    return NetworkView(ensure_model(model, data)).init_network(checkpoint="best")
 
 
 def flyvis_params(model: str = MODEL, data: Path | str | None = None) -> dict:
@@ -372,7 +394,7 @@ class FlyvisNative:
     as graded release (FlyBrain.set_graded), per 20 ms. Deterministic: one simulation serves every
     fly in a batch."""
 
-    def __init__(self, brain, model: str = MODEL, gain: float = 1.0, data: Path | str | None = None,
+    def __init__(self, brain, model: str = EYE, gain: float = 1.0, data: Path | str | None = None,
                  dt: float | None = None):
         """dt: the optic lobe's step, s (default the brain's; a HybridBrain's 0.1 ms is needlessly
         fine for flyvis, so step it every 2 ms and hold its output in between)."""

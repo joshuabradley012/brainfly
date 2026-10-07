@@ -188,7 +188,7 @@ def main() -> None:
     results["exact"] = exact(net, f)
     print("exact:", results["exact"], flush=True)
     brain = FlyBrain(batch=1, graded=OPTIC, dt=0.002, refractory=0.004)
-    ol = FlyvisNative(brain)
+    ol = FlyvisNative(brain, model=MODEL)
     ft = flyvis_type(brain, mcns_types(DATA), set(f["tau"]) | {"R1-6"})
     results["coverage"] = {"cells": len(ol.cell_type), "synapses": int(ol.W.nnz), "columns": len(ol.column_keys),
                            "malecns_neurons_of_flyvis_types": int((ft != "").sum()), "driven": len(ol.neurons)}
