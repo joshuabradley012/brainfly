@@ -36,6 +36,35 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **The mushroom body can't hear odors yet (rung 9's groundwork).** Rung 9 starts with learning: paired with
+  dopamine, an odor's response in MBON-γ1pedc falls 80–90%, and an unpaired odor's much less (Hige et al. 2015;
+  [notes](research_notes/Rung%209%20learning%20data/mushroom_body_plasticity.md)). How much the unpaired odor changes
+  depends on how the two odors' Kenyon cells overlap through the real projection neuron wiring, which makes it a test
+  the connectome can pass or fail. Before any learning, though, the odor has to reach the Kenyon cells, and in the brain
+  that passed rung 4 it doesn't. brainfly now builds odors from the DoOR database as receptor neuron drives
+  ([`brainfly/odors.py`](brainfly/odors.py)). With 3-octanol and 4-methylcyclohexanol, the projection neurons rise
+  from 3 to only about 28 Hz, whatever the drive (flies: 100–200 Hz at onset), and at most 1 of 4,064 Kenyon cells
+  responds (flies: 5–10%) ([`experiments/odor_probe.py`](experiments/odor_probe.py),
+  [`experiments/odor_probe2.py`](experiments/odor_probe2.py)). The causes:
+  - **Weak receptor synapses:** receptor-to-projection-neuron synapses are about 6 times weaker than the measured
+    6.2 mV unitary EPSP. Their measured depression is then applied on top of a weight that already behaves as
+    depressed.
+  - **Silenced Kenyon cells:** calibrating them to 0 Hz at rest left them 27 mV below threshold (flies: 21.5).
+
+  Next: set the olfactory synapses and the Kenyon cells' resting distance to threshold from those measurements, and
+  see whether real odors then activate the 5–10% of Kenyon cells flies show.
+
+* **Rung 5's retry fails too, on DNb08's robustness.** With DNb08 asked for a rhythm at any frequency, on fresh seeds,
+  its one rhythmic neuron fired rhythmically in only 4 of 16 runs; DNg100 and the scrambled-wiring controls held
+  ([`experiments/rung5_vnc2.py`](experiments/rung5_vnc2.py); details in the nerve cord entry below).
+
+* **FlyMimic's muscles twitch twenty times too fast (rung 7).** Rung 7 asks a musculoskeletal leg for flies' force per
+  spike and twitch time. Scaled so that a motor neuron spike pushes flies' force probe with 9 µN, FlyMimic's tibia
+  flexor reaches half its peak in 0.4 ms (flies: 7.7–9.7) and peaks at 3.3 ms (17–23). Its muscles activate and
+  deactivate in 0.1 and 0.4 ms, a hundred times faster than MuJoCo's defaults, as suits imitation learning rather than
+  physiology ([`experiments/leg_twitch.py`](experiments/leg_twitch.py)). Matching flies would mean fitting the
+  twitch, so rung 7 needs criteria that the muscle model predicts rather than fits.
+
 * **Rung 3 passes: an eye whose T2 answers darkening, with flies' motion directions and polarities.** Rung 3 asks
   the eye for at least 30 of 32 known contrast polarities, the right direction in all 16 of the T4/T5 motion detector
   subtypes across both eyes, and looming responses of tens of Hz in LC4 and LPLC2. A real T2 answers light turning
@@ -132,36 +161,24 @@ on fresh seeds; the fifth is the brain above. `python assets/compass.py` redraws
 Where the bump sat in each run on the way, from the saved results: passing runs in red, failing ones in grey.
 `python assets/compass_attempts.py` redraws it.
 
-* **Training flyvis from scratch hasn't learned yet.** Rung 3 needs an eye whose T2 answers
-  darkening without losing its motion directions or polarities, and fine-tuning trained models failed three ways (the
-  looming entry below). So brainfly trains a flyvis network from scratch with T2's response to darkening as a
-  constraint ([`experiments/flyvis_t2_scratch.py`](experiments/flyvis_t2_scratch.py)). T2 took on the response early,
-  but in 118,000 iterations the network never predicted flow better than predicting none (validation error 5.77;
-  flyvis's fully trained model 000 reaches 5.14). Nor did a run without the constraint, one without data augmentation,
-  or flyvis's own trainer run from scratch on a rented NVIDIA GPU (its validation loss fell 0.5% in 3,612 iterations).
-  flyvis's own models [generalized only after about 250,000 iterations](https://pmc.ncbi.nlm.nih.gov/articles/PMC11525180/).
+* **Training flyvis from scratch didn't work, so rung 3 went through fine-tuning instead.** Before the fine-tune above,
+  brainfly tried to train a flyvis network from scratch with T2's response to darkening as a constraint
+  ([`experiments/flyvis_t2_scratch.py`](experiments/flyvis_t2_scratch.py)). Nothing learned optic flow:
+  - **The constrained run:** 118,000 iterations stayed at the error of predicting no flow (5.77; flyvis's trained model
+    000 reaches 5.14). So did a control without the constraint, a run without data augmentation, and flyvis's own
+    trainer from scratch on a rented GPU. flyvis's own models
+    [generalized only after about 250,000 iterations](https://pmc.ncbi.nlm.nih.gov/articles/PMC11525180/).
+  - **A trained decoder:** a fresh network learns one batch through model 000's trained decoder but not through
+    flyvis's initial one ([`experiments/flyvis_learning.py`](experiments/flyvis_learning.py)). Held fixed, though,
+    that decoder normalized the new network's activity by model 000's statistics. 81% of its softplus units sat
+    where the softplus is flat, and it passed back a ninth of the gradient
+    ([`experiments/flyvis_readout.py`](experiments/flyvis_readout.py)).
+  - **Per-batch statistics:** fixing that didn't make the full task learnable either (10,000 iterations).
+  - **The T2 constraint:** in the long run it had stopped working. T2's own drift satisfied a penalty that read
+    responses after only 0.1 s of grey ([`experiments/t2_penalty_check.py`](experiments/t2_penalty_check.py)).
 
-  On one fixed batch, the fresh network learns when model 000's trained decoder reads it (5% in 600 iterations) but not
-  through flyvis's initial decoder, whose weights all start at 0.001 (0.9%;
-  [`experiments/flyvis_learning.py`](experiments/flyvis_learning.py)). So a run held model 000's decoder fixed and
-  trained on batches of 16 for a quarter of the steps (`fast`). It too stayed at 5.777 through 7,500 iterations
-  (120,000 samples), constant to the fourth decimal. The network was alive, and training had made it answer the
-  stimulus about as much as model 000 does; the decoder was what failed
-  ([`experiments/flyvis_readout.py`](experiments/flyvis_readout.py)). It normalizes its input by model 000's activity
-  statistics, and the new network's activity had drifted far from them. 81% of its softplus units then sat where the
-  softplus is flat, so it read the network as almost nothing and passed back a ninth of the gradient. Keeping the
-  decoder's weights fixed but normalizing each batch by its own statistics (`fastbn`) let the network learn 13% on one
-  batch in 600 iterations, against 5%. But on the full task it too stayed at the level of predicting no flow through
-  10,000 iterations (160,000 samples; 5.772–5.795).
-
-  The original run, resumed on the Mac at 118,000 iterations, turned out to have lost the point of the exercise.
-  Its T2 no longer answers flashes: 0.2 to light and nothing to dark, measured after a second of grey. It sits at 13
-  times model 000's resting level and wanders by several units on its own. The T2 penalty never noticed. It measures
-  the change from only 0.1 s of grey, where that wander reads as equal answers to light and dark
-  ([`experiments/t2_penalty_check.py`](experiments/t2_penalty_check.py)). The run was stopped at 120,000 iterations,
-  still at the level of predicting no flow (5.780). A penalty that subtracts a grey run from the same starting
-  state would cancel the wander. The two fixed-decoder runs, logged after a full second, kept T2's responses. A rented RTX 4090 was tried first and turned out slow: it started each tiny GPU
-  operation in 60–200 µs, where the Mac's GPU takes 3, so it trained no faster than the Mac.
+  A rented RTX 4090 trained no faster than the Mac's GPU: it took 60–200 µs to start each tiny GPU operation, where the
+  Mac takes 3.
 
 * **Rung 6 passes: the giant fiber relays to the jump and flight muscles like a fly's.** A connectome can't show
   electrical synapses, so brainfly adds the giant fiber's from the literature. They are one-way junctions onto its own
@@ -424,7 +441,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 | 4. Central brain | per-type properties and gains that let the whole brain rest like a fly's; homeostasis in the head-direction ring | a mean rate of 4 Hz or less with nothing running away; a head-direction bump like a fly's (above shuffled labels, settling in different places in different runs, visiting every heading, and drifting as slowly as a fly's in darkness); the rungs below still passing at rest | **passed** on the fifth attempt (pre-registered, fresh seeds, null gated on scrambled wiring): it rests at every measured rate with nothing running away, keeps rung 1's taste and the looming escape, and holds a fly-like bump (strength 0.67 against shuffles' 0.37, position entropy 0.96, resultants 0.38 and 0.47, D = 0.019 rad²/s) once each ring neuron scales its synapses from outside the ring. Two rewired brains rest as well, with no bump. FC is now the ladder's final hurdle (below) |
 | 5. Nerve cord | Pugliese et al.'s recipe: raw counts, excitability scaled by size, graded premotor neurons, strong descending drive | DNg100 and DNb08 produce 7–15 Hz leg rhythms | failed twice: on brainfly's own front-leg network, DNg100 drives 11.6-13.7 Hz leg rhythms that scrambled wiring abolishes, but DNb08 doesn't reliably. In attempt 1 its one rhythmic neuron ran at 18 Hz, outside a band borrowed from walking. In attempt 2, with any frequency allowed, it was rhythmic in only 4 of 16 runs on fresh seeds |
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | passed: 0.9 ms to the jump muscle and 1.4 to the flight muscle; the flight branch follows 40% of 250 Hz trains, as flies' does; without the gap junctions, neither branch answers. Leg sensors aren't in yet |
-| 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | started: NeuroMechFly walks under a walking controller that the brain steers through DNa02, and jumps from spikes of its jump motor neurons through a twitch-shaped torque. No muscle model yet: FlyGym's musculoskeletal front leg (FlyMimic) pushes a fly's force probe 40 times more weakly than a fly's tibia flexor does |
+| 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | started: NeuroMechFly walks under a walking controller that the brain steers through DNa02, and jumps from spikes of its jump motor neurons through a twitch-shaped torque. No muscle model yet: FlyGym's musculoskeletal front leg (FlyMimic) pushes a fly's force probe 40 times more weakly than a fly's tibia flexor does. Scaled to flies' force per spike, it also twitches 20 times too fast (its muscles activate in 0.1-0.4 ms), so its twitch can only be fitted |
 | 8. Flight, neck and song | wing power and steering, head pose, courtship song | saccades within about 10 wingbeats; song pulses about 35 ms apart | not started |
 | 9. State and learning | arousal, hunger, the mushroom body's dopamine learning rule | 80–90% depression after 1 s of odour paired with dopamine; and, as the final hurdle, held-out resting FC that beats independent firing and scrambled wiring once arousal gives the brain its brain-wide state | not started |
 
@@ -651,6 +668,9 @@ a sign that the approach is broken."
 | `experiments/rung5_vnc.py` | Pre-registered: does brainfly's nerve cord, by Pugliese et al.'s recipe, turn DNg100 and DNb08 into 7-15 Hz leg rhythms, with scrambled wiring abolishing them? | **Fail**, on DNb08 only. Each DNg100 drives rhythms in 30 and 31 of 32 runs (13.7 and 11.6 Hz), and two rewired networks in none of 128. One DNb08 neuron drives a rhythm in 10 of 16 runs but at 18.2 Hz; the other three in at most 1. |
 | `experiments/rung5_vnc2.py` | Rung 5, attempt 2, pre-registered: attempt 1 on fresh seeds, DNb08 asked for a rhythm at any frequency (no study gives one), with a DNb08 scrambled-wiring control added | **Fail**, on DNb08's robustness. DNG100 holds (30 and 32 of 32 replicates, 13.1 and 11.6 Hz) and NULL holds (no rewired DNg100 rhythmic; one rewired DNb08 replicate of 128). But the left VES082 DNb08 is rhythmic in only 4 of 16 replicates (17 Hz; attempt 1: 10 of 16), the other three DNb08s in none. |
 | `experiments/leg_probe.py` | Exploratory, not pre-registered: does FlyMimic's front-leg tibia flexor push a force probe as hard as a fly's? | No, by a factor of about 40. With flies' probe (0.2234 µN/µm, 417 µm from the joint; Azevedo et al. 2020), full activation gives 2.0-2.3 µN. A fly's whole muscle gives close to 100 µN, and one fast motor neuron spike about 9 µN. The muscle's 68 µN maximum acts through a 15 µm moment arm; it would need about 3 mN. The extensor pushes 17-28 µN. |
+| `experiments/leg_twitch.py` | Exploratory, not pre-registered: with FlyMimic's muscle forces scaled to flies' maximum and a spike set to flies' 9 uN, does its tibia flexor twitch like a fly's? | No: half its peak at 0.4 ms (flies 7.7-9.7), the peak at 3.3 ms (17-23), two spikes summing to 1.17x (1.4-1.6x). FlyMimic's activation time constants are 0.1 and 0.4 ms. Reaching 100 uN at full activation needs 607 times its forces, since 100 uN folds the tibia some 60 deg and the flexor's moment arm shrinks. |
+| `experiments/odor_probe.py` | Exploratory, not pre-registered: does the brain that passed rung 4 carry an odor (four glomeruli at 100 Hz) to the mushroom body? | No: projection neurons rise 3 to 21-32 Hz, 1 of 4,064 Kenyon cells responds, MBON11 and APL don't move. Kenyon cells sit 27 mV below threshold; an odor gives them 1-5 mV. |
+| `experiments/odor_probe2.py` | Exploratory, not pre-registered: the same with DoOR odors (3-octanol, 4-methylcyclohexanol) at three strengths | No: projection neurons saturate near 28 Hz whatever the drive; at most 1 Kenyon cell responds. |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension match flies; the launch is steep and slightly backward (79°), head-down, and 1.7 times too hard upward, from the walking pose. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.7). |
@@ -869,6 +889,7 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/eye2d.py` | a 2-D compound eye: each photoreceptor looks in its measured direction, from a micro-CT eye map; looming disks and moving edges |
 | `brainfly/optic.py` | `FlyvisNative`: flyvis's own network tiled onto the male eye, feeding `FlyBrain`; `FlyvisOpticLobe`, the earlier port onto MaleCNS wiring |
 | `brainfly/eyetorch.py` | `FlyvisNative`'s eye in PyTorch, weighted by a flyvis model's own parameters so that rung 3's direction test can be trained on; within 0.0004 of the numpy version |
+| `brainfly/odors.py` | odors from the DoOR database (consensus receptor responses, receptor-to-glomerulus map) as receptor neuron drives for `HybridBrain` |
 | `brainfly/body.py` | NeuroMechFly (FlyGym 2.1) walking in a virtual-reality arena, and `Loop`, which steps eyes, optic lobe, brain and body together (`pip install "brainfly[body]"`) |
 | `brainfly/eyes.py` | the original 1-D eye, kept so the early eye experiments still run |
 | `experiments/shiu_*.py` | rung 1: the pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
