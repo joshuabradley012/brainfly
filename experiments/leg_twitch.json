@@ -1,0 +1,47 @@
+{
+ "question": "Exploratory, not pre-registered: with its muscles scaled to flies' maximum force and a motor neuron spike set to\nflies' force per spike, does FlyMimic's tibia flexor twitch like a fly's?\n\nleg_probe.py: FlyMimic's tibia flexor pushes a fly's force probe 40 times more weakly than a fly's (2.3 against about\n100 uN). Azevedo et al. 2020 measured a fly's front-leg tibia flexor against that probe\n(research_notes/Embodied fly connectome simulation/leg_twitch_data.md). One fast motor neuron spike gives about 9 uN\n(5.4-15.4), reaching half its peak about 8.5 ms after the spike (7.7-9.7 across cells), peaking at about 17-23 ms and\nfalling to half about 12-16 ms after the peak. Two spikes 12 ms apart give 1.4-1.6 times one; the whole muscle, close\nto 100 uN.\nSetup: leg_probe.leg(90): FlyMimic's left front leg, every joint held but the femur-tibia joint, which carries the\nprobe; every other muscle at FlyMimic's floor (1e-4). Two numbers are fitted:\n  - every muscle's maximum force times one factor, so that full activation of the tibia flexor pushes the probe with\n    100 uN after 100 ms;\n  - a spike, a control pulse of 1 lasting long enough that one spike gives a 9 uN peak.\nMeasured, as predictions:\n  - the single-spike twitch's time to half its peak, time to peak, and half-decay after the peak, from the pulse's\n    start. A fly's are timed from the somatic spike, so they include the motor neuron's conduction and the synapse,\n    a few ms.\n  - the ratio of two spikes 12 ms apart to one;\n  - the peak for 1 to 17 spikes at 80 Hz. A fly's saturates near 28-30 uN, which the authors put down to fatigue,\n    and this model has none.\nFlyMimic's activation and deactivation time constants are reported.\n\n    python experiments/leg_twitch.py           (writes experiments/leg_twitch.json)\n",
+ "timestep_ms": 0.1,
+ "activation_time_constants_ms": [
+  0.1,
+  0.4
+ ],
+ "flexor_max_force_uN": 68.1,
+ "scale": 606.773,
+ "spike_pulse_ms": 1.4,
+ "single_spike": {
+  "peak_uN": 9.17,
+  "half_ms": 0.4,
+  "peak_ms": 3.3,
+  "half_decay_ms": 6.6
+ },
+ "two_spike_ratio": 1.174,
+ "train_80Hz": {
+  "1": 9.17,
+  "2": 10.58,
+  "3": 11.3,
+  "5": 11.78,
+  "10": 11.93,
+  "17": 11.93
+ },
+ "fly": {
+  "max_uN": 100.0,
+  "spike_uN": 9.0,
+  "half_ms": [
+   7.7,
+   9.7
+  ],
+  "peak_ms": [
+   17.0,
+   23.0
+  ],
+  "half_decay_ms": [
+   12.0,
+   16.0
+  ],
+  "two_spike_ratio": [
+   1.4,
+   1.6
+  ],
+  "isi_ms": 12.0
+ }
+}
