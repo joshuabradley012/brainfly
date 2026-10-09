@@ -30,7 +30,9 @@ brainfly.shiu, and lets each cell type differ:
     depression, recovery    short-term depression of the type's outgoing synapses: the fraction
                   of their strength each spike leaves, recovering toward full with time constant
                   recovery, s (default 1: none; olfactory receptor neurons onto projection neurons:
-                  0.78 and 0.893, Nagel, Hong & Wilson 2015)
+                  0.78 and 0.893, Nagel, Hong & Wilson 2015). brain.full_strength (one flag per
+                  synapse, in brain.weights' order) exempts single synapses, for depression that
+                  differs by target
     adaptation, adaptation_tau    spike-frequency adaptation: each spike adds a hyperpolarising
                   current that holds the neuron about `adaptation` mV lower and decays with time
                   constant adaptation_tau, s (default 0: none, as in Shiu's model; 0.2 s)
@@ -178,7 +180,7 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 
 
 @numba.njit(parallel=True, cache=True)
-def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
+def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
@@ -207,7 +209,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, stargets, slow_i
     adaptation current: it pulls v down like the slow current (a_va), decays by a_aa a step, keeps
     decaying through the refractory period and grows by adapt[cls] with each spike. A depressing neuron's spike carries
     the fraction left[b, i] of its full strength, recovered toward 1 (time constant recover, in
-    steps) since its last spike, and leaves depress times that. A spike of neuron i also raises each of
+    steps) since its last spike, and leaves depress times that; synapses flagged in full[e] always carry full strength. A spike of neuron i also raises each of
     its electrical partners gidx[gptr[i]:gptr[i + 1]] by gw mV at once (no delay, no depression), so they
     can fire on the next step. Its fast synapses fptr[i]:fptr[i + 1] raise their targets ftargets[fcomp[e]] by
     fw[e] mV times the spike's strength (its depression) after fpend.shape[1] steps, through the ring buffer
@@ -349,7 +351,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, sptr, sidx, sw, stargets, slow_i
                             if count < cap:
                                 tl[slot, count] = j
                             count += 1
-                        row[j] += w[e] * strength
+                        row[j] += w[e] if full[e] else w[e] * strength
                     nt[slot] = count
                     if slow:
                         for e in range(sptr[i], sptr[i + 1]):
@@ -456,6 +458,7 @@ class HybridBrain:
             self.scale = (self.scale * np.asarray(scale, np.float32)).astype(np.float32)
         C = (counts(data) if matrix is None else matrix).tocsc()
         self.ptr, self.idx, self._counts = C.indptr, C.indices, C.data.astype(np.float32)
+        self.full_strength = np.zeros(len(self._counts), np.bool_)    # synapses exempt from their neuron's depression
         G = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if gap is None else sparse.csc_matrix(gap, dtype=np.float32)
         self.gptr, self.gidx, self.gap_mv = G.indptr, G.indices, G.data.astype(np.float32)
         F = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if fast is None else sparse.csc_matrix(fast, dtype=np.float32)
@@ -611,7 +614,7 @@ class HybridBrain:
         if record is not None:
             rec_pos[record] = np.arange(len(record))
         external_on = bool(self.external_input.any())      # else only graded neurons' targets can get release
-        _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights,
+        _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights, self.full_strength,
                  self.sptr, self.sidx, self.slow_weights, self.stargets, self.slow_in, self.gptr, self.gidx, self.gap_mv,
                  self.fptr, self.fcomp, self.fast_mv, self.ftargets, self.fpending, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  k["a_xx"], k["a_ss"], k["theta"],

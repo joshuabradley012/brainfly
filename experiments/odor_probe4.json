@@ -1,0 +1,1292 @@
+{
+ "question": "Exploratory, not pre-registered: with ORN-to-PN synapses at their measured strength and Kenyon cells at their\nmeasured distance below threshold (odor_probe3.py), two more measured properties: do odors then drive sparse Kenyon\ncell responses?\n\nodor_probe3.py: projection neurons now fire like a fly's (about 190 Hz in an odor's first 100 ms, 100 Hz over the\nsecond), but no Kenyon cell rises by 5 Hz. Traced (not saved): at the odor's onset about a fifth of the Kenyon cells\ncross 10 mV within 20 ms and fire together, APL's release then clamps them (to 22 mV below rest), and without APL the\nresponse still dies within about 100 ms, because the PNs' synapses depress (0.85 of the strength left per spike, 0.8 s\nto recover) to about 8% at 100 Hz. Two properties behind that differ from measurements:\n  tau   Kenyon cells' membrane time constant is 20 ms here (Shiu's, for every neuron). Measured: about 185 ms in\n        alpha/beta, 118-130 ms in alpha'/beta' and 125 ms in gamma (Groschner et al. 2018; Chen et al. 2026), over\n        200 ms (Turner et al. 2008). Here: 150 ms for every Kenyon cell.\n  PNKC  the PNs' depression is DM1-to-LHN1's (Kim et al. 2025), applied to all their synapses. No fly data exist for\n        PN to KC, and in locusts that synapse shows neither depression nor facilitation (Jortner et al. 2007), while\n        the same fly PN's synapses onto another LH neuron facilitate. Here: PN-to-KC synapses undepressed.\nConditions: odor_probe3.py's \"ORN + KC\" brain; plus tau; plus PNKC; plus both. In each, the Kenyon cells' rest is\nset again to 21.5 mV below threshold, as in odor_probe3.py.\nOdors, trials and measures as odor_probe3.py (seeds 9600 + 10 x condition + odor), plus APL's release (Hz) in the\nodor's first 100 ms and over the second, which odor_probe3.py missed (APL is graded and never spikes).\n\n    python experiments/odor_probe4.py          (writes experiments/odor_probe4.json)\n",
+ "conditions": {
+  "ORN + KC": {
+   "rest": {
+    "brain_hz": 0.973,
+    "over_100hz": 0,
+    "kc_hz": 0.024,
+    "upn_hz": 2.8
+   },
+   "claw_30ms_mv": 6.76,
+   "odors": {
+    "3-octanol": {
+     "pn_hz": {
+      "rest": 2.83,
+      "first_100ms": 192.0,
+      "second": 104.8,
+      "count": 66
+     },
+     "kc_share": 0.0005,
+     "kc_share_1spike": 0.456,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 19.2,
+     "read": {
+      "MBON11": [
+       37.19,
+       38.5
+      ],
+      "MBON01": [
+       2.12,
+       3.94
+      ],
+      "MBON18": [
+       11.06,
+       11.19
+      ],
+      "PPL101": [
+       21.19,
+       20.62
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      64.5,
+      6.6
+     ]
+    },
+    "4-methylcyclohexanol": {
+     "pn_hz": {
+      "rest": 2.64,
+      "first_100ms": 176.4,
+      "second": 98.2,
+      "count": 36
+     },
+     "kc_share": 0.0005,
+     "kc_share_1spike": 0.3524,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 14.9,
+     "read": {
+      "MBON11": [
+       37.19,
+       37.69
+      ],
+      "MBON01": [
+       1.62,
+       3.62
+      ],
+      "MBON18": [
+       10.75,
+       11.0
+      ],
+      "PPL101": [
+       19.44,
+       21.31
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      47.7,
+      4.9
+     ]
+    },
+    "ethyl acetate": {
+     "pn_hz": {
+      "rest": 3.14,
+      "first_100ms": 171.7,
+      "second": 93.8,
+      "count": 47
+     },
+     "kc_share": 0.0005,
+     "kc_share_1spike": 0.5221,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 22.9,
+     "read": {
+      "MBON11": [
+       37.19,
+       37.5
+      ],
+      "MBON01": [
+       2.06,
+       3.31
+      ],
+      "MBON18": [
+       10.44,
+       10.56
+      ],
+      "PPL101": [
+       19.19,
+       22.38
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      73.4,
+      7.4
+     ]
+    },
+    "isopentyl acetate": {
+     "pn_hz": {
+      "rest": 2.88,
+      "first_100ms": 189.9,
+      "second": 105.3,
+      "count": 74
+     },
+     "kc_share": 0.0005,
+     "kc_share_1spike": 0.502,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 19.8,
+     "read": {
+      "MBON11": [
+       37.0,
+       38.69
+      ],
+      "MBON01": [
+       1.81,
+       3.19
+      ],
+      "MBON18": [
+       10.62,
+       11.25
+      ],
+      "PPL101": [
+       20.0,
+       21.0
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      73.8,
+      7.5
+     ]
+    },
+    "benzaldehyde": {
+     "pn_hz": {
+      "rest": 2.75,
+      "first_100ms": 183.2,
+      "second": 100.2,
+      "count": 40
+     },
+     "kc_share": 0.0005,
+     "kc_share_1spike": 0.4793,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 19.7,
+     "read": {
+      "MBON11": [
+       37.38,
+       37.75
+      ],
+      "MBON01": [
+       2.12,
+       3.44
+      ],
+      "MBON18": [
+       10.44,
+       11.44
+      ],
+      "PPL101": [
+       20.0,
+       21.06
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      69.1,
+      7.0
+     ]
+    },
+    "2-heptanone": {
+     "pn_hz": {
+      "rest": 2.78,
+      "first_100ms": 187.5,
+      "second": 103.2,
+      "count": 81
+     },
+     "kc_share": 0.0005,
+     "kc_share_1spike": 0.5167,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 20.7,
+     "read": {
+      "MBON11": [
+       36.69,
+       37.62
+      ],
+      "MBON01": [
+       1.19,
+       3.31
+      ],
+      "MBON18": [
+       10.19,
+       11.62
+      ],
+      "PPL101": [
+       19.62,
+       21.25
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      76.1,
+      7.7
+     ]
+    }
+   },
+   "overlap_jaccard": {
+    "3-octanol | 4-methylcyclohexanol": 1.0,
+    "3-octanol | ethyl acetate": 1.0,
+    "3-octanol | isopentyl acetate": 1.0,
+    "3-octanol | benzaldehyde": 1.0,
+    "3-octanol | 2-heptanone": 1.0,
+    "4-methylcyclohexanol | ethyl acetate": 1.0,
+    "4-methylcyclohexanol | isopentyl acetate": 1.0,
+    "4-methylcyclohexanol | benzaldehyde": 1.0,
+    "4-methylcyclohexanol | 2-heptanone": 1.0,
+    "ethyl acetate | isopentyl acetate": 1.0,
+    "ethyl acetate | benzaldehyde": 1.0,
+    "ethyl acetate | 2-heptanone": 1.0,
+    "isopentyl acetate | benzaldehyde": 1.0,
+    "isopentyl acetate | 2-heptanone": 1.0,
+    "benzaldehyde | 2-heptanone": 1.0
+   }
+  },
+  "+ tau": {
+   "rest": {
+    "brain_hz": 0.96,
+    "over_100hz": 0,
+    "kc_hz": 0.014,
+    "upn_hz": 2.71
+   },
+   "claw_30ms_mv": 6.76,
+   "odors": {
+    "3-octanol": {
+     "pn_hz": {
+      "rest": 3.04,
+      "first_100ms": 191.6,
+      "second": 104.8,
+      "count": 66
+     },
+     "kc_share": 0.0002,
+     "kc_share_1spike": 0.0443,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 6.0,
+     "read": {
+      "MBON11": [
+       37.06,
+       38.06
+      ],
+      "MBON01": [
+       1.94,
+       2.5
+      ],
+      "MBON18": [
+       9.88,
+       9.56
+      ],
+      "PPL101": [
+       20.94,
+       20.81
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      4.6,
+      0.6
+     ]
+    },
+    "4-methylcyclohexanol": {
+     "pn_hz": {
+      "rest": 2.5,
+      "first_100ms": 177.8,
+      "second": 98.3,
+      "count": 36
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.0236,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "read": {
+      "MBON11": [
+       36.62,
+       38.0
+      ],
+      "MBON01": [
+       2.19,
+       2.69
+      ],
+      "MBON18": [
+       9.75,
+       9.25
+      ],
+      "PPL101": [
+       20.19,
+       19.44
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      0.8,
+      0.1
+     ]
+    },
+    "ethyl acetate": {
+     "pn_hz": {
+      "rest": 3.43,
+      "first_100ms": 171.8,
+      "second": 94.0,
+      "count": 47
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.076,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "read": {
+      "MBON11": [
+       36.81,
+       38.19
+      ],
+      "MBON01": [
+       2.69,
+       2.75
+      ],
+      "MBON18": [
+       10.31,
+       9.12
+      ],
+      "PPL101": [
+       19.56,
+       21.31
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      7.0,
+      0.8
+     ]
+    },
+    "isopentyl acetate": {
+     "pn_hz": {
+      "rest": 2.89,
+      "first_100ms": 190.4,
+      "second": 105.1,
+      "count": 74
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.062,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "read": {
+      "MBON11": [
+       36.75,
+       38.0
+      ],
+      "MBON01": [
+       1.62,
+       2.56
+      ],
+      "MBON18": [
+       10.88,
+       9.25
+      ],
+      "PPL101": [
+       20.44,
+       20.75
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      4.6,
+      0.5
+     ]
+    },
+    "benzaldehyde": {
+     "pn_hz": {
+      "rest": 2.84,
+      "first_100ms": 182.2,
+      "second": 100.4,
+      "count": 40
+     },
+     "kc_share": 0.0002,
+     "kc_share_1spike": 0.0566,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 5.6,
+     "read": {
+      "MBON11": [
+       37.25,
+       38.62
+      ],
+      "MBON01": [
+       2.12,
+       2.69
+      ],
+      "MBON18": [
+       10.44,
+       10.62
+      ],
+      "PPL101": [
+       18.75,
+       21.19
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      3.5,
+      0.5
+     ]
+    },
+    "2-heptanone": {
+     "pn_hz": {
+      "rest": 3.08,
+      "first_100ms": 187.7,
+      "second": 103.3,
+      "count": 81
+     },
+     "kc_share": 0.0002,
+     "kc_share_1spike": 0.0539,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 5.6,
+     "read": {
+      "MBON11": [
+       37.06,
+       38.19
+      ],
+      "MBON01": [
+       2.25,
+       2.19
+      ],
+      "MBON18": [
+       9.5,
+       9.69
+      ],
+      "PPL101": [
+       20.12,
+       20.81
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      6.0,
+      0.7
+     ]
+    }
+   },
+   "overlap_jaccard": {
+    "3-octanol | 4-methylcyclohexanol": 0.0,
+    "3-octanol | ethyl acetate": 0.0,
+    "3-octanol | isopentyl acetate": 0.0,
+    "3-octanol | benzaldehyde": 1.0,
+    "3-octanol | 2-heptanone": 1.0,
+    "4-methylcyclohexanol | ethyl acetate": 0.0,
+    "4-methylcyclohexanol | isopentyl acetate": 0.0,
+    "4-methylcyclohexanol | benzaldehyde": 0.0,
+    "4-methylcyclohexanol | 2-heptanone": 0.0,
+    "ethyl acetate | isopentyl acetate": 0.0,
+    "ethyl acetate | benzaldehyde": 0.0,
+    "ethyl acetate | 2-heptanone": 0.0,
+    "isopentyl acetate | benzaldehyde": 0.0,
+    "isopentyl acetate | 2-heptanone": 0.0,
+    "benzaldehyde | 2-heptanone": 1.0
+   }
+  },
+  "+ PNKC": {
+   "rest": {
+    "brain_hz": 0.977,
+    "over_100hz": 0,
+    "kc_hz": 0.095,
+    "upn_hz": 3.21
+   },
+   "claw_30ms_mv": 6.76,
+   "odors": {
+    "3-octanol": {
+     "pn_hz": {
+      "rest": 3.11,
+      "first_100ms": 190.7,
+      "second": 104.9,
+      "count": 66
+     },
+     "kc_share": 0.6882,
+     "kc_share_1spike": 0.7884,
+     "kc_by_class": {
+      "KCg-m": 0.7802,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0233,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 34.3,
+     "read": {
+      "MBON11": [
+       36.94,
+       52.56
+      ],
+      "MBON01": [
+       2.5,
+       12.56
+      ],
+      "MBON18": [
+       11.56,
+       32.69
+      ],
+      "PPL101": [
+       19.38,
+       35.38
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      133.6,
+      20.4
+     ]
+    },
+    "4-methylcyclohexanol": {
+     "pn_hz": {
+      "rest": 2.78,
+      "first_100ms": 176.6,
+      "second": 98.1,
+      "count": 36
+     },
+     "kc_share": 0.562,
+     "kc_share_1spike": 0.6848,
+     "kc_by_class": {
+      "KCg-m": 0.6595,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0155,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 28.3,
+     "read": {
+      "MBON11": [
+       37.44,
+       51.38
+      ],
+      "MBON01": [
+       2.25,
+       11.88
+      ],
+      "MBON18": [
+       10.56,
+       29.75
+      ],
+      "PPL101": [
+       19.81,
+       33.06
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      101.9,
+      15.6
+     ]
+    },
+    "ethyl acetate": {
+     "pn_hz": {
+      "rest": 2.89,
+      "first_100ms": 172.4,
+      "second": 93.8,
+      "count": 47
+     },
+     "kc_share": 0.8233,
+     "kc_share_1spike": 0.8703,
+     "kc_by_class": {
+      "KCg-m": 0.9374,
+      "KCg-d": 0.0049,
+      "KCab": 0.0,
+      "KCab-p": 0.0698,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 41.2,
+     "read": {
+      "MBON11": [
+       37.06,
+       54.31
+      ],
+      "MBON01": [
+       2.0,
+       14.94
+      ],
+      "MBON18": [
+       11.44,
+       33.88
+      ],
+      "PPL101": [
+       19.75,
+       36.31
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      167.2,
+      27.4
+     ]
+    },
+    "isopentyl acetate": {
+     "pn_hz": {
+      "rest": 2.76,
+      "first_100ms": 189.2,
+      "second": 105.1,
+      "count": 74
+     },
+     "kc_share": 0.7308,
+     "kc_share_1spike": 0.8098,
+     "kc_by_class": {
+      "KCg-m": 0.8241,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.062,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 36.4,
+     "read": {
+      "MBON11": [
+       36.88,
+       52.31
+      ],
+      "MBON01": [
+       1.81,
+       12.38
+      ],
+      "MBON18": [
+       10.56,
+       32.38
+      ],
+      "PPL101": [
+       20.0,
+       36.12
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      146.6,
+      22.6
+     ]
+    },
+    "benzaldehyde": {
+     "pn_hz": {
+      "rest": 3.08,
+      "first_100ms": 181.9,
+      "second": 100.3,
+      "count": 40
+     },
+     "kc_share": 0.734,
+     "kc_share_1spike": 0.8123,
+     "kc_by_class": {
+      "KCg-m": 0.8398,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0388,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 36.8,
+     "read": {
+      "MBON11": [
+       36.94,
+       53.12
+      ],
+      "MBON01": [
+       1.81,
+       13.25
+      ],
+      "MBON18": [
+       11.31,
+       33.06
+      ],
+      "PPL101": [
+       20.5,
+       35.88
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      142.4,
+      22.7
+     ]
+    },
+    "2-heptanone": {
+     "pn_hz": {
+      "rest": 3.3,
+      "first_100ms": 187.3,
+      "second": 103.1,
+      "count": 81
+     },
+     "kc_share": 0.7384,
+     "kc_share_1spike": 0.8031,
+     "kc_by_class": {
+      "KCg-m": 0.8405,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.062,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 37.8,
+     "read": {
+      "MBON11": [
+       37.56,
+       53.31
+      ],
+      "MBON01": [
+       2.31,
+       13.56
+      ],
+      "MBON18": [
+       11.38,
+       32.38
+      ],
+      "PPL101": [
+       20.69,
+       34.44
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      148.2,
+      22.3
+     ]
+    }
+   },
+   "overlap_jaccard": {
+    "3-octanol | 4-methylcyclohexanol": 0.806,
+    "3-octanol | ethyl acetate": 0.818,
+    "3-octanol | isopentyl acetate": 0.904,
+    "3-octanol | benzaldehyde": 0.907,
+    "3-octanol | 2-heptanone": 0.915,
+    "4-methylcyclohexanol | ethyl acetate": 0.671,
+    "4-methylcyclohexanol | isopentyl acetate": 0.744,
+    "4-methylcyclohexanol | benzaldehyde": 0.749,
+    "4-methylcyclohexanol | 2-heptanone": 0.749,
+    "ethyl acetate | isopentyl acetate": 0.879,
+    "ethyl acetate | benzaldehyde": 0.876,
+    "ethyl acetate | 2-heptanone": 0.878,
+    "isopentyl acetate | benzaldehyde": 0.959,
+    "isopentyl acetate | 2-heptanone": 0.969,
+    "benzaldehyde | 2-heptanone": 0.972
+   }
+  },
+  "+ tau + PNKC": {
+   "rest": {
+    "brain_hz": 0.96,
+    "over_100hz": 0,
+    "kc_hz": 0.023,
+    "upn_hz": 2.95
+   },
+   "claw_30ms_mv": 6.76,
+   "odors": {
+    "3-octanol": {
+     "pn_hz": {
+      "rest": 3.6,
+      "first_100ms": 190.6,
+      "second": 104.8,
+      "count": 66
+     },
+     "kc_share": 0.482,
+     "kc_share_1spike": 0.7985,
+     "kc_by_class": {
+      "KCg-m": 0.5253,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0233,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 9.4,
+     "read": {
+      "MBON11": [
+       37.75,
+       53.19
+      ],
+      "MBON01": [
+       2.12,
+       13.62
+      ],
+      "MBON18": [
+       10.38,
+       32.56
+      ],
+      "PPL101": [
+       20.56,
+       34.62
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      63.8,
+      14.7
+     ]
+    },
+    "4-methylcyclohexanol": {
+     "pn_hz": {
+      "rest": 3.24,
+      "first_100ms": 176.9,
+      "second": 98.1,
+      "count": 36
+     },
+     "kc_share": 0.3302,
+     "kc_share_1spike": 0.7215,
+     "kc_by_class": {
+      "KCg-m": 0.3689,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 8.4,
+     "read": {
+      "MBON11": [
+       37.62,
+       51.44
+      ],
+      "MBON01": [
+       1.94,
+       12.19
+      ],
+      "MBON18": [
+       9.81,
+       30.12
+      ],
+      "PPL101": [
+       20.62,
+       33.88
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      41.5,
+      10.0
+     ]
+    },
+    "ethyl acetate": {
+     "pn_hz": {
+      "rest": 3.25,
+      "first_100ms": 172.7,
+      "second": 93.9,
+      "count": 47
+     },
+     "kc_share": 0.6836,
+     "kc_share_1spike": 0.8834,
+     "kc_by_class": {
+      "KCg-m": 0.7496,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0465,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 10.6,
+     "read": {
+      "MBON11": [
+       37.19,
+       55.62
+      ],
+      "MBON01": [
+       1.94,
+       15.56
+      ],
+      "MBON18": [
+       10.38,
+       34.25
+      ],
+      "PPL101": [
+       20.06,
+       37.81
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      83.8,
+      21.3
+     ]
+    },
+    "isopentyl acetate": {
+     "pn_hz": {
+      "rest": 2.86,
+      "first_100ms": 190.1,
+      "second": 104.8,
+      "count": 74
+     },
+     "kc_share": 0.5372,
+     "kc_share_1spike": 0.8209,
+     "kc_by_class": {
+      "KCg-m": 0.5626,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0543,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 9.8,
+     "read": {
+      "MBON11": [
+       37.38,
+       53.88
+      ],
+      "MBON01": [
+       2.25,
+       13.75
+      ],
+      "MBON18": [
+       10.06,
+       33.31
+      ],
+      "PPL101": [
+       20.12,
+       35.25
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      72.3,
+      16.9
+     ]
+    },
+    "benzaldehyde": {
+     "pn_hz": {
+      "rest": 2.84,
+      "first_100ms": 182.5,
+      "second": 100.1,
+      "count": 40
+     },
+     "kc_share": 0.5509,
+     "kc_share_1spike": 0.8243,
+     "kc_by_class": {
+      "KCg-m": 0.6028,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.031,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 9.8,
+     "read": {
+      "MBON11": [
+       37.19,
+       54.12
+      ],
+      "MBON01": [
+       1.94,
+       14.25
+      ],
+      "MBON18": [
+       10.5,
+       33.81
+      ],
+      "PPL101": [
+       19.88,
+       35.38
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      69.2,
+      16.9
+     ]
+    },
+    "2-heptanone": {
+     "pn_hz": {
+      "rest": 3.2,
+      "first_100ms": 188.6,
+      "second": 103.2,
+      "count": 81
+     },
+     "kc_share": 0.5682,
+     "kc_share_1spike": 0.8361,
+     "kc_by_class": {
+      "KCg-m": 0.6267,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0388,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 10.0,
+     "read": {
+      "MBON11": [
+       36.81,
+       54.75
+      ],
+      "MBON01": [
+       1.44,
+       14.44
+      ],
+      "MBON18": [
+       10.31,
+       33.31
+      ],
+      "PPL101": [
+       19.62,
+       35.56
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      75.0,
+      17.0
+     ]
+    }
+   },
+   "overlap_jaccard": {
+    "3-octanol | 4-methylcyclohexanol": 0.644,
+    "3-octanol | ethyl acetate": 0.656,
+    "3-octanol | isopentyl acetate": 0.791,
+    "3-octanol | benzaldehyde": 0.805,
+    "3-octanol | 2-heptanone": 0.806,
+    "4-methylcyclohexanol | ethyl acetate": 0.457,
+    "4-methylcyclohexanol | isopentyl acetate": 0.547,
+    "4-methylcyclohexanol | benzaldehyde": 0.563,
+    "4-methylcyclohexanol | 2-heptanone": 0.559,
+    "ethyl acetate | isopentyl acetate": 0.757,
+    "ethyl acetate | benzaldehyde": 0.753,
+    "ethyl acetate | 2-heptanone": 0.766,
+    "isopentyl acetate | benzaldehyde": 0.889,
+    "isopentyl acetate | 2-heptanone": 0.907,
+    "benzaldehyde | 2-heptanone": 0.927
+   }
+  }
+ },
+ "kc_rest_calibration": {
+  "ORN + KC": {
+   "KC": 22.06,
+   "KCa'b'-ap1": 21.5,
+   "KCa'b'-ap2": 21.47,
+   "KCa'b'-m": 21.49,
+   "KCab-c": 21.52,
+   "KCab-m": 21.53,
+   "KCab-p": 21.42,
+   "KCab-s": 21.48,
+   "KCg": 21.54,
+   "KCg-d": 21.38,
+   "KCg-m": 21.51,
+   "KCg-s1": 21.43,
+   "KCg-s2": 21.43,
+   "KCg-s3": 21.64,
+   "KCg-s4": 21.74
+  },
+  "+ tau": {
+   "KC": 19.94,
+   "KCa'b'-ap1": 15.07,
+   "KCa'b'-ap2": 14.88,
+   "KCa'b'-m": 14.94,
+   "KCab-c": 19.62,
+   "KCab-m": 19.71,
+   "KCab-p": 11.87,
+   "KCab-s": 19.09,
+   "KCg": 10.85,
+   "KCg-d": 12.26,
+   "KCg-m": 19.57,
+   "KCg-s1": 11.53,
+   "KCg-s2": 11.94,
+   "KCg-s3": 17.11,
+   "KCg-s4": 18.87
+  },
+  "+ PNKC": {
+   "KC": 21.91,
+   "KCa'b'-ap1": 21.5,
+   "KCa'b'-ap2": 21.52,
+   "KCa'b'-m": 21.48,
+   "KCab-c": 21.36,
+   "KCab-m": 21.3,
+   "KCab-p": 21.69,
+   "KCab-s": 21.42,
+   "KCg": 21.8,
+   "KCg-d": 21.68,
+   "KCg-m": 21.42,
+   "KCg-s1": 21.65,
+   "KCg-s2": 21.28,
+   "KCg-s3": 21.37,
+   "KCg-s4": 21.65
+  },
+  "+ tau + PNKC": {
+   "KC": 19.57,
+   "KCa'b'-ap1": 15.09,
+   "KCa'b'-ap2": 14.83,
+   "KCa'b'-m": 14.81,
+   "KCab-c": 19.57,
+   "KCab-m": 19.88,
+   "KCab-p": 11.87,
+   "KCab-s": 18.9,
+   "KCg": 11.47,
+   "KCg-d": 12.29,
+   "KCg-m": 19.64,
+   "KCg-s1": 11.37,
+   "KCg-s2": 10.61,
+   "KCg-s3": 18.52,
+   "KCg-s4": 19.78
+  }
+ },
+ "seconds": 525
+}
