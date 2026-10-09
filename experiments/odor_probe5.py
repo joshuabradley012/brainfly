@@ -6,7 +6,7 @@ quiet. Turner, Bazhenov & Laurent 2008 (J Neurophysiol 99:734) measured the rest
   - EPSPs are fast although the soma's time constant is over 200 ms: 10-90% rise 2.1 +- 0.5 ms, decay 11.5 +- 5.3 ms,
     "determined mostly by synaptic (and possibly, voltage-gated) conductances in the dendrites". In this model a
     neuron's membrane time constant is what sets its EPSP's decay, so the Kenyon cells get 11.5 ms.
-  - unitary EPSPs of 1.4 mV (mean; median 1.2), from the distribution of spontaneous EPSPs; here 3.3 mV for the mean
+  - unitary EPSPs of 1.4 mV (mean; median 1.2), from the distribution of spontaneous EPSPs; here 3.4 mV for the mean
     PN-to-KC connection (with a 20 ms membrane).
   - resting 21.5 +- 5.6 mV below threshold (odor_probe3.py's calibration), and about 10 PNs per Kenyon cell.
   - a passive model built from these numbers, driven by recorded PN odor responses with no synaptic depression,
@@ -32,6 +32,10 @@ alpha'/beta' 1.3-1.6 (flies: 4.9 +- 3.0), gamma 2.6-5.2. APL releases 12-42 Hz i
 2.5-4.3 Hz and MBON18 1-8 Hz (Hige et al. 2015's flies: 118 +- 8.3 spikes above the spontaneous rate in the 1.4 s
 from 3-octanol's onset, about 84 a second; "about 20 Hz", used here at first, wasn't that experiment's measure). With the PNs' depression (depressed), 1.7-2.6% of Kenyon cells
 respond, with under one extra spike, and the MBONs don't move. The resting brain stays at 0.97 Hz either way.
+Checked afterwards: DoOR's responses here include each receptor's spontaneous level (DoOR's SFR row, 0-0.2 of its strongest
+response), which brainfly.odors now subtracts, as DoOR's own reset_sfr does; so every glomerulus was driven harder
+than its odor drives it, and receptors at or below their spontaneous rate were driven too (odor_probe7.py reruns
+the current model without this).
 
     python experiments/odor_probe5.py          (writes experiments/odor_probe5.json)
 """

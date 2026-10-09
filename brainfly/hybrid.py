@@ -505,7 +505,8 @@ class HybridBrain:
 
     def set_slow(self, slow: sparse.spmatrix | None) -> None:
         """Replace the slow edges (signed counts, rows postsynaptic; None for none), weighted like the others by
-        w_syn and the target's scale. The slow state starts again from zero."""
+        w_syn and the target's scale. The slow currents start again from zero; graded neurons keep releasing, so their
+        slow input is rebuilt from their present release along the new edges."""
         S = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if slow is None else sparse.csc_matrix(slow, dtype=np.float32)
         self.sptr, self.sidx, self._slow_counts = S.indptr, S.indices, S.data.astype(np.float32)
         self.stargets = np.unique(S.indices).astype(np.int64)
@@ -516,6 +517,10 @@ class HybridBrain:
         self.s = np.zeros((self.trials, self.n), np.float32)
         self.pending_slow = np.zeros((self.trials, self.delay, self.n if len(self.slow_weights) else 0), np.float32)
         self.slow_graded_input = np.zeros((self.trials, self.n if len(self.slow_weights) else 0), np.float32)
+        if len(self.slow_weights):
+            for q, i in enumerate(self.graded):
+                for e in range(self.sptr[i], self.sptr[i + 1]):
+                    self.slow_graded_input[:, self.sidx[e]] += self.slow_weights[e] * self.release[:, q]
 
     def cells(self, types: list[str], side: str | None = None) -> np.ndarray:
         """Neurons whose cell type (FlyWire's or MaleCNS's own) or superclass is in `types`,

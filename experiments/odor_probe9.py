@@ -1,8 +1,9 @@
 """Exploratory, not pre-registered: APL's inhibition with its measured slow (GABA_B) part. Does lasting inhibition make
 the Kenyon cells sparser, and does APL then matter as much as a fly's?
 
-odor_probe8.py: silencing the model's APL makes 1.5-1.7 times as many Kenyon cells respond, where blocking flies' APL
-makes about four times as many active (Lin et al. 2014; research_notes/Rung 9 learning data/kc_classes_and_apl.md).
+odor_probe8.py: silencing the model's APL makes 1.4-1.6 times as many Kenyon cells respond, where blocking flies' APL
+lowers their population sparseness as much as about four times as many active cells would (Lin et al. 2014; derived,
+research_notes/Rung 9 learning data/kc_classes_and_apl.md).
 The model's APL inhibits Kenyon cells through the fast current only. Its peak, about 11 mV during an odor's onset,
 matches the measured saturation (10-12 mV, Inada et al. 2017), but it fades within about 100 ms, as the Kenyon cells
 fall quiet. Flies' lasts: in vivo it peaks within about 0.2 s and recovers over about a second (Vrontou et al. 2021),
@@ -23,20 +24,22 @@ Conditions:
 Odors, flies and measures as odor_probe7.py; seeds 30000 + 100 x condition + odor (Turner's protocol), + 50 + odor
 (Hige's), + 90 (Kenyon cells' rest), + 80 (their class offsets), + 95 (the resting brain). The four-fold comparison
 is loose: Lin et al. measured somatic calcium over 5 s pulses of ethyl acetate, this the share of Kenyon cells
-responding by Turner's criterion over 2 s from a 0.5 s pulse.
+responding by Turner's criterion over 2 s from a 0.5 s pulse. (Lin et al.'s sparseness came from somatic calcium
+over a 7-odor panel; their lobe imaging used 5 s pulses of ethyl acetate.)
 
-Ran: lasting inhibition doesn't make the Kenyon cells sparser. Over the six odors:
-  current                 11-29% respond (MCH 11.3%, OCT 19.9%); MBON11 2.1-12.4 spikes
-  APL silenced            16-48%, 1.4-1.7 times the current model's (flies: about 4 times)
-  GABA_B                  12-31%, 1.03-1.09 times the current model's; spikes per response unchanged (alpha/beta
-                          2.4-4.3, alpha'/beta' 1.0-1.3, gamma 1.9-3.0); MBON11 4.0-12.0
-  GABA_B + Inada classes  11-30%; by class alpha/beta 12-41%, alpha'/beta' 11-28%, gamma 11-20%; alpha'/beta' fire
-                          1.7-2.7 spikes per response; MBON11 2.1-8.9
+Ran (after the second review: DoOR's spontaneous level subtracted, and the ring's offsets, which an earlier run added
+twice in the GABA_B conditions and three times in the last, added once; the first run is in git history): lasting
+inhibition doesn't make the Kenyon cells sparser. Over the six odors:
+  current                 6.6-19.4% respond (MCH 6.6%, OCT 16.3%); MBON11 0.8-5.3 spikes
+  APL silenced            9.7-31.9%, 1.4-1.6 times the current model's for each odor
+  GABA_B                  7.7-20.5%, 1.00-1.16 times the current model's; spikes per response about as before (alpha/beta
+                          1.6-3.7, alpha'/beta' 0.9-1.3, gamma 1.5-2.2); MBON11 2.1-5.2
+  GABA_B + Inada classes  7.3-20.3%; by class alpha/beta 7-26%, alpha'/beta' 8-20%, gamma 8-16%; alpha'/beta' fire
+                          1.2-2.1 spikes per response; MBON11 1.0-4.9
 The resting brain stays at 0.97-0.98 Hz with no neuron over 100 Hz. Moving 47% of APL's weight to the slow current
 weakens its fast inhibition while the slow part builds up too late to stop the Kenyon cells that fire at the odor's
 onset, and those are most of the responses. Flies' APL can't stop them either (its inhibition lags excitation by
-hundreds of ms), so the excess more likely lies in what reaches the Kenyon cells at onset: every receptor neuron of
-an odor switching on at the same instant and full rate.
+hundreds of ms).
 
     python experiments/odor_probe9.py          (writes experiments/odor_probe9.json)
 """

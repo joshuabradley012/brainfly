@@ -1,14 +1,18 @@
 """Odors as olfactory receptor neuron drives, from the DoOR database (Münch & Galizia 2016, ropensci/DoOR.data).
 
 DoOR's consensus response matrix gives each odorant's response at each receptor, scaled 0-1 per receptor (1 its
-strongest response to any odorant). Its mapping assigns receptors to antennal lobe glomeruli, which MaleCNS names its
-receptor neuron types by (ORN_DM1, ...). An odor here drives every receptor neuron of each glomerulus at its
-response times `max_hz`, taking the strongest receptor where several share a glomerulus. A receptor DoOR maps to two
+strongest response to any odorant), with the receptor's spontaneous firing as one more row ("SFR", 0-0.2). As DoOR's
+own reset_sfr does, responses here are taken relative to it (the SFR value subtracted; none where it is missing), so
+a receptor at its spontaneous rate gives 0 and one below it a negative, inhibitory response. Its mapping assigns
+receptors to antennal lobe glomeruli, which MaleCNS names its receptor neuron types by (ORN_DM1, ...). An odor here
+drives every receptor neuron of each glomerulus at its excitatory response times `max_hz`, taking the strongest
+receptor where several share a glomerulus. A receptor DoOR maps to two
 glomeruli (Or33b, in DM5's and DM3's neurons) or to a pair of subdivisions ("DL2d/v": Ir75b, Ir75c and the ac3A neuron)
 drives both. Recordings DoOR keeps for a whole sensillum of several neurons (ac1, ac2, ac3 without Or35a) and receptors
 with no glomerulus are left out.
 
-    pattern = glomeruli("3-octanol")                     # {glomerulus: response 0-1}
+    pattern = glomeruli("3-octanol")                     # {glomerulus: response above spontaneous, 0-1}
+    signed = glomeruli("3-octanol", inhibition=True)     # inhibitory responses too, negative
     drive = orn_drive(brain, "3-octanol", max_hz=200)     # [(cells, Hz), ...] for HybridBrain.advance(drive=...)
 """
 from __future__ import annotations
@@ -57,22 +61,27 @@ def _tables():
     head = odor[0]
     name_col, key_col = head.index("Name") + 1, head.index("InChIKey") + 1      # rows carry a leading index
     key_of = {r[name_col].lower(): r[key_col] for r in odor[1:]}
-    return receptors, keys, M, glom, key_of
+    sfr = np.nan_to_num(M[keys.index("SFR")], nan=0.0)                          # each receptor's spontaneous level
+    return receptors, keys, M, glom, key_of, sfr
 
 
-def glomeruli(name: str, floor: float = 0.0) -> dict[str, float]:
-    """An odorant's response at each glomerulus with a mapped, measured receptor (above `floor`), 0-1."""
-    receptors, keys, M, glom, key_of = _tables()
+def glomeruli(name: str, floor: float = 0.0, inhibition: bool = False) -> dict[str, float]:
+    """An odorant's response above its receptors' spontaneous level at each glomerulus with a mapped, measured receptor:
+    those above `floor` (0-1), or with inhibition also those below -floor (negative). Where several receptors share a
+    glomerulus, the most excitatory, or if none excites, the most inhibitory."""
+    receptors, keys, M, glom, key_of, sfr = _tables()
     key = key_of.get(name.lower())
     if key is None or key not in keys:
         raise KeyError(f"{name!r} isn't in DoOR")
-    row = M[keys.index(key)]
+    row = M[keys.index(key)] - sfr
     out: dict[str, float] = {}
     for rec, v in zip(receptors, row):
-        if np.isnan(v) or v <= floor:
+        if np.isnan(v) or not (v > floor or (inhibition and v < -floor)):
             continue
         for g in glom.get(rec, ()):
-            out[g] = max(out.get(g, 0.0), float(v))
+            old = out.get(g)
+            if old is None or (v > old if v > 0 or old > 0 else v < old):
+                out[g] = float(v)
     return out
 
 

@@ -47,7 +47,7 @@ Conventions:
    - 15-s odors: ≈ 8 → 60–65 Hz at onset, then a plateau of ≈ 20 Hz (Vrontou, fig.).
    - 5-s odors: +35 Hz on a ≈ 37 Hz baseline (Huang 2024, voltage imaging, fig.).
    - Whole-cell baselines are ≈ 3–10 Hz (fig.).
-10. **Against brainfly's numbers.**
+10. **Against brainfly's numbers** (as of odor_probe5/6, 2026-10-08, before later corrections; the current model is in experiments/odor_probe7.py).
     - The model's α′β′ fire too few spikes and αβ too many. A threshold 5–13 mV lower for α′β′ than for αβ is supported everywhere.
     - The model's αβ spike counts (3.6–7 vs 2.2) point to an αβ threshold that is too low, or to APL feedback that is too weak or too slow.
     - The model's MBON11 rise (5–17 Hz) is 2–17× below the measured 35–85 Hz. "≈ 20 Hz" is only the late plateau of 15-s odors.
@@ -209,7 +209,7 @@ Somata (7 odors):
 | KC>shi, 22 → 32 °C | 0.93 → 0.82 | 0.14 → 0.24 |
 | Controls | 0.95–0.98 | 0.06–0.13 |
 
-- Derived: for binary responses (1 − S)(1 − 1/N) is the active fraction. For graded responses it is a lower bound. So ≈ 3% active → ≥ 11–14% with APL blocked.
+- Derived: for all-or-none responses the active fraction is a = 1 − S(1 − 1/N) (≈ 1 − S for many pixels; corrected from (1 − S)(1 − 1/N), which differs by about 1/N). Graded responses make this a bound, not a count. So ≈ 3% active → ≈ 11–14% with APL blocked, if responses were all-or-none.
 
 Odor dependence: the increase "was greater for the IA:EB mixtures than for δ-DL … supporting the idea that inhibitory feedback is driven by overall Kenyon cell activity". Blocking APL did not change δ-DL's sparseness.
 

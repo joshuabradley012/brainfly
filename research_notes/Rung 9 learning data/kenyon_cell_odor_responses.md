@@ -48,6 +48,6 @@ In vivo whole-cell recordings from 71 Kenyon cells (KCs), each tested with about
 ## For brainfly
 - In a current-based LIF the membrane time constant sets the EPSP's decay, so 11.5 ms (not the soma's >200 ms) is the
   KC time constant that matches synaptic integration (odor_probe4.py tried 150 ms; odor_probe5.py uses 11.5).
-- With MaleCNS's PN-to-KC synapse counts, the mean connection gives 3.3 mV with a 20 ms membrane, against 1.4 mV.
+- With MaleCNS's PN-to-KC synapse counts, the mean connection gives 3.4 mV with a 20 ms membrane, against 1.4 mV.
 - Gruntman & Turner 2013 (optogenetic PN activation): about 4 of a KC's 5-7 claws must be coactive to spike, summation
   linear to sublinear, the depolarization plateauing about 30 ms into >100 Hz PN firing.

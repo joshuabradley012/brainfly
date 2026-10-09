@@ -29,17 +29,19 @@ Procedure, for 3-octanol paired and 4-methylcyclohexanol unpaired, then the reve
   4. post: with tau_e 0.5 s's weights, both odors again at the same 4 seeds: the spike depression.
 Seeds: 11000 + 10 x odor + seed (pre and post), 11200 + 10 x pairing + seed (forward), 11300 + ... (backward).
 
-Ran: the depression isn't odor-specific: the two odors' Kenyon cells overlap too much. Before pairing, MBON11 gains
-5.0 +- 0.3 spikes to OCT and 2.7 +- 0.3 to MCH (32 flies; Hige's flies 118 and 110). The rate that cuts OCT's charge
-by 90% cuts MCH's by 85%, and the other four odors' by 63-80%; paired with MCH instead, MCH's 90% comes with OCT's 61%.
-tau_e makes no difference (0.2 to 1 s change these by under half a percentage point). In spikes (tau_e 0.5 s),
-pairing with OCT takes OCT's response from 5.0 to -1.7 and MCH's from 2.7 to 0.1, drops of 134% and 98% (flies: 80%
-and about 25%); pairing with MCH, MCH's goes from 2.7 to -0.2 and OCT's from 5.0 to 0.8 (107% and 84%). Responses
-below zero mean MBON11 fires less than at rest during the odor once its Kenyon cell input is gone. Backward pairing
-changes the paired odor's charge by 1% (OCT) or 4% (MCH), as flies' responses don't change, which checks only the
-rule's timing. The Kenyon cells that carry MCH's input to MBON11 are mostly ones OCT drives too, which follows from
-responses two to five times denser than flies' (odor_probe7.py): 796 Kenyon cells gain more than half a spike to OCT
-and 422 to MCH, of the 3,623 that reach MBON11.
+Ran (after the second review: DoOR's spontaneous level subtracted; the first run is in git history): the depression
+isn't odor-specific: the two odors' Kenyon cells overlap too much. Before pairing, MBON11 gains 3.6 +- 0.3 spikes to
+OCT and 1.8 +- 0.3 to MCH (32 flies; Hige's flies 118 and 110). The rate that cuts OCT's charge by 90% cuts MCH's by
+79%, and the other four odors' by 60-80%; paired with MCH instead, MCH's 90% comes with OCT's 51% (the others 30-46%).
+In flies the unpaired odor's charge didn't change significantly (Hige et al. Fig. 3, n = 5 cells). tau_e makes no
+difference (0.2 to 1 s change these by under a percentage point). In spikes (tau_e 0.5 s), pairing with OCT takes OCT's
+response from 3.6 to -1.4 and MCH's from 1.8 to 0.5, drops of 140% and 73% (flies: 80% and about 25%); pairing with
+MCH, MCH's goes from 1.8 to 0.3 and OCT's from 3.6 to 1.0 (83% and 73%). Responses below zero mean MBON11 fires less
+than at rest during the odor once its Kenyon cell input is gone. Backward pairing changes the paired odor's charge by
+1% (OCT) or 7-8% (MCH), where flies' responses don't change; that checks only the rule's timing. 665 of the 4,064 Kenyon
+cells gain more than half a spike to OCT and 284 to MCH; 3,623 of them reach MBON11, through 4,184 connections
+(41,460 synapses). The responses are small and noisy enough that the spike drops carry about 10-20 percentage points
+of uncertainty (SEMs of 0.3 spikes on responses of 2-4).
 
     python experiments/learning_pilot.py         (writes experiments/learning_pilot.json)
 """
@@ -109,8 +111,9 @@ def main() -> None:
     kc_of = np.searchsorted(kc, pre_n[onto])
     w0 = b.weights.copy()
     per_kc = np.bincount(kc_of, weights=w0[onto], minlength=len(kc))      # each KC's total weight onto MBON11
-    out = {"question": __doc__, "kc_rest_calibration": calibration, "kc_mbon11_synapses": int(len(onto)),
-           "kcs_onto_mbon11": int((per_kc > 0).sum()), "pre": {}, "pairings": []}
+    out = {"question": __doc__, "kc_rest_calibration": calibration, "kc_mbon11_connections": int(len(onto)),
+           "kc_mbon11_synapses": int(np.abs(b._counts[onto]).sum()), "kcs_onto_mbon11": int((per_kc > 0).sum()),
+           "pre": {}, "pairings": []}
 
     def tests(odor: str, k: int) -> dict:
         r = [trial(o, odor, 11000 + 10 * k + j, mbon) for j in range(SEEDS)]

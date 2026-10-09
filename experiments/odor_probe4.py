@@ -34,7 +34,11 @@ Checked afterwards (odor_probe7.py): the saved overlaps ("overlap_jaccard") are 
 the time constant there are almost none, so the overlap of 0.2 first reported for "+ tau" meant nothing; that run
 can't say whether its responding cells were odor-specific. "About 37 to 57 Hz" isn't the flies' MBON11 response in the
 pairing experiment: Hige et al. 2015 counted 118 +- 8.3 spikes above the spontaneous rate in the 1.4 s from 3-octanol's
-onset.
+onset. With the 150 ms membrane the two rounds setting the Kenyon cells' rest didn't converge: in "+ tau" and
+"+ tau + PNKC" they sat 10.6-19.9 mV below threshold (saved), nearer than the 21.5 mV intended. And DoOR's responses here include each receptor's spontaneous level (DoOR's SFR row, 0-0.2 of its strongest
+response), which brainfly.odors now subtracts, as DoOR's own reset_sfr does; so every glomerulus was driven harder
+than its odor drives it, and receptors at or below their spontaneous rate were driven too (odor_probe7.py reruns
+the current model without this).
 
     python experiments/odor_probe4.py          (writes experiments/odor_probe4.json)
 """

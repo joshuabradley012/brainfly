@@ -99,10 +99,32 @@ def test_graded_release_along_a_slow_synapse_settles_like_spikes():
     assert brain.s[0, 1] == pytest.approx(s_ss, rel=1e-3)
     assert brain.u[0, 1] == pytest.approx(_approach(0.05, T_MBR, DT) * s_ss / (1 - np.exp(-DT / T_MBR)), rel=1e-3)
     assert brain.x[0, 1] == 0                           # nothing reaches the fast current
+    brain.set_slow(sparse.csr_matrix(([1.5], ([1], [0])), shape=(2, 2)))     # the same edge, set again mid-run:
+    brain.advance(20000)                                # the release carries on, so the slow current rebuilds
+    assert brain.s[0, 1] == pytest.approx(s_ss, rel=1e-3)
     brain.set_slow(None)                                # without the slow synapse the target gets nothing
     brain.reset()
     brain.advance(2000)
     assert brain.u[0, 1] == 0
+
+
+def test_full_strength_exempts_single_synapses_from_depression():
+    """A depressing neuron's second spike reaches a target flagged in full_strength at full strength, and its other
+    target depressed, exactly as a neuron without depression and one with it would."""
+    def two_spikes(depression):
+        brain = small([(0, 1, 1.0), (0, 2, 1.0)], 3, types={"c0": {"depression": depression, "recovery": 1.0}},
+                      w_poi=100.0)
+        pre = np.repeat(np.arange(brain.n), np.diff(brain.ptr))
+        brain.full_strength[(pre == 0) & (brain.idx == 2)] = True
+        for _ in range(2):                              # two spikes 2 ms apart
+            brain.advance(1, drive=[([0], 1 / DT)])
+            brain.advance(19)
+        brain.advance(20)                               # both have arrived
+        return brain.x[0, 1], brain.x[0, 2]
+    depressed, full = two_spikes(0.5)
+    plain_1, plain_2 = two_spikes(1.0)
+    assert full == pytest.approx(plain_2, rel=1e-6)
+    assert depressed < plain_1 - 0.1
 
 
 def test_slow_current_decays_with_its_own_time_constant_and_survives_spikes():

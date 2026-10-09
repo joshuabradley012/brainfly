@@ -17,8 +17,11 @@ with no neuron over 100 Hz.
 Checked afterwards (odor_probe7.py): the flies' figure first set beside this, "about 37 to 57 Hz", combined a resting
 rate from voltage imaging with an onset rate read off a figure of 15 s odors. In the pairing experiment, Hige et al.
 2015 counted 118 +- 8.3 spikes above the spontaneous rate in the 1.4 s from 3-octanol's onset (110 +- 11 for MCH):
-about 84 a second, five to fifteen times MBON11's rise here. And the ORN-to-PN factor should be 7.3, not 8.8 (see
-odor_probe3.py).
+about 84 a second, five to sixteen times MBON11's rise here. And the ORN-to-PN factor should be 7.3, not 8.8 (see
+odor_probe3.py). And DoOR's responses here include each receptor's spontaneous level (DoOR's SFR row, 0-0.2 of its strongest
+response), which brainfly.odors now subtracts, as DoOR's own reset_sfr does; so every glomerulus was driven harder
+than its odor drives it, and receptors at or below their spontaneous rate were driven too (odor_probe7.py reruns
+the current model without this).
 
     python experiments/odor_probe6.py          (writes experiments/odor_probe6.json)
 """

@@ -2,13 +2,15 @@
 as strong as a fly's, would the Kenyon cell classes' measured thresholds put the right classes first, and how much does
 the odor's strength matter?
 
-odor_probe7.py: with the pathway's measured properties, 11-30% of Kenyon cells respond to an odor by Turner et al.
-2008's criterion (flies: 6 +- 5%), alpha'/beta' cells least (2-5%) and gamma cells a lot (15-29%), where Turner's
-flies show alpha'/beta' most (about 9-14%), alpha/beta 3-8% and gamma about 2%; and MBON11 gains 2-11 spikes where Hige
-et al. 2015's flies gained 110-118. The measurements behind these checks are in
+odor_probe7.py: with the pathway's measured properties, 7-20% of Kenyon cells respond to an odor by Turner et al.
+2008's criterion (flies: 6 +- 5%), alpha'/beta' cells least (1-3%) and gamma cells a lot (11-22%), where Turner's
+flies show alpha'/beta' most (about 9-14%), alpha/beta 3-8% and gamma about 2%; and MBON11 gains 1-6 spikes where Hige
+et al. 2015's flies gained 110-118 (to 3-octanol and 4-methylcyclohexanol, the only odors they measured). The measurements behind these checks are in
 research_notes/Rung 9 learning data/kc_classes_and_apl.md:
   APL      blocking APL raises Kenyon cells' odor calcium two- to threefold and lowers their population sparseness from
-           0.97 to 0.86-0.89 (Lin et al. 2014), roughly 3% active to 11-14% (derived): about four times as many.
+           0.97 to 0.86-0.89 (Lin et al. 2014, somatic calcium over a 7-odor panel), which for all-or-none responses
+           would mean about 3% active becoming 11-14%, about four times as many (derived; graded responses make it a
+           bound, not a count).
            Here: APL silenced throughout, the current model otherwise. The model's APL hyperpolarizes Kenyon cells by
            about 11 mV at its peak (release about 38 Hz x the summed APL-to-KC weight x 5 ms), near the measured
            saturation of 10-12 mV (Inada et al. 2017), but for about 100 ms, where flies' inhibition lags by
@@ -20,37 +22,44 @@ research_notes/Rung 9 learning data/kc_classes_and_apl.md:
              Inada          alpha'/beta' 5.5 mV nearer threshold than alpha/beta, gamma 2.5 mV farther
              Groschner/Chen alpha'/beta' 13 mV nearer, gamma 11 mV farther
            (unclassified "KC" cells at 21.5 mV).
-  strength the current model drives each receptor neuron at its DoOR response times 200 Hz. Turner diluted odors
+  strength the current model drives each receptor neuron at its DoOR response above spontaneous times 200 Hz. Turner diluted odors
            1:1000; Hige et al. used 2% of saturated vapour, a stronger stimulus, and no study here relates either to
            receptor rates. Here: 100 and 50 Hz at a response of 1.
 Odors, flies and measures as odor_probe7.py; seeds 20000 + 100 x condition + odor (Turner's protocol), + 50 + odor
 (Hige's), + 90 (Kenyon cells' rest), + 95 (the resting brain).
 
-Ran: the model's APL does too little, the classes' measured thresholds move the class pattern partway, and odor
-strength sets the density, but nothing here brings MBON11 near a fly's. Over the six odors (Kenyon cells responding by
-Turner's criterion; MBON11's evoked spikes, 0-1.4 s):
-  current                     10-29% (MCH 10.4%, OCT 19.6%); MBON11 2.3-11.9: odor_probe7.py's, on new seeds
-  current, APL silenced       16-47%, 1.5-1.7 times the current model's (flies: about 4 times); MBON11 3.7-16.6
-  class thresholds, Inada     alpha'/beta' 15.98 mV below threshold, alpha/beta 21.48, gamma 23.98: 11-30% in all;
-                              by class alpha/beta 12-40%, alpha'/beta' 11-27%, gamma 10-19% (flies about 3-8, 9-14
-                              and 2%); spikes per response alpha/beta 2.4-4.3, alpha'/beta' 1.8-2.9, gamma 1.5-2.2;
-                              MBON11 2.7-8.6
-  class thresholds,           alpha'/beta' 6.51, alpha/beta 19.51, gamma 30.51 mV: 19-35%; gamma 1.0-2.3%, as in
-    Groschner/Chen            flies, but alpha'/beta' 74-90% with 6.7-10 spikes per response (flies 9-14% and 4.9),
-                              and their rest rises (Kenyon cells 0.046 Hz at rest against 0.004); alpha/beta 13-43%;
-                              MBON11 2.5-12.1
-  receptors at 100 Hz         7-23%; PNs 145-168 Hz in the first 100 ms; MBON11 0.7-7.8
-  receptors at 50 Hz          4-13% (MCH 4.1%, OCT 10.6%), within or at the edge of the flies' 6 +- 5%; PNs 117-142 Hz
-                              in the first 100 ms, still within flies' 100-200; MBON11 0.9-3.3
-Responding cells' overlap (Jaccard, mean over odor pairs) runs from 0.41 at 50 Hz to 0.65 with Groschner/Chen's
-offsets (current 0.51). The resting brain stays at 0.95-0.98 Hz with no neuron over 100 Hz throughout. Odor strength
+Ran (after the second review: DoOR's spontaneous level subtracted, and the ring's offsets, which an earlier run added
+twice in the class-threshold conditions, added once; the first run is in git history): the model's APL does too little,
+the classes' measured thresholds move the class pattern partway, and odor strength sets the density, but nothing here
+brings MBON11 near a fly's. Over the six odors (Kenyon cells responding by Turner's criterion; MBON11's evoked spikes,
+0-1.4 s):
+  current                     6.7-19.6% (MCH 6.7%, OCT 17.1%); MBON11 1.6-5.9: odor_probe7.py's, on new seeds
+  current, APL silenced       9.6-31.8%, 1.4-1.6 times the current model's for each odor (flies: about 4 times, see
+                              above); MBON11 1.7-7.8
+  class thresholds, Inada     alpha'/beta' 15.98 mV below threshold, alpha/beta 21.48, gamma 23.98: 7.2-20.2% in all;
+                              by class alpha/beta 7-26%, alpha'/beta' 8-19%, gamma 7-16% (flies about 3-8, 9-14 and
+                              2%); spikes per response alpha/beta 1.5-3.5, alpha'/beta' 1.4-2.3, gamma 1.2-1.7; MBON11
+                              0.9-4.8
+  class thresholds,           alpha'/beta' 6.51, alpha/beta 19.51, gamma 30.51 mV: 13.7-24.4%; gamma 0.4-1.5%, near
+    Groschner/Chen            flies' 2%, but alpha'/beta' 59-80% with 5.0-8.3 spikes per response (flies 9-14% and 4.9),
+                              and their rest rises (Kenyon cells 0.048 Hz at rest against 0.004); alpha/beta 7-26%;
+                              MBON11 1.0-6.1
+  receptors at 100 Hz         4.5-15.3%; PNs 149-163 Hz in the first 100 ms; MBON11 -0.4 to 5.0
+  receptors at 50 Hz          3.1-9.3% (MCH 3.1%, OCT 8.2%), within the flies' 6 +- 5%; PNs 124-137 Hz in the first
+                              100 ms, still within flies' 100-200; MBON11 0.4-2.5
+Responding cells' overlap (Jaccard, mean over odor pairs) runs from 0.36 at 50 Hz to 0.59 with Groschner/Chen's
+offsets (current 0.42). The resting brain stays at 0.95-0.98 Hz with no neuron over 100 Hz throughout. Odor strength
 alone puts the density in range, but the receptor rate a DoOR response stands for isn't measured, and MBON11 then
-hears even less: its shortfall, 7 to 160 times across these variants (110-118 spikes in flies), is the most robust
-failure. Traced afterwards in the current model (not saved): during 3-octanol, MBON11's Kenyon cell synapses
-depolarize it by 3.1 mV on average (rate x weight x 5 ms, per cell), while inhibition from other MBONs (MBON05,
-MBON06, MBON02 and the other MBON11) grows by 0.7 mV; the net 2.3 mV takes it from 37 to about 42 Hz. As a Shiu
-neuron held at 8.85 mV (threshold 7, reset -5), it would need about 28 mV more to fire 84 Hz above its rest, so its
-Kenyon cell drive is about ten times too small even with Kenyon cells two to five times too active.
+hears even less: for 3-octanol and 4-methylcyclohexanol it falls 20 to 180 times short of the flies' 118 and 110 spikes
+across these variants, and at 100 Hz it doesn't answer 4-methylcyclohexanol at all.
+Traced afterwards in the current model (not saved): during 3-octanol, MBON11's Kenyon cell synapses depolarize it by
+2.2 mV on average (rate x weight x 5 ms, per cell), while inhibition from other MBONs (MBON05, MBON02, MBON06 and the
+other MBON11) grows by 0.5 mV; the net 1.7 mV takes it from 37 to about 41 Hz. As a Shiu neuron held at 8.85 mV
+(threshold 7, reset -5), it would need about 28 mV more to fire 84 Hz above its rest. Its synapses are weak by
+construction: rung 4 divides every synapse by its target's size (total synapse count over the median neuron's), and
+MBON11's two cells are 29 and 40 times the median (scales 0.034 and 0.025, against MBON18's 0.072). No measurement
+sets that normalization for MBON11 (no unitary KC-to-MBON11 EPSP or input resistance has been published), and the one
+measured KC-to-MBON unitary, onto MBON-alpha2sc, the model matches (about 0.15 mV against 0.1-0.2).
 
     python experiments/odor_probe8.py          (writes experiments/odor_probe8.json)
 """
@@ -92,7 +101,7 @@ def set_rest(o: p7.Olfaction, gaps: dict, seed: int) -> list:
     """odor_probe3.set_kc_rest with a distance below threshold per Kenyon cell type."""
     b, kc, types = o.brain, o.m["kc"], o.types
     threshold = b.params[b.cls[np.flatnonzero(kc)[0]]]["threshold"]
-    bias = b.bias.copy()
+    bias = o.own_bias()                                   # set_bias adds the ring's offsets back
     log = []
     for r in range(3):
         u = p3.rest_state(o.s, seed + r, True)["u"]

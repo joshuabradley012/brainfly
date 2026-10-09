@@ -1,16 +1,22 @@
-"""Exploratory, not pre-registered: odor_probe3.py to odor_probe6.py's olfactory pathway rebuilt with three corrections
+"""Exploratory, not pre-registered: odor_probe3.py to odor_probe6.py's olfactory pathway rebuilt with four corrections
 and measured as the flies were. How close do Kenyon cells and MBON11 come to the flies' numbers?
 
 Corrections, found on checking those probes:
   - ORN to PN. Kazama & Wilson 2008's 6.19 mV unitary EPSP is between an ORN and a PN of the same glomerulus. Those
     connections average 32 synapses in MaleCNS (Tobin et al. 2017 counted about 23 in DM6). odor_probe3.py averaged over
-    every ORN-to-uniglomerular-PN connection, a quarter of which join different glomeruli with about 2 synapses (8% of
-    the weight), so its factor was 8.8. Here the factor makes the mean same-glomerulus connection's rested peak PSP
+    every ORN-to-uniglomerular-PN connection, a quarter of which join different glomeruli with few synapses (median 2,
+    mean 6; 8% of the weight), so its factor was 8.8. (361 of those are ORN_VM6v/m/l onto VM6 PNs, which the name match
+    here misses; counting them as same-glomerulus leaves the factor unchanged.) Here the factor makes the mean same-glomerulus connection's rested peak PSP
     6.19 mV (7.3), applied to every ORN-to-PN synapse.
   - PN to KC. The factor setting the mean connection to Turner et al. 2008's 1.4 mV now averages and scales only the
     excitatory connections (0.4% are from GABAergic PNs, left as they were).
   - Odors. brainfly.odors now gives a receptor DoOR maps to two glomeruli, or to a pair of subdivisions, to both
     (Or33b: DM5 and DM3; Ir75b, Ir75c and the ac3A neuron: DL2d and DL2v); before, they drove nothing.
+  - DoOR's spontaneous level (found on a second review). DoOR's responses include each receptor's spontaneous firing
+    (its SFR row, 0-0.2 of its strongest response); brainfly.odors now subtracts it, as DoOR's own reset_sfr does, so a
+    receptor at or below its spontaneous rate drives nothing. Before, every glomerulus was driven harder than its odor
+    drives it: the subtraction removes 19-33% of each odor's summed drive, and 3-15 of its glomeruli drop out (3-octanol
+    31 to 27, 4-methylcyclohexanol 22 to 18, ethyl acetate 47 to 32).
 Measured as the flies were:
   - Kenyon cells as Turner et al. 2008 did: a 0.5 s odor; spikes in 200 ms bins; a cell responds if, on at least half of
     the flies, some bin within 2 s of the odor's onset exceeds its baseline's mean by 3.5 SD (baseline: the five 200 ms
@@ -33,7 +39,8 @@ The two undepressed choices have no fly measurement behind them and were made af
 fall silent (odor_probe5.py, odor_probe6.py), so they are informed by the outcome; the last condition shows how much
 the first matters.
 Odors: 3-octanol (OCT), 4-methylcyclohexanol (MCH), ethyl acetate, isopentyl acetate, benzaldehyde, 2-heptanone, each
-glomerulus's receptor neurons at its DoOR response times 200 Hz. 8 flies; seeds 10000 + 100 x condition + odor
+glomerulus's receptor neurons at its DoOR response above the receptor's spontaneous level times 200 Hz (DoOR's SFR
+row subtracted, as brainfly.odors now does). 8 flies; seeds 10000 + 100 x condition + odor
 (Turner's protocol), + 50 + odor (Hige's), + 90 (Kenyon cells' rest), + 95 (the resting brain).
 Also reported: the driven PNs' rates (glomeruli above 0.2; first 100 ms and the odor's second, Hige's protocol), APL's
 release, the share of Kenyon cells with at least one extra spike in the 1 s odor in at least half the flies (the
@@ -41,24 +48,25 @@ earlier probes' measure), the overlap (Jaccard) of the responding Kenyon cells b
 MBON18's responses. Known gap: receptor neurons are silent at rest here, while flies' fire a few spikes a second, which
 holds their synapses partly depressed when an odor arrives.
 
-Ran: the projection neurons are right; the Kenyon cells respond too densely and in the wrong classes, and MBON11
-hears them ten to fifty times too faintly. The factors: 7.3 for ORN to PN (12,393 same-glomerulus connections of
-16,265, 32 synapses each on average) and 0.28 for PN to KC. Over the six odors:
-  rung 4 brain              21-35% of Kenyon cells pass Turner's criterion, each firing under one extra spike (0.6-0.8):
-                            a single, reliable spike at the odor's onset. PNs 70-86 Hz in the first 100 ms, 20-28 Hz
-                            over the second. MBON11 gains 0.3-1.1 spikes.
-  measured receptor input   PNs 162-181 Hz in the first 100 ms and 86-97 over the second. 32-51% of Kenyon cells
-                            respond, still under one spike each. MBON11 -0.4 to 1.5.
-  + Turner's Kenyon cells   11-31%; alpha/beta 2.5-4.2 spikes per response, alpha'/beta' 1.0-1.4, gamma 1.9-3.1.
-                            MBON11 1.5-4.1.
-  + undepressed outputs     11-30% (MCH 10.8%, OCT 20.3%, ethyl acetate 29.5%). By class, alpha/beta 11-39%,
-                            alpha'/beta' 2-5%, gamma 15-29%, where Turner's flies (derived from his Fig. 2D) show
-                            alpha'/beta' most (about 9-14%), alpha/beta 3-8% and gamma about 2%. Spikes per response:
-                            alpha/beta 2.5-4.4 (flies 2.2 +- 1.2), alpha'/beta' 1.0-1.4 (4.9 +- 3.0), gamma 1.9-3.2.
-                            Responding cells overlap between odors by a Jaccard index of 0.26-0.76 (mean 0.52; OCT and
-                            MCH 0.42). APL releases 11-38 Hz in the first 100 ms. MBON11 gains 2.3-11.0 spikes (OCT 4.1,
-                            MCH 2.3; flies 118 and 110), MBON18 3.7-21.2, MBON01 2.6-7.5.
-  current, PN-KC depressed  1.4-2.6% respond, under one extra spike each; the MBONs don't move.
+Ran (after the second review; the first run, with DoOR's spontaneous level left in, is in git history and gave
+11-30% of Kenyon cells): the projection neurons are right; the Kenyon cells respond somewhat too densely and in the
+wrong classes, and MBON11 hears them 36 to 92 times too faintly. The factors: 7.3 for ORN to PN (12,393
+same-glomerulus connections of 16,265, 32 synapses each on average) and 0.28 for PN to KC. Over the six odors:
+  rung 4 brain              19-29% of Kenyon cells pass Turner's criterion, each firing under one extra spike (0.6-0.8):
+                            a single, reliable spike at the odor's onset. PNs 76-85 Hz in the first 100 ms, 23-30 Hz
+                            over the second. MBON11 gains 0.5-1.3 spikes.
+  measured receptor input   PNs 165-179 Hz in the first 100 ms and 86-97 over the second. 27-44% of Kenyon cells
+                            respond, still under one spike each (0.6-0.9). MBON11 -0.1 to 1.5.
+  + Turner's Kenyon cells   7.2-19.6%; alpha/beta 1.5-3.6 spikes per response, alpha'/beta' 0.9-1.4, gamma 1.5-2.2.
+                            MBON11 1.0-2.7.
+  + undepressed outputs     7.3-19.9% (MCH 7.3%, OCT 16.7%, ethyl acetate 16.5%, 2-heptanone 19.9%). By class,
+                            alpha/beta 6-25%, alpha'/beta' 1.3-3.2%, gamma 11-22%, where Turner's flies (derived from his
+                            Fig. 2D) show alpha'/beta' most (about 9-14%), alpha/beta 3-8% and gamma about 2%. Spikes per
+                            response: alpha/beta 1.6-3.7 (flies 2.2 +- 1.2), alpha'/beta' 0.9-1.4 (4.9 +- 3.0), gamma
+                            1.4-2.3. Responding cells overlap between odors by a Jaccard index of 0.19-0.62 (mean 0.43;
+                            OCT and MCH 0.32). APL releases 6-24 Hz in the first 100 ms. MBON11 gains 1.2-5.5 spikes
+                            (OCT 3.3, MCH 1.2; flies 118 and 110), MBON18 1.6-11.0, MBON01 -0.1 to 3.9.
+  current, PN-KC depressed  1.0-2.3% respond, under one extra spike each; the MBONs don't move.
 The resting brain stays at 0.95-0.98 Hz with no neuron over 100 Hz in every condition.
 
     python experiments/odor_probe7.py          (writes experiments/odor_probe7.json)
@@ -96,8 +104,9 @@ class Olfaction:
     """rung4_scaling.py's intact brain with the olfactory pathway's measured properties switchable (CONDITIONS)."""
 
     def __init__(self):
-        self.s = r4s.prepare("intact")[0]
+        self.s, st = r4s.prepare("intact")[:2]
         b = self.brain = self.s.brain
+        self.extra = np.asarray(st["extra"], np.float64)      # the ring's offsets, which its set_bias adds itself
         self.types = np.asarray(self.s.types).astype(str)
         self.m = m = p3.masks(self.types)
         self.w0, self.bias0 = b.weights.copy(), self.s.bias[self.s.gid].astype(np.float64)
@@ -117,6 +126,10 @@ class Olfaction:
                                                  "mean_synapses": round(float(b._counts[same].mean()), 1),
                                                  "factor": round(self.orn_factor, 3)},
                       "pn_kc_excitatory": {"connections": int(self.pn_kc.sum()), "factor": round(self.kc_factor, 3)}}
+
+    def own_bias(self) -> np.ndarray:
+        """The brain's bias without the ring's offsets: what to change and hand back to set_bias, which adds them."""
+        return self.brain.bias - self.extra
 
     def set(self, name: str, seed: int) -> list:
         """Put the brain in condition `name`; returns the Kenyon cells' rest calibration, if any."""
@@ -179,15 +192,18 @@ def turner_responders(r: dict) -> np.ndarray:
     return hit.mean(0) >= 0.5
 
 
-def measure_odor(o: Olfaction, odor: str, turner_seed: int, hige_seed: int, silence=(), max_hz: float = p3.MAX_HZ):
-    """One odor's measures (see the docstring) and its Kenyon cells responding by Turner's criterion."""
+def measure_odor(o: Olfaction, odor: str, turner_seed: int, hige_seed: int, silence=(), max_hz: float = p3.MAX_HZ,
+                 runner=None):
+    """One odor's measures (see the docstring) and its Kenyon cells responding by Turner's criterion. runner: a
+    function like run (the default) that produces the trials."""
+    runner = runner or run
     types, m = o.types, o.m
     kc = np.flatnonzero(m["kc"])
     kc_types = types[kc]
-    t = run(o, odor, turner_seed, 0.5, 1.5, silence, max_hz)                  # Turner's protocol
+    t = runner(o, odor, turner_seed, 0.5, 1.5, silence, max_hz)               # Turner's protocol
     resp = turner_responders(t)
     extra = (t["window"][:, kc] - 2 * t["rest"][:, kc]).mean(0)
-    h = run(o, odor, hige_seed, 1.0, 0.4, silence, max_hz)                    # Hige's protocol
+    h = runner(o, odor, hige_seed, 1.0, 0.4, silence, max_hz)                 # Hige's protocol
     evoked = h["window"] - 1.4 * h["rest"]
     gl = [g for g, v in odors.glomeruli(odor).items() if v > 0.2]
     pn = np.isin(types, [f"{g}_{x}" for g in gl for x in p3.PN_SUFFIX])

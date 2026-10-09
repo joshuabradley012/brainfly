@@ -13,6 +13,11 @@ max_hz, and MBON11 and APL don't move. The projection neurons of the glomeruli e
 25-29 Hz, whatever the receptor neurons' rate (100, 200 or 400 Hz). Flies' projection neurons reach about 100-200 Hz
 at an odor's onset. So the pathway is limited twice: projection neurons that saturate low, and Kenyon cells that are
 far from threshold and weakly driven (odor_probe.py).
+Checked afterwards: DoOR's responses here include each receptor's spontaneous level (DoOR's SFR row, 0-0.2 of its strongest
+response), which brainfly.odors now subtracts, as DoOR's own reset_sfr does; so every glomerulus was driven harder
+than its odor drives it, and receptors at or below their spontaneous rate were driven too (odor_probe7.py reruns
+the current model without this). The glomerulus counts above (30 and 21) include
+4 and 3 DoOR entries with no receptor neurons in MaleCNS, so 26 and 18 were driven.
 
     python experiments/odor_probe2.py          (writes experiments/odor_probe2.json)
 """
