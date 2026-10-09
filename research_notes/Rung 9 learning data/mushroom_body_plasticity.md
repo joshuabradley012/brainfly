@@ -18,6 +18,12 @@ Neuron 88:985 ([PMC4674068](https://pmc.ncbi.nlm.nih.gov/articles/PMC4674068/)).
 - Trials: odors 1 s long; before pairing each odor "typically 5 times, at least 3 times", 25 s apart; testing again
   "starting 1 to 1.5 min after" pairing.
 - Synaptic currents: "average reduction in charge transfer was 90 ± 3.7 %".
+- The unpaired odor's currents (Fig. 3, whole-cell voltage clamp with QX-314 so the MBON can't spike, n = 5 cells):
+  "Excitatory synaptic input decreased for CS+ (p < 0.005) but not for CS−" (p > 0.1). In Fig. 4, with the pairing
+  done under voltage clamp (which "suppressed 83 ± 4.5% of odor-evoked spikes"), "Charge transfer decreased in CS+
+  (p < 0.001) and CS− (p < 0.001), but the effect of pairing was significantly different between the two odors".
+  Odor-evoked EPSCs "typically exceeded 200 pA in amplitude and were sustained throughout the duration of the odor
+  pulse". No input resistance or current-clamp depolarization is given. (Read 2026-10-09.)
 - Duration: depression persisted "at least 40 min".
 
 ## Specificity
