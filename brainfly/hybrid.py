@@ -38,14 +38,17 @@ brainfly.shiu, and lets each cell type differ:
                   constant adaptation_tau, s (default 0: none, as in Shiu's model; 0.2 s)
 
 A spike adds w_syn x (signed synapse count) to a fast current in each target (tau 5 ms, as in
-Shiu), or to a slow current (tau_slow) along the edges given as slow, t_dly later. As in Brian2,
-input that reaches a refractory neuron is lost, and a spike resets the fast current but not the
-slow one. Neurons can also take their output from outside: set_release gives each a release in
-Hz, held until the next call, and they never spike. That is how an optic lobe simulated elsewhere
-(brainfly.optic.FlyvisNative) drives the brain. With no types and no slow edges HybridBrain is
-Shiu's model: tests/test_hybrid.py checks it against Brian2 spike for spike. Its state persists
-between calls to advance(), so it can run inside a loop with a body, and advancing in pieces gives
-the same spikes as advancing in one go.
+Shiu), or to a slow current (tau_slow) along the edges given as slow, t_dly later. A slow edge's
+spike adds the same increment as a fast one's, so it carries tau_slow / 5 ms times the charge (20
+times at tau_slow 0.1 s); scale slow counts down to match a fast synapse's charge. Graded and
+external release reach their targets in the same step, without the spikes' t_dly delay. As in
+Brian2, input that reaches a refractory neuron is lost, and a spike resets the fast current but
+not the slow one. Neurons can also take their output from outside: set_release gives each a
+release in Hz, held until the next call, and they never spike. That is how an optic lobe simulated
+elsewhere (brainfly.optic.FlyvisNative) drives the brain. With no types and no slow edges
+HybridBrain is Shiu's model: tests/test_hybrid.py checks it against Brian2 spike for spike. Its
+state persists between calls to advance(), so it can run inside a loop with a body, and advancing
+in pieces gives the same spikes as advancing in one go.
 
     brain = HybridBrain(types={"APL": {"unit": "graded"}})
     rates = brain.run(1.0, drive=[(brain.cells(["LB3b", "LB3c"], side="L"), 100.0)]).rates
@@ -693,7 +696,8 @@ class HybridBrain:
         return self._g_targets
 
     def set_release(self, neurons, hz) -> None:
-        """Make these neurons' output external. From now until reset() they never spike, and each
+        """Make these neurons' output external. From now on they never spike (reset() keeps them external,
+        releasing nothing until set again), and each
         passes on `hz` (one value per neuron, or one for all) as a change of its release from rest.
         Every Hz acts on its targets like one spike per second, and a negative change takes input
         away. It holds until the next call. This is for an optic lobe simulated elsewhere, like

@@ -5,7 +5,7 @@ shiu_baseline.py and shiu_scaled.py failed: Shiu et al.'s recipe runs away on Ma
 shiu_runaway.py placed the runaway among the mushroom body's Kenyon cells. The wiring says why. An
 average Kenyon cell receives about 284 synapses from other Kenyon cells and 55 from dopamine neurons,
 both counted as fast excitation by the transmitter sign rule, against about 125 from olfactory
-projection neurons and 48 inhibitory synapses from APL. Neither large input is fast excitation in the
+projection neurons [corrected afterwards: about 93 from uniglomerular projection neurons in brainfly's counts] and 48 inhibitory synapses from APL. Neither large input is fast excitation in the
 fly. Acetylcholine acts on Kenyon cells partly through muscarinic receptors that inhibit them
 (mAChR-B; Bielopolski et al. 2019), a slow G-protein effect, and no recording shows Kenyon cells
 exciting each other. Dopamine, octopamine and serotonin act through G-protein receptors over hundreds

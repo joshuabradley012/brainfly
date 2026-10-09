@@ -131,7 +131,7 @@ def build(batch: int):
 
 def main() -> None:
     t0 = time.perf_counter()
-    results = {"criteria": __doc__, "sweep": [], "confirm": None}
+    results = {"criteria": __doc__, "eye": EYE_MODEL, "sweep": [], "confirm": None}
     ref = FlyBrain(batch=6, dt=DT, refractory=REFRACTORY)
     optic = np.zeros(N0, bool)
     optic[ref.cells(GRADED["optic"])] = True

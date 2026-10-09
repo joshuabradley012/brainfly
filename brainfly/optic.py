@@ -56,15 +56,52 @@ R16 = ["R1", "R2", "R3", "R4", "R5", "R6"]
 RENAME = {"Lai": "Am", "TmY9a": "TmY9", "TmY9b": "TmY9", "TmY9q": "TmY9", "TmY9q__perp": "TmY9"}
 
 
+def _sha256(path: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _same_parameters(a: Path, b: Path) -> bool:
+    """Whether two flyvis checkpoints hold the same network and decoder parameters (their files can differ in bytes)."""
+    import torch
+
+    def same(u, v) -> bool:
+        if isinstance(u, dict) and isinstance(v, dict):
+            return set(u) == set(v) and all(same(u[k], v[k]) for k in u)
+        if torch.is_tensor(u) and torch.is_tensor(v):
+            return u.shape == v.shape and bool(torch.equal(u, v))
+        return u == v
+    x, y = (torch.load(p, map_location="cpu", weights_only=False) for p in (a, b))
+    return all(same(x.get(part), y.get(part)) for part in ("network", "decoder"))
+
+
+def _stamp(folder: Path) -> str:
+    """A short hash of a flyvis model folder's checkpoints (best_chkpt and chkpts/*), which change if it's retrained."""
+    import hashlib
+
+    files = ([folder / "best_chkpt"] if (folder / "best_chkpt").exists() else []) + sorted((folder / "chkpts").glob("*"))
+    return hashlib.sha256("".join(f"{f.name}:{_sha256(f)}" for f in files).encode()).hexdigest()[:12]
+
+
 def ensure_model(model: str, data: Path | str | None = None) -> Path:
     """A flyvis model's folder under flyvis's results, fetching flyvis's pretrained models if needed. A fine-tuned
-    model brainfly ships (SHIPPED) is built from the model it came from, with its checkpoint from brainfly/models."""
+    model brainfly ships (SHIPPED) is built from the model it came from, with its checkpoint from brainfly/models: in a
+    temporary folder renamed when complete, so an interrupted build can't leave the source model's parameters under
+    the shipped name. If the folder exists but the checkpoint flyvis loads holds other parameters than the shipped
+    one (retrained locally, say), a warning says so."""
     data = DATA if data is None else Path(data)                 # flyvis's models only; not brainfly's network files
     os.environ.setdefault("FLYVIS_ROOT_DIR", str(data / "flyvis"))
     import flyvis
 
     folder = flyvis.results_dir / model
+    shipped = Path(__file__).with_name("models") / model.replace("/", "_")
     if folder.exists():
+        if model in SHIPPED and not _same_parameters(folder / "chkpts" / "chkpt_00000", shipped / "best_chkpt"):
+            import warnings
+
+            warnings.warn(f"{folder} holds a checkpoint other than the one brainfly ships for {model}; delete the "
+                          f"folder to rebuild the shipped model", stacklevel=2)
         return folder
     source = SHIPPED.get(model, model)
     if not (flyvis.results_dir / source).exists():            # flyvis doesn't fetch its own pretrained models
@@ -74,11 +111,14 @@ def ensure_model(model: str, data: Path | str | None = None) -> Path:
                        check=True)
     if model in SHIPPED:
         import shutil
-        shipped = Path(__file__).with_name("models") / model.replace("/", "_")
-        shutil.copytree(flyvis.results_dir / source, folder, ignore=shutil.ignore_patterns("__cache__"))
+        partial = folder.with_name(folder.name + ".partial")
+        if partial.exists():
+            shutil.rmtree(partial)
+        shutil.copytree(flyvis.results_dir / source, partial, ignore=shutil.ignore_patterns("__cache__"))
         for name in ("best_chkpt", "validation_loss.h5", "brainfly.json"):
-            shutil.copy(shipped / name, folder / name)
-        shutil.copy(shipped / "best_chkpt", folder / "chkpts" / "chkpt_00000")
+            shutil.copy(shipped / name, partial / name)
+        shutil.copy(shipped / "best_chkpt", partial / "chkpts" / "chkpt_00000")
+        partial.rename(folder)
     return folder
 
 
@@ -272,7 +312,8 @@ def flyvis_filters(model: str = MODEL, data: Path | str | None = None) -> dict:
     count, (du, dv) being the target's position minus the source's in flyvis's axial lattice
     coordinates; and the positions of the types that don't tile every column (Lawf1, Lawf2)."""
     data = ensure_data(data)
-    cache = data / f"flyvis_filters_{model.replace('/', '_')}.npz"
+    folder = ensure_model(model, data)
+    cache = data / f"flyvis_filters_{model.replace('/', '_')}_{_stamp(folder)}.npz"   # retrained: new filters
     if cache.exists():
         return np.load(cache, allow_pickle=True)["filters"].item()
     net = _network(model, data)

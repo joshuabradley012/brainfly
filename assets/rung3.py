@@ -5,7 +5,7 @@
 flyvis's model 001 against the same model fine-tuned with rung 3's direction test and the known polarities in its loss
 (experiments/rung3_001.py, pre-registered; flyvis model flow/9014/000). Left: T5a's response in the right eye to dark
 edges moving each way at 40 deg/s (flyvis_native.direction_selectivity; the mean over the eye's T5a cells of each
-cell's peak), each model's scaled to its largest. Middle: the flash response index of flyvis's 32 known types,
+cell's peak), both models on one scale. Middle: the flash response index of flyvis's 32 known types,
 signed so that the known polarity is positive, before (x) and after (y). Right: the fine-tuned eye's fast loom on the
 left: the loomed side's LC4, LPLC2 and giant fiber (DNp01), mean of 8 flies in 20 ms bins, from the looming test's
 confirmation (eyepath_native.py's protocol at gain 1); the other side's in grey.
@@ -44,16 +44,16 @@ def load():
 
 def figure(theme: str, before: dict, after: dict, loom: dict) -> str:
     c = THEMES[theme]
-    out = [text(24, 34, "Rung 3 passes: an eye whose T2 answers darkening, with the motion and polarity flies have", "lab"),
+    out = [text(24, 34, "Rung 3 passes on fitted criteria: an eye whose T2 answers darkening, with flies' polarities", "lab"),
            text(24, 54, "flyvis's model 001 (grey) and the same model fine-tuned with rung 3's direction test and the known "
                 "polarities in its loss (red), on a fresh seed", "note")]
 
     # --- left: T5a in the eye
     x0, y0, y1, bw = 56, 120, 300, 16
     out.append(text(24, 96, "T5a in the eye, dark edges moving each way", "val"))
+    top = max(max(res["R T5a"]["responses"].values()) for res in (before["direction_selectivity"], after["direction_selectivity"]))
     for m, (res, colour, dx) in enumerate(((before["direction_selectivity"], c["faint"], 0), (after["direction_selectivity"], c["red"], bw + 2))):
         r = res["R T5a"]["responses"]
-        top = max(r.values())
         for k, d in enumerate(DIRS):
             h = (y1 - y0) * r[d] / top
             x = x0 + k * 80 + dx
@@ -62,8 +62,9 @@ def figure(theme: str, before: dict, after: dict, loom: dict) -> str:
     for k, d in enumerate(DIRS):
         out.append(text(x0 + k * 80 + bw + 1, y1 + 16, SHORT[d], "tick", "middle"))
     out.append(text(24, y1 + 40, f"model 001 prefers up (DSI {before['direction_selectivity']['R T5a']['dsi']:.2f}): wrong", "tick"))
-    out.append(text(24, y1 + 56, f"fine-tuned prefers front to back (DSI {after['direction_selectivity']['R T5a']['dsi']:.2f}),", "tick"))
-    out.append(text(24, y1 + 72, "as T5a does; all 16 subtypes right in both eyes", "tick"))
+    ratio = after["direction_selectivity"]["R T5a"]["responses"]["front-to-back"] / before["direction_selectivity"]["R T5a"]["responses"]["front-to-back"]
+    out.append(text(24, y1 + 56, f"fine-tuned prefers front to back (DSI {after['direction_selectivity']['R T5a']['dsi']:.2f}), as T5a does,", "tick"))
+    out.append(text(24, y1 + 72, f"but at {ratio:.1f} of model 001's response; all 16 subtypes right", "tick"))
 
     # --- middle: polarity
     px0, px1, py0, py1 = 430, 690, 110, 330
@@ -114,8 +115,8 @@ def figure(theme: str, before: dict, after: dict, loom: dict) -> str:
     out.append(f'<line x1="{tx(CONTACT):.1f}" y1="{110}" x2="{tx(CONTACT):.1f}" y2="{300}" stroke="{c["muted"]}" stroke-dasharray="3 3"/>')
     out.append(text(tx(CONTACT), 316, "contact", "tick", "middle"))
     out.append(text(tx0, 340, "loomed side in red, the other in grey; peaks of", "tick"))
-    out.append(text(tx0, 356, "at least 20 Hz asked of LC4 and LPLC2: looming wasn't", "tick"))
-    out.append(text(tx0, 372, "in the loss, so this is the test", "tick"))
+    out.append(text(tx0, 356, "at least 20 Hz asked of LC4 and LPLC2, a bar", "tick"))
+    out.append(text(tx0, 372, "model 001 already met; looming wasn't in the loss", "tick"))
 
     style = f"""
     text {{ font-family: {FONT}; }}
@@ -124,9 +125,11 @@ def figure(theme: str, before: dict, after: dict, loom: dict) -> str:
     .note {{ font-size: 13px; fill: {c["muted"]}; }}
     .tick {{ font-size: 11px; fill: {c["muted"]}; }}
     """
+    peaks = {k: max(loom["trace_hz"]["fastL"][f"{k} L"]) for k in ("LC4", "LPLC2", "DNp01")}
     title = ("Rung 3: flyvis's model 001 fine-tuned with rung 3's direction test and polarities in its loss. T5a, which "
-             "preferred no direction, now prefers front to back in the eye; 31 of 32 polarities are right; and a loom "
-             "on the left still drives the loomed side's LC4, LPLC2 and giant fiber to peaks of 25-29 Hz")
+             "weakly preferred up, now prefers front to back in the eye, though with a smaller response; 31 of 32 "
+             f"polarities are right; and a loom on the left still drives the loomed side's LC4 and LPLC2 to peaks of "
+             f"{peaks['LC4']:.0f} and {peaks['LPLC2']:.0f} Hz and the giant fiber to {peaks['DNp01']:.0f} Hz")
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")

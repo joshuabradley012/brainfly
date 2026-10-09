@@ -3,8 +3,9 @@
 rung3_001_pilot.py and rung3_001_pilot2.py protected T4/T5 directions on flyvis's own lattice, and T5a's direction in
 the eye (FlyvisNative, the model tiled onto the male eye, where rung 3 measures it) came out right by 0.02 in one and
 wrong in the other. No lattice stand-in tried predicts T5a in the eye. brainfly.eyetorch now runs the eye's network in
-PyTorch with the flyvis model's own parameters (matching FlyvisNative within 0.0004), so the direction test can be
-trained on directly.
+PyTorch with the flyvis model's own parameters (matching FlyvisNative within 0.0004 [corrected afterwards: no saved result
+shows that; tests/test_eyetorch.py checks T5 responses agree within 0.002]), so the direction test can be trained on
+directly.
 Model: flow/0000/001, fine-tuned with brainfly.vistrain.fine_tune (flyvis's flow task on augmented Sintel batches of 4,
 Adam on network and decoder, learning rate 1e-5, seed 0) for 1,500 iterations. Every fourth iteration adds, at four
 times its weight:

@@ -14,8 +14,9 @@ neuron is silent until driven), and synaptic delay, current and refractoriness i
 v0 = v_rst = -52 mV, v_th = -45 mV, t_mbr = 20 ms, tau = 5 ms, t_rfc = 2.2 ms, t_dly = 1.8 ms and
 w_syn = 0.275 mV are Shiu's values. w_syn was fitted on FlyWire, whose synapse counts run lower than
 MaleCNS's, so it needs refitting here. As in the original, a driven neuron gets Poisson input whose
-every event pushes it over threshold (and it has no refractory period), and a silenced neuron loses
-all its synapses. The equations are integrated exactly over each step, and each step runs in
+every event pushes it over threshold (and it has no refractory period). A silenced neuron loses all
+its synapses here; Shiu's model.py zeroes only its outgoing ones, which differs only in the silenced
+neurons' own rates. The equations are integrated exactly over each step, and each step runs in
 Brian2's order, as Shiu's did. A consequence easy to miss: Brian2 drops input that reaches a
 refractory neuron, because it gives variables marked "unless refractory" a conditional write.
 tests/test_shiu_brian2.py checks the kernel against Brian2 spike for spike.

@@ -83,9 +83,9 @@ def figure(theme: str, ps: list[dict]) -> str:
     .fail {{ font-size: 12px; font-weight: 600; fill: {c["muted"]}; }}
     """
     title = ("Where the simulated fly's head-direction bump sat over rung 4's measurement in seven runs: even in the exploratory "
-             "run, lopsided on fresh seeds, even again after annealed homeostasis, nearly even in the fourth attempt, pinned "
-             "in one place by homeostasis on long runs, and even with synaptic scaling, both exploratory and in the fifth "
-             "attempt, which passes")
+             "run, lopsided on fresh seeds, even again after annealed homeostasis, leaning toward three wedges in the fourth "
+             "attempt, pinned in one place by homeostasis on long runs, and even with synaptic scaling in the exploratory run, "
+             "nearly even in the fifth attempt (still leaning toward the fourth's wedges), which passes")
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")

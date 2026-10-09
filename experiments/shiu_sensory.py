@@ -12,7 +12,8 @@ report's rung-1 recipe specifies "no synapses onto sensory neurons". Attempts 1-
 shiu_runaway.py tried it only as a variant of the runaway network.
 
 Second, 18 of 20 weight shuffles drove MN9. A check afterwards (not pre-registered) showed that
-shuffling the counts runs these networks away (50,000-83,000 neurons above 100 Hz), and that even
+shuffling the counts runs these networks away (50,000-83,000 neurons above 100 Hz [corrected afterwards: no saved
+result holds that range; shiu_signs.py's 20 count shuffles put 77,135-84,782 neurons above 100 Hz]), and that even
 shuffling the final synaptic strengths leaves 9,000-27,000 there. A network that runs away drives MN9
 whatever its routing, so that null can't ask whether the route depends on the wiring. The null here
 shuffles strengths only among the inputs of one sign onto one neuron. Each neuron keeps its total

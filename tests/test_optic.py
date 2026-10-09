@@ -39,3 +39,15 @@ def test_optic_lobe_output_is_unchanged(optic, monkeypatch):
     fast = run()
     monkeypatch.setattr(module, "matvec", lambda W, x: W @ x)
     np.testing.assert_array_equal(fast, run())
+
+
+def test_the_shipped_eye_is_the_checkpoint_brainfly_ships():
+    """The default eye's folder holds the shipped checkpoint's parameters, and the check tells models apart."""
+    from pathlib import Path
+
+    from brainfly import optic
+
+    shipped = Path(optic.__file__).with_name("models") / optic.EYE.replace("/", "_") / "best_chkpt"
+    folder = optic.ensure_model(optic.EYE)
+    assert optic._same_parameters(folder / "chkpts" / "chkpt_00000", shipped)
+    assert not optic._same_parameters(optic.ensure_model("flow/0000/001") / "best_chkpt", shipped)

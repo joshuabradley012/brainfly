@@ -186,7 +186,7 @@ def main() -> None:
     panels = []
     for name, title, subtitle, verdict in (("rung4_rest", "Attempt 3", "offsets in place", "favors one side: fails"),
                                            ("rung4_anneal", "Attempt 4", "annealed offsets", "leans: fails"),
-                                           ("rung4_scaling", "Attempt 5", "scaled synapses (above)", "even: passes")):
+                                           ("rung4_scaling", "Attempt 5", "scaled synapses (above)", "nearly even: passes")):
         m = load(name)
         res = max(m["bump"][x]["resultant"] for x in "LR")
         panels.append({"title": title, "subtitle": subtitle, "hist": m["bump_motion"]["position_histogram"], "even": bool(m["BUMP"]),

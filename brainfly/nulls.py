@@ -2,16 +2,21 @@
 depends on them. The research report's ladder climbs from weight shuffles to degree-preserving
 rewiring to rewiring that keeps cell classes. Each function takes a signed synapse-count matrix with
 rows = postsynaptic neurons and a numpy Generator, and returns a new matrix. The two grouped ones
-make a single pass instead of sorting, so a null of the whole connectome (23 million connections)
+make a single pass instead of sorting, so a null of the whole connectome (25.6 million connections)
 takes well under a second.
 
-    global_shuffle       every connection keeps its place and takes a random connection's count
+    global_shuffle       every connection keeps its place and takes a random connection's count (and sign:
+                         signs move between neurons, so it breaks Dale's law)
     within_neuron        each neuron's input counts permuted among its inputs of the same sign; it
                          keeps its partners and its total excitation and inhibition
     degree_preserving    every connection keeps its source and count and takes a random connection's
-                         target; each neuron keeps its in- and out-degree
+                         target; each neuron keeps its in- and out-degree, but not its input strength: a
+                         neuron whose inputs are strong gets random connections' counts instead (on the
+                         raw connectome MN9 L keeps 743-823 of its 3,092 excitatory synapses in three
+                         draws), so a result this null abolishes may only have lost its input
     class_preserving     the same, with targets drawn only from connections whose target is in the
-                         same class (superclass, say)
+                         same class (superclass, say), which keeps more of a neuron's input strength
+                         (MN9 L: 2,187-3,618 of 3,092 in three draws)
 
 The experiments of rung 1 (shiu_*.py) keep their own implementations, which draw differently, so that
 they reproduce their recorded null networks.

@@ -96,7 +96,7 @@ def main() -> None:
     t0 = time.perf_counter()
     s = r6.build("intact")
     body = Jump()
-    out = {"question": __doc__, "scenes": {}}
+    out = {"question": __doc__, "eye": eyes.MODEL, "scenes": {}}
     for k, (name, az) in enumerate(SCENES.items()):
         w = watch(s, az, SEED + 100 * k)
         jumps = [jump(body, f["ttmn"]) for f in w["flies"]]

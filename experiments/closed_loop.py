@@ -80,7 +80,7 @@ def main() -> None:
         flies[seed] = r = run_fly(brain, ol, body, seed)
         print(f"fly {seed}: yaw deg/s " + " ".join(f"{k} {v['yaw_deg_s']:+.1f}" for k, v in r.items())
               + f" | DNa02 ccw L/R {r['ccw']['dna02_hz']['L']:.1f}/{r['ccw']['dna02_hz']['R']:.1f} Hz ({time.perf_counter() - t1:.0f} s)", flush=True)
-        OUT.write_text(json.dumps({"criteria": __doc__, "flies": flies}, indent=1))
+        OUT.write_text(json.dumps({"criteria": __doc__, "eye": EYE_MODEL, "flies": flies}, indent=1))
     yaw = {k: np.array([flies[s][k]["yaw_deg_s"] for s in FLIES]) for k in CONDITIONS}
     turn = stat(yaw["ccw"] - yaw["cw"])
     cut = stat(yaw["ccw-cut"] - yaw["cw-cut"])
@@ -90,7 +90,7 @@ def main() -> None:
     result["pass"] = result["TURN"]
     print(f"{'PASS' if result['pass'] else 'FAIL'}: TURN {turn} | link cut {cut} | "
           f"mean yaw {result['mean_yaw_deg_s']}", flush=True)
-    OUT.write_text(json.dumps({"criteria": __doc__, "result": result, "flies": flies,
+    OUT.write_text(json.dumps({"criteria": __doc__, "eye": EYE_MODEL, "result": result, "flies": flies,
                                "seconds": round(time.perf_counter() - t0)}, indent=1))
 
 

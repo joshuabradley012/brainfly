@@ -11,6 +11,14 @@ against GABA or glutamate, and changes nothing in brainfly's model between GABA 
 inhibitory there. Counted by kind, by superclass, and among rung 1's taste route (the neurons sugar at 100 Hz
 raises by more than 5 Hz in its silent brain).
 
+Checked afterwards (2026-10-09 review): the 51,364 neurons with a hemilineage include 4,738 with placeholder labels
+(putative_primary 3,549, TBD 1,189), and the 226 scored hemilineages include 7 placeholder groups (TBD,
+putative_primary, primary and four "__prim" ones); without them, 219 scored and 191 clear. No sign flip comes from a
+placeholder. 6 of the 260 flipped neurons (GNG640 and SLP305, two each, acetylcholine to inhibitory; LHPD2d1, two,
+glutamate to excitatory) have MaleCNS ground truth agreeing with their consensus and should have been exempt. And for
+253 of the 260 the cell type's own transmitter prediction agrees with the neuron's consensus, so the flips set
+neurons to their hemilineage's majority rather than correcting known errors.
+
     python experiments/hemilineage_audit.py            (writes experiments/hemilineage_audit.json)
 """
 from __future__ import annotations

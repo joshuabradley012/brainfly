@@ -36,9 +36,9 @@ def verdict(name: str, *keys: str):
 def rungs() -> list[dict]:
     """Each rung: its name, status, and marks (done, text)."""
     lower = ("REST", "RELAY", "SIDE", "ESCAPE", "QUIET", "SUGAR", "RESPONSE", "BITTER", "IR94E", "STABLE")
-    rung4 = [(bool(verdict("rung4_scaling", "RATE")), "rests at the measured rates, nothing runs away"),
+    rung4 = [(bool(verdict("rung4_scaling", "RATE")), "rests at its 8 targeted rates, nothing runs away"),
              (all(verdict("rung4_scaling", k) for k in lower), "taste and escape still pass at rest"),
-             (bool(verdict("rung4_scaling", "BUMP")), "a head-direction bump that moves like a fly's")]
+             (bool(verdict("rung4_scaling", "BUMP")), "a head-direction bump (fitted; still leaning)")]
     return [
         {"name": "Validated baseline", "status": "passed" if verdict("shiu_rewiring", "pass") else "in progress",
          "marks": [(True, "sugar drives the proboscis motor neuron; bitter suppresses it; rewiring abolishes it")]},
@@ -46,9 +46,9 @@ def rungs() -> list[dict]:
          "marks": [(True, "consensus transmitters; monoamines out of fast excitation"),
                    (bool(verdict("rung2_signs", "pass")), "signs audited by hemilineage; false positives 1 in 100")]},
         {"name": "Eye and optic lobe", "status": "passed" if verdict("rung3_001", "pass") else "in progress",
-         "marks": [(bool(verdict("rung3_001", "DIRECTION")), "16/16 motion directions in the eye"),
-                   (bool(verdict("rung3_001", "LOOMING")), "looming reaches LC4, LPLC2, giant fiber"),
-                   (bool(verdict("rung3_001", "POLARITY")), "31 of 32 polarities, T2 answering darkening")]},
+         "marks": [(bool(verdict("rung3_001", "DIRECTION")), "16/16 motion directions in the eye (fitted; weak)"),
+                   (bool(verdict("rung3_001", "LOOMING")), "looming reaches LC4 and LPLC2 (as in model 001)"),
+                   (bool(verdict("rung3_001", "POLARITY")), "31 of 32 polarities (fitted)")]},
         {"name": "Central brain at rest", "status": "passed" if verdict("rung4_scaling", "pass") else "in progress",
          "marks": rung4},
         {"name": "Nerve cord", "status": "passed" if verdict("rung5_vnc2", "pass") else "in progress",
@@ -56,7 +56,7 @@ def rungs() -> list[dict]:
                    (bool(verdict("rung5_vnc2", "DNB08")), "DNb08 drives them reliably too")]},
         {"name": "Gap junctions and proprioception", "status": "passed" if verdict("rung6_relay", "pass") else "started",
          "marks": [(True, "electrical and fast synapses in the model"),
-                   (bool(verdict("rung6_relay", "pass")), "giant fiber to jump muscle in 0.9 ms; slower without gap junctions"),
+                   (bool(verdict("rung6_relay", "pass")), "giant fiber to jump muscle in 0.9 ms (built in); silent without gap junctions"),
                    (False, "leg sensors driven by the body")]},
         {"name": "Body and muscles", "status": "started",
          "marks": [(True, "NeuroMechFly walks, steered by DNa02"), (True, "jumps from jump motor neuron spikes"),
