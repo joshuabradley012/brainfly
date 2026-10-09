@@ -174,7 +174,11 @@ New quotes:
 - "a PA-responsive KC also responds to BA (64.6% of all PA-responsive KCs across recordings) and vice versa (63.1%), whereas EL-responsive KCs rarely respond to either of these odors (21.8%)".
 - "KCs that respond uniquely to either PA (70 of 2756 total KCs; 2.5%) or BA (75 of 2756 total KCs; 2.7%)".
 - Population correlations: "the correlation score of PA-BA (mean r = 0.70) is substantially and significantly greater than either PA-EL (mean r = 0.15 …)". Criterion: peak ΔF/F 0.5–4.5 s after onset more than 2.33 SD above baseline. (Read 2026-10-09.)
-- For brainfly: dissimilar odors share about a fifth of their responders (EL: 21.8%), similar ones about two thirds. odor_probe7.py's current model has 3-octanol and 4-methylcyclohexanol at a Jaccard index of 0.32, with 16.7% and 7.3% of KCs responding, so about 5.8% respond to both: 35% of 3-octanol's responders but 80% of 4-methylcyclohexanol's (derived from odor_probe7.json's shares and Jaccard index). The weaker odor's responders are nearly a subset of the stronger's, which is why pairing either odor depresses the other's (learning_pilot.py).
+- For brainfly: dissimilar odors share about a fifth of their responders (EL: 21.8%), similar ones about two thirds.
+  odor_probe11.py and odor_probe12.py (2026-10-09) trace the model's overlap to the Kenyon cell layer: its projection
+  neurons respond as broadly as flies' (Turner's 59 +- 14% of PNs), and the Kenyon cells with the most PN input answer
+  nearly every odor. Flies' Kenyon cells stay odor-specific with input that broad (Gruntman & Turner 2013: about 4 of 5-7
+  claws must be coactive; Prisco 2021: APL normalizes claw input; Abdelrahman 2021: excitability offsets input). odor_probe7.py's current model has 3-octanol and 4-methylcyclohexanol at a Jaccard index of 0.32, with 16.7% and 7.3% of KCs responding, so about 5.8% respond to both: 35% of 3-octanol's responders but 80% of 4-methylcyclohexanol's (derived from odor_probe7.json's shares and Jaccard index). The weaker odor's responders are nearly a subset of the stronger's, which is why pairing either odor depresses the other's (learning_pilot.py).
 
 **Ahmed et al. 2023: the threshold changes the answer.** GCaMP6s, cut-off "a 20% increase in fluorescence", 1:100, 2-s pulses.
 - "~50% of cells responded to 0 or 1 odor, and ~10–15% of cells responded to all 4 odors".

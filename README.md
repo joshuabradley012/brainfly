@@ -104,7 +104,7 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   25%). The two odors share too many Kenyon cells. Backward pairing barely changes anything, as in flies, but that only
   checks the rule's timing.
 
-  Four checks on the current model, each from a measurement:
+  Checks on the current model, each from a measurement:
   - **APL does too little** ([`odor_probe8.py`](experiments/odor_probe8.py)). Silencing it makes 1.4–1.6 times as many
     Kenyon cells respond. Blocking flies' APL lowers their population sparseness as much as about four times as many
     active cells would (derived from Lin et al. 2014's calcium imaging; a bound, not a count).
@@ -126,6 +126,20 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     projection neurons answer odors with only 65–80 Hz at onset (flies 100–200). Responding Kenyon cells then fire
     under 1.5 spikes and APL is hardly recruited. Projection neurons also rest at 5.3 Hz after recalibration, above the
     3 Hz aimed at. The notes flag that this depression fit over-depresses single fibres at low rates.
+  - **Why the responding cells overlap** ([`odor_probe11.py`](experiments/odor_probe11.py),
+    [`odor_probe12.py`](experiments/odor_probe12.py)). The projection neurons respond as broadly as flies' (49–71% of
+    them to each odor by Turner's criterion, flies 59 ± 14%) and, as Bhandawat et al. found in flies, separate odors
+    farther than the receptors do early on. But input that broad reaches most of each Kenyon cell's claws, so the
+    cells with the most projection neuron input answer nearly every odor. 113 cells answer all six odors, where
+    independent cells would leave none, and the fifth of cells with the most input respond to 43% of odors, against
+    0.9% for the fifth with the least. α′/β′ cells get about 60% of the other classes' input, which is why they
+    respond least here. The cells' rest is already even (within 0.2 mV), so evening it changes nothing; Turner's
+    measured ±5.6 mV spread, drawn independently of input, makes the overlap worse; and evening out each cell's
+    input helps only a little (mean Jaccard 0.43 to 0.37). Flies keep odor responses distinct with input this broad,
+    through what the model lacks or has too weakly: excitability matched to input (Abdelrahman et al. 2021) and
+    APL's normalizing inhibition (Prisco et al. 2021, Lin et al. 2014). In flies, dissimilar odors share about a
+    fifth of their responding cells (Campbell et al. 2013); here 80% of 4-methylcyclohexanol's also answer
+    3-octanol.
 
   **Corrections.** Two reviews of this work, my own and an independent one, found these errors, now fixed and rerun:
   - **DoOR's spontaneous level was counted as a response.** DoOR's table includes each receptor's spontaneous firing,
@@ -871,6 +885,8 @@ a sign that the approach is broken."
 | `experiments/odor_probe8.py` | Exploratory, not pre-registered: APL silenced; the Kenyon cell classes' measured threshold offsets; receptor rates of 100 and 50 Hz | APL silenced: 1.4–1.6 times as many Kenyon cells respond (flies: sparseness drops as about 4 times as many would). Inada's offsets: α′/β′ 8–19%, γ 7–16%; Groschner/Chen's: γ 0.4–1.5% as in flies but α′/β′ 59–80%. At 50 Hz, 3–9% respond (flies 6 ± 5%) but MBON11 gains 0.6–2.1 spikes. |
 | `experiments/odor_probe9.py` | Exploratory, not pre-registered: APL's inhibition split into fast (GABA_A) and slow (GABA_B) parts in Inada et al.'s proportions; with and without the classes' threshold offsets | No sparser: 1.00–1.16 times as many Kenyon cells respond; APL silenced, 1.4–1.6 times. The excess is at the odor's onset, before inhibition arrives. |
 | `experiments/odor_probe10.py` | Exploratory, not pre-registered: receptor neurons with measured dynamics (drive-dependent latency, rise, adaptation, offset silence) and spontaneous firing, the resting state recalibrated | Dynamics alone: 6.5–18.6% of Kenyon cells respond, barely changed. With spontaneous firing, 1.6–5.0%, but because projection neurons fall out of flies' range (65–80 Hz at onset, flies 100–200; 5.3 Hz at rest) under the receptor synapses' measured depression; APL isn't recruited. |
+| `experiments/odor_probe11.py` | Exploratory, not pre-registered: why do the current model's responding Kenyon cells overlap so much across odors, and does evening out their excitability help? | Not their rest (already within 0.2 mV); their summed projection neuron input: the fifth with the most respond to 43% of odors, the fifth with the least to 0.9%, and 113 cells answer all six. Turner's ±5.6 mV spread of rest, independent of input, makes it worse (mean Jaccard 0.52); equal input within each type helps a little (0.43 to 0.37), since the odors' drives stay correlated (r = 0.71). |
+| `experiments/odor_probe12.py` | Exploratory, not pre-registered: do the projection neurons make odors more alike than the receptors do, where flies' make them more separable? | No: 49-71% of them respond to each odor (flies 59 ± 14%), and early on odors lie farther apart in their space than in the receptors' (15 of 15 pairs), as in flies. Their broad responses reach most of each Kenyon cell's claws, so the odors' drives correlate (r = 0.80, against 0.50 for DoOR's responses through the same wiring) and follow each cell's summed input. |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension fall inside the pre-set windows (flies: about 7 and 3.3 ms), the only 2 of 6 checks that pass, and the timing only with the coxa braced; the launch is steep and slightly backward (79°), head-down, 1.7 times too hard upward and 2.7 times too weak horizontally. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.6). |
