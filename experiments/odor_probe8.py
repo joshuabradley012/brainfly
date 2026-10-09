@@ -45,7 +45,8 @@ Turner's criterion; MBON11's evoked spikes, 0-1.4 s):
 Responding cells' overlap (Jaccard, mean over odor pairs) runs from 0.41 at 50 Hz to 0.65 with Groschner/Chen's
 offsets (current 0.51). The resting brain stays at 0.95-0.98 Hz with no neuron over 100 Hz throughout. Odor strength
 alone puts the density in range, but the receptor rate a DoOR response stands for isn't measured, and MBON11 then
-hears even less: its shortfall, 10 to 100 times, is the most robust failure.
+hears even less: its shortfall, 7 to 160 times across these variants (110-118 spikes in flies), is the most robust
+failure.
 
     python experiments/odor_probe8.py          (writes experiments/odor_probe8.json)
 """
