@@ -52,7 +52,7 @@ def rungs() -> list[dict]:
         {"name": "Central brain at rest", "status": "passed" if verdict("rung4_scaling", "pass") else "in progress",
          "marks": rung4},
         {"name": "Nerve cord", "status": "passed" if verdict("rung5_vnc2", "pass") else "in progress",
-         "marks": [(bool(verdict("rung5_vnc2", "DNG100") and verdict("rung5_vnc2", "NULL")), "DNg100 drives 7-15 Hz leg rhythms; scrambled wiring doesn't"),
+         "marks": [(bool(verdict("rung5_vnc2", "DNG100") and verdict("rung5_vnc2", "NULL")), "DNg100 drives 7-15 Hz leg rhythms; scrambled wiring at its drive doesn't"),
                    (bool(verdict("rung5_vnc2", "DNB08")), "DNb08 drives them reliably too")]},
         {"name": "Gap junctions and proprioception", "status": "passed" if verdict("rung6_relay", "pass") else "started",
          "pill": "half passed" if verdict("rung6_relay", "pass") else None,     # its test has no proprioception

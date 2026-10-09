@@ -30,6 +30,22 @@ Pass: all three.
 Reported: each condition's scores and frequencies, the DNb08 drives the rule settles on, and the motor modules (their
 table's annotation: coxa swing, tibia flexion...) that the rhythmic replicates' active motor neurons belong to.
 
+
+Checked afterwards (2026-10-09 review; the text above is the pre-registration as it ran):
+  - DNb08's result was set by the drive: the rule kept the starting 128 (which has no source; Pugliese et al. give no
+    starting value) for every replicate, and at 256, which the rule also keeps, the left VES082 neuron is rhythmic in
+    16 of 16 replicates at 13.6 Hz (rung5_drive_check.py). DNg100's nulls at 400 ran away (98-110 of 130 motor neurons
+    active, against a median of 4-9 in the real network); tuned by the rule they settle at 150-200 and stay
+    arrhythmic, barely reaching the motor neurons.
+  - "Driving DNg100 makes decapitated flies walk, stepping at about 7-15 Hz": the band is intact flies' stepping
+    frequency, as Pugliese et al. cite it; for DNg100-driven decapitated flies they give none (stepping quickens with
+    the light's intensity).
+  - The report's plan also asks that silencing E1 or E2 kill the rhythms, and for a promotor-remotor phase offset,
+    with a motif-count null; the ladder's test, written before this run, kept only the rhythms.
+  - At 400 DNg100 itself fires 13.6-21 Hz, well short of the plan's 100-200 Hz "strong descending drive".
+  - vnc_own.py's rhythms ran at 13.4 and 11.6 Hz, not 12-13, and its synapse-count proxy, at the same drive, left the
+    network under-driven, which doesn't test whether size scaling is needed.
+
     python experiments/rung5_vnc.py            (writes experiments/rung5_vnc.json)
 """
 from __future__ import annotations

@@ -1,0 +1,380 @@
+{
+ "question": "Exploratory, not pre-registered: how much do rung 5's two attempts depend on the descending neurons' drive?\n\nA review (2026-10-09) found two things in rung5_vnc.py and rung5_vnc2.py that the drive decides:\n  - DNb08's drive comes from Pugliese et al.'s DN screen rule (halve it if more than 1,500 neurons are active or more\n    than 100 fire over 100 Hz, double it if fewer than 5 are active), started at 128. Pugliese et al. give no starting\n    value (their DNb08 drives were 65 in MANC and 180 in FANC), and in both attempts the rule kept 128 for every\n    replicate, so 128 decided DNb08's result.\n  - DNg100's scrambled-wiring null drives the rewired network at 400, the drive suited to the real network, and every\n    null run had about 100 of 130 motor neurons active, where the real network has 4-9. A network that saturated\n    can't oscillate, so the null may be abolishing the rhythm by running away rather than by losing the wiring.\nHere, on each attempt's own network and seeds:\n  - DNg100's nulls (the same rewirings, seeds and 32 replicates) with the drive tuned by the same rule, started at 400,\n    as attempt 2 tuned DNb08's nulls;\n  - every DNb08 neuron at 256, which the review found the rule also keeps for the left VES082 neuron, 16 replicates on\n    its attempt's seeds, with the rule's verdict on 256 from the run's first second (identical to the rule's 1 s run).\nReported as the attempts' criteria read them: rhythmic replicates (score over 0.5) and their median frequency.\n\n    python experiments/rung5_drive_check.py        (writes experiments/rung5_drive_check.json)\n",
+ "dng100_null_tuned": {
+  "attempt 1, rewiring 1, DNg100_L": {
+   "rhythmic": 0,
+   "of": 32,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "drive": [
+    175.0,
+    200.0
+   ],
+   "active_motor_neurons": [
+    0,
+    0,
+    5
+   ]
+  },
+  "attempt 1, rewiring 1, DNg100_R": {
+   "rhythmic": 0,
+   "of": 32,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "drive": [
+    150.0,
+    200.0
+   ],
+   "active_motor_neurons": [
+    0,
+    1,
+    3
+   ]
+  },
+  "attempt 1, rewiring 2, DNg100_L": {
+   "rhythmic": 0,
+   "of": 32,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "drive": [
+    150.0,
+    200.0
+   ],
+   "active_motor_neurons": [
+    0,
+    0,
+    3
+   ]
+  },
+  "attempt 1, rewiring 2, DNg100_R": {
+   "rhythmic": 0,
+   "of": 32,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "drive": [
+    150.0,
+    200.0
+   ],
+   "active_motor_neurons": [
+    0,
+    0,
+    2
+   ]
+  },
+  "attempt 2, rewiring 1, DNg100_L": {
+   "rhythmic": 0,
+   "of": 32,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "drive": [
+    150.0,
+    200.0
+   ],
+   "active_motor_neurons": [
+    0,
+    0,
+    0
+   ]
+  },
+  "attempt 2, rewiring 1, DNg100_R": {
+   "rhythmic": 13,
+   "of": 32,
+   "score_mean": 0.369,
+   "freq_hz_median": 5.8,
+   "freq_hz": [
+    5.4,
+    5.3,
+    6.0,
+    6.1,
+    5.8,
+    6.7,
+    5.2,
+    5.7,
+    5.7,
+    6.8,
+    6.4,
+    5.7,
+    6.2
+   ],
+   "drive": [
+    150.0,
+    200.0
+   ],
+   "active_motor_neurons": [
+    0,
+    1,
+    15
+   ]
+  },
+  "attempt 2, rewiring 2, DNg100_L": {
+   "rhythmic": 0,
+   "of": 32,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "drive": [
+    175.0,
+    250.0
+   ],
+   "active_motor_neurons": [
+    0,
+    0,
+    1
+   ]
+  },
+  "attempt 2, rewiring 2, DNg100_R": {
+   "rhythmic": 0,
+   "of": 32,
+   "score_mean": 0.0,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "drive": [
+    137.5,
+    200.0
+   ],
+   "active_motor_neurons": [
+    0,
+    0,
+    4
+   ]
+  }
+ },
+ "dnb08_at_256": {
+  "attempt 1, DNb08(VES082)_R": {
+   "rhythmic": 1,
+   "of": 16,
+   "freq_hz_median": 17.9,
+   "freq_hz": [
+    17.9
+   ],
+   "rule": {
+    "keeps": 16,
+    "active": [
+     96,
+     135
+    ],
+    "over_100hz": [
+     0,
+     0
+    ]
+   },
+   "active_motor_neurons": [
+    5,
+    6,
+    8
+   ],
+   "dn_hz": 55.6
+  },
+  "attempt 1, DNb08(VES083)_R": {
+   "rhythmic": 0,
+   "of": 16,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "rule": {
+    "keeps": 10,
+    "active": [
+     94,
+     1735
+    ],
+    "over_100hz": [
+     0,
+     655
+    ]
+   },
+   "active_motor_neurons": [
+    3,
+    7,
+    61
+   ],
+   "dn_hz": 51.8
+  },
+  "attempt 1, DNb08(VES083)_L": {
+   "rhythmic": 6,
+   "of": 16,
+   "freq_hz_median": 17.0,
+   "freq_hz": [
+    16.7,
+    16.1,
+    17.2,
+    15.6,
+    17.2,
+    19.2
+   ],
+   "rule": {
+    "keeps": 16,
+    "active": [
+     148,
+     255
+    ],
+    "over_100hz": [
+     0,
+     3
+    ]
+   },
+   "active_motor_neurons": [
+    12,
+    14,
+    17
+   ],
+   "dn_hz": 60.8
+  },
+  "attempt 1, DNb08(VES082)_L": {
+   "rhythmic": 16,
+   "of": 16,
+   "freq_hz_median": 13.6,
+   "freq_hz": [
+    12.2,
+    13.3,
+    13.7,
+    12.5,
+    13.5,
+    14.3,
+    14.9,
+    15.9,
+    14.1,
+    14.5,
+    12.2,
+    14.1,
+    7.9,
+    13.0,
+    13.2,
+    14.1
+   ],
+   "rule": {
+    "keeps": 16,
+    "active": [
+     181,
+     263
+    ],
+    "over_100hz": [
+     2,
+     6
+    ]
+   },
+   "active_motor_neurons": [
+    13,
+    16,
+    20
+   ],
+   "dn_hz": 63.3
+  },
+  "attempt 2, DNb08(VES082)_R": {
+   "rhythmic": 0,
+   "of": 16,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "rule": {
+    "keeps": 15,
+    "active": [
+     98,
+     1412
+    ],
+    "over_100hz": [
+     0,
+     486
+    ]
+   },
+   "active_motor_neurons": [
+    5,
+    6,
+    50
+   ],
+   "dn_hz": 54.2
+  },
+  "attempt 2, DNb08(VES083)_R": {
+   "rhythmic": 0,
+   "of": 16,
+   "freq_hz_median": null,
+   "freq_hz": [],
+   "rule": {
+    "keeps": 10,
+    "active": [
+     86,
+     1826
+    ],
+    "over_100hz": [
+     0,
+     707
+    ]
+   },
+   "active_motor_neurons": [
+    4,
+    9,
+    59
+   ],
+   "dn_hz": 54.5
+  },
+  "attempt 2, DNb08(VES083)_L": {
+   "rhythmic": 3,
+   "of": 16,
+   "freq_hz_median": 16.9,
+   "freq_hz": [
+    16.9,
+    15.2,
+    17.5
+   ],
+   "rule": {
+    "keeps": 16,
+    "active": [
+     137,
+     264
+    ],
+    "over_100hz": [
+     0,
+     3
+    ]
+   },
+   "active_motor_neurons": [
+    12,
+    14,
+    18
+   ],
+   "dn_hz": 59.0
+  },
+  "attempt 2, DNb08(VES082)_L": {
+   "rhythmic": 15,
+   "of": 16,
+   "freq_hz_median": 13.3,
+   "freq_hz": [
+    16.9,
+    14.7,
+    12.5,
+    11.1,
+    13.2,
+    12.8,
+    14.1,
+    13.5,
+    13.0,
+    13.3,
+    14.9,
+    13.0,
+    14.7,
+    12.2,
+    15.4
+   ],
+   "rule": {
+    "keeps": 16,
+    "active": [
+     178,
+     279
+    ],
+    "over_100hz": [
+     2,
+     5
+    ]
+   },
+   "active_motor_neurons": [
+    12,
+    17,
+    18
+   ],
+   "dn_hz": 63.6
+  }
+ },
+ "seconds": 4329
+}

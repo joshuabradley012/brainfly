@@ -79,7 +79,7 @@ def figure(theme: str, data: dict, res: dict) -> str:
     c = THEMES[theme]
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">',
            '<title id="t">Driving the descending neuron DNg100 makes the front legs\' motor neurons oscillate at walking frequency in '
-           'brainfly\'s nerve cord; rewiring the network abolishes the rhythm</title>',
+           'brainfly\'s nerve cord; rewiring the network, at the same drive, abolishes the rhythm</title>',
            f'<style>text {{ font-family: {FONT}; }} .h {{ font-size: 17px; font-weight: 600; fill: {c["ink"]}; }} '
            f'.lab {{ font-size: 12px; fill: {c["muted"]}; }} .val {{ font-size: 13px; font-weight: 600; fill: {c["ink"]}; }}</style>',
            f'<rect width="{W}" height="{H}" fill="{c["paper"]}"/>']

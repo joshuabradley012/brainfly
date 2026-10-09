@@ -23,6 +23,17 @@ Tests:
 Pass: all three.
 Reported: as attempt 1, plus the DNb08 frequencies and the motor modules of its rhythmic replicates.
 
+
+Checked afterwards (2026-10-09 review; the text above is the pre-registration as it ran):
+  - Pugliese et al. do show DNb08's simulated frequencies, as a figure only (Extended Data Fig. 10a); they give none for
+    flies.
+  - DNb08's result was set by the drive: the rule kept the starting 128 for every replicate, and at 256, which it also
+    keeps, the left VES082 neuron is rhythmic in 15 of 16 replicates at 13.3 Hz (rung5_drive_check.py). DNg100's
+    nulls at 400 ran away (about 100 of 130 motor neurons active); tuned by the rule, as this attempt tuned DNb08's
+    nulls, one of the four (the first rewiring, right DNg100) is rhythmic in 13 of 32 replicates at 5.8 Hz, which
+    would fail NULL.
+  - One rewired DNb08 run of 128 was rhythmic (rewiring 2, VES083_R, 1 of 16 at 2.7 Hz), within NULL's limit.
+
     python experiments/rung5_vnc2.py            (writes experiments/rung5_vnc2.json)
 """
 from __future__ import annotations
