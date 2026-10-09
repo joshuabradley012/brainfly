@@ -22,6 +22,15 @@ escape_circuit.md 1.2 point 5). Does the fly still take off on one leg, and how 
 how much the answers depend on choices the notes don't fix: the timestep (halved and doubled), when the
 other legs let go, the scripted tibia extension, and the braced coxa.
 
+Ran: tau_max = 85.6 µN·mm (109 µN per leg) gives 0.48 m/s. 2 of the 6 checks pass, both on timing: takeoff 5.8 ms
+after the giant fiber spike (flies: about 7) and a 4.1 ms leg extension (flies: 3.33 ms, IQR 0.46, so inside the
+window but 1.7 IQRs slower than their median). The launch is too steep and slightly backward (79°), pitched head-down
+(-4° at takeoff), 1.7 times too hard upward (190 m/s²) and 2.7 times too weak horizontally (40 m/s²). Without the
+scripted tibia extension it still leaves at 81°, so that isn't what makes it steep. The timing pass depends on the
+braced coxa: unbraced and recalibrated, takeoff comes 4.3 ms after the giant fiber spike, failing, while the pitch
+turns head-up (+11°), passing. Halving or doubling the timestep, or when the other legs let go, changes little. One
+TTMn alone gives a weak, tumbling launch (0.2 m/s at 44°, rolled 82° at takeoff).
+
     python experiments/jump_calibration.py         (writes experiments/jump_calibration.json, about 1 min)
 """
 from __future__ import annotations

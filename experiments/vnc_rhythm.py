@@ -7,7 +7,7 @@ strong descending drive"; its test: "DNg100 and DNb08 produce 7-15 Hz leg rhythm
 rhythms, from a three-neuron oscillator repeated in each leg, when DNg100 (BDN2) or DNb08 is driven. Driving
 DNg100 makes decapitated flies walk, and DNb08 makes them flail rhythmically. This reruns their male CNS case,
 before brainfly builds its own: their network of the front legs' neuromere (4,310 neurons: 1,236 descending,
-2,378 intrinsic, 328 ascending, 232 sensory, 130 leg motor neurons), with synapses in the nerve cord only and
+2,378 intrinsic, 328 ascending, 232 sensory, 130 leg motor neurons, and 6 other sensory and efferent neurons), with synapses in the nerve cord only and
 connections under 5 synapses dropped (their W_20260210_vncRoisOnly and its table, in ~/fly-data/pugliese).
 Their model, reimplemented:
     tau_i dr_i/dt = max(rmax_i tanh((a_i / rmax_i) (I_i + 0.03 sum_j w_ij r_j - theta_i)), 0) - r_i
@@ -22,8 +22,9 @@ frequency is that of the most prominent peak. They count a score over 0.5 as rhy
 Conditions: each DNg100 and each DNb08 alone, and DNg100 in a degree-preserving rewiring of the network.
 Ran: DNg100 reproduces their result. The left one gives rhythmic legs in 14 of 16 replicates (13.3 Hz) and the
 right one in 16 of 16 (11.6 Hz), through 4-8 active motor neurons. At the same drive, the left DNb08s are rhythmic in
-9-10 of 16 but fast (16-18 Hz), the right ones in 1-4. Rewired, DNg100 gives no rhythm (0 of 16) and 96 motor
-neurons run up to about 64 Hz. vnc_rhythm_dnb08.py drives DNb08 at their gentler DNb08 value.
+9-10 of 16, the right ones in 1-4. Their frequencies, over all replicates, are 15.7-18.2 Hz; rung 5 takes the median
+over the rhythmic replicates only, 13.0 Hz for VES082_L and 17.9 Hz for VES083_L. Rewired, DNg100 gives no rhythm
+(0 of 16) and 96 motor neurons are active, the median one peaking at about 64 Hz. vnc_rhythm_dnb08.py drives DNb08 at their gentler DNb08 value.
 
     python experiments/vnc_rhythm.py            (writes experiments/vnc_rhythm.json)
 """

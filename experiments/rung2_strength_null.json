@@ -1,0 +1,1116 @@
+{
+ "question": "Exploratory, not pre-registered: does rung 2's sugar route need its wiring once the scrambled wiring keeps every\nneuron's input and output strength?\n\nRung 2 passed with sugar driving MN9 L in 1 of 100 degree-preserving and 0 of 100 class-preserving rewirings\n(rung2_signs.py). Degree-preserving rewiring keeps each neuron's number of partners but not its input strength: MN9 L\nkeeps only a quarter of its excitatory synapses (brainfly/nulls.py), so a route it abolishes may only have lost its\ninput. Class-preserving rewiring keeps more of it. The report's null ladder has a rung between them that brainfly\nhasn't run, degree- and weight-matched ensembles.\nNull here: every synapse keeps its source and count and takes the target of a random synapse of the same sign whose\ncount is within 10% of its own (counts grouped in log-spaced bins 10% wide, so single counts below 10). Every neuron\nkeeps its partners' number on both sides and its output strength exactly, and its input strength to within its\ninputs' bins (MN9 L's strongest inputs, 241-464 synapses, are among the rarest counts). Rung 2's network otherwise\n(rung2_signs.py: rung 1's, with the hemilineage audit's 260 sign flips), with its scale per neuron unchanged.\nMeasured as rung 2's FALSE test: in 100 networks, sugar at 100 Hz activates MN9 L (any spike in 10 trials of 1 s).\nRead, fixed before the first run as rung 2's FALSE reads it: at most 3 of 100 means the route needs its wiring beyond\neach neuron's strength. Seeds 6000 + network; rewiring from default_rng(2028).\n\n    python experiments/rung2_strength_null.py      (writes experiments/rung2_strength_null.json)\n",
+ "rung2_activated": {
+  "degree_preserving": 1,
+  "class_preserving": 0
+ },
+ "mn9_L_input_synapses": {
+  "excitatory": 2963,
+  "inhibitory": 2914
+ },
+ "networks": [
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2974,
+    "inhibitory": 2929
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.061
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2982,
+    "inhibitory": 2910
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2952,
+    "inhibitory": 2874
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2989,
+    "inhibitory": 2914
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.062
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2975,
+    "inhibitory": 2869
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2988,
+    "inhibitory": 2905
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2926,
+    "inhibitory": 2879
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2991,
+    "inhibitory": 2912
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2949,
+    "inhibitory": 2893
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.063
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2976,
+    "inhibitory": 2889
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2969,
+    "inhibitory": 2908
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2991,
+    "inhibitory": 2892
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.062
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2932,
+    "inhibitory": 2928
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2979,
+    "inhibitory": 2908
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2954,
+    "inhibitory": 2878
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2943,
+    "inhibitory": 2937
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.062
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2974,
+    "inhibitory": 2884
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2944,
+    "inhibitory": 2923
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2947,
+    "inhibitory": 2878
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.072
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2952,
+    "inhibitory": 2910
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.066
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2988,
+    "inhibitory": 2894
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2950,
+    "inhibitory": 2889
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2977,
+    "inhibitory": 2903
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.062
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2982,
+    "inhibitory": 2905
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 0.996,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2969,
+    "inhibitory": 2930
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.068
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2958,
+    "inhibitory": 2912
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2981,
+    "inhibitory": 2923
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2972,
+    "inhibitory": 2886
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.072
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2980,
+    "inhibitory": 2915
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2981,
+    "inhibitory": 2895
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 0.996,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2966,
+    "inhibitory": 2907
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2968,
+    "inhibitory": 2898
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2992,
+    "inhibitory": 2916
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2959,
+    "inhibitory": 2901
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 0.996,
+   "largest_input_change": 0.07
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2981,
+    "inhibitory": 2906
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2953,
+    "inhibitory": 2915
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2972,
+    "inhibitory": 2863
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 3006,
+    "inhibitory": 2894
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.072
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2993,
+    "inhibitory": 2901
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.068
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2941,
+    "inhibitory": 2907
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.07
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2974,
+    "inhibitory": 2883
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2969,
+    "inhibitory": 2914
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2967,
+    "inhibitory": 2905
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.066
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2983,
+    "inhibitory": 2873
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2927,
+    "inhibitory": 2856
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2955,
+    "inhibitory": 2934
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2994,
+    "inhibitory": 2881
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2957,
+    "inhibitory": 2925
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.068
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2962,
+    "inhibitory": 2920
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2987,
+    "inhibitory": 2921
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.063
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2935,
+    "inhibitory": 2905
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2955,
+    "inhibitory": 2910
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 0.996,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2982,
+    "inhibitory": 2875
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2956,
+    "inhibitory": 2879
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 0.996,
+   "largest_input_change": 0.062
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2954,
+    "inhibitory": 2908
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.068
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2924,
+    "inhibitory": 2876
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 3008,
+    "inhibitory": 2868
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.066
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 3002,
+    "inhibitory": 2897
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 0.996,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2976,
+    "inhibitory": 2908
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2927,
+    "inhibitory": 2868
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2932,
+    "inhibitory": 2887
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2971,
+    "inhibitory": 2900
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2959,
+    "inhibitory": 2904
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2969,
+    "inhibitory": 2886
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2967,
+    "inhibitory": 2912
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2973,
+    "inhibitory": 2875
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.065
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2946,
+    "inhibitory": 2934
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2953,
+    "inhibitory": 2923
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2984,
+    "inhibitory": 2918
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2927,
+    "inhibitory": 2892
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2943,
+    "inhibitory": 2888
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2966,
+    "inhibitory": 2931
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2964,
+    "inhibitory": 2898
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2970,
+    "inhibitory": 2923
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.066
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 3007,
+    "inhibitory": 2920
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2991,
+    "inhibitory": 2922
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.063
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2971,
+    "inhibitory": 2919
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.07
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2997,
+    "inhibitory": 2873
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.066
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2957,
+    "inhibitory": 2946
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.066
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2999,
+    "inhibitory": 2893
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.075
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2953,
+    "inhibitory": 2893
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2982,
+    "inhibitory": 2889
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2984,
+    "inhibitory": 2878
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.062
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2966,
+    "inhibitory": 2886
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2961,
+    "inhibitory": 2911
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2988,
+    "inhibitory": 2875
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2986,
+    "inhibitory": 2896
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 0.996,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2921,
+    "inhibitory": 2932
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2930,
+    "inhibitory": 2905
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2973,
+    "inhibitory": 2929
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2969,
+    "inhibitory": 2889
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2970,
+    "inhibitory": 2873
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.07
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2955,
+    "inhibitory": 2946
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.062
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2959,
+    "inhibitory": 2907
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.064
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2964,
+    "inhibitory": 2922
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.069
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2935,
+    "inhibitory": 2921
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2970,
+    "inhibitory": 2889
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.067
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2989,
+    "inhibitory": 2924
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 0.996,
+   "largest_input_change": 0.068
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2959,
+    "inhibitory": 2908
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  },
+  {
+   "mn9_L_hz": 0.0,
+   "undriven_over_100hz": 0,
+   "mn9_L_input_synapses": {
+    "excitatory": 2982,
+    "inhibitory": 2889
+   },
+   "synapses_moved": 1.0,
+   "mn9_L_inputs_moved": 1.0,
+   "largest_input_change": 0.071
+  }
+ ],
+ "activated": 0,
+ "needs_wiring": true,
+ "seconds": 1128
+}

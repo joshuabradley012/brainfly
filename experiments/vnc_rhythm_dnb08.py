@@ -2,13 +2,14 @@
 the drive they used for it?
 
 vnc_rhythm.py drove each descending neuron with 400, Pugliese et al.'s male CNS value for DNg100. DNg100 then gave
-12-13 Hz rhythms, but the DNb08 neurons, which are a fifth of DNg100's volume, gave weak scores (0.19-0.26). Since
+11.6-13.3 Hz rhythms, but the right DNb08 neurons, which are a fifth of DNg100's volume, gave weak scores (0.19-0.26;
+the left ones 0.45-0.51). Since
 threshold and gain scale with size, a drive of 400 pushes a DNb08 far past threshold. Pugliese et al. drove one
 DNb08 with 65 in MANC, where their DNg100 drive was 250 (400 in the male CNS). This sweeps 65, 104 (65 x 400 / 250)
 and 160 for each DNb08 alone, 8 replicates each, with vnc_rhythm.py's model and score.
 Ran: little rhythm at 65 and 104 (at most 2 of 8 replicates); at 160 one neuron, DNb08(VES082)_L, is rhythmic in 6 of 8
 but at 16.4 Hz. Their paper gives no male CNS drive for DNb08 (their DN screen set drives by a recruitment rule, which
-rung5_vnc.py uses) and no DNb08 frequency.
+rung5_vnc.py uses) and no DNb08 frequency in the text (Extended Data Fig. 10a plots its simulated frequencies).
 
     python experiments/vnc_rhythm_dnb08.py            (writes experiments/vnc_rhythm_dnb08.json)
 """

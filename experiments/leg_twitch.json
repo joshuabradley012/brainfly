@@ -1,5 +1,5 @@
 {
- "question": "Exploratory, not pre-registered: with its muscles scaled to flies' maximum force and a motor neuron spike set to\nflies' force per spike, does FlyMimic's tibia flexor twitch like a fly's?\n\nleg_probe.py: FlyMimic's tibia flexor pushes a fly's force probe 40 times more weakly than a fly's (2.3 against about\n100 uN). Azevedo et al. 2020 measured a fly's front-leg tibia flexor against that probe\n(research_notes/Embodied fly connectome simulation/leg_twitch_data.md). One fast motor neuron spike gives about 9 uN\n(5.4-15.4), reaching half its peak about 8.5 ms after the spike (7.7-9.7 across cells), peaking at about 17-23 ms and\nfalling to half about 12-16 ms after the peak. Two spikes 12 ms apart give 1.4-1.6 times one; the whole muscle, close\nto 100 uN.\nSetup: leg_probe.leg(90): FlyMimic's left front leg, every joint held but the femur-tibia joint, which carries the\nprobe; every other muscle at FlyMimic's floor (1e-4). Two numbers are fitted:\n  - every muscle's maximum force times one factor, so that full activation of the tibia flexor pushes the probe with\n    100 uN after 100 ms;\n  - a spike, a control pulse of 1 lasting long enough that one spike gives a 9 uN peak.\nMeasured, as predictions:\n  - the single-spike twitch's time to half its peak, time to peak, and half-decay after the peak, from the pulse's\n    start. A fly's are timed from the somatic spike, so they include the motor neuron's conduction and the synapse,\n    a few ms.\n  - the ratio of two spikes 12 ms apart to one;\n  - the peak for 1 to 17 spikes at 80 Hz. A fly's saturates near 28-30 uN, which the authors put down to fatigue,\n    and this model has none.\nFlyMimic's activation and deactivation time constants are reported.\n\n    python experiments/leg_twitch.py           (writes experiments/leg_twitch.json)\n",
+ "question": "Exploratory, not pre-registered: with its muscles scaled to flies' maximum force and a motor neuron spike set to\nflies' force per spike, does FlyMimic's tibia flexor twitch like a fly's?\n\nleg_probe.py: FlyMimic's tibia flexor pushes a fly's force probe 40 times more weakly than a fly's (2.3 against about\n100 uN). Azevedo et al. 2020 measured a fly's front-leg tibia flexor against that probe\n(research_notes/Embodied fly connectome simulation/leg_twitch_data.md). One fast motor neuron spike gives about 9 uN\n(5.4-15.4), reaching half its peak about 8.5 ms after the spike (7.7-9.7 across cells). Read from example traces (the\npaper reports neither): the peak at about 17-23 ms, and half the force gone about 12-16 ms after it. Two spikes give\n1.4-1.6 times one (across cells, at intervals not stated; about 12 ms apart in the example shown); the whole muscle,\nclose to 100 uN.\nSetup: leg_probe.leg(90): FlyMimic's left front leg, every joint held by joint limits but the femur-tibia joint,\nwhich carries the probe; every other muscle at FlyMimic's floor (1e-4). Two numbers are fitted:\n  - every muscle's maximum force times one factor, so that full activation of the tibia flexor pushes the probe with\n    100 uN after 100 ms;\n  - a spike, a control pulse of 1 lasting long enough that one spike gives a 9 uN peak.\nMeasured, as predictions:\n  - the single-spike twitch's time to half its peak, time to peak, and half-decay after the peak, from the pulse's\n    start. A fly's are timed from the somatic spike, so they include the motor neuron's conduction and the synapse,\n    a few ms.\n  - the ratio of two spikes 12 ms apart to one;\n  - the peak for 1 to 17 spikes at 80 Hz. A fly's saturates near 28-30 uN, which the authors put down to fatigue,\n    and this model has none.\nFlyMimic's activation and deactivation time constants are reported. In the model FlyGym ships they are 0.1 and 0.4\nms, though Ozdil et al. say they used OpenSim's defaults (10 and 40 ms, MuJoCo's too). Added 2026-10-09, after a\nreview: the same run with those time constants, and with the held joints held stiffly (limits with a 0.2 ms time\nconstant instead of MuJoCo's 20 ms); and what the scale works against (the leg at rest and fully flexed, and the\nflexor scaled alone).\n\nRan: as shipped, no. Full activation reaches 100 uN only with every maximum force times 607, not the 44 leg_probe.py's\nsmall-deflection estimate gave, mostly because scaling every muscle also scales the tibia extensor's passive tension.\nIt holds the resting tibia at 72 degrees rather than 90, and with 100 uN on the probe (the tibia at 133 degrees) it\ncancels 417 of the flexor's 486 uN mm. The flexor scaled alone can't reach 100 uN: it folds the tibia toward 148\ndegrees, where its moment arm (15 um at 90 degrees) vanishes, and tops out near 92 uN (at 1000 times; 3000 times runs\nunstable). A spike set to give 9 uN (a 1.4 ms pulse) reaches\nhalf its peak 20 times sooner than a fly's (0.4 ms against 7.7-9.7) and peaks 5-7 times sooner (3.3 ms against\n17-23), and half of it is gone 6.6 ms after the peak (12-16). Two spikes 12 ms apart sum to 1.17 times one (1.4-1.6),\nand 80 Hz trains saturate at 11.9 uN (flies: 28-30). At this scale the leg's own passive stiffness about the joint\n(123 uN mm/rad) exceeds the probe's (39), so the leg as much as the probe shapes the twitch. The joints meant to be\nheld give way at this scale (one by 96 degrees), but held stiffly the results barely move: a scale of 605, 0.4, 3.3\nand 6.9 ms, and 1.19 times.\nWith the paper's stated time constants, mostly yes: a scale of 614, and a 0.1 ms pulse (the shortest the 0.1 ms step\nallows) gives 9.0 uN, reaching half its peak at 6.1 ms (7.7-9.7, which include a few ms of conduction) and peaking at\n17.1 ms (17-23). Two spikes sum to 1.61 times one (1.4-1.6), and 80 Hz trains level off at 26.9 uN (28-30) without\nany fatigue. But it relaxes about four times too slowly: half of it is gone 58 ms after the peak (12-16). So FlyMimic's\nown stated parameters predict a fly's twitch rise, summation and plateau but not its relaxation, and the shipped ones\npredict none of them.\n\n    python experiments/leg_twitch.py           (writes experiments/leg_twitch.json)\n",
  "timestep_ms": 0.1,
  "activation_time_constants_ms": [
   0.1,
@@ -22,6 +22,93 @@
   "5": 11.78,
   "10": 11.93,
   "17": 11.93
+ },
+ "mechanics": {
+  "tibia_at_rest_deg": 71.8,
+  "held_joints_moved_deg": 95.7,
+  "passive_stiffness_uN_mm_per_rad": 122.9,
+  "probe_stiffness_uN_mm_per_rad": 38.8,
+  "full_flexor": {
+   "tibia_deg": 133.3,
+   "probe_uN": 100.0,
+   "flexor_arm_um": 11.8,
+   "torque_uN_mm": {
+    "tibia flexor": 485.6,
+    "tibia extensor": -416.7
+   }
+  }
+ },
+ "flexor_only": {
+  "100": {
+   "probe_uN": 73.7,
+   "tibia_deg": 135.1,
+   "unstable": false
+  },
+  "300": {
+   "probe_uN": 86.9,
+   "tibia_deg": 143.3,
+   "unstable": false
+  },
+  "1000": {
+   "probe_uN": 91.9,
+   "tibia_deg": 146.4,
+   "unstable": false
+  },
+  "3000": {
+   "probe_uN": 93.1,
+   "tibia_deg": 147.4,
+   "unstable": true
+  }
+ },
+ "flexor_arm_um_by_angle": {
+  "90": 14.7,
+  "120": 14.7,
+  "140": 7.9,
+  "145": 3.3,
+  "148": -0.0
+ },
+ "stiff_holds": {
+  "hold_time_constant_ms": 0.2,
+  "scale": 605.067,
+  "spike_pulse_ms": 1.4,
+  "single_spike": {
+   "peak_uN": 9.17,
+   "half_ms": 0.4,
+   "peak_ms": 3.3,
+   "half_decay_ms": 6.9
+  },
+  "two_spike_ratio": 1.186,
+  "train_80Hz": {
+   "1": 9.17,
+   "2": 10.68,
+   "3": 11.34,
+   "5": 11.79,
+   "10": 11.92,
+   "17": 11.92
+  }
+ },
+ "paper_time_constants": {
+  "activation_time_constants_ms": [
+   10.0,
+   40.0
+  ],
+  "scale": 613.899,
+  "spike_pulse_ms": 0.1,
+  "single_spike": {
+   "peak_uN": 9.02,
+   "half_ms": 6.1,
+   "peak_ms": 17.1,
+   "half_decay_ms": 58.1
+  },
+  "two_spike_ratio": 1.613,
+  "train_80Hz": {
+   "1": 9.02,
+   "2": 14.55,
+   "3": 18.53,
+   "5": 22.87,
+   "10": 26.26,
+   "17": 26.88
+  }
  },
  "fly": {
   "max_uN": 100.0,

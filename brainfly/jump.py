@@ -15,7 +15,8 @@ The jump follows research_notes/Embodied fly connectome simulation/escape_circui
   Thomas & Wyman 1984, Kadas et al. 2019) and 0.5 ms from muscle potential to force (unmeasured). k rises
   with time constant 1.3 ms (Kolomenskiy et al. 2016's ramp, fitted to Zumstein et al. 2004's force slope)
   and decays with 9 ms (Zumstein 2004 via Elliott et al. 2007: 8-10 ms, a twitch of about 20 ms), scaled
-  to peak 1, reached 2.7 ms after onset.
+  to peak 1, reached 2.7 ms after onset. That peak is assumed: Zumstein measured 8.2 ms to peak in tethered
+  flies pushing on a strain gauge (GF-evoked).
 - The tibia extensor, SCRIPTED: its motor neuron (the TLMn) isn't identified in MaleCNS yet. Each side's
   femur-tibia pitch gets -tibia * tau_max * a(t - 0.5 ms), toward extension. FTi pitch is the femur-tibia
   angle (0 is a straight leg), so extension is a decrease.

@@ -12,12 +12,16 @@ takeoff before contact; launch speed, angle and heading; and the loomed side's L
 (assets/loom_jump.py).
 Ran: every fly's giant fibers fired and every fly left the ground, but few escapes were good. A side loom fires
 only that side's giant fiber, so the fly pushes with one middle leg and tumbles away sideways at 0.2 m/s. The
-loom-evoked giant fiber spikes come late, mostly 2-52 ms before contact (the fly then leaves at or just before
-contact), and head-on ones mostly after contact. And a few giant fiber spikes long before contact, while the disk was
+loom-evoked giant fiber spikes come late, mostly 2-52 ms before contact (the fly then leaves between 45 ms before
+contact and 5 ms after it, 3 of the 12 after), and head-on ones mostly after contact. And a few giant fiber spikes long before contact, while the disk was
 still small, look spontaneous (the resting giant fiber fires about 0.1 Hz here, where a fly's is silent); with the
 relay each of them makes a jump. Head-on, both jump motor neurons fired in every fly, but rarely within the same
-push; one fly launched with both legs, at 0.47 m/s. ("sides" lists the TTMns that fired within 20 ms of the first,
-not only during the push.)
+push; one fly launched with both legs, at 0.47 m/s. ("sides" lists the TTMns that fired at any time during the
+loom; only the spikes within 20 ms of the first drive the push.)
+Corrected 2026-10-09: takeoff before contact was 2.0 ms too large. takeoff_ms is timed from the first TTMn spike, but
+the 2 ms lead the body run starts with was subtracted as if it were timed from the run's start. The code is fixed,
+and takeoff_before_contact_ms in loom_jump.json and loom_jump_rung3eye.json was lowered by 2.0 ms to match (the same
+inputs give the corrected values to within 0.05 ms).
 
     python experiments/loom_jump.py            (writes experiments/loom_jump.json and loom_jump.npz)
     python experiments/loom_jump.py rung3eye   (the same with rung 3's eye, brainfly.optic.EYE: loom_jump_rung3eye.json)
@@ -87,7 +91,7 @@ def jump(body: Jump, ttmn: dict) -> dict | None:
     summary = rec["summary"]
     took = summary.get("took_off", False)
     return {"first_ttmn_s": round(first, 4), "sides": "".join(x for x in "LR" if ttmn[x]),
-            "takeoff_before_contact_ms": round((CONTACT - (first - LEAD + summary["takeoff_ms"] * 1e-3)) * 1e3, 1) if took else None,
+            "takeoff_before_contact_ms": round((CONTACT - (first + summary["takeoff_ms"] * 1e-3)) * 1e3, 1) if took else None,
             **{k: summary[k] for k in ("took_off", "takeoff_ms", "launch_speed_m_s", "launch_angle_deg", "launch_heading_deg",
                                        "roll_at_takeoff_deg", "pitch_at_takeoff_deg") if k in summary}}
 

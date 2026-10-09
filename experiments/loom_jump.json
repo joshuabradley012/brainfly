@@ -331,7 +331,7 @@
     {
      "first_ttmn_s": 1.5902,
      "sides": "LR",
-     "takeoff_before_contact_ms": 204.8,
+     "takeoff_before_contact_ms": 202.8,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -343,7 +343,7 @@
     {
      "first_ttmn_s": 1.7978,
      "sides": "L",
-     "takeoff_before_contact_ms": -2.7,
+     "takeoff_before_contact_ms": -4.7,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -355,7 +355,7 @@
     {
      "first_ttmn_s": 1.7854,
      "sides": "L",
-     "takeoff_before_contact_ms": 9.7,
+     "takeoff_before_contact_ms": 7.7,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -367,7 +367,7 @@
     {
      "first_ttmn_s": 1.7944,
      "sides": "L",
-     "takeoff_before_contact_ms": 0.8,
+     "takeoff_before_contact_ms": -1.2,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -379,7 +379,7 @@
     {
      "first_ttmn_s": 1.3356,
      "sides": "LR",
-     "takeoff_before_contact_ms": 459.4,
+     "takeoff_before_contact_ms": 457.4,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -391,7 +391,7 @@
     {
      "first_ttmn_s": 0.5765,
      "sides": "LR",
-     "takeoff_before_contact_ms": 1218.5,
+     "takeoff_before_contact_ms": 1216.5,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -403,7 +403,7 @@
     {
      "first_ttmn_s": 1.7913,
      "sides": "L",
-     "takeoff_before_contact_ms": 3.8,
+     "takeoff_before_contact_ms": 1.8,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -415,7 +415,7 @@
     {
      "first_ttmn_s": 1.7884,
      "sides": "L",
-     "takeoff_before_contact_ms": 6.8,
+     "takeoff_before_contact_ms": 4.8,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -7239,7 +7239,7 @@
     {
      "first_ttmn_s": 1.7933,
      "sides": "R",
-     "takeoff_before_contact_ms": 1.7,
+     "takeoff_before_contact_ms": -0.3,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -7251,7 +7251,7 @@
     {
      "first_ttmn_s": 1.7878,
      "sides": "R",
-     "takeoff_before_contact_ms": 7.2,
+     "takeoff_before_contact_ms": 5.2,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -7263,7 +7263,7 @@
     {
      "first_ttmn_s": 1.7901,
      "sides": "R",
-     "takeoff_before_contact_ms": 5.0,
+     "takeoff_before_contact_ms": 3.0,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -7275,7 +7275,7 @@
     {
      "first_ttmn_s": 1.7609,
      "sides": "R",
-     "takeoff_before_contact_ms": 34.1,
+     "takeoff_before_contact_ms": 32.1,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -7287,7 +7287,7 @@
     {
      "first_ttmn_s": 1.7869,
      "sides": "R",
-     "takeoff_before_contact_ms": 8.1,
+     "takeoff_before_contact_ms": 6.1,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -7299,7 +7299,7 @@
     {
      "first_ttmn_s": 1.78,
      "sides": "R",
-     "takeoff_before_contact_ms": 15.1,
+     "takeoff_before_contact_ms": 13.1,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -7311,7 +7311,7 @@
     {
      "first_ttmn_s": 1.7478,
      "sides": "R",
-     "takeoff_before_contact_ms": 47.3,
+     "takeoff_before_contact_ms": 45.3,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -7323,7 +7323,7 @@
     {
      "first_ttmn_s": 1.5008,
      "sides": "LR",
-     "takeoff_before_contact_ms": 294.3,
+     "takeoff_before_contact_ms": 292.3,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -14045,7 +14045,7 @@
     {
      "first_ttmn_s": 0.7865,
      "sides": "LR",
-     "takeoff_before_contact_ms": 1008.6,
+     "takeoff_before_contact_ms": 1006.6,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -14057,7 +14057,7 @@
     {
      "first_ttmn_s": 1.6801,
      "sides": "LR",
-     "takeoff_before_contact_ms": 115.0,
+     "takeoff_before_contact_ms": 113.0,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -14069,7 +14069,7 @@
     {
      "first_ttmn_s": 1.8386,
      "sides": "LR",
-     "takeoff_before_contact_ms": -43.4,
+     "takeoff_before_contact_ms": -45.4,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -14081,7 +14081,7 @@
     {
      "first_ttmn_s": 1.4766,
      "sides": "LR",
-     "takeoff_before_contact_ms": 318.4,
+     "takeoff_before_contact_ms": 316.4,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -14093,7 +14093,7 @@
     {
      "first_ttmn_s": 1.8397,
      "sides": "LR",
-     "takeoff_before_contact_ms": -44.6,
+     "takeoff_before_contact_ms": -46.6,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,
@@ -14105,7 +14105,7 @@
     {
      "first_ttmn_s": 1.8622,
      "sides": "LR",
-     "takeoff_before_contact_ms": -65.6,
+     "takeoff_before_contact_ms": -67.6,
      "took_off": true,
      "takeoff_ms": 5.45,
      "launch_speed_m_s": 0.4747,
@@ -14117,7 +14117,7 @@
     {
      "first_ttmn_s": 1.8245,
      "sides": "LR",
-     "takeoff_before_contact_ms": -29.4,
+     "takeoff_before_contact_ms": -31.4,
      "took_off": true,
      "takeoff_ms": 6.95,
      "launch_speed_m_s": 0.1971,
@@ -14129,7 +14129,7 @@
     {
      "first_ttmn_s": 1.8525,
      "sides": "LR",
-     "takeoff_before_contact_ms": -57.4,
+     "takeoff_before_contact_ms": -59.4,
      "took_off": true,
      "takeoff_ms": 6.85,
      "launch_speed_m_s": 0.1994,

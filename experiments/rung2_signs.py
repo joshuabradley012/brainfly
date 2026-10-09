@@ -25,6 +25,13 @@ Reported, not part of the pass: WATER, BITTER, IR94E. Also rung 1's tests on the
   - with every glutamatergic synapse excitatory instead of inhibitory (glutamate's sign sensitivity);
   - with the monoamines back as fast excitation (rung 2's other change undone).
 
+Checked afterwards (2026-10-09 review; the code is left as it ran): 6 of the 260 flipped neurons have MaleCNS ground
+truth agreeing with their consensus and should have been exempt (hemilineage_audit.py). And the glutamate variant
+flips the consensus-glutamatergic neurons of the already-audited matrix, so 128 that the audit had made cholinergic
+are flipped back to inhibitory and 41 that it had made glutamatergic stay inhibitory: 169 neurons with 1.9% of the
+glutamatergic synapses that the variant meant to be excitatory. It ran away regardless (94,950 undriven neurons over
+100 Hz).
+
     python experiments/rung2_signs.py            (writes experiments/rung2_signs.json)
 """
 from __future__ import annotations

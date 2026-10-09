@@ -166,12 +166,15 @@ New quotes:
 - "an odor evokes responses in about 5% of the KCs in an imaging plane (n = 8 flies and n = 933 neurons) … The mean proportion of responding cells did not exceed 0.1 for any odor, although the response from individual flies reached values up to 0.17."
 - "On any given odor trial, about 20% of KCs may be active".
 - Mixtures: "Presented individually, each of these odors activates 9% of KCs on average. When presented simultaneously, however, this proportion increases only slightly (11%) and is smaller than the linear sum … 15%".
+  - The two odors are 3-octanol and 4-methylcyclohexanol, Hige et al.'s learning pair: they "activate very different populations of KCs" (fig. 7). No overlap count is given. If every cell responding to either odor also responded to the linear sum, the union would be at most 15%, so at least 3% of KCs respond to both: at least a third of each odor's responders, a Jaccard index of at least 0.2 (derived; the linear sum can also recruit cells that respond to neither alone). (Read 2026-10-09.)
 - Concentration: "the very first odor presentation of the experiment typically evoked the broadest response, regardless of the concentration". Banana stays under 0.2 across concentrations.
 - Spike count (an aside): "KCs fire a small number of spikes, typically 5 to 10".
 
 **Campbell et al. 2013, J Neurosci** ([PMC3685844](https://pmc.ncbi.nlm.nih.gov/articles/PMC3685844/)): overlap. Same preparation; 1:100.
 - "a PA-responsive KC also responds to BA (64.6% of all PA-responsive KCs across recordings) and vice versa (63.1%), whereas EL-responsive KCs rarely respond to either of these odors (21.8%)".
 - "KCs that respond uniquely to either PA (70 of 2756 total KCs; 2.5%) or BA (75 of 2756 total KCs; 2.7%)".
+- Population correlations: "the correlation score of PA-BA (mean r = 0.70) is substantially and significantly greater than either PA-EL (mean r = 0.15 …)". Criterion: peak ΔF/F 0.5–4.5 s after onset more than 2.33 SD above baseline. (Read 2026-10-09.)
+- For brainfly: dissimilar odors share about a fifth of their responders (EL: 21.8%), similar ones about two thirds. odor_probe7.py's current model has 3-octanol and 4-methylcyclohexanol at a Jaccard index of 0.32, with 16.7% and 7.3% of KCs responding, so about 5.8% respond to both: 35% of 3-octanol's responders but 80% of 4-methylcyclohexanol's (derived from odor_probe7.json's shares and Jaccard index). The weaker odor's responders are nearly a subset of the stronger's, which is why pairing either odor depresses the other's (learning_pilot.py).
 
 **Ahmed et al. 2023: the threshold changes the answer.** GCaMP6s, cut-off "a 20% increase in fluorescence", 1:100, 2-s pulses.
 - "~50% of cells responded to 0 or 1 odor, and ~10–15% of cells responded to all 4 odors".

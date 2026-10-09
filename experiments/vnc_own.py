@@ -2,7 +2,7 @@
 from its own copy of MaleCNS?
 
 vnc_rhythm.py reran Pugliese et al.'s male CNS model on their own network files and reproduced their result:
-DNg100 drives 12-13 Hz leg rhythms, and a rewired network doesn't. This builds the same 4,310 neurons' network from
+DNg100 drives 11.6-13.3 Hz leg rhythms, and a rewired network doesn't. This builds the same 4,310 neurons' network from
 brainfly's data instead (brainfly.shiu.counts, from MaleCNS v1.0 at confidence 0.5, signed by brainfly's consensus
 transmitters: acetylcholine excitatory, GABA and glutamate inhibitory, others left out; connections under 5 synapses
 dropped). It differs from theirs in counting every synapse between two of these neurons, brain-side ones
@@ -15,7 +15,9 @@ vnc_rhythm.py's model, score and 16 replicates with DNg100 on each side driven a
 Ran: brainfly's network keeps 118,680 of their 118,920 connections (99.8%), all with the same sign, counts
 correlating at 0.96; counting brain-side synapses adds 23,256 more. With their volumes DNg100 gives rhythms in 16 of
 16 replicates on each side (13.4 and 11.6 Hz). With the synapse proxy (ranked like the volumes, Spearman 0.93) there
-is no rhythm (0 of 16), and hardly any motor neuron is active: size scaling needs the volumes.
+is no rhythm (0 of 16), and hardly any motor neuron is active (a median of 1): at the drive that suits the volumes,
+the proxy leaves the network under-driven. That shows the proxy can't stand in for the volumes at this drive, not
+that scaling by size is needed (Pugliese et al. report no robust rhythm without it).
 
     python experiments/vnc_own.py            (writes experiments/vnc_own.json)
 """

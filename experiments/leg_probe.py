@@ -15,7 +15,9 @@ extensor (every other muscle at FlyMimic's floor, 1e-4); the muscles' moment arm
 force the flexor would need to reach flies' 100 uN.
 Ran: no, by a factor of about 40. FlyMimic's tibia flexor pushes the probe with 2.0-2.3 uN from 60 to 120 degrees: a
 fortieth of a fly's whole muscle and a quarter of one fast motor neuron spike. Its 68 uN maximum force acts through a
-15 um moment arm; to push 100 uN it would need about 3 mN. The extensor (304 uN through 35 um) pushes 17-28 uN.
+15 um moment arm; for small deflections, pushing 100 uN would take about 3 mN. (leg_twitch.py found that estimate
+unreachable: the flexor alone folds the tibia toward 148 degrees, where its moment arm vanishes, and tops out near
+93 uN.) The extensor (304 uN through 35 um) pushes 17-28 uN.
 
     python experiments/leg_probe.py            (writes experiments/leg_probe.json)
 """
@@ -38,14 +40,17 @@ ANGLES = (60, 90, 120)                                    # degrees from a strai
 SECONDS, FLOOR = 0.1, 1e-4
 
 
-def leg(angle: float) -> tuple[mj.MjModel, mj.MjData]:
-    """FlyMimic with every left front leg joint held but the femur-tibia joint, which carries the probe."""
+def leg(angle: float, hold: float | None = None) -> tuple[mj.MjModel, mj.MjData]:
+    """FlyMimic with every left front leg joint held but the femur-tibia joint, which carries the probe. The holds are
+    joint limits, as soft as MuJoCo's default unless `hold` gives their time constant, s."""
     spec = ms._load_mjcf(XML)
     m = spec.compile()
     for j in spec.joints:
         if j.name.startswith("joint_LF") and j.name != FTI:
             v = m.qpos0[m.jnt_qposadr[m.joint(j.name).id]]
             j.limited, j.range = True, [v - 1e-4, v + 1e-4]
+            if hold is not None:
+                j.solref_limit = [hold, 1.0]
     fti = next(j for j in spec.joints if j.name == FTI)
     fti.stiffness = fti.stiffness + K * ARM ** 2
     fti.armature = fti.armature + MASS * ARM ** 2

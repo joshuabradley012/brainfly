@@ -68,9 +68,21 @@ def test_class_preserving_also_keeps_each_connection_s_target_class(matrix):
     assert (matrix != S).nnz > 0.7 * matrix.nnz
 
 
+def test_strength_preserving_also_keeps_each_neuron_s_input_strength(matrix):
+    S = nulls.strength_preserving(matrix, np.random.default_rng(5))
+    for a, b in zip(degrees(matrix), degrees(S)):
+        assert np.array_equal(a, b)
+    assert all(np.array_equal(a, b) for a, b in zip(sent(matrix), sent(S)))
+    A, B = matrix.tocoo(), S.tocoo()                 # entry by entry: sparse arithmetic would merge a null's
+    for sign in (1, -1):                             # repeated connections; each neuron's excitatory and
+        a, b = (np.bincount(X.row[X.data * sign > 0], X.data[X.data * sign > 0] * sign, X.shape[0]) for X in (A, B))
+        assert np.all(np.abs(b - a) <= 0.1 * a)      # inhibitory input, within 10%
+    assert (matrix != S).nnz > 0.7 * matrix.nnz
+
+
 def test_the_same_generator_gives_the_same_null(matrix):
     klass = np.arange(matrix.shape[0]) % 4
-    for make in (nulls.global_shuffle, nulls.within_neuron, nulls.degree_preserving,
+    for make in (nulls.global_shuffle, nulls.within_neuron, nulls.degree_preserving, nulls.strength_preserving,
                  lambda M, g: nulls.class_preserving(M, klass, g)):
         a, b = make(matrix, np.random.default_rng(9)), make(matrix, np.random.default_rng(9))
         assert (a != b).nnz == 0

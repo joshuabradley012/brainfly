@@ -55,11 +55,13 @@ def rungs() -> list[dict]:
          "marks": [(bool(verdict("rung5_vnc2", "DNG100") and verdict("rung5_vnc2", "NULL")), "DNg100 drives 7-15 Hz leg rhythms; scrambled wiring doesn't"),
                    (bool(verdict("rung5_vnc2", "DNB08")), "DNb08 drives them reliably too")]},
         {"name": "Gap junctions and proprioception", "status": "passed" if verdict("rung6_relay", "pass") else "started",
-         "marks": [(True, "electrical and fast synapses in the model"),
-                   (bool(verdict("rung6_relay", "pass")), "giant fiber to jump muscle in 0.9 ms (built in); silent without gap junctions"),
+         "pill": "half passed" if verdict("rung6_relay", "pass") else None,     # its test has no proprioception
+         "marks": [(True, "electrical synapses in the model"),
+                   (bool(verdict("rung6_relay", "pass")), "giant fiber to jump muscle in 0.9 ms (built in); silent without them"),
                    (False, "leg sensors driven by the body")]},
         {"name": "Body and muscles", "status": "started",
-         "marks": [(True, "NeuroMechFly walks, steered by DNa02"), (True, "jumps from jump motor neuron spikes"),
+         "marks": [(bool(verdict("closed_loop", "result", "pass")), "NeuroMechFly walks, steered by DNa02"),
+                   (bool(verdict("jump_calibration", "bilateral", "took_off")), "jumps from jump motor neuron spikes"),
                    (False, "motor neurons drive muscles")]},
         {"name": "Flight, neck and song", "status": "not started", "marks": [(False, "saccades, head pose, song pulses")]},
         {"name": "State and learning", "status": "not started",
@@ -88,7 +90,7 @@ def figure(theme: str, rows: list[dict]) -> str:
         tx = RAIL_X + RAIL_W + 36
         out.append(f'<text x="{tx}" y="{y - 4:.1f}" class="num" fill="{col if (done or partial) else c["muted"]}">{k + 1}</text>')
         out.append(f'<text x="{tx + 30}" y="{y - 4:.1f}" class="name">{r["name"]}</text>')
-        pill = {"passed": "passed", "in progress": "in progress", "started": "started", "not started": "not started"}[state]
+        pill = r.get("pill") or {"passed": "passed", "in progress": "in progress", "started": "started", "not started": "not started"}[state]
         pw = 12 + 7.6 * len(pill)
         px = W - 32 - pw
         if done:
