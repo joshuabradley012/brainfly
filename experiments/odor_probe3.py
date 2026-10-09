@@ -155,6 +155,8 @@ def condition(s, name: str, types: np.ndarray, m: dict, c: int) -> dict:
             "kc_share": round(float(up.sum() / kc.sum()), 4), "kc_share_1spike": round(float(any_.sum() / kc.sum()), 4),
             "kc_by_class": {x: round(float((up & (types == x)).sum() / max((types == x).sum(), 1)), 4) for x in KC_CLASSES},
             "kc_responders_hz": round(float(odr[up].mean()), 1) if up.any() else None,
+            "spikes_per_response": {x: round(float((r["odor"] - r["rest"]).mean(0)[any_ & np.char.startswith(types, x)].mean()), 2)
+                                    if (any_ & np.char.startswith(types, x)).any() else None for x in ("KCab", "KCa'b'", "KCg")},
             "read": {x: [round(float(rest[types == x].mean()), 2), round(float(odr[types == x].mean()), 2)] for x in READ}}
         if "apl" in r:
             out["odors"][odor]["apl_release_hz"] = r["apl"]          # first 100 ms, whole second (odor_probe4.py)

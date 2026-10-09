@@ -1,0 +1,716 @@
+{
+ "question": "Exploratory, not pre-registered: Kenyon cells built from Turner et al. 2008's measurements. Do odors then drive the\nsparse responses flies show, and does MBON11 hear them?\n\nodor_probe4.py gave Kenyon cells a 150 ms membrane time constant (somatic measurements) and found them sparse but too\nquiet. Turner, Bazhenov & Laurent 2008 (J Neurophysiol 99:734) measured the rest of the input stage in vivo:\n  - EPSPs are fast although the soma's time constant is over 200 ms: 10-90% rise 2.1 +- 0.5 ms, decay 11.5 +- 5.3 ms,\n    \"determined mostly by synaptic (and possibly, voltage-gated) conductances in the dendrites\". In this model a\n    neuron's membrane time constant is what sets its EPSP's decay, so the Kenyon cells get 11.5 ms.\n  - unitary EPSPs of 1.4 mV (mean; median 1.2), from the distribution of spontaneous EPSPs; here 3.3 mV for the mean\n    PN-to-KC connection (with a 20 ms membrane).\n  - resting 21.5 +- 5.6 mV below threshold (odor_probe3.py's calibration), and about 10 PNs per Kenyon cell.\n  - a passive model built from these numbers, driven by recorded PN odor responses with no synaptic depression,\n    responded in 6% of model Kenyon cells, as the real ones did.\nMeasured in flies, as predictions here: a given odor evoked spikes in 6 +- 5% of Kenyon cells (71 cells, 10 odors\neach; a response is a rate 3.5 SD over baseline within 2 s); responses \"closely followed the stimulus time course\";\nalpha/beta Kenyon cells fired 2.2 +- 1.2 spikes per response and alpha'/beta' ones 4.9 +- 3.0. And MBON11 (Hige et al.\n2015): high rates \"that persisted throughout the duration of the 1-s odor pulse\", rising from about 37 Hz to about 57.\nModel: odor_probe3.py's ORN + KC brain (ORN-to-PN at 6.19 mV per connection; Kenyon cells 21.5 mV below threshold),\nand every Kenyon cell's membrane time constant 11.5 ms, the PN-to-KC weights times one factor so that the mean\nconnection's peak PSP is 1.4 mV, then the Kenyon cells' rest set again to 21.5 mV below threshold. Conditions:\n  Turner     PN-to-KC synapses undepressed, as in Turner's model (no fly data; none in locusts, Jortner et al. 2007);\n  depressed  PN-to-KC synapses keeping the PNs' depression (0.85 left per spike, 0.8 s), as in rung 4's brain.\nOdors, trials and measures as odor_probe4.py (seeds 9700 + 10 x condition + odor); a responding Kenyon cell is one\nfiring at least one spike more in the odor's second than in the second of rest before it, in at least half the flies.\nAlso reported: spikes per response by Kenyon cell class (the mean extra spikes of the responding cells).\n\n    python experiments/odor_probe5.py          (writes experiments/odor_probe5.json)\n",
+ "pn_kc": {
+  "connections": 21368,
+  "peak_mv_before": 3.41,
+  "factor": 0.282,
+  "peak_per_weight_11.5ms": 0.2291
+ },
+ "conditions": {
+  "Turner": {
+   "rest": {
+    "brain_hz": 0.969,
+    "over_100hz": 0,
+    "kc_hz": 0.004,
+    "upn_hz": 2.92
+   },
+   "claw_30ms_mv": 1.91,
+   "odors": {
+    "3-octanol": {
+     "pn_hz": {
+      "rest": 2.68,
+      "first_100ms": 191.2,
+      "second": 104.8,
+      "count": 66
+     },
+     "kc_share": 0.048,
+     "kc_share_1spike": 0.2286,
+     "kc_by_class": {
+      "KCg-m": 0.0455,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 13.1,
+     "spikes_per_response": {
+      "KCab": 4.9,
+      "KCa'b'": 1.26,
+      "KCg": 3.25
+     },
+     "read": {
+      "MBON11": [
+       36.38,
+       39.94
+      ],
+      "MBON01": [
+       1.69,
+       3.88
+      ],
+      "MBON18": [
+       10.0,
+       13.75
+      ],
+      "PPL101": [
+       19.44,
+       22.62
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      30.6,
+      3.4
+     ]
+    },
+    "4-methylcyclohexanol": {
+     "pn_hz": {
+      "rest": 3.1,
+      "first_100ms": 176.6,
+      "second": 98.3,
+      "count": 36
+     },
+     "kc_share": 0.0185,
+     "kc_share_1spike": 0.126,
+     "kc_by_class": {
+      "KCg-m": 0.0201,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 12.1,
+     "spikes_per_response": {
+      "KCab": 3.64,
+      "KCa'b'": 1.57,
+      "KCg": 2.55
+     },
+     "read": {
+      "MBON11": [
+       37.06,
+       39.62
+      ],
+      "MBON01": [
+       1.5,
+       3.06
+      ],
+      "MBON18": [
+       10.88,
+       12.0
+      ],
+      "PPL101": [
+       20.19,
+       21.75
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      12.0,
+      1.3
+     ]
+    },
+    "ethyl acetate": {
+     "pn_hz": {
+      "rest": 3.42,
+      "first_100ms": 171.4,
+      "second": 93.9,
+      "count": 47
+     },
+     "kc_share": 0.1233,
+     "kc_share_1spike": 0.3327,
+     "kc_by_class": {
+      "KCg-m": 0.1125,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 13.7,
+     "spikes_per_response": {
+      "KCab": 7.08,
+      "KCa'b'": 1.59,
+      "KCg": 5.15
+     },
+     "read": {
+      "MBON11": [
+       37.25,
+       41.5
+      ],
+      "MBON01": [
+       1.62,
+       5.56
+      ],
+      "MBON18": [
+       10.0,
+       17.75
+      ],
+      "PPL101": [
+       20.56,
+       25.0
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      41.7,
+      5.2
+     ]
+    },
+    "isopentyl acetate": {
+     "pn_hz": {
+      "rest": 3.0,
+      "first_100ms": 189.8,
+      "second": 105.0,
+      "count": 74
+     },
+     "kc_share": 0.0679,
+     "kc_share_1spike": 0.2424,
+     "kc_by_class": {
+      "KCg-m": 0.0589,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 13.2,
+     "spikes_per_response": {
+      "KCab": 5.79,
+      "KCa'b'": 1.54,
+      "KCg": 3.95
+     },
+     "read": {
+      "MBON11": [
+       37.06,
+       40.19
+      ],
+      "MBON01": [
+       1.75,
+       3.75
+      ],
+      "MBON18": [
+       10.25,
+       14.56
+      ],
+      "PPL101": [
+       19.5,
+       24.0
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      34.5,
+      4.0
+     ]
+    },
+    "benzaldehyde": {
+     "pn_hz": {
+      "rest": 3.0,
+      "first_100ms": 183.4,
+      "second": 100.2,
+      "count": 40
+     },
+     "kc_share": 0.0758,
+     "kc_share_1spike": 0.2498,
+     "kc_by_class": {
+      "KCg-m": 0.0738,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 12.9,
+     "spikes_per_response": {
+      "KCab": 5.97,
+      "KCa'b'": 1.42,
+      "KCg": 4.06
+     },
+     "read": {
+      "MBON11": [
+       37.62,
+       40.5
+      ],
+      "MBON01": [
+       2.0,
+       3.44
+      ],
+      "MBON18": [
+       10.31,
+       15.06
+      ],
+      "PPL101": [
+       20.25,
+       21.56
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      30.2,
+      3.5
+     ]
+    },
+    "2-heptanone": {
+     "pn_hz": {
+      "rest": 3.29,
+      "first_100ms": 188.0,
+      "second": 103.2,
+      "count": 81
+     },
+     "kc_share": 0.0785,
+     "kc_share_1spike": 0.2685,
+     "kc_by_class": {
+      "KCg-m": 0.0723,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": 13.6,
+     "spikes_per_response": {
+      "KCab": 6.25,
+      "KCa'b'": 1.41,
+      "KCg": 3.92
+     },
+     "read": {
+      "MBON11": [
+       37.38,
+       41.12
+      ],
+      "MBON01": [
+       2.25,
+       4.25
+      ],
+      "MBON18": [
+       10.81,
+       16.44
+      ],
+      "PPL101": [
+       20.06,
+       23.75
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      36.2,
+      4.0
+     ]
+    }
+   },
+   "overlap_jaccard": {
+    "3-octanol | 4-methylcyclohexanol": 0.337,
+    "3-octanol | ethyl acetate": 0.294,
+    "3-octanol | isopentyl acetate": 0.529,
+    "3-octanol | benzaldehyde": 0.524,
+    "3-octanol | 2-heptanone": 0.562,
+    "4-methylcyclohexanol | ethyl acetate": 0.114,
+    "4-methylcyclohexanol | isopentyl acetate": 0.206,
+    "4-methylcyclohexanol | benzaldehyde": 0.204,
+    "4-methylcyclohexanol | 2-heptanone": 0.205,
+    "ethyl acetate | isopentyl acetate": 0.455,
+    "ethyl acetate | benzaldehyde": 0.445,
+    "ethyl acetate | 2-heptanone": 0.464,
+    "isopentyl acetate | benzaldehyde": 0.669,
+    "isopentyl acetate | 2-heptanone": 0.776,
+    "benzaldehyde | 2-heptanone": 0.776
+   }
+  },
+  "depressed": {
+   "rest": {
+    "brain_hz": 0.97,
+    "over_100hz": 0,
+    "kc_hz": 0.003,
+    "upn_hz": 3.22
+   },
+   "claw_30ms_mv": 1.91,
+   "odors": {
+    "3-octanol": {
+     "pn_hz": {
+      "rest": 3.48,
+      "first_100ms": 190.6,
+      "second": 104.7,
+      "count": 66
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.0219,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "spikes_per_response": {
+      "KCab": 0.7,
+      "KCa'b'": 0.69,
+      "KCg": 0.8
+     },
+     "read": {
+      "MBON11": [
+       37.25,
+       37.88
+      ],
+      "MBON01": [
+       1.56,
+       2.19
+      ],
+      "MBON18": [
+       10.56,
+       8.62
+      ],
+      "PPL101": [
+       19.69,
+       20.31
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      2.5,
+      0.3
+     ]
+    },
+    "4-methylcyclohexanol": {
+     "pn_hz": {
+      "rest": 3.0,
+      "first_100ms": 176.8,
+      "second": 98.1,
+      "count": 36
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.0172,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "spikes_per_response": {
+      "KCab": 0.91,
+      "KCa'b'": 0.75,
+      "KCg": 0.82
+     },
+     "read": {
+      "MBON11": [
+       37.62,
+       37.06
+      ],
+      "MBON01": [
+       2.06,
+       2.31
+      ],
+      "MBON18": [
+       10.62,
+       9.69
+      ],
+      "PPL101": [
+       18.75,
+       20.69
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      0.6,
+      0.1
+     ]
+    },
+    "ethyl acetate": {
+     "pn_hz": {
+      "rest": 2.62,
+      "first_100ms": 172.9,
+      "second": 93.8,
+      "count": 47
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.0253,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "spikes_per_response": {
+      "KCab": 0.71,
+      "KCa'b'": 0.73,
+      "KCg": 0.92
+     },
+     "read": {
+      "MBON11": [
+       37.31,
+       37.94
+      ],
+      "MBON01": [
+       1.56,
+       2.62
+      ],
+      "MBON18": [
+       10.75,
+       8.25
+      ],
+      "PPL101": [
+       19.06,
+       19.81
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      3.5,
+      0.4
+     ]
+    },
+    "isopentyl acetate": {
+     "pn_hz": {
+      "rest": 2.73,
+      "first_100ms": 189.0,
+      "second": 105.1,
+      "count": 74
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.0226,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "spikes_per_response": {
+      "KCab": 0.71,
+      "KCa'b'": 0.79,
+      "KCg": 0.85
+     },
+     "read": {
+      "MBON11": [
+       37.25,
+       37.88
+      ],
+      "MBON01": [
+       1.94,
+       2.0
+      ],
+      "MBON18": [
+       10.62,
+       8.81
+      ],
+      "PPL101": [
+       20.94,
+       20.31
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      2.9,
+      0.4
+     ]
+    },
+    "benzaldehyde": {
+     "pn_hz": {
+      "rest": 3.01,
+      "first_100ms": 182.7,
+      "second": 100.6,
+      "count": 40
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.0249,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "spikes_per_response": {
+      "KCab": 0.64,
+      "KCa'b'": 0.62,
+      "KCg": 0.78
+     },
+     "read": {
+      "MBON11": [
+       37.19,
+       37.44
+      ],
+      "MBON01": [
+       1.88,
+       3.06
+      ],
+      "MBON18": [
+       10.06,
+       9.69
+      ],
+      "PPL101": [
+       19.56,
+       19.94
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      2.3,
+      0.3
+     ]
+    },
+    "2-heptanone": {
+     "pn_hz": {
+      "rest": 2.76,
+      "first_100ms": 188.6,
+      "second": 103.4,
+      "count": 81
+     },
+     "kc_share": 0.0,
+     "kc_share_1spike": 0.0258,
+     "kc_by_class": {
+      "KCg-m": 0.0,
+      "KCg-d": 0.0,
+      "KCab": 0.0,
+      "KCab-p": 0.0,
+      "KCapbp-m": 0.0,
+      "KCapbp-ap1": 0.0,
+      "KCapbp-ap2": 0.0
+     },
+     "kc_responders_hz": null,
+     "spikes_per_response": {
+      "KCab": 0.79,
+      "KCa'b'": 0.65,
+      "KCg": 0.88
+     },
+     "read": {
+      "MBON11": [
+       36.88,
+       37.06
+      ],
+      "MBON01": [
+       2.19,
+       3.06
+      ],
+      "MBON18": [
+       9.88,
+       9.38
+      ],
+      "PPL101": [
+       19.44,
+       19.94
+      ],
+      "APL": [
+       0.0,
+       0.0
+      ]
+     },
+     "apl_release_hz": [
+      3.3,
+      0.4
+     ]
+    }
+   },
+   "overlap_jaccard": {
+    "3-octanol | 4-methylcyclohexanol": 0.0,
+    "3-octanol | ethyl acetate": 0.0,
+    "3-octanol | isopentyl acetate": 0.0,
+    "3-octanol | benzaldehyde": 0.0,
+    "3-octanol | 2-heptanone": 0.0,
+    "4-methylcyclohexanol | ethyl acetate": 0.0,
+    "4-methylcyclohexanol | isopentyl acetate": 0.0,
+    "4-methylcyclohexanol | benzaldehyde": 0.0,
+    "4-methylcyclohexanol | 2-heptanone": 0.0,
+    "ethyl acetate | isopentyl acetate": 0.0,
+    "ethyl acetate | benzaldehyde": 0.0,
+    "ethyl acetate | 2-heptanone": 0.0,
+    "isopentyl acetate | benzaldehyde": 0.0,
+    "isopentyl acetate | 2-heptanone": 0.0,
+    "benzaldehyde | 2-heptanone": 0.0
+   }
+  }
+ },
+ "kc_rest_calibration": {
+  "Turner": {
+   "KC": 21.78,
+   "KCa'b'-ap1": 21.49,
+   "KCa'b'-ap2": 21.49,
+   "KCa'b'-m": 21.49,
+   "KCab-c": 21.49,
+   "KCab-m": 21.48,
+   "KCab-p": 21.46,
+   "KCab-s": 21.51,
+   "KCg": 21.47,
+   "KCg-d": 21.55,
+   "KCg-m": 21.52,
+   "KCg-s1": 21.44,
+   "KCg-s2": 21.57,
+   "KCg-s3": 21.49,
+   "KCg-s4": 21.34
+  },
+  "depressed": {
+   "KC": 21.49,
+   "KCa'b'-ap1": 21.47,
+   "KCa'b'-ap2": 21.48,
+   "KCa'b'-m": 21.48,
+   "KCab-c": 21.49,
+   "KCab-m": 21.5,
+   "KCab-p": 21.5,
+   "KCab-s": 21.53,
+   "KCg": 21.48,
+   "KCg-d": 21.5,
+   "KCg-m": 21.48,
+   "KCg-s1": 21.53,
+   "KCg-s2": 21.44,
+   "KCg-s3": 21.45,
+   "KCg-s4": 21.42
+  }
+ },
+ "seconds": 277
+}
