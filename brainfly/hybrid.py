@@ -183,7 +183,7 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
-             u, x, s, ad, until, pend, spend, touched, n_touched, R, rel, rng, left, last,
+             u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
@@ -217,7 +217,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, 
     lost. counts[b, i] gains each spike, and
     timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0; a recorded neuron's spike
     (rec_pos[i] >= 0) also sets rec_out[b, k, rec_pos[i]]. Only the slow synapses' targets (stargets, flagged in
-    slow_in) ever carry a slow current, so only they are updated for it."""
+    slow_in) ever carry a slow current, so only they are updated for it. A graded neuron's release reaches its slow
+    synapses' targets the same way, through RS[b, i], each Hz like one spike a second into the slow current."""
     trials, n = u.shape
     slow = len(sw) > 0
     ng = len(g_list)
@@ -230,6 +231,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, 
         fired = np.empty(n, np.int64)
         # this trial's state in arrays of its own while it runs, which the compiler optimises better
         ub, xb, sb, untilb, Rb = u[b].copy(), x[b].copy(), s[b].copy(), until[b].copy(), R[b].copy()
+        RSb = RS[b].copy()
         adb = ad[b].copy()
         tl, nt = touched[b], n_touched[b]
         rlist = np.empty(n, np.int64)          # the refractory neurons, and the slow current each is frozen with
@@ -272,6 +274,9 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, 
                     rel[b, q] = r
                     for e in range(ptr[i], ptr[i + 1]):
                         Rb[idx[e]] += w[e] * change
+                    if slow:                   # its slow synapses: release into the targets' slow current
+                        for e in range(sptr[i], sptr[i + 1]):
+                            RSb[sidx[e]] += sw[e] * change
             slot = t % delay
             row = pend[b, slot]
             srow = spend[b, slot]
@@ -299,6 +304,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, 
                     if srow[i] != 0.0:
                         sb[i] += srow[i]
                         srow[i] = 0.0
+                    if RSb[i] != 0.0:
+                        sb[i] += RSb[i] * dt
             frow = fpend[b, t % fdelay]
             for q in range(nf):                # fast synapses' jumps, due now
                 if frow[q] != 0.0:
@@ -368,6 +375,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, 
         ad[b, :] = adb
         until[b, :] = untilb
         R[b, :] = Rb
+        RS[b, :] = RSb
 
 
 @numba.njit(parallel=True, cache=True)
@@ -495,6 +503,20 @@ class HybridBrain:
         self.slow_weights = (self._slow_counts * np.float32(value) * self.scale[self.sidx]).astype(np.float32)
         self.w_poi = F_POI * self._w_syn if self._fixed_poi is None else self._fixed_poi
 
+    def set_slow(self, slow: sparse.spmatrix | None) -> None:
+        """Replace the slow edges (signed counts, rows postsynaptic; None for none), weighted like the others by
+        w_syn and the target's scale. The slow state starts again from zero."""
+        S = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if slow is None else sparse.csc_matrix(slow, dtype=np.float32)
+        self.sptr, self.sidx, self._slow_counts = S.indptr, S.indices, S.data.astype(np.float32)
+        self.stargets = np.unique(S.indices).astype(np.int64)
+        self.slow_in = np.zeros(self.n, np.bool_)
+        self.slow_in[self.stargets] = True
+        self.slow_weights = (self._slow_counts * np.float32(self._w_syn) * self.scale[self.sidx]).astype(np.float32)
+        self._tables_cache = None                        # whether the network is uniform depends on it
+        self.s = np.zeros((self.trials, self.n), np.float32)
+        self.pending_slow = np.zeros((self.trials, self.delay, self.n if len(self.slow_weights) else 0), np.float32)
+        self.slow_graded_input = np.zeros((self.trials, self.n if len(self.slow_weights) else 0), np.float32)
+
     def cells(self, types: list[str], side: str | None = None) -> np.ndarray:
         """Neurons whose cell type (FlyWire's or MaleCNS's own) or superclass is in `types`,
         optionally on one side."""
@@ -577,6 +599,7 @@ class HybridBrain:
         self.touched = np.zeros((self.trials, self.delay, cap), np.int32)
         self.n_touched = np.zeros((self.trials, self.delay), np.int64)
         self.graded_input = np.zeros(shape if len(self.graded) or self.external.any() else (self.trials, 0), np.float32)
+        self.slow_graded_input = np.zeros(shape if len(self.slow_weights) else (self.trials, 0), np.float32)
         self._external_release[:] = 0.0
         self.external_input = np.zeros(self.n, np.float32)
         self.release = np.zeros((self.trials, len(self.graded)), np.float32)
@@ -621,7 +644,7 @@ class HybridBrain:
                  k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["uniform"],
                  bool(len(self.graded) or external_on), k["g_list"], k["g_gain"], k["g_at"], k["g_max"],
                  self._graded_targets() if external_on else self._graded_only_targets(), self.u, self.x, self.s, self.ad, self.until,
-                 self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.release,
+                 self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.slow_graded_input, self.release,
                  self.rng, self.left, self.last,
                  drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self._internal_neurons(), self.external_input,
                  k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,

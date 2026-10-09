@@ -55,7 +55,7 @@ def test_advancing_in_pieces_changes_nothing():
     parts = sum(pieces.advance(k, drive) for k in (1, 7, 192, 800, 1000))
     assert once.sum() > 100, "the circuit should be active"
     np.testing.assert_array_equal(once, parts)
-    for name in ("u", "x", "s", "until", "graded_input", "release", "rng"):
+    for name in ("u", "x", "s", "until", "graded_input", "slow_graded_input", "release", "rng"):
         np.testing.assert_array_equal(getattr(whole, name), getattr(pieces, name), err_msg=name)
 
 
@@ -87,6 +87,22 @@ def test_graded_release_and_its_effect_at_steady_state():
     assert brain.x[0, 1] == pytest.approx(x, rel=1e-3)
     assert brain.u[0, 1] == pytest.approx(a_vx * x / (1 - a_vv), rel=1e-3)
     assert brain.advance(1000).sum() == 0               # 3.3 mV, below threshold: nothing spikes
+
+
+def test_graded_release_along_a_slow_synapse_settles_like_spikes():
+    """A graded neuron's release along a slow synapse acts like that many spikes a second into its target's slow
+    current, which settles where release x weight x dt balances the slow current's decay."""
+    brain = small([], 2, slow_edges=[(0, 1, 1.5)], tau_slow=0.05, types={"c0": {"unit": "graded", "bias": 20.0, "gain": 5.0}})
+    brain.advance(20000)                                # 2 s, 40 slow time constants
+    r = 5.0 * (20.0 - 7.0)
+    s_ss = 1.5 * r * DT / (1 - np.exp(-DT / 0.05))      # about r x weight x tau_slow
+    assert brain.s[0, 1] == pytest.approx(s_ss, rel=1e-3)
+    assert brain.u[0, 1] == pytest.approx(_approach(0.05, T_MBR, DT) * s_ss / (1 - np.exp(-DT / T_MBR)), rel=1e-3)
+    assert brain.x[0, 1] == 0                           # nothing reaches the fast current
+    brain.set_slow(None)                                # without the slow synapse the target gets nothing
+    brain.reset()
+    brain.advance(2000)
+    assert brain.u[0, 1] == 0
 
 
 def test_slow_current_decays_with_its_own_time_constant_and_survives_spikes():
