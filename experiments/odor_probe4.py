@@ -22,16 +22,19 @@ Ran: the measured time constant alone makes the Kenyon cells sparse and odor-spe
 neurons to notice. Shares of Kenyon cells firing at least one extra spike, by odor (OCT, MCH, ethyl acetate,
 isopentyl acetate, benzaldehyde, 2-heptanone), and MBON11's rate over the second (rest about 37 Hz):
   ORN + KC        35-52%, the same cells for every odor (Jaccard 1.0); APL 48-76 Hz in the first 100 ms; MBON11 38
-  + tau           2.4-7.6% (4.4% OCT, 2.4% MCH); Jaccard 0.2 on average; no cell rises by 5 Hz; APL 1-7 Hz;
-                  MBON11 38
+  + tau           2.4-7.6% (4.4% OCT, 2.4% MCH); at most 1 cell rises by 5 Hz; APL 1-7 Hz; MBON11 38
   + PNKC          68-87% (56-82% rise by 5 Hz, at 28-41 Hz); APL 102-167 Hz; MBON11 51-54
   + tau + PNKC    72-88% (33-68% by 5 Hz, at 8-11 Hz); MBON11 51-56
 The resting brain stays at 0.96-0.98 Hz with no neuron over 100 Hz in all four. With the time constant, the
-onset burst is gone: a claw then gives about 4.5 mV at an odor's onset (190 Hz, depressing), so about 5 coactive
-claws reach the 21.5 mV threshold, as Gruntman & Turner 2013 found (about 4 of 5-7). Undepressed PN synapses make
-almost every Kenyon cell respond, and APL can't stop it. Flies' MBON11 rises from about 37 to about 57 Hz at an odor's
-onset (Hige et al. 2015). Its synapses from Kenyon cells are near the one measured value (alpha/beta KC to
-MBON-alpha2sc: 0.15 mV here, about 0.2 measured), so the gap is in how much the responding Kenyon cells fire.
+onset burst is gone: a claw then gives about 4.5 mV at an odor's onset (190 Hz, depressing; estimated by hand, not
+simulated), so about 5 coactive claws reach the 21.5 mV threshold, as Gruntman & Turner 2013 found (about 4 of 5-7). Undepressed PN synapses make
+almost every Kenyon cell respond, and APL can't stop it. MBON11's synapses from Kenyon cells are near the one
+measured value (alpha/beta KC to MBON-alpha2sc: 0.15 mV here, about 0.2 measured).
+Checked afterwards (odor_probe7.py): the saved overlaps ("overlap_jaccard") are over the cells rising by 5 Hz, and with
+the time constant there are almost none, so the overlap of 0.2 first reported for "+ tau" meant nothing; that run
+can't say whether its responding cells were odor-specific. "About 37 to 57 Hz" isn't the flies' MBON11 response in the
+pairing experiment: Hige et al. 2015 counted 118 +- 8.3 spikes above the spontaneous rate in the 1.4 s from 3-octanol's
+onset.
 
     python experiments/odor_probe4.py          (writes experiments/odor_probe4.json)
 """

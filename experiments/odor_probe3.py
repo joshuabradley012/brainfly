@@ -33,10 +33,15 @@ Ran: the projection neurons now answer like a fly's, and the Kenyon cells still 
 (0.70 to 6.19 mV per connection). With it, the driven PNs fire 172-192 Hz in an odor's first 100 ms and 94-105 Hz
 over the second (rung 4's brain: 69-87 and 21-28; flies: 100-200 at onset), and the brain still rests at 0.97 Hz
 with no neuron over 100 Hz. Two rounds put every Kenyon cell type 21.4-21.6 mV below threshold (from 12-35). Yet with
-both changes 0.1% of Kenyon cells rise by 5 Hz for any odor, while 34-55% fire at least one extra spike, the same
-cells for every odor (Jaccard 1.0). The mean PN-to-KC connection gives 6.8 mV after 30 ms of 100 Hz, close to the 5 mV
-per claw Gruntman & Turner's numbers imply. APL reads 0 because it is graded and never spikes: this probe missed its
+both changes 0.1% of Kenyon cells (2 to 4) rise by 5 Hz for any odor, the same few for every odor, while 34-55% fire
+at least one extra spike. The mean PN-to-KC connection gives 6.8 mV after 30 ms of 100 Hz (with the PNs' depression),
+close to the 5 mV per claw Gruntman & Turner's numbers imply. APL reads 0 because it is graded and never spikes: this probe missed its
 release (odor_probe4.py measures it).
+Checked afterwards (odor_probe7.py): Kazama & Wilson's 6.19 mV is between an ORN and a PN of the same glomerulus, and
+those connections are stronger than the average used here (a quarter of the ORN-to-PN connections join different
+glomeruli, with about 2 synapses each), so the factor should be 7.3, not 8.8. The saved overlap ("overlap_jaccard") is
+over the cells rising by 5 Hz only, and "kc_by_class" names several classes by types MaleCNS doesn't have (KCab,
+KCapbp-*), so those fields read 0.
 
     python experiments/odor_probe3.py          (writes experiments/odor_probe3.json)
 """

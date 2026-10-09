@@ -9,6 +9,10 @@ In vivo whole-cell recordings from 71 Kenyon cells (KCs), each tested with about
   22 s apart; "within the dynamic range of the OSNs (Hallem and Carlson 2006)" and similar to the T-maze protocol.
 
 ## Sparseness and spikes
+- The criterion, in full (methods): "KC firing rates were measured in successive 200-ms bins and averaged across all
+  trials. To qualify as a response, a KC's firing rate had to exceed 3.5 SD of baseline firing rate in a window 0–2 s
+  after odor onset on at least half of the trials (typically 3 of 6 trials)", a reliability criterion "because KC
+  baseline firing rates are very low: one trial with several spikes could potentially qualify as a response".
 - "A KC was described as responsive if its firing rate crossed a threshold >3.5 SD above baseline at any time in the
   2 s after odor onset."
 - "a given odor evoked a spiking response in only 6 ± 5% of the cells. PN response probability, by contrast, was
@@ -33,10 +37,13 @@ In vivo whole-cell recordings from 71 Kenyon cells (KCs), each tested with about
 - Convergence estimated at about 10 PNs per KC ("a likely range of 5:1 to 15:1").
 
 ## Their model
-- 1,000 passive conductance-based KCs, each randomly connected to 23 PNs whose recorded benzaldehyde responses drove
-  them, with EPSP kinetics fitted to the data and a -36.3 mV threshold. "with connectivity ratios around 10:1, and an
+- 1,000 passive conductance-based KCs, "randomly connected to an input layer of 23 PNs, with a fixed PN:KC
+  convergence ratio"; the 23 PNs' activity was their recorded responses to benzaldehyde. EPSP kinetics fitted to the
+  data, threshold -36.3 mV. "with connectivity ratios around 10:1, and an
   EPSP amplitude of 1.4 mV, our model matched closely the experimental KC response probability of 6%"; 15:1 was
-  needed at 1.2 mV. No synaptic depression is described.
+  needed at 1.2 mV. The paper describes no synaptic depression (its text never mentions synaptic depression or facilitation).
+- MaleCNS gives each KC about 5.2 excitatory PN connections (about 5 PN types), fewer than the 10:1 their model needed
+  at 1.4 mV.
 
 ## For brainfly
 - In a current-based LIF the membrane time constant sets the EPSP's decay, so 11.5 ms (not the soma's >200 ms) is the

@@ -3,7 +3,10 @@
 DoOR's consensus response matrix gives each odorant's response at each receptor, scaled 0-1 per receptor (1 its
 strongest response to any odorant). Its mapping assigns receptors to antennal lobe glomeruli, which MaleCNS names its
 receptor neuron types by (ORN_DM1, ...). An odor here drives every receptor neuron of each glomerulus at its
-response times `max_hz`, taking the strongest receptor where several share a glomerulus.
+response times `max_hz`, taking the strongest receptor where several share a glomerulus. A receptor DoOR maps to two
+glomeruli (Or33b, in DM5's and DM3's neurons) or to a pair of subdivisions ("DL2d/v": Ir75b, Ir75c and the ac3A neuron)
+drives both. Recordings DoOR keeps for a whole sensillum of several neurons (ac1, ac2, ac3 without Or35a) and receptors
+with no glomerulus are left out.
 
     pattern = glomeruli("3-octanol")                     # {glomerulus: response 0-1}
     drive = orn_drive(brain, "3-octanol", max_hz=200)     # [(cells, Hz), ...] for HybridBrain.advance(drive=...)
@@ -37,7 +40,19 @@ def _tables():
     rows = list(csv.reader(open(d / "door_response_matrix.csv"), delimiter=";"))
     receptors, keys = rows[0], [r[0] for r in rows[1:]]
     M = np.array([[float(x) if x not in ("NA", "") else np.nan for x in r[1:]] for r in rows[1:]])
-    glom = {r[1]: r[4] for r in list(csv.reader(open(d / "door_mappings.csv"), delimiter=";"))[1:] if r[1] not in ("?", "")}
+    glom = {}
+    for r in list(csv.reader(open(d / "door_mappings.csv"), delimiter=";"))[1:]:     # rows carry a leading index
+        receptor, neurons, g = r[1], r[3], r[4]
+        if g in ("?", "") or ("+" in neurons and not receptor[:2] in ("Or", "Ir", "Gr")):
+            continue                     # no glomerulus, or a whole sensillum's response
+        names = []
+        for part in g.split("+"):
+            if "/" in part:              # "DL2d/v": both subdivisions
+                head, tail = part.split("/")
+                names += [head, head[:-len(tail)] + tail]
+            else:
+                names.append(part)
+        glom[receptor] = names
     odor = list(csv.reader(open(d / "odor.csv"), delimiter=";"))
     head = odor[0]
     name_col, key_col = head.index("Name") + 1, head.index("InChIKey") + 1      # rows carry a leading index
@@ -54,8 +69,9 @@ def glomeruli(name: str, floor: float = 0.0) -> dict[str, float]:
     row = M[keys.index(key)]
     out: dict[str, float] = {}
     for rec, v in zip(receptors, row):
-        g = glom.get(rec, "")
-        if g and not np.isnan(v) and v > floor:
+        if np.isnan(v) or v <= floor:
+            continue
+        for g in glom.get(rec, ()):
             out[g] = max(out.get(g, 0.0), float(v))
     return out
 

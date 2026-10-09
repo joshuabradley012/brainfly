@@ -36,39 +36,56 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
-* **The mushroom body hears odors now, from measured synapses, though not yet as sparsely as a fly's (rung 9's
-  groundwork).** Rung 9 starts with learning: paired with dopamine, an odor's response in MBON-γ1pedc (MBON11) falls
-  80–90%, and an unpaired odor's much less (Hige et al. 2015;
-  [notes](research_notes/Rung%209%20learning%20data/mushroom_body_plasticity.md)). How much the unpaired odor changes
-  depends on how the two odors' Kenyon cells overlap through the real projection neuron wiring, so the connectome can
-  pass or fail it. First the odor has to reach the Kenyon cells. In the brain that passed rung 4 it didn't: with DoOR
-  odors ([`brainfly/odors.py`](brainfly/odors.py)), at most 1 of 4,064 Kenyon cells responded
-  ([`odor_probe.py`](experiments/odor_probe.py), [`odor_probe2.py`](experiments/odor_probe2.py)). Five exploratory
-  probes then set the olfactory pathway from measurements, one property at a time, without fitting anything to the
-  responses:
-  - **Receptor to projection neuron:** the rested unitary EPSP set to its measured 6.19 mV, 8.8 times stronger. The
-    projection neurons now fire 172–192 Hz in an odor's first 100 ms and about 100 Hz over the second (before: 28 Hz;
-    flies: 100–200 at onset) ([`odor_probe3.py`](experiments/odor_probe3.py)).
-  - **Kenyon cells:** 21.5 mV below threshold at rest, as measured (they were 27 mV below). EPSPs that decay in
-    11.5 ms, as Turner et al. 2008 measured (a fly Kenyon cell's dendrites make its EPSPs brief although its soma's
-    time constant is over 200 ms). Unitary inputs from projection neurons of 1.4 mV, as measured (they were 3.3 mV).
-    Undepressed, as in Turner's own model and as in locusts; no fly data exist
-    ([`odor_probe4.py`](experiments/odor_probe4.py), [`odor_probe5.py`](experiments/odor_probe5.py);
-    [notes](research_notes/Rung%209%20learning%20data/kenyon_cell_odor_responses.md)).
-  - **Kenyon cell to MBON:** undepressed, since MBON-γ1pedc's odor input is sustained through the odor in vivo; the
-    depression came from an optogenetic paired-pulse measurement ([`odor_probe6.py`](experiments/odor_probe6.py)).
+* **Odors reach the mushroom body, but not yet as a fly's do (rung 9's groundwork).** Rung 9 starts with learning:
+  paired with dopamine, an odor's response in MBON-γ1pedc (MBON11) falls 80–90%, and an unpaired odor's much less
+  (Hige et al. 2015; [notes](research_notes/Rung%209%20learning%20data/mushroom_body_plasticity.md)). How much the
+  unpaired odor changes depends on how the two odors' Kenyon cells overlap through the real projection neuron wiring,
+  so the connectome can pass or fail it. First the odor has to reach the Kenyon cells, and in the brain that passed
+  rung 4 it barely did: with DoOR odors ([`brainfly/odors.py`](brainfly/odors.py)), at most 1 of 4,064 Kenyon cells
+  rose by 5 Hz ([`odor_probe.py`](experiments/odor_probe.py), [`odor_probe2.py`](experiments/odor_probe2.py)).
+  Exploratory probes ([`odor_probe3.py`](experiments/odor_probe3.py) to [`odor_probe6.py`](experiments/odor_probe6.py))
+  then set the pathway's properties from measurements one at a time, and
+  [`odor_probe7.py`](experiments/odor_probe7.py) reruns them with the corrections that checking them turned up:
+  - **Receptor to projection neuron:** the rested unitary EPSP set to its measured 6.19 mV per same-glomerulus
+    connection, 7.3 times stronger. Projection neurons now fire 162–181 Hz in an odor's first 100 ms and 86–97 Hz over
+    the second (before: 70–86 and 20–28; flies: 100–200 at onset).
+  - **Kenyon cells, from Turner et al. 2008:** resting 21.5 mV below threshold (they were 12–35 mV below, by type),
+    EPSPs that decay in 11.5 ms (a fly Kenyon cell's dendrites make its EPSPs brief although its soma's time constant
+    is over 200 ms), and unitary inputs of 1.4 mV (they were 3.3)
+    ([notes](research_notes/Rung%209%20learning%20data/kenyon_cell_odor_responses.md)).
+  - **Two choices without fly data, made after seeing the alternatives fail, so informed by the outcome:** synapses from
+    projection neurons to Kenyon cells undepressed, as in Turner's own model and in locusts (with the projection
+    neurons' depression, 1–3% of Kenyon cells respond, with under one spike each, and the output neurons don't move);
+    and synapses from Kenyon cells to output neurons undepressed, since MBON-γ1pedc's input is sustained through an
+    odor in vivo.
 
-  With all of it, across six odors, 13–33% of Kenyon cells fire at least one extra spike (flies: 6 ± 5%) and 2–12%
-  rise by more than 5 Hz. Different odors recruit partly different cells (3-octanol and 4-methylcyclohexanol overlap
-  by a third). MBON11 rises 5–17 Hz (flies: about 20), and the resting brain is undisturbed (0.96 Hz, nothing over
-  100 Hz). Still wrong: too many Kenyon cells respond, by 2–4 times, and α/β Kenyon cells fire 3.6–7 spikes per
-  response where flies' fire 2.2, while α′/β′ ones fire 1.3–1.6 where flies' fire 4.9. On the way, the slow 150 ms
-  membrane from somatic recordings made the Kenyon cells sparse (2–8%) but too quiet for MBON11 to notice. Undepressed
-  inputs with 3.3 mV EPSPs made 56–82% respond.
+  Measured as the flies were (Turner's response criterion for Kenyon cells, Hige et al.'s spike count for MBON11),
+  across six odors, three things are still wrong:
+  - **Too many Kenyon cells respond:** 11–30%, against 6 ± 5% in flies.
+  - **The wrong classes respond:** α′/β′ cells least (2–5%) and γ cells a lot (15–29%), where flies' α′/β′ respond
+    most (about 9–14%) and their γ about 2%. α/β cells fire 2.5–4.4 spikes per response (flies 2.2) and α′/β′ ones
+    1.0–1.4 (flies 4.9).
+  - **MBON11 hears ten to fifty times too little:** it gains 2–11 spikes in the 1.4 s after an odor's onset, where
+    Hige et al.'s flies gained 110–118.
+
+  Different odors' responding cells overlap by a Jaccard index of 0.26–0.76 (3-octanol and 4-methylcyclohexanol: 0.42),
+  and the resting brain is undisturbed (about 0.97 Hz, nothing over 100 Hz). The measurements for the next step are in
+  the [notes](research_notes/Rung%209%20learning%20data/kc_classes_and_apl.md): in every lab α′/β′ Kenyon cells' spike
+  thresholds sit 5.5–13 mV below α/β cells', and blocking APL makes about four times as many Kenyon cells active.
+
+  **Corrections.** Checking these probes found four errors in what this entry first said:
+  - **The receptor synapse factor:** 8.8 should be 7.3. Kazama & Wilson's EPSP is between neurons of one glomerulus,
+    and a quarter of the connections averaged join different glomeruli with about 2 synapses each.
+  - **The flies' MBON11 response:** I compared against "about 20 Hz", which is the late plateau of 15 s odors. In the
+    pairing experiment Hige et al. counted about 84 spikes a second above baseline.
+  - **An overlap that measured nothing:** the overlap reported for the 150 ms membrane version was computed over almost
+    no cells.
+  - **"Without fitting anything to the responses":** the two depression choices above were made after seeing the
+    results.
 
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/olfaction-dark.svg">
-    <img src="assets/olfaction-light.svg" width="100%" alt="Two panels, one row per model step, six odors each. Left: the share of Kenyon cells firing an extra spike: rung 4's brain 22-33%; with measured receptor synapses and Kenyon cell rest 34-55%; with a 150 ms Kenyon cell membrane 2-8%; with Kenyon cells from Turner 2008 13-33%; with undepressed Kenyon cell outputs 13-33%, against flies' 6 plus or minus 5%, shaded. Right: MBON11's rise over rest: about 1 Hz for the first three steps, 2.6-4.2 Hz with Turner's Kenyon cells, 5.1-16.6 Hz with undepressed outputs, against about 20 Hz in flies, dashed.">
+    <img src="assets/olfaction-light.svg" width="100%" alt="Two panels, one row per model, six odors each. Left: the share of Kenyon cells responding by Turner's criterion: rung 4's brain 21-35%; with measured receptor input 32-51%; with Turner's Kenyon cells 11-31%; with undepressed outputs, the current model, 11-30%; the current model with depressed inputs 1-3%; against flies' 6 plus or minus 5%, shaded. Right: MBON11's odor-evoked spikes in the 1.4 s after onset: about 1 or less for the first two rows, 1.5-4 with Turner's Kenyon cells, 2-11 for the current model, about 0 with depressed inputs, against flies' 110-118, shaded at the right edge.">
   </picture>
 
 * **Rung 3's eye is now brainfly's default, and the behaviors downstream of it still work.** The fine-tuned model that
@@ -474,7 +491,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | passed: 0.9 ms to the jump muscle and 1.4 to the flight muscle; the flight branch follows 40% of 250 Hz trains, as flies' does; without the gap junctions, neither branch answers. Leg sensors aren't in yet |
 | 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | started: NeuroMechFly walks under a walking controller that the brain steers through DNa02, and jumps from spikes of its jump motor neurons through a twitch-shaped torque. No muscle model yet: FlyGym's musculoskeletal front leg (FlyMimic) pushes a fly's force probe 40 times more weakly than a fly's tibia flexor does. Scaled to flies' force per spike, it also twitches 20 times too fast (its muscles activate in 0.1-0.4 ms), so its twitch can only be fitted |
 | 8. Flight, neck and song | wing power and steering, head pose, courtship song | saccades within about 10 wingbeats; song pulses about 35 ms apart | not started |
-| 9. State and learning | arousal, hunger, the mushroom body's dopamine learning rule | 80–90% depression after 1 s of odour paired with dopamine; and, as the final hurdle, held-out resting FC that beats independent firing and scrambled wiring once arousal gives the brain its brain-wide state | not started; groundwork: the plasticity data are in the notes, and with olfactory synapses set from measurements odors reach the Kenyon cells (13–33% respond, flies 6 ± 5%) and move MBON11 by 5–17 Hz |
+| 9. State and learning | arousal, hunger, the mushroom body's dopamine learning rule | 80–90% depression after 1 s of odour paired with dopamine; and, as the final hurdle, held-out resting FC that beats independent firing and scrambled wiring once arousal gives the brain its brain-wide state | not started; groundwork: the plasticity data are in the notes, and with olfactory synapses set from measurements odors reach the Kenyon cells (11–30% respond by Turner's criterion, flies 6 ± 5%) but move MBON11 ten to fifty times less than in flies |
 
 Resting FC moved from rung 4 to the end of the ladder on 27 September 2026. Shared neurons plus one brain-wide signal explain the flies' resting FC at r = 0.69 with no network at all ([`experiments/rest_measurement.py`](experiments/rest_measurement.py)). FC therefore mostly tests whether a model has the flies' brain-wide state, and a hand-added signal would pass it without testing the wiring. It becomes a real test once arousal, modeled from the connectome's own neuromodulatory neurons (rung 9), produces that state, and it is still compared with scrambled wiring. Until then every rung 4 attempt reports FC but doesn't pass or fail on it. On the same day, rung 4's bump test gained position entropy (at least 0.9) and a drift rate within flies' range (D of 0.003–0.04 rad²/s; `rest_calibration.bump_motion`), after a bump pinned in two places passed the old test ([`experiments/ring_heldout.py`](experiments/ring_heldout.py)).
 
@@ -702,10 +719,11 @@ a sign that the approach is broken."
 | `experiments/leg_twitch.py` | Exploratory, not pre-registered: with FlyMimic's muscle forces scaled to flies' maximum and a spike set to flies' 9 uN, does its tibia flexor twitch like a fly's? | No: half its peak at 0.4 ms (flies 7.7-9.7), the peak at 3.3 ms (17-23), two spikes summing to 1.17x (1.4-1.6x). FlyMimic's activation time constants are 0.1 and 0.4 ms. Reaching 100 uN at full activation needs 607 times its forces, since 100 uN folds the tibia some 60 deg and the flexor's moment arm shrinks. |
 | `experiments/odor_probe.py` | Exploratory, not pre-registered: does the brain that passed rung 4 carry an odor (four glomeruli at 100 Hz) to the mushroom body? | No: projection neurons rise 3 to 21-32 Hz, 1 of 4,064 Kenyon cells responds, MBON11 and APL don't move. Kenyon cells sit 27 mV below threshold; an odor gives them 1-5 mV. |
 | `experiments/odor_probe2.py` | Exploratory, not pre-registered: the same with DoOR odors (3-octanol, 4-methylcyclohexanol) at three strengths | No: projection neurons saturate near 28 Hz whatever the drive; at most 1 Kenyon cell responds. |
-| `experiments/odor_probe3.py` | Exploratory, not pre-registered: the ORN-to-PN synapses at their measured unitary EPSP (6.19 mV) and Kenyon cells at their measured distance below threshold (21.5 mV), each alone and both, with six DoOR odors | Projection neurons fire like a fly's (172–192 Hz in the first 100 ms, about 100 Hz over the second); Kenyon cells don't: 0.1% rise by 5 Hz, and the 34–55% that fire an extra spike are the same cells for every odor. |
-| `experiments/odor_probe4.py` | Exploratory, not pre-registered: plus Kenyon cells' somatic time constant (150 ms) and undepressed PN-to-KC synapses | The time constant alone makes Kenyon cells sparse (2.4–7.6%) and odor-specific, but too quiet to move MBON11; undepressed synapses make 56–82% respond. |
-| `experiments/odor_probe5.py` | Exploratory, not pre-registered: Kenyon cells from Turner et al. 2008 (11.5 ms EPSP decay, 1.4 mV unitary EPSPs, undepressed inputs) | 13–33% of Kenyon cells fire an extra spike (flies: 6 ± 5%); α/β fire too many spikes per response and α′/β′ too few; MBON11 rises 2.5–4 Hz (flies: about 20). With depressed inputs, under 3% respond. |
-| `experiments/odor_probe6.py` | Exploratory, not pre-registered: plus undepressed Kenyon cell to MBON synapses | MBON11 rises 5–17 Hz per odor; the Kenyon cells as in odor_probe5.py. |
+| `experiments/odor_probe3.py` | Exploratory, not pre-registered: the ORN-to-PN synapses at their measured unitary EPSP (6.19 mV) and Kenyon cells at their measured distance below threshold (21.5 mV), each alone and both, with six DoOR odors | Projection neurons fire like a fly's (172–192 Hz in the first 100 ms, about 100 Hz over the second); Kenyon cells don't: 0.1% rise by 5 Hz, while 34–55% fire one extra spike. Its ORN-to-PN factor (8.8) should have been 7.3 (odor_probe7.py). |
+| `experiments/odor_probe4.py` | Exploratory, not pre-registered: plus Kenyon cells' somatic time constant (150 ms) and undepressed PN-to-KC synapses | The time constant alone makes Kenyon cells sparse (2.4–7.6% fire an extra spike) but too quiet to move MBON11; undepressed synapses make 56–82% respond. |
+| `experiments/odor_probe5.py` | Exploratory, not pre-registered: Kenyon cells from Turner et al. 2008 (11.5 ms EPSP decay, 1.4 mV unitary EPSPs, undepressed inputs) | 13–33% of Kenyon cells fire an extra spike (flies: 6 ± 5%); α/β fire too many spikes per response and α′/β′ too few; MBON11 rises 2.5–4 Hz (flies: about 84 spikes a second above baseline). With depressed inputs, under 3% respond. |
+| `experiments/odor_probe6.py` | Exploratory, not pre-registered: plus undepressed Kenyon cell to MBON synapses | MBON11 rises 5–17 Hz per odor (flies: about 84 spikes a second above baseline); the Kenyon cells as in odor_probe5.py. |
+| `experiments/odor_probe7.py` | Exploratory, not pre-registered: odor_probe3–6 rerun with corrections (ORN-to-PN factor from same-glomerulus connections, excitatory PN-to-KC only, compound DoOR glomeruli), measured with Turner's criterion and Hige's spike count | Projection neurons right; 11–30% of Kenyon cells respond (flies 6 ± 5%), α′/β′ least and γ much (flies: the reverse); MBON11 gains 2–11 spikes in 1.4 s (flies 110–118). With depressed PN-to-KC synapses, 1–3% respond and the output neurons don't move. |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension match flies; the launch is steep and slightly backward (79°), head-down, and 1.7 times too hard upward, from the walking pose. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.7). |

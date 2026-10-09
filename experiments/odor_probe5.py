@@ -26,10 +26,11 @@ Also reported: spikes per response by Kenyon cell class (the mean extra spikes o
 
 Ran: close on the input stage, wrong on the output. The mean PN-to-KC connection went from 3.41 to 1.4 mV (times
 0.28). Turner: 13-33% of Kenyon cells fire at least one extra spike per odor (MCH 13%, OCT 23%, ethyl acetate 33%;
-flies: 6 +- 5%), and 2-12% rise by more than 5 Hz. Different odors recruit partly different cells (Jaccard 0.44 on
-average; OCT and MCH 0.34). Spikes per response come out the wrong way round: alpha/beta 3.6-7.1 (flies: 2.2 +- 1.2),
+flies: 6 +- 5%), and 2-12% rise by more than 5 Hz. The cells rising by 5 Hz differ partly between odors (Jaccard 0.44
+on average; OCT and MCH 0.34). Spikes per response come out the wrong way round: alpha/beta 3.6-7.1 (flies: 2.2 +- 1.2),
 alpha'/beta' 1.3-1.6 (flies: 4.9 +- 3.0), gamma 2.6-5.2. APL releases 12-42 Hz in the first 100 ms. MBON11 rises
-2.5-4.3 Hz (flies: about 20) and MBON18 1-8 Hz. With the PNs' depression (depressed), 1.7-2.6% of Kenyon cells
+2.5-4.3 Hz and MBON18 1-8 Hz (Hige et al. 2015's flies: 118 +- 8.3 spikes above the spontaneous rate in the 1.4 s
+from 3-octanol's onset, about 84 a second; "about 20 Hz", used here at first, wasn't that experiment's measure). With the PNs' depression (depressed), 1.7-2.6% of Kenyon cells
 respond, with under one extra spike, and the MBONs don't move. The resting brain stays at 0.97 Hz either way.
 
     python experiments/odor_probe5.py          (writes experiments/odor_probe5.json)

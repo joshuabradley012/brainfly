@@ -4,7 +4,9 @@ Rung 9's first test pairs an odor with dopamine and asks that MBON-γ1pedc's res
 2015; research_notes/Rung 9 learning data/mushroom_body_plasticity.md). Before any plasticity, the odor itself has to
 reach MBON-γ1pedc (MBON11) through sparse Kenyon cell activity. In flies, an odor activates about 5-10% of Kenyon cells
 (Honegger et al. 2011; Lin et al. 2014), and MBON-γ1pedc fires about 57 Hz at an odor's onset against about 37 Hz at
-rest (Hige et al. 2015, research_notes/Rung 4 resting state data/adaptation.md).
+rest (Hige et al. 2015, research_notes/Rung 4 resting state data/adaptation.md). [Corrected afterwards
+(odor_probe7.py): those two rates come from different preparations, a 15 s odor's figure and voltage imaging; in the
+pairing experiment Hige et al. counted 118 +- 8.3 spikes above the spontaneous rate in the 1.4 s from the odor's onset.]
 Model: rung4_scaling.py's intact brain (biases, ring offsets and factors from its saved state), 8 flies, flyvis's
 neurons silent at grey.
 Odors: an odor drives every olfactory receptor neuron of four glomeruli, on both antennae, at 100 Hz for 1 s. Odor A:
