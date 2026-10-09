@@ -82,6 +82,17 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   The two odors share too many Kenyon cells. Backward pairing changes nothing, as in flies, but that only checks the
   rule's timing.
 
+  Three checks on the current model, each from a measurement ([`odor_probe8.py`](experiments/odor_probe8.py)):
+  - **APL does too little.** Silencing it makes 1.5–1.7 times as many Kenyon cells respond, where blocking flies' APL
+    makes about four times as many active.
+  - **The classes' thresholds move the pattern partway.** With Inada et al.'s offsets (α′/β′ 5.5 mV nearer threshold
+    than α/β, γ 2.5 mV farther), α′/β′ cells respond at 11–27% and γ at 10–19%. With Groschner's and Chen's larger
+    ones, γ falls to flies' 2%, but 74–90% of α′/β′ cells respond (flies: 9–14%).
+  - **Odor strength sets the density.** With receptor neurons at 50 Hz for DoOR's strongest response instead of
+    200, 4–13% of Kenyon cells respond, within or at the edge of flies' range, and projection neurons still fire
+    117–142 Hz at onset. No measurement fixes that rate, and MBON11 then gains only 1–3 spikes. Its shortfall, 10 to
+    100 times, holds in every variant.
+
   **Corrections.** Checking these probes found four errors in what this entry first said:
   - **The receptor synapse factor:** 8.8 should be 7.3. Kazama & Wilson's EPSP is between neurons of one glomerulus,
     and a quarter of the connections averaged join different glomeruli with about 2 synapses each.
@@ -734,6 +745,7 @@ a sign that the approach is broken."
 | `experiments/odor_probe6.py` | Exploratory, not pre-registered: plus undepressed Kenyon cell to MBON synapses | MBON11 rises 5–17 Hz per odor (flies: about 84 spikes a second above baseline); the Kenyon cells as in odor_probe5.py. |
 | `experiments/odor_probe7.py` | Exploratory, not pre-registered: odor_probe3–6 rerun with corrections (ORN-to-PN factor from same-glomerulus connections, excitatory PN-to-KC only, compound DoOR glomeruli), measured with Turner's criterion and Hige's spike count | Projection neurons right; 11–30% of Kenyon cells respond (flies 6 ± 5%), α′/β′ least and γ much (flies: the reverse); MBON11 gains 2–11 spikes in 1.4 s (flies 110–118). With depressed PN-to-KC synapses, 1–3% respond and the output neurons don't move. |
 | `experiments/learning_pilot.py` | Exploratory, not pre-registered: dopamine-gated depression at Kenyon cell to MBON11 synapses in Hige et al. 2015's protocol, its rate fitted to the paired odor's 90% charge drop | Not odor-specific: the unpaired odor's charge falls 61–85% and its spikes 84–98% (flies: about 25%), because the two odors' Kenyon cells overlap too much; backward pairing changes nothing. |
+| `experiments/odor_probe8.py` | Exploratory, not pre-registered: APL silenced; the Kenyon cell classes' measured threshold offsets; receptor rates of 100 and 50 Hz | APL silenced: 1.5–1.7 times as many Kenyon cells respond (flies about 4). Inada's offsets: α′/β′ 11–27%, γ 10–19%; Groschner/Chen's: γ 1–2% as in flies but α′/β′ 74–90%. At 50 Hz, 4–13% respond (flies 6 ± 5%) but MBON11 gains 1–3 spikes. |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension match flies; the launch is steep and slightly backward (79°), head-down, and 1.7 times too hard upward, from the walking pose. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.7). |

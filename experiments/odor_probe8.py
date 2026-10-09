@@ -26,6 +26,27 @@ research_notes/Rung 9 learning data/kc_classes_and_apl.md:
 Odors, flies and measures as odor_probe7.py; seeds 20000 + 100 x condition + odor (Turner's protocol), + 50 + odor
 (Hige's), + 90 (Kenyon cells' rest), + 95 (the resting brain).
 
+Ran: the model's APL does too little, the classes' measured thresholds move the class pattern partway, and odor
+strength sets the density, but nothing here brings MBON11 near a fly's. Over the six odors (Kenyon cells responding by
+Turner's criterion; MBON11's evoked spikes, 0-1.4 s):
+  current                     10-29% (MCH 10.4%, OCT 19.6%); MBON11 2.3-11.9: odor_probe7.py's, on new seeds
+  current, APL silenced       16-47%, 1.5-1.7 times the current model's (flies: about 4 times); MBON11 3.7-16.6
+  class thresholds, Inada     alpha'/beta' 15.98 mV below threshold, alpha/beta 21.48, gamma 23.98: 11-30% in all;
+                              by class alpha/beta 12-40%, alpha'/beta' 11-27%, gamma 10-19% (flies about 3-8, 9-14
+                              and 2%); spikes per response alpha/beta 2.4-4.3, alpha'/beta' 1.8-2.9, gamma 1.5-2.2;
+                              MBON11 2.7-8.6
+  class thresholds,           alpha'/beta' 6.51, alpha/beta 19.51, gamma 30.51 mV: 19-35%; gamma 1.0-2.3%, as in
+    Groschner/Chen            flies, but alpha'/beta' 74-90% with 6.7-10 spikes per response (flies 9-14% and 4.9),
+                              and their rest rises (Kenyon cells 0.046 Hz at rest against 0.004); alpha/beta 13-43%;
+                              MBON11 2.5-12.1
+  receptors at 100 Hz         7-23%; PNs 145-168 Hz in the first 100 ms; MBON11 0.7-7.8
+  receptors at 50 Hz          4-13% (MCH 4.1%, OCT 10.6%), within or at the edge of the flies' 6 +- 5%; PNs 117-142 Hz
+                              in the first 100 ms, still within flies' 100-200; MBON11 0.9-3.3
+Responding cells' overlap (Jaccard, mean over odor pairs) runs from 0.41 at 50 Hz to 0.65 with Groschner/Chen's
+offsets (current 0.51). The resting brain stays at 0.95-0.98 Hz with no neuron over 100 Hz throughout. Odor strength
+alone puts the density in range, but the receptor rate a DoOR response stands for isn't measured, and MBON11 then
+hears even less: its shortfall, 10 to 100 times, is the most robust failure.
+
     python experiments/odor_probe8.py          (writes experiments/odor_probe8.json)
 """
 from __future__ import annotations
