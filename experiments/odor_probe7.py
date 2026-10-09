@@ -134,25 +134,26 @@ class Olfaction:
         return p3.set_kc_rest(self.s, m["kc"], self.types, bias, seed)[-1] if c["rest"] else []
 
 
-def run(o: Olfaction, odor: str, seed: int, seconds: float, after: float) -> dict:
+def run(o: Olfaction, odor: str, seed: int, seconds: float, after: float, silence=(), max_hz: float = p3.MAX_HZ) -> dict:
     """1 s to settle and 1 s of rest, then the odor for `seconds` and `after` more, in 10 ms pieces: spike counts per
     neuron (rest, the first 100 ms, the odor, the whole window), the Kenyon cells' counts per 200 ms bin (rest's five,
-    then the window's), and APL's release (first 100 ms, the odor), each per fly."""
+    then the window's), and APL's release (first 100 ms, the odor), each per fly. silence: neurons silenced throughout
+    (HybridBrain.advance's); max_hz: the receptor neurons' rate at a DoOR response of 1."""
     b = o.brain
     kc = np.flatnonzero(o.m["kc"])
     apl = np.searchsorted(b.graded, b.cells(["APL"]))
     b.reset(seed)
     b.set_release(o.s.ol.neurons, o.s.silent)
-    b.advance(int(round(1.0 / b.dt)))
+    b.advance(int(round(1.0 / b.dt)), silence=silence)
     piece = int(round(0.01 / b.dt))
     per_bin = int(round(BIN / 0.01))
-    rest_bins = [b.advance(int(round(BIN / b.dt))) for _ in range(int(round(1.0 / BIN)))]
+    rest_bins = [b.advance(int(round(BIN / b.dt)), silence=silence) for _ in range(int(round(1.0 / BIN)))]
     rest = sum(rest_bins)
-    drive = odors.orn_drive(b, odor, p3.MAX_HZ)
+    drive = odors.orn_drive(b, odor, max_hz)
     n_odor, n_all = int(round(seconds / 0.01)), int(round((seconds + after) / 0.01))
     total, first, during, bins, cur, release = np.zeros_like(rest), None, None, [], np.zeros_like(rest[:, kc]), []
     for k in range(n_all):
-        c = b.advance(piece, drive=drive if k < n_odor else ())
+        c = b.advance(piece, drive=drive if k < n_odor else (), silence=silence)
         total += c
         cur += c[:, kc]
         if k < n_odor:
@@ -178,41 +179,58 @@ def turner_responders(r: dict) -> np.ndarray:
     return hit.mean(0) >= 0.5
 
 
-def condition(o: Olfaction, name: str, c: int) -> dict:
-    b, types, m = o.brain, o.types, o.m
+def measure_odor(o: Olfaction, odor: str, turner_seed: int, hige_seed: int, silence=(), max_hz: float = p3.MAX_HZ):
+    """One odor's measures (see the docstring) and its Kenyon cells responding by Turner's criterion."""
+    types, m = o.types, o.m
     kc = np.flatnonzero(m["kc"])
     kc_types = types[kc]
+    t = run(o, odor, turner_seed, 0.5, 1.5, silence, max_hz)                  # Turner's protocol
+    resp = turner_responders(t)
+    extra = (t["window"][:, kc] - 2 * t["rest"][:, kc]).mean(0)
+    h = run(o, odor, hige_seed, 1.0, 0.4, silence, max_hz)                    # Hige's protocol
+    evoked = h["window"] - 1.4 * h["rest"]
+    gl = [g for g, v in odors.glomeruli(odor).items() if v > 0.2]
+    pn = np.isin(types, [f"{g}_{x}" for g in gl for x in p3.PN_SUFFIX])
+    one = ((h["odor"][:, kc] - h["rest"][:, kc]) >= 1).mean(0) >= 0.5
+    row = {"kc_share": round(float(resp.mean()), 4),
+           "kc_share_by_class": {cl: round(float(resp[np.char.startswith(kc_types, p)].mean()), 4) for cl, p in CLASSES.items()},
+           "spikes_per_response": {cl: (round(float(extra[resp & np.char.startswith(kc_types, p)].mean()), 2)
+                                        if (resp & np.char.startswith(kc_types, p)).any() else None) for cl, p in CLASSES.items()},
+           "kc_share_1spike_1s": round(float(one.mean()), 4),
+           "evoked_spikes_0_1.4s": {x: round(float(evoked[:, types == x].mean()), 1) for x in MBONS},
+           "pn_hz": {"rest": round(float(h["rest"][:, pn].mean()), 2), "first_100ms": round(float(h["first"][:, pn].mean() / 0.1), 1),
+                     "odor_second": round(float(h["odor"][:, pn].mean()), 1), "count": int(pn.sum()), "glomeruli": len(gl)},
+           "apl_release_hz": {"turner": t["apl"], "hige": h["apl"]}}
+    return row, resp
+
+
+def rest_measures(o: Olfaction, seed: int, silence=()) -> dict:
+    b, types, m = o.brain, o.types, o.m
+    b.reset(seed)
+    b.set_release(o.s.ol.neurons, o.s.silent)
+    b.advance(int(round(1.0 / b.dt)), silence=silence)
+    rest = b.advance(int(round(1.0 / b.dt)), silence=silence).mean(0)
+    return {"brain_hz": round(float(rest.mean()), 3), "over_100hz": int((rest > 100).sum()),
+            "kc_hz": round(float(rest[m["kc"]].mean()), 3), "upn_hz": round(float(rest[m["upn"]].mean()), 2),
+            **{f"{x}_hz": round(float(rest[types == x].mean()), 2) for x in MBONS}}
+
+
+def overlaps(responders: dict) -> dict:
+    names = list(responders)
+    return {f"{a} | {z}": round(float((responders[a] & responders[z]).sum() / max((responders[a] | responders[z]).sum(), 1)), 3)
+            for i, a in enumerate(names) for z in names[i + 1:]}
+
+
+def condition(o: Olfaction, name: str, c: int) -> dict:
     base = 10000 + 100 * c
     out = {"kc_rest_calibration": o.set(name, base + 90)}
-    rest = p3.rest_state(o.s, base + 95, False)["counts"].mean(0)
-    out["rest"] = {"brain_hz": round(float(rest.mean()), 3), "over_100hz": int((rest > 100).sum()),
-                   "kc_hz": round(float(rest[m["kc"]].mean()), 3), "upn_hz": round(float(rest[m["upn"]].mean()), 2),
-                   **{f"{x}_hz": round(float(rest[types == x].mean()), 2) for x in MBONS}}
+    out["rest"] = rest_measures(o, base + 95)
     out["odors"], responders = {}, {}
     for k, odor in enumerate(ODORS):
-        t = run(o, odor, base + k, 0.5, 1.5)                                  # Turner's protocol
-        resp = turner_responders(t)
-        responders[odor] = resp
-        extra = (t["window"][:, kc] - 2 * t["rest"][:, kc]).mean(0)
-        h = run(o, odor, base + 50 + k, 1.0, 0.4)                             # Hige's protocol
-        evoked = h["window"] - 1.4 * h["rest"]
-        gl = [g for g, v in odors.glomeruli(odor).items() if v > 0.2]
-        pn = np.isin(types, [f"{g}_{x}" for g in gl for x in p3.PN_SUFFIX])
-        one = ((h["odor"][:, kc] - h["rest"][:, kc]) >= 1).mean(0) >= 0.5
-        row = {"kc_share": round(float(resp.mean()), 4),
-               "kc_share_by_class": {cl: round(float(resp[np.char.startswith(kc_types, p)].mean()), 4) for cl, p in CLASSES.items()},
-               "spikes_per_response": {cl: (round(float(extra[resp & np.char.startswith(kc_types, p)].mean()), 2)
-                                            if (resp & np.char.startswith(kc_types, p)).any() else None) for cl, p in CLASSES.items()},
-               "kc_share_1spike_1s": round(float(one.mean()), 4),
-               "evoked_spikes_0_1.4s": {x: round(float(evoked[:, types == x].mean()), 1) for x in MBONS},
-               "pn_hz": {"rest": round(float(h["rest"][:, pn].mean()), 2), "first_100ms": round(float(h["first"][:, pn].mean() / 0.1), 1),
-                         "odor_second": round(float(h["odor"][:, pn].mean()), 1), "count": int(pn.sum()), "glomeruli": len(gl)},
-               "apl_release_hz": {"turner": t["apl"], "hige": h["apl"]}}
+        row, responders[odor] = measure_odor(o, odor, base + k, base + 50 + k)
         out["odors"][odor] = row
         print(name, "|", odor, json.dumps({x: row[x] for x in ("kc_share", "spikes_per_response", "evoked_spikes_0_1.4s", "pn_hz")}), flush=True)
-    names = list(responders)
-    out["overlap_jaccard"] = {f"{a} | {z}": round(float((responders[a] & responders[z]).sum() / max((responders[a] | responders[z]).sum(), 1)), 3)
-                              for i, a in enumerate(names) for z in names[i + 1:]}
+    out["overlap_jaccard"] = overlaps(responders)
     return out
 
 

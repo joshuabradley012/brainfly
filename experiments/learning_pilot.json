@@ -1,0 +1,199 @@
+{
+ "question": "Exploratory, not pre-registered: dopamine-gated depression at Kenyon cell to MBON11 synapses, in Hige et al. 2015's\nprotocol, on odor_probe7.py's current model. With the rule's rate fitted to the paired odor's depression, how much does\nthe unpaired odor's response change?\n\nHige et al. 2015 (research_notes/Rung 9 learning data/mushroom_body_plasticity.md): a 1 s odor with PPL1-gamma1pedc\ndriven by four 1 ms light pulses at 2 Hz from 0.2 s after the odor's onset depressed MBON-gamma1pedc's response to that\nodor: its odor-evoked spikes (0 to 1.4 s from onset, spontaneous rate subtracted) fell from 118 +- 8.3 to 24 +- 7.4\n(80%), its EPSC charge in the same window by 90 +- 3.7%. To the other odor, spikes fell from 110 +- 11 to 83 +- 14\n(about 25%). Backward pairing (the odor 0.5 s after the last pulse) changed nothing. The paired odor's depression is\nwhat the rule's rate is fitted to; the unpaired odor's depends on how many Kenyon cells the two odors share through\nthe real PN-to-KC wiring, so it is a prediction. The backward pairing checks the rule's timing, not the connectome.\nModel: odor_probe7.py's current model (\"+ undepressed outputs\"; Kenyon cells' rest set from seed 11090).\nRule: each Kenyon cell carries an eligibility trace of its spikes that decays with tau_e; at each dopamine pulse every\nsynapse from it onto MBON11 (MBON-gamma1pedc>a/b, both cells; MBON11's dendrites lie in gamma1 and the peduncle,\nwhich PPL1-gamma1pedc innervates) loses a share of its weight: ln w -> ln w - eta x (the trace at the pulse). The pulses\nare the protocol's, at fixed times, not PPL101's simulated spikes. The model's 8 flies share one set of weights, so the\ntraces are means over flies and seeds: the pilot treats them as one fly.\nTrials: 0.5 s to settle, 2.5 s before the odor, the odor for 1 s, 1 s after, Kenyon cells' spikes in 10 ms bins.\nMBON11's response is its spikes from 0 to 1.4 s after onset less 1.4 times its rate in the second before, mean over\nflies, seeds and both cells; its charge is the sum over its Kenyon cell synapses of each one's weight times its Kenyon\ncell's evoked spikes in the same window (mean over flies and seeds), the current a Kenyon cell's spikes deliver here.\nProcedure, for 3-octanol paired and 4-methylcyclohexanol unpaired, then the reverse:\n  1. pre: both odors (and the four others of odor_probe7.py) at 4 seeds each (32 flies);\n  2. pairing: the paired odor with pulses at 0.2, 0.7, 1.2 and 1.7 s (4 seeds), and for the backward check pulses at\n     -2.0, -1.5, -1.0 and -0.5 s (4 more);\n  3. for tau_e of 0.2, 0.5 and 1 s: eta set so the paired odor's charge falls 90% (computed from the pre trials' Kenyon\n     cell spikes; no simulation), the unpaired odor's and the other odors' charge changes read off the same way, and\n     the backward pairing's change with the same eta;\n  4. post: with tau_e 0.5 s's weights, both odors again at the same 4 seeds: the spike depression.\nSeeds: 11000 + 10 x odor + seed (pre and post), 11200 + 10 x pairing + seed (forward), 11300 + ... (backward).\n\n    python experiments/learning_pilot.py         (writes experiments/learning_pilot.json)\n",
+ "kc_rest_calibration": {
+  "KC": 21.55,
+  "KCa'b'-ap1": 21.6,
+  "KCa'b'-ap2": 21.58,
+  "KCa'b'-m": 21.56,
+  "KCab-c": 21.58,
+  "KCab-m": 21.58,
+  "KCab-p": 21.5,
+  "KCab-s": 21.53,
+  "KCg": 21.54,
+  "KCg-d": 21.53,
+  "KCg-m": 21.62,
+  "KCg-s1": 21.57,
+  "KCg-s2": 21.29,
+  "KCg-s3": 21.73,
+  "KCg-s4": 21.72
+ },
+ "kc_mbon11_synapses": 4184,
+ "kcs_onto_mbon11": 3623,
+ "pre": {
+  "3-octanol": {
+   "mbon11_evoked_spikes": 4.98,
+   "sem": 0.33,
+   "charge": 1205.0,
+   "kcs_with_evoked_spikes_over_0.5": 796
+  },
+  "4-methylcyclohexanol": {
+   "mbon11_evoked_spikes": 2.7,
+   "sem": 0.26,
+   "charge": 532.0,
+   "kcs_with_evoked_spikes_over_0.5": 422
+  },
+  "ethyl acetate": {
+   "mbon11_evoked_spikes": 11.07,
+   "sem": 0.26,
+   "charge": 2717.7,
+   "kcs_with_evoked_spikes_over_0.5": 1196
+  },
+  "isopentyl acetate": {
+   "mbon11_evoked_spikes": 6.98,
+   "sem": 0.25,
+   "charge": 1553.8,
+   "kcs_with_evoked_spikes_over_0.5": 860
+  },
+  "benzaldehyde": {
+   "mbon11_evoked_spikes": 8.27,
+   "sem": 0.33,
+   "charge": 1943.5,
+   "kcs_with_evoked_spikes_over_0.5": 944
+  },
+  "2-heptanone": {
+   "mbon11_evoked_spikes": 8.42,
+   "sem": 0.26,
+   "charge": 2046.2,
+   "kcs_with_evoked_spikes_over_0.5": 1033
+  }
+ },
+ "pairings": [
+  {
+   "paired": "3-octanol",
+   "unpaired": "4-methylcyclohexanol",
+   "by_tau": {
+    "0.2": {
+     "eta": 2.1831,
+     "reachable": true,
+     "charge_drop": {
+      "3-octanol": 0.9,
+      "4-methylcyclohexanol": 0.846,
+      "ethyl acetate": 0.627,
+      "isopentyl acetate": 0.801,
+      "benzaldehyde": 0.734,
+      "2-heptanone": 0.729
+     },
+     "backward_charge_drop": 0.008,
+     "kcs_losing_half": 739
+    },
+    "0.5": {
+     "eta": 1.0006,
+     "reachable": true,
+     "charge_drop": {
+      "3-octanol": 0.9,
+      "4-methylcyclohexanol": 0.847,
+      "ethyl acetate": 0.626,
+      "isopentyl acetate": 0.798,
+      "benzaldehyde": 0.734,
+      "2-heptanone": 0.728
+     },
+     "backward_charge_drop": 0.01,
+     "kcs_losing_half": 743
+    },
+    "1.0": {
+     "eta": 0.6128,
+     "reachable": true,
+     "charge_drop": {
+      "3-octanol": 0.9,
+      "4-methylcyclohexanol": 0.847,
+      "ethyl acetate": 0.625,
+      "isopentyl acetate": 0.798,
+      "benzaldehyde": 0.734,
+      "2-heptanone": 0.728
+     },
+     "backward_charge_drop": 0.01,
+     "kcs_losing_half": 748
+    }
+   },
+   "spikes": {
+    "3-octanol": {
+     "pre": 4.98,
+     "post": -1.67,
+     "sem": [
+      0.33,
+      0.31
+     ],
+     "drop": 1.336
+    },
+    "4-methylcyclohexanol": {
+     "pre": 2.7,
+     "post": 0.06,
+     "sem": [
+      0.26,
+      0.24
+     ],
+     "drop": 0.978
+    }
+   }
+  },
+  {
+   "paired": "4-methylcyclohexanol",
+   "unpaired": "3-octanol",
+   "by_tau": {
+    "0.2": {
+     "eta": 3.4547,
+     "reachable": true,
+     "charge_drop": {
+      "3-octanol": 0.612,
+      "4-methylcyclohexanol": 0.9,
+      "ethyl acetate": 0.407,
+      "isopentyl acetate": 0.508,
+      "benzaldehyde": 0.482,
+      "2-heptanone": 0.476
+     },
+     "backward_charge_drop": 0.035,
+     "kcs_losing_half": 472
+    },
+    "0.5": {
+     "eta": 1.5469,
+     "reachable": true,
+     "charge_drop": {
+      "3-octanol": 0.611,
+      "4-methylcyclohexanol": 0.9,
+      "ethyl acetate": 0.405,
+      "isopentyl acetate": 0.506,
+      "benzaldehyde": 0.481,
+      "2-heptanone": 0.475
+     },
+     "backward_charge_drop": 0.04,
+     "kcs_losing_half": 467
+    },
+    "1.0": {
+     "eta": 0.9395,
+     "reachable": true,
+     "charge_drop": {
+      "3-octanol": 0.611,
+      "4-methylcyclohexanol": 0.9,
+      "ethyl acetate": 0.405,
+      "isopentyl acetate": 0.505,
+      "benzaldehyde": 0.481,
+      "2-heptanone": 0.475
+     },
+     "backward_charge_drop": 0.041,
+     "kcs_losing_half": 465
+    }
+   },
+   "spikes": {
+    "4-methylcyclohexanol": {
+     "pre": 2.7,
+     "post": -0.19,
+     "sem": [
+      0.26,
+      0.26
+     ],
+     "drop": 1.072
+    },
+    "3-octanol": {
+     "pre": 4.98,
+     "post": 0.81,
+     "sem": [
+      0.33,
+      0.34
+     ],
+     "drop": 0.837
+    }
+   }
+  }
+ ],
+ "seconds": 1162
+}
