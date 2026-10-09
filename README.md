@@ -91,7 +91,10 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   - **Odor strength sets the density.** With receptor neurons at 50 Hz for DoOR's strongest response instead of
     200, 4–13% of Kenyon cells respond, within or at the edge of flies' range, and projection neurons still fire
     117–142 Hz at onset. No measurement fixes that rate, and MBON11 then gains only 1–3 spikes. It falls 7 to 160
-    times short of flies' 110–118 spikes in every variant.
+    times short of flies' 110–118 spikes in every variant. Traced in the current model: during 3-octanol, MBON11's
+    Kenyon cell synapses depolarize it by about 3 mV, and inhibition from other output neurons takes back 0.7. A
+    fly-sized response would need about 28 mV, so the drive is about ten times too small, even with Kenyon cells two
+    to five times too active.
 
   **Corrections.** Checking these probes found four errors in what this entry first said:
   - **The receptor synapse factor:** 8.8 should be 7.3. Kazama & Wilson's EPSP is between neurons of one glomerulus,

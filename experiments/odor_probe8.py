@@ -46,7 +46,11 @@ Responding cells' overlap (Jaccard, mean over odor pairs) runs from 0.41 at 50 H
 offsets (current 0.51). The resting brain stays at 0.95-0.98 Hz with no neuron over 100 Hz throughout. Odor strength
 alone puts the density in range, but the receptor rate a DoOR response stands for isn't measured, and MBON11 then
 hears even less: its shortfall, 7 to 160 times across these variants (110-118 spikes in flies), is the most robust
-failure.
+failure. Traced afterwards in the current model (not saved): during 3-octanol, MBON11's Kenyon cell synapses
+depolarize it by 3.1 mV on average (rate x weight x 5 ms, per cell), while inhibition from other MBONs (MBON05,
+MBON06, MBON02 and the other MBON11) grows by 0.7 mV; the net 2.3 mV takes it from 37 to about 42 Hz. As a Shiu
+neuron held at 8.85 mV (threshold 7, reset -5), it would need about 28 mV more to fire 84 Hz above its rest, so its
+Kenyon cell drive is about ten times too small even with Kenyon cells two to five times too active.
 
     python experiments/odor_probe8.py          (writes experiments/odor_probe8.json)
 """
