@@ -193,7 +193,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
              uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last, left_s, last_s,
-             pfast, pslow, pinh, pdep, pdecay, pinc, pk, preA,
+             pfast, pslow, pinh, pdep, pdecay, pinc, pk, ppow, preA,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
@@ -343,7 +343,10 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
             if npre:
                 tot = 0.0
                 for j in range(len(pk)):
-                    tot += pk[j] * preA[b, j]
+                    if ppow[j] == 1.0:
+                        tot += pk[j] * preA[b, j]
+                    else:                           # a trace acting as a power of the rate (supralinear)
+                        tot += pk[j] * max(preA[b, j], 0.0) ** ppow[j]
                 gp = np.float32(1.0 / (1.0 + tot))
             for f in range(m):
                 i = fired[f]
@@ -571,7 +574,7 @@ class HybridBrain:
                 for e in range(self.sptr[i], self.sptr[i + 1]):
                     self.slow_graded_input[:, self.sidx[e]] += self.slow_weights[e] * self.release[:, q]
 
-    def set_presynaptic(self, fast=None, slow=None, inhibitors=(), tau=(), k=(), start=(), depleting=()) -> None:
+    def set_presynaptic(self, fast=None, slow=None, inhibitors=(), tau=(), k=(), start=(), depleting=(), power=()) -> None:
         """Presynaptic inhibition: the flagged synapses (fast: one flag per synapse in brain.weights' order; slow: in
         brain.slow_weights' order) carry their strength divided by 1 + sum_j k[j] A_j, where A_j is the inhibitors'
         summed spike rate (Hz) low-passed with time constant tau[j], s (each spike adds 1 / tau[j], and A_j decays by
@@ -579,8 +582,10 @@ class HybridBrain:
         traces' values after reset (spikes/s, one per trace; zero if not given), e.g. the inhibitors' resting rate, so
         that a run doesn't begin uninhibited. depleting lists neurons whose depression also follows the gain: their
         spikes, releasing less, deplete less, (1 - depression) x gain of what is left instead of (1 - depression)
-        (meant for neurons all of whose synapses are flagged). Called with no tau, it turns the inhibition off. Spiking
-        inhibitors only; set_slow clears the slow flags."""
+        (meant for neurons all of whose synapses are flagged). power gives each trace an exponent (1 if not given): the
+        divisor becomes 1 + sum_j k[j] A_j ** power[j], for inhibition that grows faster than linearly with the
+        inhibitors' rate. Called with no tau, it turns the inhibition off. Spiking inhibitors only; set_slow clears the
+        slow flags."""
         tau, k = np.atleast_1d(np.asarray(tau, np.float64)), np.atleast_1d(np.asarray(k, np.float64))
         if len(tau) != len(k):
             raise ValueError("give one k per time constant")
@@ -597,8 +602,10 @@ class HybridBrain:
         dep[np.asarray(depleting, np.int64)] = True
         start = np.atleast_1d(np.asarray(start, np.float64))
         start = np.zeros(len(k)) if not len(start) else np.broadcast_to(start, k.shape).copy()
+        power = np.atleast_1d(np.asarray(power, np.float64))
+        power = np.ones(len(k)) if not len(power) else np.broadcast_to(power, k.shape).copy()
         self._presynaptic = {"fast": fast, "slow": slow, "inhibitors": inh, "depleting": dep, "decay": np.exp(-self.dt / tau),
-                             "inc": 1.0 / tau, "k": k, "start": start}
+                             "inc": 1.0 / tau, "k": k, "power": power, "start": start}
         self.presynaptic_state = np.tile(start, (self.trials, 1))
 
     def set_type(self, key: str, **params) -> None:
@@ -769,10 +776,11 @@ class HybridBrain:
         p = self._presynaptic
         if p is None:
             e = np.zeros(0, np.bool_)
-            return e, e, np.zeros(self.n, np.bool_), np.zeros(self.n, np.bool_), np.zeros(0), np.zeros(0), np.zeros(0), np.zeros((self.trials, 0))
+            return (e, e, np.zeros(self.n, np.bool_), np.zeros(self.n, np.bool_), np.zeros(0), np.zeros(0), np.zeros(0), np.zeros(0),
+                    np.zeros((self.trials, 0)))
         if self.presynaptic_state.shape != (self.trials, len(p["k"])):
             self.presynaptic_state = np.tile(p["start"], (self.trials, 1))
-        return p["fast"], p["slow"], p["inhibitors"], p["depleting"], p["decay"], p["inc"], p["k"], self.presynaptic_state
+        return p["fast"], p["slow"], p["inhibitors"], p["depleting"], p["decay"], p["inc"], p["k"], p["power"], self.presynaptic_state
 
     def _kernel_tables(self) -> dict:
         """The coefficient tables and graded-neuron arrays the kernel reads. They depend only on the types,

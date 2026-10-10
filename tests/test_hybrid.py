@@ -271,6 +271,21 @@ def test_presynaptic_inhibition_can_lower_the_depletion_too():
     assert with_dep / without == pytest.approx(expected, rel=1e-4)
 
 
+def test_a_presynaptic_trace_can_act_as_a_power_of_the_rate():
+    """With power 2 and the trace held near its start A0, a flagged spike is divided by 1 + k A0^2."""
+    k, a0 = 1e-4, 150.0
+    def first_spike(power):
+        brain = small([(0, 1, 1.0)], 4, w_poi=100.0)
+        pre = np.repeat(np.arange(brain.n), np.diff(brain.ptr))
+        brain.set_presynaptic(fast=pre == 0, inhibitors=[3], tau=1e6, k=k, start=a0, power=power)
+        brain.reset(0)
+        brain.advance(1, drive=[([0], 1 / DT)])
+        assert brain.advance(1)[0, 0] == 1
+        brain.advance(20)
+        return float(brain.x[0, 1])
+    assert first_spike(2.0) / first_spike(()) == pytest.approx((1.0 + k * a0) / (1.0 + k * a0 ** 2), rel=1e-4)
+
+
 def test_slow_full_exempts_slow_synapses_from_depression():
     """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
     neuron without depression would, and an unflagged slow target depressed."""
