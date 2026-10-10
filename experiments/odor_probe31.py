@@ -22,6 +22,20 @@ window (its Kenyon cells' spikes above their resting rate x their synapses onto 
 about 250-265 pC (a semi-independent check: the same experiments). Seeds 240000 for the build (odor_probe30.py's), 250000
 for this probe's runs (+ 10 x step for the gain; + 100 x q index + odor for the odors).
 
+Ran: with the synapses set from MBON11's own measurements, MBON11 answers odors with tens of spikes rather than a few,
+but still short of flies', and it turns its input into spikes inefficiently while the two test odors are unbalanced. The
+model's MBON11 rests at 34 Hz and gains 3.7 spikes/s per mV (34 to 64 Hz over 8 mV), so the synapses get 0.42, 0.67 and
+0.94 mV (rung 4's rule gave 0.046), 0.76-1.69 mV per Kenyon cell. MBON11 then gains 60, 74 and 91 spikes to 3-octanol
+and 21, 28 and 35 to 4-methylcyclohexanol (flies 118 +- 8.3 and 110 +- 11), and 19-81 to the other four odors; alpha2sc,
+whose synapses were left as they were, 0-18 (flies about 71-85). Its Kenyon cell input carries 749, 1146 and 1702 pC for
+3-octanol and 172, 273 and 382 pC for 4-methylcyclohexanol (flies about 250-265 for both): at the middle charge
+4-methylcyclohexanol's input matches flies' while 3-octanol's is 4.4 times too large, as 3-octanol drives 10% of the
+Kenyon cells and 4-methylcyclohexanol 2.4% (odor_probe30.py; gamma cells, which make 63% of MBON11's Kenyon cell
+synapses in the hemibrain, 9.4% and 2.6%, flies about 2%), each responding cell firing 4-6 spikes (flies 2.2). And
+MBON11 makes only 0.05-0.12 spikes per pC of its input, where flies' make about 0.45 (118 spikes from about 250 pC), as
+Wang et al.'s gain predicts (0.41): its response grows only about as the square root of q, so something in the model
+holds MBON11 back during odors (the timing of its input, or inhibition; to be diagnosed).
+
     python experiments/odor_probe31.py         (writes experiments/odor_probe31.json)
 """
 from __future__ import annotations
