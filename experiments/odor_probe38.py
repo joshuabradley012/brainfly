@@ -17,6 +17,15 @@ odor reaches the antenna, for 2-heptanone (Nagel et al.'s odor) and 3-octanol (4
 square of the log ratio to Nagel et al.'s 22, 13, 8 and 6 over the four bins for 2-heptanone. Seeds 350000 + 100 x
 scale index (+ round for the rest; + 50 + 10 x odor + seed for the odors).
 
+Ran: scaling the receptor-to-LN synapses alone can't give the LNs flies' response: their onset burst barely moves while
+their later firing falls with the synapses. To 2-heptanone the GABAergic LNs fire 9, 66, 41 and 19 spikes/s per cell in
+Nagel et al.'s four bins at full strength (flies 22, 13, 8 and 6), 7, 59, 28 and 8 at half, and 5, 53, 22 and 4 at a
+quarter (3-octanol alike); the fit to the four bins is best at half strength (root mean square log ratio 1.15, against
+1.36 at full), where the later firing is flies' but the onset 2.7 times theirs. The model's onset also comes a bin later
+than flies' (the receptor neurons' latency, up to 50 ms, against an LN peak 15-25 ms after Nagel et al.'s fast valve).
+The rest correction fell short of its target (the GABAergic LNs resting at 1.4-3.5 spikes/s instead of 4), three rounds
+at a fixed 3 spikes/s per mV being too few. odor_ln_inputs.py traces the onset to the LNs' other inputs.
+
     python experiments/odor_probe38.py         (writes experiments/odor_probe38.json)
 """
 from __future__ import annotations
