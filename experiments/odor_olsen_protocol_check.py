@@ -21,6 +21,20 @@ comparison (odor_transform_check.py's protocol). Olsen et al.'s function fitted 
 (DL5, VM7, DM4; DM1 45 and 152); VM7 PNs peak at 176 spikes/s at 175 ms for x = 11.6, 0.42 of the peak at 500 ms; peak
 over mean 2.3-2.5 for weak and intermediate input, 1.9 for strong (Olsen et al. Fig. 8).
 
+Ran: measured as flies were, the model's transform has about flies' steepness and timing but half to two thirds of
+their size, and its strong responses don't last. Over the cholinergic PNs, Olsen et al.'s protocol gives sigma 15.6,
+19.9, 20.3 and 13.4 for DL5, VM7d, DM4 and DM1 (flies 11.8, 12.4, 16.3 and 44.8) and Rmax 117, 118, 81 and 116 (flies 167,
+163, 170, 144); the step gives sigma 19.2, 25.2, 23.1 and 17.3 and Rmax 133, 132, 89 and 134, so the protocol lowers sigma
+to 0.77-0.88 of the step's and Rmax to 0.88-0.92, as weak_input_gain.md's one-PN model predicted (about 1/1.3 and 0.87).
+DL5's PNs rise 21, 42, 69, 90, 104 and 120 spikes/s over the 500 ms for 5-160 spikes/s of receptor input (flies: 44 at
+5.1, 85 at 13.4, 149 at 41.5, 158 at 98.7). The responses peak at 135-155 ms for 20 spikes/s and more (flies 150-175).
+Weak responses keep flies' shape (at 10 spikes/s, 0.42-0.59 of the peak at 500 ms, peak over mean 1.7-2.0; flies' VM7
+at 11.6: 0.42 and about 2.1-2.5) but peak at 69-82 spikes/s (flies 176). Strong ones peak about as high as flies' (267-305
+spikes/s at 80-160; flies' VM7 296 at 48) but fall to 0.17-0.38 of it by 500 ms (flies 0.44), peak over mean 2.2-2.7
+(flies 1.9). Over all the uniglomerular PNs DM4's Rmax is 55 against 81 over its two cholinergic ones. DM1, which GABA
+holds down in flies, is the model's most sensitive glomerulus. (A first run binned the PSTH in 20 ms instead of 25 ms
+bins, which shifted the window; it was stopped and its numbers discarded.)
+
     python experiments/odor_olsen_protocol_check.py      (writes experiments/odor_olsen_protocol_check.json)
 """
 from __future__ import annotations
