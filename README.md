@@ -36,6 +36,47 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **The antennal lobe's local neurons now answer odors as flies' do, but its projection neurons still don't
+  accommodate (rung 9's groundwork).** Responding Kenyon cells fire about 11 spikes in 1.4 s where flies' fire about 2,
+  and the cause is upstream. Flies' projection neurons open strongly and fall to about half within half a second. The
+  model's climb through the odor. This round calibrated the local neurons to their measured odor response and fixed a
+  bug in how the antennal lobe is built. Neither changes the projection neurons' time course.
+  - **The local neurons' onset burst came from all their inputs at once** ([`odor_probe38.py`](experiments/odor_probe38.py),
+    [`odor_ln_inputs.py`](experiments/odor_ln_inputs.py), [`odor_probe39.py`](experiments/odor_probe39.py)). Flies'
+    GABAergic local neurons answer an odor with a brief onset: 22, 13, 8 and 6 spikes/s per cell over 0–50, 50–100,
+    100–200 and 200–500 ms, from a rest of about 4 (Nagel et al. 2015). The model's fired 64 at their onset. Their input
+    synapses carry rung 4's size rule, which no measurement sets. The burst came from receptor neurons, projection
+    neurons and other local neurons together, so scaling only the receptor neurons' synapses left it 2.7 times flies'.
+    One scale on all their inputs brings the onset to flies'.
+  - **Rebuilt around those local neurons, the antennal lobe matches flies' local neurons closely**
+    ([`odor_probe40.py`](experiments/odor_probe40.py), [`odor_probe42.py`](experiments/odor_probe42.py)). With every
+    synapse onto the local neurons at 0.17 of its strength and the GABAergic ones resting at flies' 4 spikes/s, they
+    fire 23, 16, 10 and 7.5 spikes/s in Nagel et al.'s bins (flies 22, 13, 8 and 6). But the presynaptic inhibition,
+    refitted to Olsen & Wilson's EPSCs, grows as the local neurons' rates fall (threefold), so it still takes hold within
+    100 ms of onset. The projection neurons barely change: 3-octanol's open at 90 spikes/s, climb to 120 at 0.3 s and
+    hold 0.93 of that at 0.5 s (flies 0.48). With the inhibition refitted, what shapes the projection neurons is its time
+    course and the receptor synapse's slow component, not how hard the local neurons fire. Stronger projection neurons
+    with nothing to make them accommodate push the Kenyon cells further from flies' (3.6–13.4% respond; α/β cells fire
+    4.8–7.3 spikes per response). The next run tests the slow component at Kazama & Wilson's unitary size together with
+    projection neurons that keep their synaptic current through their spikes
+    ([`odor_probe41.py`](experiments/odor_probe41.py), running).
+  - **A bug: the presynaptic inhibition acted at rest** ([`odor_offset_check.py`](experiments/odor_offset_check.py)).
+    Since odor_probe27 the inhibition was meant to act only on the local neurons' activity above their resting rate,
+    because flies have little tonic presynaptic inhibition. The build measured that resting rate too early. It came
+    right after the projection neurons' resting polish, which had just lowered them and with them the local neurons,
+    and a second polish then raised the local neurons back to their targets. So in every model since odor_probe27 the
+    receptor synapses rested at about two thirds of their strength (0.67 in odor_probe30's model). The polish had raised
+    the projection neurons' excitability to make up for it, so odor responses barely change when the inhibition is
+    fitted after the polishes (odor_probe42.py): 3-octanol's projection neurons peak at 106 spikes/s instead of 105,
+    and the Kenyon cells respond at 2.6–10.5% instead of 2.1–10.1%. Earlier conclusions stand.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/al_lns-dark.svg">
+  <img src="assets/al_lns-light.svg" width="100%" alt="Four panels. Top: the antennal lobe's GABAergic local neurons' mean rate per cell to 2-heptanone over the odor's first 0.55 s, against flies' (Nagel et al. 2015, rings drawn 50 ms later for the model's receptor latency). Left, the model as built with every synapse onto the local neurons scaled by s from 1 to 0.25: the onset falls from 64 to 23 spikes/s, flies' 22. Right, the antennal lobe rebuilt with its inhibition fitted after the resting polishes: at s = 1 the local neurons fire 64 at onset; at s = 0.17, resting at flies' 4 spikes/s, they follow flies' rings (23, 16, 10 and 7.5 spikes/s against 22, 13, 8 and 6). Bottom: 3-octanol's strongly driven projection neurons, each line divided by its own peak. In every condition they rise to their peak at about 0.3 s and hold it, where flies' peak at about 70 ms and fall to 0.48 by 0.43 s.">
+</picture>
+
+`python assets/al_lns.py` redraws it.
+
 * **MBON11 now answers 3-octanol as flies' does, and learning with 3-octanol paired is as specific as flies' (rung 9's
   groundwork).** MBON11 is the mushroom body output neuron that Hige et al. 2015 trained. Rung 4 divides each synapse by
   its target's size, which left MBON11 gaining a few spikes to an odor where flies' gain 110–118. Three changes, each
@@ -1147,6 +1188,7 @@ a sign that the approach is broken."
 | `experiments/odor_probe39.py` | Exploratory, not pre-registered: one scale (1 to 0.25) on every synapse onto the antennal lobe's LNs, fitted (criterion stated first) to Nagel et al.'s LN PSTH, on the built model | Onset reaches flies' at 0.25 (23/19/13/9 spikes/s against 22/13/8/6; the sweep's best and lowest); the later firing stays about 1.5 times flies'. With the rest at flies' 4 spikes/s the best scale extrapolates to about 0.17 |
 | `experiments/odor_probe40.py` | Exploratory, not pre-registered: the antennal lobe rebuilt around LNs whose inputs are scaled to 0.25 and 0.17, the GABAergic LNs resting at flies' 4 spikes/s, the inhibition refitted | At 0.17 the LNs fit best (24/20/14/10 spikes/s against 22/13/8/6): flies' onset, 1.5-1.7 times their later firing. The PNs are as before (3-octanol: 73 spikes/s at 50-100 ms, a peak of 96 at 0.25-0.3 s, 0.88 of it at 0.5 s): the refitted inhibition grows as the LNs' rates fall. Built with the inhibition acting at rest (odor_offset_check.py) |
 | `experiments/odor_offset_check.py` | Exploratory check: does the built antennal lobe's presynaptic inhibition act at rest? | Yes: the build sets its offset before the second polishes raise the LNs, so the receptor-to-PN synapses rest at 0.67 of their strength (odor_probe30.py's model) and 0.54 (odor_probe40.py's). Raising the offset alone frees the PNs, which drive the LNs harder (0.73) |
+| `experiments/odor_probe42.py` | Exploratory, not pre-registered: the antennal lobe built with its presynaptic inhibition fitted after the resting polishes (the bug undone), at s = 1 and with the LNs' inputs at 0.17 | Synapses rest at full strength (0.99). At s = 1 odor responses barely change (3-octanol's PNs peak at 106 instead of 105; Kenyon cells 2.6-10.5%). At 0.17 the LNs match flies' (23/16/10/7.5 spikes/s against 22/13/8/6) and the PNs open harder (90 spikes/s at 50-100 ms) but still climb (peak 120 at 0.3 s, 0.93 at 0.5 s); Kenyon cells denser (3.6-13.4%) |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension fall inside the pre-set windows (flies: about 7 and 3.3 ms), the only 2 of 6 checks that pass, and the timing only with the coxa braced; the launch is steep and slightly backward (79°), head-down, 1.7 times too hard upward and 2.7 times too weak horizontally. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.6). |

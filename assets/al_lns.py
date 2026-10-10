@@ -6,8 +6,8 @@ Top: the GABAergic local neurons' (LNs') mean rate per cell to 2-heptanone in 50
 mean of 45 LNs (Fig. 5b, read off the figure; 22, 13, 8 and 6 spikes/s over 0-50, 50-100, 100-200 and 200-500 ms after
 their fast valve), drawn 50 ms later for the model's receptor latency as odor_probe39.py's fit compares them. Left: every
 synapse onto the LNs scaled by s in the model as built, the LNs' rest re-set (odor_probe39.py). Right: the antennal lobe
-rebuilt around the scaled LNs, their rest at flies' 4 spikes/s and the presynaptic inhibition fitted again
-(odor_probe40.py). Bottom: 3-octanol's strongly driven projection neurons (PNs of glomeruli driven above 0.2) in the same
+rebuilt with its presynaptic inhibition fitted after the resting polishes (odor_probe42.py), at s = 1 (rung 4's resting
+targets) and at s = 0.17 with the GABAergic LNs resting at flies' 4 spikes/s. Bottom: 3-octanol's strongly driven projection neurons (PNs of glomeruli driven above 0.2) in the same
 runs, each line divided by its own peak, against the mean of 843 PN responses in flies (Bhandawat et al. 2007, Fig. 1b,
 read off the figure: the peak about 145 ms after the valve, 0.48 of it at 500 ms), moved 75 ms earlier for the valve's
 delay (odor_probe21.py) so that 0 is the odor reaching the antenna, as in the model.
@@ -118,15 +118,15 @@ def normalised(vs) -> tuple[list, float]:
 def figure(theme: str, sweep: dict, rebuilt: dict | None) -> str:
     c = THEMES[theme]
     best = rebuilt["best"] if rebuilt else None
-    out = [text(24, 30, "Scaled to flies' onset, the local neurons leave the projection neurons' time course as it was", "lab"),
+    out = [text(24, 30, "The local neurons now answer odors as flies' do; the projection neurons still don't accommodate", "lab"),
            text(24, 50, "Red: the model. Top: the GABAergic LNs' mean rate per cell to 2-heptanone. Bottom: 3-octanol's strongly driven PNs, "
                 "each line over its own peak.", "note"),
            text(24, 68, "Left: the model as built with every synapse onto the LNs times s (odor_probe39.py). Right: the antennal lobe rebuilt "
-                "around the scaled LNs (odor_probe40.py).", "note"),
+                "with the inhibition fitted last, at s = 1 and 0.17 (odor_probe42.py).", "note"),
            text(24, 86, "Rings: flies (Nagel et al. 2015's LNs, drawn 50 ms later for the model's receptor latency; Bhandawat et al. 2007's "
                 "mean of 843 PN responses).", "note")]
     panels = [(X0, "the model as built, every LN input times s (odor_probe39.py)"),
-              (X0 + PW + GAP, "rebuilt around the scaled LNs (odor_probe40.py)")]
+              (X0 + PW + GAP, "rebuilt, the inhibition fitted last (odor_probe42.py)")]
     for k, (x0, title) in enumerate(panels):
         out.append(text(x0, LN[0] - 12, title, "val"))
         out += axes(c, x0, LN, "spikes/s per GABAergic LN, 2-heptanone", range(0, 71, 10), lambda v: f"{v}", k == 0)
@@ -145,22 +145,18 @@ def figure(theme: str, sweep: dict, rebuilt: dict | None) -> str:
                                                                     for r in sweep["scales"].values()) + " spikes/s (s = 1 to 0.25)", "tick", "end"))
     if rebuilt:
         x0 = panels[1][0]
-        ref = sweep["scales"]["1"]
-        out.append(line(x0, LN, ref["odors"]["2-heptanone"]["ln_hz_50ms"], c["faint"], 1.0, title="as built, s = 1"))
-
-        pn, _ = normalised(ref["odors"]["3-octanol"]["oct_pn_hz_50ms"])
-        out.append(line(x0, PN, pn, c["faint"], 1.0, title="as built, s = 1"))
-        notes = []
+        notes, items = [], []
         for s, entry in rebuilt["conditions"].items():
             r = entry["ln_response"]
             ln = r["odors"]["2-heptanone"]["ln_hz_50ms"]
             pn, peak = normalised(r["odors"]["3-octanol"]["oct_pn_hz_50ms"])
-            dashed = s != best
-            out.append(line(x0, LN, ln, c["red"], 1.0, dashed, title=f"rebuilt, s = {s}: {', '.join(f'{v:g}' for v in ln)} spikes/s per LN"))
-            out.append(line(x0, PN, pn, c["red"], 1.0, dashed, title=f"rebuilt, s = {s}: peak {peak:.0f} spikes/s"))
-            notes.append(f"s = {s}{' (dashed)' if dashed else ''}: peak {peak:.0f}")
-        out += legend(c, x0 + PW - 150, LN[0] + 10, [("as built, s = 1", c["faint"], 1.0, False)] +
-                      [(f"rebuilt, s = {s}", c["red"], 1.0, s != best) for s in rebuilt["conditions"]])
+            colour = c["red"] if s == best else c["faint"]
+            label = f"s = {s}" + (" (LNs at 4 spikes/s)" if s == best else "")
+            out.append(line(x0, LN, ln, colour, 1.0, title=f"rebuilt, {label}: {', '.join(f'{v:g}' for v in ln)} spikes/s per LN"))
+            out.append(line(x0, PN, pn, colour, 1.0, title=f"rebuilt, {label}: peak {peak:.0f} spikes/s"))
+            notes.append(f"s = {s}: {peak:.0f}")
+            items.append((label, colour, 1.0, False))
+        out += legend(c, x0 + PW - 190, LN[0] + 10, items)
         out.append(text(x0 + PW, PN[1] + 34, "PNs' peaks: " + "; ".join(notes) + " spikes/s", "tick", "end"))
     out.append(text(X0 + PW + GAP / 2, PN[1] + 60, "time from the odor reaching the antenna (s)", "tick", "middle"))
     style = f"""
@@ -178,7 +174,7 @@ def figure(theme: str, sweep: dict, rebuilt: dict | None) -> str:
 
 def main() -> None:
     sweep = json.loads((ROOT / "experiments" / "odor_probe39.json").read_text())
-    path = ROOT / "experiments" / "odor_probe40.json"
+    path = ROOT / "experiments" / "odor_probe42.json"
     rebuilt = json.loads(path.read_text()) if path.exists() else None
     if rebuilt:
         rebuilt["best"] = min(rebuilt["conditions"], key=lambda s: rebuilt["conditions"][s]["ln_response"]["rms_log_error"])

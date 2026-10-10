@@ -21,6 +21,25 @@ model is cached (odor_probe42_s1, odor_probe42_s0.17).
 Measured for each: everything odor_probe40.py measures. Seeds 240000 for the builds (odor_probe30.py's, + 1100 + seed for
 the resting check); 420000 + 1000 x condition for the measures (odor_probe40.py's offsets).
 
+Ran: with the inhibition fitted after the polishes the receptor synapses rest at full strength (0.99 at both scales; the
+inhibitors resting at 78 and 305 spikes/s summed, below offsets of 122 and 341, so none was raised), and the LNs at 0.17
+answer odors as flies' do, but the projection neurons still don't accommodate. At s = 1 the model is odor_probe30.py's
+with the bug undone, and its odor responses barely change: k_A 0.00042 and k_B 0.0022 (0.00046 and 0.0023 before);
+3-octanol's PNs fire 74 spikes/s at 50-100 ms, peak at 106 at 0.3 s and hold 0.95 of it at 0.5 s and 0.79 at 0.95 s
+(71, 105, 0.97 and 0.78 before); the transform's Rmax is 214-361 and sigma 28-42 (184-355 and 28-38); 2.6-10.5% of
+Kenyon cells respond (2.1-10.1%), mean Jaccard 0.17, alpha/beta cells firing 4.6-6.4 spikes per response; MBON11 gains
+119 spikes to 3-octanol from 459 pC (112 and 429). Its GABAergic LNs rest at 1.9 spikes/s and fire 64, 43, 23 and 12 in
+Nagel et al.'s bins (root mean square log ratio 1.02). At s = 0.17, with the GABAergic LNs' target at 4 spikes/s, they
+rest at 3.8 and fire 23, 16, 10 and 7.5 (flies 22, 13, 8 and 6; 0.20), 3-octanol alike, a little weaker. The
+inhibition's strengths triple (k_A 0.0012, k_B 0.0072), and 3-octanol's PNs open harder (90 spikes/s at 50-100 ms, the
+synapses at 0.39 of their strength there against 0.32 at s = 1) but still climb, to 120 at 0.3 s, holding 0.93 of it at
+0.5 s and 0.71 at 0.95 s; the strongly driven ones (glomeruli driven over 0.2) go from 156 at 50-100 ms to 202 at
+0.3-0.35 s. 4-methylcyclohexanol's PNs peak at 0.61 of 3-octanol's (0.55 at s = 1; flies 0.85-0.98). The transform's
+sigma falls a little (26-37; Rmax 210-358) and PN breadth rises (28-39% respond by Turner's criterion, 17-36% at s = 1;
+flies 59 +- 14%), but with stronger PNs and nothing to make them accommodate the Kenyon cells respond more densely
+(3.6-13.4%, mean Jaccard 0.18) with more spikes (alpha/beta 4.8-7.3 per response), and MBON11 gains 133 spikes to
+3-octanol from 561 pC and 53 to 4-methylcyclohexanol from 162.
+
     python experiments/odor_probe42.py         (writes experiments/odor_probe42.json)
 """
 from __future__ import annotations
