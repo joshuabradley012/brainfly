@@ -27,6 +27,22 @@ after the valve opens to 135-140 Hz at about 0.3 s and 95-100 Hz at 0.6-1.05 s) 
 about 170 pA from 0.6 to 1.0 s). Seeds 290000 + 1000 x condition + 10 x odor + seed (+ 900 + round for the Kenyon cells'
 rest).
 
+Ran: the measured depression gives MBON11's input flies' early peak but not their sustained plateau, so with the model's
+Kenyon cell firing it leaves MBON11 far short of flies'; the depression is held out of the model carried forward until
+the Kenyon cells fire as sparsely in time as flies' (MBON11's gain here 3.70 spikes/s per mV; the Kenyon cell depression
+leaves 0.617 at 400 ms). Undepressed, MBON11 gains 64.5 spikes to 3-octanol from 442 pC per cell and 22.1 to
+4-methylcyclohexanol from 101 pC (20-67 to the other odors; 0.15-0.24 spikes per pC); its input to 3-octanol peaks at
+701 pA at 0.3-0.35 s and is still 254 pA at 0.95 s, and MBON11 peaks at 122 spikes/s and holds 83 at 0.95 s. Depressing,
+that input peaks earlier and lower, 302 pA at 0.2-0.25 s, and falls to 89 pA by 0.5 s and 21 pA by 0.95 s (flies' EPSC:
+about 400 pA at its peak soon after onset, about 200 pA at 0.35 s and 170 pA from 0.6 to 1.0 s); MBON11 peaks at 91
+spikes/s at 0.2-0.25 s and is back near its 34 Hz rest by 1 s (40 spikes/s) where flies' holds 95-100. It gains 25.6
+spikes to 3-octanol from 114 pC and 7.5 to 4-methylcyclohexanol from 25 pC (6.7-24 to the others; MBON-alpha2sc
+0.1-1.9), now 0.22-0.31 spikes per pC: the depressed spikes were partly the wasted ones. Flies' synapses depress too,
+yet their EPSC stays at about 40% of its peak through the odor and their MBON11 keeps firing; with each spike leaving
+0.5 of the strength and 1.5 s to recover, that needs Kenyon cells whose spikes come singly and spread out over the odor,
+so that most find their synapses largely recovered, where the model's responding Kenyon cells fire 4-6 spikes, mostly
+early (odor_probe33.py; flies' alpha/beta 2.2).
+
     python experiments/odor_probe34.py         (writes experiments/odor_probe34.json)
 """
 from __future__ import annotations
