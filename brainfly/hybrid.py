@@ -33,6 +33,11 @@ brainfly.shiu, and lets each cell type differ:
                   0.78 and 0.893, Nagel, Hong & Wilson 2015). brain.full_strength (one flag per
                   synapse, in brain.weights' order) exempts single synapses, for depression that
                   differs by target
+    depression2, recovery2, share2    a second pool of the outgoing synapses' release, depressing and recovering
+                  on its own (default share2 0: one pool): a spike's strength is (1 - share2) times what the first
+                  pool has left plus share2 times what the second has; each pool loses its own fraction per spike
+                  (receptor neurons onto projection neurons: two halves, 0.67 and 0.3 s, 0.83 and 7.5 s, fitted to
+                  Kazama & Wilson's and Nagel et al.'s trains, research_notes/Rung 9 learning data/orn_pn_depression.md)
     adaptation, adaptation_tau    spike-frequency adaptation: each spike adds a hyperpolarising
                   current that holds the neuron about `adaptation` mV lower and decays with time
                   constant adaptation_tau, s (default 0: none, as in Shiu's model; 0.2 s)
@@ -77,7 +82,8 @@ UNIT = {"spiking": False, "graded": True}
 DEFAULTS = {"unit": "spiking", "tau_m": T_MBR, "threshold": V_TH - V0, "reset": V_RST - V0, "refractory": T_RFC,
             "bias": 0.0, "scale": 1.0, "gain": 6.0, "release_at": V_TH - V0, "max_release": np.inf,
             "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0, "adaptation": 0.0,
-            "adaptation_tau": 0.2, "tau_slow": 0.0, "slow_depression": 0.0, "slow_recovery": 0.0, "keep_current": 0.0}
+            "adaptation_tau": 0.2, "tau_slow": 0.0, "slow_depression": 0.0, "slow_recovery": 0.0, "keep_current": 0.0,
+            "depression2": 1.0, "recovery2": 1.0, "share2": 0.0}
 MONOAMINES = ("dopamine", "octopamine", "serotonin")
 
 
@@ -194,9 +200,9 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, keep, graded, depress, recover, depress_s, recover_s,
-             uniform, graded_in,
+             depress2, recover2, share2, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
-             u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last, left_s, last_s,
+             u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last, left_s, last_s, left2, last2,
              pfast, pslow, pinh, pdep, pdecay, pinc, pk, ppow, poff, psrc, preA,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out):
@@ -384,6 +390,14 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                     else:
                         left[b, i] = strength * depress[cls[i]]
                     last[b, i] = t
+                if share2[cls[i]] > 0.0:                # a second pool: its own share, depletion and recovery
+                    second = np.float32(1.0 - (1.0 - left2[b, i]) * np.exp(-(t - last2[b, i]) / recover2[cls[i]]))
+                    if lowered:
+                        left2[b, i] = second * np.float32(1.0 - (1.0 - depress2[cls[i]]) * gp)
+                    else:
+                        left2[b, i] = second * depress2[cls[i]]
+                    last2[b, i] = t
+                    strength = np.float32((1.0 - share2[cls[i]]) * strength + share2[cls[i]] * second)
                 strength_s = strength                   # the slow synapses' strength: the fast one's, unless the
                 if slow and depress_s[cls[i]] > 0.0:    # type depresses them on their own
                     strength_s = np.float32(1.0)
@@ -694,6 +708,8 @@ class HybridBrain:
             depress=f32(lambda p: p["depression"]), recover=np.array([p["recovery"] / dt for p in table]),
             depress_s=f32(lambda p: p["slow_depression"]),
             recover_s=np.array([(p["slow_recovery"] or p["recovery"]) / dt for p in table]),
+            depress2=f32(lambda p: p["depression2"]), recover2=np.array([p["recovery2"] / dt for p in table]),
+            share2=f32(lambda p: p["share2"]),
             noise_lambda=np.array([p["noise_rate"] * dt for p in table]) * np.bincount(self.cls, minlength=len(table)),
             noise_kick=f32(lambda p: p["noise_kick"]))
 
@@ -739,11 +755,13 @@ class HybridBrain:
         self.t = 0
 
     def _depression_state(self, fresh: bool = False) -> None:
-        """The fast synapses' depression state (left, last), and the slow ones' where a type depresses them on their
-        own (left_s, last_s): per neuron when needed, else empty. Made at reset, or when set_type needs them later."""
+        """The fast synapses' depression state (left, last), the slow ones' where a type depresses them on their own
+        (left_s, last_s), and a second pool's where a type has one (left2, last2): per neuron when needed, else empty.
+        Made at reset, or when set_type needs them later."""
         shape = (self.trials, self.n)
         for name, needed in (("", any(p["depression"] < 1 for p in self.params)),
-                             ("_s", any(0 < p["slow_depression"] < 1 for p in self.params))):
+                             ("_s", any(0 < p["slow_depression"] < 1 for p in self.params)),
+                             ("2", any(p["share2"] > 0 for p in self.params))):
             if fresh or (needed and getattr(self, "left" + name).shape[1] != self.n):
                 setattr(self, "left" + name, np.ones(shape if needed else (self.trials, 0), np.float32))
                 setattr(self, "last" + name, np.full(shape if needed else (self.trials, 0), -(1 << 40), np.int64))
@@ -780,11 +798,12 @@ class HybridBrain:
                  self.sptr, self.sidx, self.slow_weights, self.slow_full, self.stargets, self.slow_in, self.gptr, self.gidx, self.gap_mv,
                  self.fptr, self.fcomp, self.fast_mv, self.ftargets, self.fpending, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  k["a_xx"], k["a_ss"], k["theta"],
-                 k["reset"], k["rfc"], k["keep"], k["graded"], k["depress"], k["recover"], k["depress_s"], k["recover_s"], k["uniform"],
+                 k["reset"], k["rfc"], k["keep"], k["graded"], k["depress"], k["recover"], k["depress_s"], k["recover_s"],
+                 k["depress2"], k["recover2"], k["share2"], k["uniform"],
                  bool(len(self.graded) or external_on), k["g_list"], k["g_gain"], k["g_at"], k["g_max"],
                  self._graded_targets() if external_on else self._graded_only_targets(), self.u, self.x, self.s, self.ad, self.until,
                  self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.slow_graded_input, self.release,
-                 self.rng, self.left, self.last, self.left_s, self.last_s,
+                 self.rng, self.left, self.last, self.left_s, self.last_s, self.left2, self.last2,
                  *self._presynaptic_args(),
                  drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self._internal_neurons(), self.external_input,
                  k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,

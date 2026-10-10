@@ -398,6 +398,39 @@ def test_depression_follows_its_recurrence():
     np.testing.assert_allclose(landed, expected, rtol=1e-4)      # it lands on the last of those 19 steps
 
 
+def test_a_second_pool_depresses_and_recovers_on_its_own():
+    """Two pools, each half the synapse (0.67 left per spike, 0.3 s to recover; 0.83, 7.5 s): a neuron fired every 10 ms
+    carries the sum of the two recurrences' strengths, and each pool keeps its own state."""
+    types = {"c0": {"depression": 0.67, "recovery": 0.3, "depression2": 0.83, "recovery2": 7.5, "share2": 0.5}}
+    brain = small([(0, 1, 1.0)], 2, types=types, w_poi=100.0)
+    first, second, expected, landed = 1.0, 1.0, [], []
+    for k in range(12):
+        brain.advance(1, drive=[([0], 1 / DT)])         # a kick; neuron 0 fires on the next step
+        before = float(brain.x[0, 1])
+        brain.advance(19)
+        landed.append(float(brain.x[0, 1]) - before * np.exp(-19 * DT / TAU))
+        brain.advance(80)
+        expected.append(0.5 * first + 0.5 * second)
+        assert brain.left[0, 0] == pytest.approx(0.67 * first, rel=1e-5)
+        assert brain.left2[0, 0] == pytest.approx(0.83 * second, rel=1e-5)
+        first = 1 - (1 - 0.67 * first) * np.exp(-100 * DT / 0.3)
+        second = 1 - (1 - 0.83 * second) * np.exp(-100 * DT / 7.5)
+    np.testing.assert_allclose(landed, expected, rtol=1e-4)
+
+
+def test_a_second_pool_with_no_share_changes_nothing():
+    """share2 0 (the default) leaves every spike as it was, whatever the second pool's other parameters."""
+    edges, slow, types, n = random_circuit()
+    drive = [(np.arange(4), 120.0)]
+    types = {**types, "c0": {"depression": 0.8, "recovery": 0.5}}
+    plain = small(edges, n, slow, types=types, trials=2, w_poi=30.0)
+    pool = small(edges, n, slow, types={**types, "c0": {**types["c0"], "depression2": 0.5, "recovery2": 2.0}}, trials=2,
+                 w_poi=30.0)
+    a, b = plain.advance(3000, drive=drive), pool.advance(3000, drive=drive)
+    assert a.sum() > 50
+    np.testing.assert_array_equal(a, b)
+
+
 def test_setting_w_syn_is_the_same_as_building_with_it():
     edges, slow, types, n = random_circuit()
     built = small(edges, n, slow, types=types, trials=2)

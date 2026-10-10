@@ -111,37 +111,47 @@ def fit(xs, ys) -> dict | None:
         return None
 
 
-def main() -> None:
-    t0 = time.perf_counter()
-    o, rec, built = brain_cache.load("odor_probe49", p49.build, p44.prepare)
+def measure(o, rec, protocols=("olsen", "step"), seed: int = SEED, show: bool = True) -> dict:
+    """The transform under each protocol, over each glomerulus's cholinergic and all uniglomerular PNs (call within
+    warm.tracking)."""
     types, m = o.types, o.m
     cholinergic = np.asarray(consensus_transmitters()) == "acetylcholine"
-    out = {"question": __doc__, "rates": list(p16.RATES), "settling": getattr(o, "settling", None), "protocols": {}}
-    with warm.tracking(o, rec):
-        for p, protocol in enumerate(("olsen", "step")):
-            rows = {}
-            for gi, g in enumerate(p16.GLOMERULI):
-                pns = np.flatnonzero(m["upn"] & np.char.startswith(types, f"{g}_"))
-                sets = {"cholinergic": pns[cholinergic[pns]], "all": pns}
-                pts = {name: {} for name in sets}
-                for k, x in enumerate(p16.RATES):
-                    rs = [run(o, rec, g, x, sets, SEED + 1000 * p + 100 * gi + 10 * k + s, protocol) for s in range(SEEDS)]
-                    for name in sets:
-                        psth = np.mean([r[name] for r in rs], 0)
-                        pts[name][f"{x:g}"] = dict(summarize(psth), psth=psth.round(1).tolist())
-                rows[g] = {"pns": {name: int(len(v)) for name, v in sets.items()},
-                           "olsen": {"rmax": p16.OLSEN[g][0], "sigma": p16.OLSEN[g][1]}}
+    out = {}
+    for p, protocol in enumerate(("olsen", "step")):
+        if protocol not in protocols:
+            continue
+        rows = {}
+        for gi, g in enumerate(p16.GLOMERULI):
+            pns = np.flatnonzero(m["upn"] & np.char.startswith(types, f"{g}_"))
+            sets = {"cholinergic": pns[cholinergic[pns]], "all": pns}
+            pts = {name: {} for name in sets}
+            for k, x in enumerate(p16.RATES):
+                rs = [run(o, rec, g, x, sets, seed + 1000 * p + 100 * gi + 10 * k + s, protocol) for s in range(SEEDS)]
                 for name in sets:
-                    rows[g][name] = {"points": pts[name],
-                                     "fit": fit(p16.RATES, [pts[name][f"{x:g}"]["window_mean"] for x in p16.RATES])}
-            out["protocols"][protocol] = rows
+                    psth = np.mean([r[name] for r in rs], 0)
+                    pts[name][f"{x:g}"] = dict(summarize(psth), psth=psth.round(1).tolist())
+            rows[g] = {"pns": {name: int(len(v)) for name, v in sets.items()},
+                       "olsen": {"rmax": p16.OLSEN[g][0], "sigma": p16.OLSEN[g][1]}}
+            for name in sets:
+                rows[g][name] = {"points": pts[name],
+                                 "fit": fit(p16.RATES, [pts[name][f"{x:g}"]["window_mean"] for x in p16.RATES])}
+        out[protocol] = rows
+        if show:
             for name in ("cholinergic", "all"):
                 print(protocol, name, json.dumps({g: rows[g][name]["fit"] for g in rows}),
                       json.dumps({g: [rows[g][name]["points"][f"{x:g}"]["window_mean"] for x in p16.RATES] for g in rows}), flush=True)
             for g in rows:
                 print(" ", g, json.dumps({x: {k: v for k, v in rows[g]["cholinergic"]["points"][x].items() if k != "psth"}
                                           for x in ("5", "10", "20", "40")}), flush=True)
-            OUT.write_text(json.dumps(out, indent=1))
+    return out
+
+
+def main() -> None:
+    t0 = time.perf_counter()
+    o, rec, built = brain_cache.load("odor_probe49", p49.build, p44.prepare)
+    out = {"question": __doc__, "rates": list(p16.RATES), "settling": getattr(o, "settling", None)}
+    with warm.tracking(o, rec):
+        out["protocols"] = measure(o, rec)
     out["seconds"] = round(time.perf_counter() - t0)
     OUT.write_text(json.dumps(out, indent=1))
     print(f"done ({out['seconds']} s)", flush=True)

@@ -35,7 +35,7 @@ from brainfly.hybrid import HybridBrain
 
 STATE = ("u", "x", "s", "until", "ad", "pending", "fpending", "pending_slow", "touched", "n_touched", "graded_input",
          "slow_graded_input", "_external_release", "external_input", "release", "driven", "left", "last", "left_s",
-         "last_s", "presynaptic_state", "t")
+         "last_s", "left2", "last2", "presynaptic_state", "t")
 SEED, SETTLE_S, RESTED_SETTLE_S = 440000, 6.0, 3.0
 
 
@@ -66,9 +66,10 @@ def resting_gain(b: HybridBrain) -> float:
 
 
 def rest_depression(o, rec) -> dict:
-    """The receptor neurons' fast and slow synapses set to their mean depression at their spontaneous rates: at rate r,
-    using (1 - f) g of what is left per spike (g the resting presynaptic gain, for the neurons whose depletion follows it)
-    and recovering over tau, a synapse keeps 1 / (1 + r tau (1 - f) g) of its strength on average."""
+    """The receptor neurons' fast and slow synapses (and a second pool, where their type has one) set to their mean
+    depression at their spontaneous rates: at rate r, using (1 - f) g of what is left per spike (g the resting
+    presynaptic gain, for the neurons whose depletion follows it) and recovering over tau, a pool keeps
+    1 / (1 + r tau (1 - f) g) of its strength on average."""
     b = o.brain
     rate = np.zeros(b.n)
     for g, cells in rec.cells.items():
@@ -81,10 +82,12 @@ def rest_depression(o, rec) -> dict:
     for c in np.unique(b.cls[cells]):
         sel = cells[b.cls[cells] == c]
         p = b.params[c]
-        for name, f, tau in (("fast", p["depression"], p["recovery"]),
-                             ("slow", p["slow_depression"], p["slow_recovery"] or p["recovery"])):
-            left, last = (b.left, b.last) if name == "fast" else (b.left_s, b.last_s)
-            if left.shape[1] and 0 < f < 1:
+        pools = (("fast", p["depression"], p["recovery"], b.left, b.last),
+                 ("slow", p["slow_depression"], p["slow_recovery"] or p["recovery"], b.left_s, b.last_s),
+                 ("second", p.get("depression2", 1.0) if p.get("share2", 0.0) > 0 else 1.0, p.get("recovery2", 1.0),
+                  getattr(b, "left2", None), getattr(b, "last2", None)))
+        for name, f, tau, left, last in pools:
+            if left is not None and left.shape[1] and 0 < f < 1:
                 strength = 1.0 / (1.0 + rate[sel] * tau * (1 - f) * gain[sel])
                 left[:, sel], last[:, sel] = strength, b.t
                 out[name] = round(float(strength.mean()), 4)
