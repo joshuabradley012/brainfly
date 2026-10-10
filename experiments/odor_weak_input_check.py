@@ -13,6 +13,17 @@ under four conditions: intact; the presynaptic inhibition off; the receptor syna
 every receptor neuron's synapses at their rested strength throughout); both off. Seeds 460000 + 100 x condition + 10 x
 glomerulus + rate index (+ 5 for the second seed); settled starts (warm.tracking) throughout.
 
+Ran: presynaptic inhibition isn't it, and the receptor synapse's depression can't be taken out on its own. Intact,
+DL5's PNs rise 19, 42, 78 and 111 spikes/s over the 0.5 s for 5, 10, 20 and 40 spikes/s of receptor input (Olsen et
+al.'s fit 36, 73, 115 and 144), VM7d's 13, 34, 70 and 108 (33, 68, 110 and 139), DM4's 9, 19, 31 and 46 (25, 55, 98 and
+135), and DM1's 24, 50, 82 and 114, above its fit (5, 14, 33 and 66): DM1 is flies' least sensitive glomerulus (sigma
+45) and the model's most sensitive. Without the presynaptic inhibition they barely change (DL5 22, 45, 79 and 111): one
+glomerulus recruits too few LNs for it to matter. Without the receptor synapses' depression the spontaneous input,
+undepressed, drives the LNs so hard that the inhibition silences the PNs at rest (0 spikes/s) and nearly abolishes weak
+responses (DL5 0, 4, 42 and 123); with both off the PNs rest at 39-89 spikes/s and rise far above flies' (DL5 84, 146,
+222 and 286). The model's resting state is built around the depressed synapse, so these manipulations don't isolate its
+gain. odor_transform_check.py asks whether the step the transform is measured with understates weak input.
+
     python experiments/odor_weak_input_check.py      (writes experiments/odor_weak_input_check.json)
 """
 from __future__ import annotations

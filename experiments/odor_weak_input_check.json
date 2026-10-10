@@ -1,0 +1,466 @@
+{
+ "question": "Exploratory check, not pre-registered: what keeps weak receptor input from reaching the projection neurons?\n\nodor_probe41.py and odor_probe44.py: the model's transform (one glomerulus's receptor neurons driven alone, the PNs'\nmean rise over 0.5 s; Olsen et al. 2010) is shifted to stronger input than flies': DL5's PNs rise 41 spikes/s for 10\nspikes/s of receptor input where Olsen et al.'s fit gives 73, and 75 for 20 where it gives 115, meeting it only near 80;\nthe transform's sigma is 21-34 (flies 12-16). In flies broad tuning and weak-input gain come mainly from the receptor\nsynapse itself (research_notes/Rung 9 learning data/lateral_excitation.md: Olsen & Wilson 2008, Wilson 2013), whose\ndepression and presynaptic inhibition the model both carries.\nModel: odor_probe44.py's (its cache).\nMeasured: for each of Olsen et al.'s four glomeruli and 5, 10, 20 and 40 spikes/s of receptor input above the\nspontaneous rate, odor_probe24.drive_response (the PNs' rise over the first 100 ms and over 0.5 s, 8 flies, 2 seeds)\nunder four conditions: intact; the presynaptic inhibition off; the receptor synapses' depression off (fast and slow,\nevery receptor neuron's synapses at their rested strength throughout); both off. Seeds 460000 + 100 x condition + 10 x\nglomerulus + rate index (+ 5 for the second seed); settled starts (warm.tracking) throughout.\n\n    python experiments/odor_weak_input_check.py      (writes experiments/odor_weak_input_check.json)\n",
+ "orn_depression": {
+  "depression": 0.78,
+  "slow_depression": 0.9927
+ },
+ "conditions": {
+  "intact": {
+   "DM4": {
+    "5": {
+     "whole": 8.79,
+     "first_100ms": 12.11,
+     "rest": 2.27
+    },
+    "10": {
+     "whole": 19.36,
+     "first_100ms": 32.36,
+     "rest": 2.17
+    },
+    "20": {
+     "whole": 31.45,
+     "first_100ms": 59.73,
+     "rest": 2.29
+    },
+    "40": {
+     "whole": 45.73,
+     "first_100ms": 91.2,
+     "rest": 2.39
+    },
+    "olsen_fit": {
+     "5": 24.7,
+     "10": 55.2,
+     "20": 97.9,
+     "40": 134.9
+    }
+   },
+   "DL5": {
+    "5": {
+     "whole": 18.94,
+     "first_100ms": 22.25,
+     "rest": 2.75
+    },
+    "10": {
+     "whole": 42.22,
+     "first_100ms": 54.84,
+     "rest": 3.28
+    },
+    "20": {
+     "whole": 78.41,
+     "first_100ms": 109.66,
+     "rest": 2.84
+    },
+    "40": {
+     "whole": 111.09,
+     "first_100ms": 173.34,
+     "rest": 2.28
+    },
+    "olsen_fit": {
+     "5": 36.1,
+     "10": 73.2,
+     "20": 114.9,
+     "40": 143.9
+    }
+   },
+   "VM7d": {
+    "5": {
+     "whole": 13.0,
+     "first_100ms": 14.3,
+     "rest": 2.66
+    },
+    "10": {
+     "whole": 34.06,
+     "first_100ms": 51.49,
+     "rest": 2.53
+    },
+    "20": {
+     "whole": 69.76,
+     "first_100ms": 109.06,
+     "rest": 2.81
+    },
+    "40": {
+     "whole": 107.54,
+     "first_100ms": 172.29,
+     "rest": 2.54
+    },
+    "olsen_fit": {
+     "5": 33.2,
+     "10": 68.5,
+     "20": 109.5,
+     "40": 139.0
+    }
+   },
+   "DM1": {
+    "5": {
+     "whole": 23.91,
+     "first_100ms": 31.53,
+     "rest": 2.84
+    },
+    "10": {
+     "whole": 49.94,
+     "first_100ms": 63.25,
+     "rest": 3.0
+    },
+    "20": {
+     "whole": 82.31,
+     "first_100ms": 118.25,
+     "rest": 2.69
+    },
+    "40": {
+     "whole": 114.09,
+     "first_100ms": 175.72,
+     "rest": 2.41
+    },
+    "olsen_fit": {
+     "5": 5.2,
+     "10": 13.7,
+     "20": 33.1,
+     "40": 65.9
+    }
+   }
+  },
+  "no presynaptic inhibition": {
+   "DM4": {
+    "5": {
+     "whole": 9.39,
+     "first_100ms": 14.11,
+     "rest": 2.77
+    },
+    "10": {
+     "whole": 17.66,
+     "first_100ms": 32.84,
+     "rest": 2.78
+    },
+    "20": {
+     "whole": 31.31,
+     "first_100ms": 61.38,
+     "rest": 2.38
+    },
+    "40": {
+     "whole": 47.52,
+     "first_100ms": 96.48,
+     "rest": 2.26
+    },
+    "olsen_fit": {
+     "5": 24.7,
+     "10": 55.2,
+     "20": 97.9,
+     "40": 134.9
+    }
+   },
+   "DL5": {
+    "5": {
+     "whole": 22.31,
+     "first_100ms": 24.88,
+     "rest": 2.31
+    },
+    "10": {
+     "whole": 45.19,
+     "first_100ms": 58.44,
+     "rest": 3.12
+    },
+    "20": {
+     "whole": 79.25,
+     "first_100ms": 114.06,
+     "rest": 3.12
+    },
+    "40": {
+     "whole": 110.56,
+     "first_100ms": 177.19,
+     "rest": 2.81
+    },
+    "olsen_fit": {
+     "5": 36.1,
+     "10": 73.2,
+     "20": 114.9,
+     "40": 143.9
+    }
+   },
+   "VM7d": {
+    "5": {
+     "whole": 14.16,
+     "first_100ms": 19.95,
+     "rest": 2.91
+    },
+    "10": {
+     "whole": 35.23,
+     "first_100ms": 51.34,
+     "rest": 2.95
+    },
+    "20": {
+     "whole": 66.47,
+     "first_100ms": 110.2,
+     "rest": 3.37
+    },
+    "40": {
+     "whole": 103.59,
+     "first_100ms": 172.91,
+     "rest": 3.43
+    },
+    "olsen_fit": {
+     "5": 33.2,
+     "10": 68.5,
+     "20": 109.5,
+     "40": 139.0
+    }
+   },
+   "DM1": {
+    "5": {
+     "whole": 27.66,
+     "first_100ms": 33.09,
+     "rest": 2.84
+    },
+    "10": {
+     "whole": 51.78,
+     "first_100ms": 70.28,
+     "rest": 3.47
+    },
+    "20": {
+     "whole": 84.84,
+     "first_100ms": 126.97,
+     "rest": 3.03
+    },
+    "40": {
+     "whole": 114.47,
+     "first_100ms": 178.16,
+     "rest": 3.41
+    },
+    "olsen_fit": {
+     "5": 5.2,
+     "10": 13.7,
+     "20": 33.1,
+     "40": 65.9
+    }
+   }
+  },
+  "no depression": {
+   "DM4": {
+    "5": {
+     "whole": 0.0,
+     "first_100ms": 0.0,
+     "rest": 0.0
+    },
+    "10": {
+     "whole": 2.69,
+     "first_100ms": 0.78,
+     "rest": 0.0
+    },
+    "20": {
+     "whole": 21.09,
+     "first_100ms": 20.31,
+     "rest": 0.0
+    },
+    "40": {
+     "whole": 57.22,
+     "first_100ms": 61.56,
+     "rest": 0.0
+    },
+    "olsen_fit": {
+     "5": 24.7,
+     "10": 55.2,
+     "20": 97.9,
+     "40": 134.9
+    }
+   },
+   "DL5": {
+    "5": {
+     "whole": 0.0,
+     "first_100ms": 0.0,
+     "rest": 0.0
+    },
+    "10": {
+     "whole": 4.31,
+     "first_100ms": 3.75,
+     "rest": 0.0
+    },
+    "20": {
+     "whole": 42.25,
+     "first_100ms": 33.44,
+     "rest": 0.0
+    },
+    "40": {
+     "whole": 122.5,
+     "first_100ms": 110.31,
+     "rest": 0.0
+    },
+    "olsen_fit": {
+     "5": 36.1,
+     "10": 73.2,
+     "20": 114.9,
+     "40": 143.9
+    }
+   },
+   "VM7d": {
+    "5": {
+     "whole": 0.18,
+     "first_100ms": 0.09,
+     "rest": 0.0
+    },
+    "10": {
+     "whole": 6.83,
+     "first_100ms": 3.12,
+     "rest": 0.0
+    },
+    "20": {
+     "whole": 48.42,
+     "first_100ms": 41.16,
+     "rest": 0.0
+    },
+    "40": {
+     "whole": 143.56,
+     "first_100ms": 125.09,
+     "rest": 0.0
+    },
+    "olsen_fit": {
+     "5": 33.2,
+     "10": 68.5,
+     "20": 109.5,
+     "40": 139.0
+    }
+   },
+   "DM1": {
+    "5": {
+     "whole": 0.12,
+     "first_100ms": 0.0,
+     "rest": 0.0
+    },
+    "10": {
+     "whole": 6.56,
+     "first_100ms": 3.12,
+     "rest": 0.0
+    },
+    "20": {
+     "whole": 54.25,
+     "first_100ms": 41.88,
+     "rest": 0.0
+    },
+    "40": {
+     "whole": 131.44,
+     "first_100ms": 118.44,
+     "rest": 0.0
+    },
+    "olsen_fit": {
+     "5": 5.2,
+     "10": 13.7,
+     "20": 33.1,
+     "40": 65.9
+    }
+   }
+  },
+  "neither": {
+   "DM4": {
+    "5": {
+     "whole": 32.89,
+     "first_100ms": 31.14,
+     "rest": 39.02
+    },
+    "10": {
+     "whole": 61.0,
+     "first_100ms": 61.81,
+     "rest": 40.38
+    },
+    "20": {
+     "whole": 101.89,
+     "first_100ms": 100.48,
+     "rest": 39.52
+    },
+    "40": {
+     "whole": 155.59,
+     "first_100ms": 150.06,
+     "rest": 40.25
+    },
+    "olsen_fit": {
+     "5": 24.7,
+     "10": 55.2,
+     "20": 97.9,
+     "40": 134.9
+    }
+   },
+   "DL5": {
+    "5": {
+     "whole": 83.66,
+     "first_100ms": 70.59,
+     "rest": 49.41
+    },
+    "10": {
+     "whole": 145.72,
+     "first_100ms": 131.72,
+     "rest": 51.72
+    },
+    "20": {
+     "whole": 221.94,
+     "first_100ms": 207.75,
+     "rest": 50.69
+    },
+    "40": {
+     "whole": 285.62,
+     "first_100ms": 276.25,
+     "rest": 52.19
+    },
+    "olsen_fit": {
+     "5": 36.1,
+     "10": 73.2,
+     "20": 114.9,
+     "40": 143.9
+    }
+   },
+   "VM7d": {
+    "5": {
+     "whole": 88.52,
+     "first_100ms": 83.77,
+     "rest": 87.92
+    },
+    "10": {
+     "whole": 144.98,
+     "first_100ms": 132.23,
+     "rest": 87.68
+    },
+    "20": {
+     "whole": 211.05,
+     "first_100ms": 203.51,
+     "rest": 88.81
+    },
+    "40": {
+     "whole": 270.03,
+     "first_100ms": 260.94,
+     "rest": 88.97
+    },
+    "olsen_fit": {
+     "5": 33.2,
+     "10": 68.5,
+     "20": 109.5,
+     "40": 139.0
+    }
+   },
+   "DM1": {
+    "5": {
+     "whole": 80.59,
+     "first_100ms": 76.78,
+     "rest": 62.28
+    },
+    "10": {
+     "whole": 138.84,
+     "first_100ms": 127.78,
+     "rest": 61.91
+    },
+    "20": {
+     "whole": 207.5,
+     "first_100ms": 194.88,
+     "rest": 62.31
+    },
+    "40": {
+     "whole": 275.1,
+     "first_100ms": 265.53,
+     "rest": 60.41
+    },
+    "olsen_fit": {
+     "5": 5.2,
+     "10": 13.7,
+     "20": 33.1,
+     "40": 65.9
+    }
+   }
+  }
+ },
+ "seconds": 772
+}
