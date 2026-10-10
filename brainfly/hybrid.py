@@ -213,7 +213,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
     that list overflowed (n_touched > its capacity), when the whole row is scanned. uniform: every
     neuron is spiking and in class 0, and there is no slow current, so the parameters are scalars.
     external neurons never fire; their release is set from outside (HybridBrain.set_release), and
-    E[i], the same for every trial, is what it adds to neuron i each second, like graded input R.
+    E[i], the same for every trial, is what it adds to neuron i each second, like graded input R. A
+    graded neuron made external releases only that (its own state isn't integrated, so isn't read).
     internal lists the neurons that aren't external; in the non-uniform case only they are integrated,
     which gives the same spikes (external neurons never fire, and nothing reads their state).
     g_targets lists the only neurons R or E can reach: the targets of graded and external neurons.
@@ -283,7 +284,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                                    a_xx, a_ss, theta, graded, external, tonic_on, adapt_on, slow, slow_in, fired)
             for q in range(ng):
                 i = g_list[q]
-                r = 0.0 if silenced[i] else min(max(g_gain[q] * (ub[i] - g_at[q]), 0.0), g_max[q])
+                r = 0.0 if silenced[i] or external[i] else min(max(g_gain[q] * (ub[i] - g_at[q]), 0.0), g_max[q])
                 change = r - rel[b, q]
                 if change != 0.0:
                     rel[b, q] = r

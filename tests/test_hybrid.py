@@ -450,6 +450,18 @@ def test_external_release_reaches_targets_and_the_neuron_never_fires():
     assert brain.x[0, 1] == 0 and brain.external[0]
 
 
+def test_an_external_graded_neuron_releases_only_what_is_set():
+    """A graded neuron whose release is set from outside adds only that release to its target, however its own
+    (unintegrated) state is kicked by background noise and synaptic input."""
+    types = {"c0": {"unit": "graded", "gain": 5.0, "noise_rate": 500.0, "noise_kick": 3.0}}
+    brain = small([(0, 1, 10.0), (2, 0, 500.0)], 3, types=types, w_poi=100.0)
+    brain.set_release([0], 30.0)
+    brain.advance(8000, drive=[([2], 1 / DT)])               # neuron 2 hammers neuron 0
+    assert brain.release[0, 0] == 0.0
+    x = 10.0 * 30.0 * DT / (1 - np.exp(-DT / TAU))
+    assert brain.x[0, 1] == pytest.approx(x, rel=1e-3)
+
+
 def test_input_to_external_neurons_changes_nothing():
     """External release skips targets that are external themselves, since their input can't
     matter: with or without a synapse between two external neurons, every spike is the same."""
