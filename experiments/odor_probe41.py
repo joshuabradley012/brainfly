@@ -25,6 +25,28 @@ changes. Each built model is cached (odor_probe41_kw08, odor_probe41_kw08_kept, 
 Measured as odor_probe42.py measures. Seeds 240000 for the builds (odor_probe30.py's, as odor_probe42.py offsets them);
 390000 + 1000 x condition for the measures (odor_probe40.py's offsets).
 
+Ran: the slow component's size sets whether the projection neurons accommodate and keeping their current sets how hard
+they open; only the two together give flies' kind of response. In every condition the LNs still answer as flies' do
+(root mean square log ratio 0.20-0.22) and the inhibition's fit is as before (k_A 0.0012, k_B 0.0061-0.0069; the
+synapses resting at 0.94-0.99 of their strength, the PNs at 1.9-2.4 spikes/s). kw08: 3-octanol's PNs peak at once, at
+56 spikes/s at 50-100 ms, and fall to 0.36 of that by 0.5 s and 0.25 by 0.95 s, but the transform's Rmax is 62-135
+(flies 144-170) and the Kenyon cells nearly fall silent (0.05-0.4%), as in odor_probe36.py. kw08_kept: they peak at 103
+at 50-100 ms (the strongly driven ones at 186) and fall to 0.35 of it at 0.40-0.45 s, 0.30 at 0.5 s and 0.20 at 0.95 s
+(flies: about 0.48 at 0.43 s, 500 ms after the valve); they fire 101-122 spikes/s over the first 100 ms of each odor and
+52-75 over the second; the transform's Rmax is 174-198 in DL5, VM7d and DM1 (flies 163-170) and 84 in DM4 (170), its
+sigma 23-34 (12-16; DM1 45); 1.1-6.0% of Kenyon cells respond (flies 6 +- 5%), mean Jaccard 0.14, the responding
+alpha/beta cells firing 1.1-2.0 spikes per response (flies 2.2) and 3.6 over 1.4 s to 3-octanol (11 with Nagel's
+component); but alpha'/beta' cells respond no more than alpha/beta (5.2% and 5.9% to 3-octanol; flies 9-14% and 3-8%),
+4-methylcyclohexanol reaches a quarter as many Kenyon cells as 3-octanol (1.1% against 4.7%; flies 0.73-0.92) though its
+PNs answer as hard (122 spikes/s per PN over the first 100 ms, against 120), only 29-43% of PNs respond by Turner's
+criterion (flies 59 +- 14%), and MBON11 gains 13 spikes to 3-octanol from 44 pC per cell (flies 118 from about 250).
+nagel_kept: the PNs open hardest (117 spikes/s at 50-100 ms, the strongly driven ones at 217) but never accommodate (a
+peak of 127 at 0.25 s, 0.94 of it at 0.5 s and 0.74 at 0.95 s); the transform's Rmax is 213-359 and sigma 19-30; the
+Kenyon cells respond at 5.3-20% and fire 5.2-8.1 spikes per response (alpha/beta); MBON11 gains 203 spikes from 1094 pC.
+So with the measured unitary slow component and the PNs keeping their current, the antennal lobe opens and accommodates
+roughly as flies' does and the Kenyon cells fire as few spikes as flies'; what remains is weak input (the transform's
+sigma, PN breadth, 4-methylcyclohexanol's reach), the alpha'/beta' cells and MBON11's input.
+
     python experiments/odor_probe41.py         (writes experiments/odor_probe41.json)
 """
 from __future__ import annotations
