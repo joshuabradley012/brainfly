@@ -16,6 +16,13 @@ is 0.48 of 3-octanol's (DoOR alone 0.445; flies' receptor neurons about 0.45, Ba
 
     with receptor_fills.applied():
         ...                                    # brainfly.odors.glomeruli (and so Receptors.plan) includes the fills
+
+A second tier, PN_INFERRED, is a stand-in, not a measurement: for receptors no study has recorded with the odor at the
+receptor level (DoOR or Barth et al.), the receptor input that would give Badel et al. 2016's significant PN responses,
+converted at 0.0028 DoOR units per % PN ΔF/F (the median of 10 glomerulus-odor anchors, range 0.0012-0.0081;
+oct_mch_input.md, "For the model" 5a). It applies only with applied(pn_inferred=True), after the receptor fills, and only
+where neither DoOR nor the receptor fills give a value. With both tiers 4-methylcyclohexanol's summed drive is 0.61 of
+3-octanol's.
 """
 from __future__ import annotations
 
@@ -27,6 +34,9 @@ from brainfly import odors
 
 FILLS = {"4-methylcyclohexanol": {"VC1": 0.175, "VC3": 0.125, "VM2": 0.12, "VA7l": 0.12},
          "3-octanol": {"VM2": 0.69}}
+PN_INFERRED = {"4-methylcyclohexanol": {"VM7v": 0.34, "DA3": 0.32, "DL4": 0.27, "DA4l": 0.27, "DL3": 0.25, "DA1": 0.22,
+                                        "VM3": 0.20},
+               "3-octanol": {"DL3": 0.47, "VM3": 0.34, "DA1": 0.33, "DA3": 0.32}}
 
 
 def measured(name: str) -> set:
@@ -36,25 +46,27 @@ def measured(name: str) -> set:
     return {g for r, v in zip(receptors, row) if not np.isnan(v) for g in glom.get(r, ())}
 
 
-def filling(plain):
-    """odors.glomeruli with the fills added where DoOR has no measurement."""
+def filling(plain, pn_inferred: bool = False):
+    """odors.glomeruli with the fills added where DoOR has no measurement (and, with pn_inferred, the PN-inferred tier
+    where neither gives one)."""
     def glomeruli(name: str, floor: float = 0.0, inhibition: bool = False) -> dict:
         out = plain(name, floor, inhibition)
-        fills = FILLS.get(name.lower(), {})
-        if fills:
+        tiers = [FILLS.get(name.lower(), {})] + ([PN_INFERRED.get(name.lower(), {})] if pn_inferred else [])
+        if any(tiers):
             have = measured(name)
-            for g, v in fills.items():
-                if g not in have and v > floor:
-                    out[g] = v
+            for fills in tiers:
+                for g, v in fills.items():
+                    if g not in have and g not in out and v > floor:
+                        out[g] = v
         return out
     return glomeruli
 
 
 @contextlib.contextmanager
-def applied():
+def applied(pn_inferred: bool = False):
     plain = odors.glomeruli
-    odors.glomeruli = filling(plain)
+    odors.glomeruli = filling(plain, pn_inferred)
     try:
-        yield FILLS
+        yield {"receptor": FILLS, **({"pn_inferred": PN_INFERRED} if pn_inferred else {})}
     finally:
         odors.glomeruli = plain
