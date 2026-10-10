@@ -16,6 +16,24 @@ the PNs polished one by one), with only the receptor neurons' synapses onto unig
 (the receptor neurons' depletion still follows the gain, as their synapses onto PNs dominate it), and k_A and k_B fitted
 again. Measured as odor_probe28.py measures. Seeds 230000 (otherwise as odor_probe28.py's, with its offsets).
 
+Ran: the LNs keep sustained activity and the PNs keep their onsets, and the fit to flies' EPSCs is the closest yet; the
+PNs still don't accommodate. With their own input uninhibited, the GABAergic LNs fire 60 spikes/s each over an odor's
+first 50 ms and about 11 from 300 ms on (resting 0.5), a burst about 5.5 times their later activity (flies: 22 and 6-8
+over a rest of about 4, about 6 times), so the fit needs far less inhibition: k_A = 0.00044 and k_B = 0.0021 per spike/s
+above rest (it oscillated between rounds, the LNs' activity depending strongly on the inhibition through the PNs), giving
+EPSCs at 0.32-0.33 of baseline (flies 0.27-0.37) and with GABA-B blocked 0.61-0.71 (0.52-0.81). The synapses then hold
+at 0.26-0.39 of their resting strength through an odor, with no onset crash, and the driven PNs fire 130-156 Hz in the
+first 100 ms (flies 100-200) but rise through the odor (3-octanol: 83 Hz in the first 50 ms, 122 by 450 ms; 158-206 over
+1 s; flies fall to about half by 500 ms). 25-38% of PNs respond by Turner's criterion (flies 59 +- 14%). 3.4-15.9% of
+Kenyon cells respond (flies 6 +- 5%), with mean Jaccard 0.19 (flies' dissimilar odors about 0.22) and PN patterns
+correlating 0.32, but 65% of 4-methylcyclohexanol's responders also answer 3-octanol, and responding cells fire too
+many spikes (alpha/beta 6.3, flies 2.2), as the PNs' rising responses would give; alpha'/beta' cells respond at 1-6%
+(flies about 9-14%), gamma at 4-14% (about 2). MBON11 gains 4.5-21 spikes and MBON-alpha2sc 6-39 (flies 110-118 and about
+71-85). The transform stays too steep (Rmax 194, 320, 339 and 307; sigma 39, 32, 32 and 28; Olsen 144-170 and 12-16, DM1
+45), weak input held back by the synapses' resting depression with spontaneous firing (about 0.4 of full strength; the
+notes record about 0.6 at 7 Hz in Kazama & Wilson 2008, where the depression fit predicts 0.44), and lateral input still
+divides too much (to 0-0.52). PNs rest at 1.7 Hz, the brain at 1.11 Hz.
+
     python experiments/odor_probe29.py         (writes experiments/odor_probe29.json)
 """
 from __future__ import annotations
