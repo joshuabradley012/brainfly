@@ -643,3 +643,22 @@ def test_recorded_spikes_match_the_counts_step_by_step():
     pre, post = np.flatnonzero(spikes[0, :, 1]), np.flatnonzero(spikes[0, :, 0])
     assert len(post) > 3 and post[0] == pre[0] + 1
     assert set(post) <= set(pre + 1)                # c1 fires one step after c0, unless still refractory
+
+
+def test_keep_current_lets_synaptic_drive_work_like_a_bias():
+    """Shiu's reset sets a neuron's fast current to zero at each spike and drops input while it is refractory, so
+    synaptic drive that holds a neuron at a high rate loses much of its charge. With keep_current the same synaptic
+    drive (20 driven inputs at 200 Hz, each 2 mV into the 5 ms current: 40 mV on average) fires the target about as fast
+    as a 40 mV bias does; without it, far slower."""
+    n_in, rate, w = 20, 200.0, 2.0
+    drive = [(np.arange(n_in), rate)]
+    def run(**types):
+        brain = small([(i, n_in, w) for i in range(n_in)], n_in + 1, types=types, trials=4, w_poi=100.0)
+        return float(brain.advance(20000, drive)[:, n_in].mean() / 2.0)
+    shiu = run()
+    kept = run(**{f"c{n_in}": {"keep_current": 1.0}})
+    biased = small([], n_in + 1, types={f"c{n_in}": {"bias": rate * n_in * w * TAU}}, trials=4)
+    bias_hz = float(biased.advance(20000)[:, n_in].mean() / 2.0)
+    assert bias_hz > 100, "the target should fire fast"
+    assert kept == pytest.approx(bias_hz, rel=0.1)
+    assert shiu < 0.8 * bias_hz

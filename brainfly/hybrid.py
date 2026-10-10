@@ -39,6 +39,10 @@ brainfly.shiu, and lets each cell type differ:
     tau_slow      the time constant of the type's slow current, s (default 0: the brain's tau_slow)
     slow_depression, slow_recovery    depression of the type's outgoing slow synapses, on their own (default 0: with
                   the fast ones; Nagel, Hong & Wilson 2015's slow receptor component: 0.9927 and 33.2 s)
+    keep_current  1 to keep the fast synaptic current through a spike: Shiu's model (the default, 0) sets it to zero
+                  at each spike and drops input arriving while the neuron is refractory, so a neuron driven to a high
+                  rate by synapses loses much of their charge, which a constant bias doesn't; with 1, only the voltage
+                  is held at reset while refractory and the current decays and takes input as usual
 
 A spike adds w_syn x (signed synapse count) to a fast current in each target (tau 5 ms, as in
 Shiu), or to a slow current (tau_slow, the target type's) along the edges given as slow, t_dly
@@ -73,7 +77,7 @@ UNIT = {"spiking": False, "graded": True}
 DEFAULTS = {"unit": "spiking", "tau_m": T_MBR, "threshold": V_TH - V0, "reset": V_RST - V0, "refractory": T_RFC,
             "bias": 0.0, "scale": 1.0, "gain": 6.0, "release_at": V_TH - V0, "max_release": np.inf,
             "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0, "adaptation": 0.0,
-            "adaptation_tau": 0.2, "tau_slow": 0.0, "slow_depression": 0.0, "slow_recovery": 0.0}
+            "adaptation_tau": 0.2, "tau_slow": 0.0, "slow_depression": 0.0, "slow_recovery": 0.0, "keep_current": 0.0}
 MONOAMINES = ("dopamine", "octopamine", "serotonin")
 
 
@@ -189,7 +193,7 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
-             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, depress_s, recover_s,
+             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, keep, graded, depress, recover, depress_s, recover_s,
              uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last, left_s, last_s,
@@ -334,7 +338,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
             for q in range(rn):                # the refractory neurons back to their frozen state
                 j = rlist[q]
                 ub[j] = reset[cls[j]]
-                xb[j] = 0.0
+                if not keep[cls[j]]:
+                    xb[j] = 0.0
                 if slow:
                     sb[j] = rs[q]
             spikes = 0
@@ -354,7 +359,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                     continue
                 spikes += 1
                 ub[i] = reset[cls[i]]
-                xb[i] = 0.0
+                if not keep[cls[i]]:
+                    xb[i] = 0.0
                 if adapt_on:
                     adb[i] += adapt[cls[i]]
                 untilb[i] = t if driven[i] else t + rfc[cls[i]]
@@ -682,6 +688,7 @@ class HybridBrain:
             a_aa=f32(lambda p: np.exp(-dt / p["adaptation_tau"])), adapt=f32(lambda p: p["adaptation"]),
             theta=f32(lambda p: p["threshold"]), reset=f32(lambda p: p["reset"]),
             rfc=np.array([int(round(p["refractory"] / dt)) for p in table], np.int64),
+            keep=np.array([bool(p.get("keep_current", 0.0)) for p in table], np.bool_),
             graded=np.array([UNIT[p["unit"]] for p in table], np.bool_),
             depress=f32(lambda p: p["depression"]), recover=np.array([p["recovery"] / dt for p in table]),
             depress_s=f32(lambda p: p["slow_depression"]),
@@ -772,7 +779,7 @@ class HybridBrain:
                  self.sptr, self.sidx, self.slow_weights, self.slow_full, self.stargets, self.slow_in, self.gptr, self.gidx, self.gap_mv,
                  self.fptr, self.fcomp, self.fast_mv, self.ftargets, self.fpending, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  k["a_xx"], k["a_ss"], k["theta"],
-                 k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["depress_s"], k["recover_s"], k["uniform"],
+                 k["reset"], k["rfc"], k["keep"], k["graded"], k["depress"], k["recover"], k["depress_s"], k["recover_s"], k["uniform"],
                  bool(len(self.graded) or external_on), k["g_list"], k["g_gain"], k["g_at"], k["g_max"],
                  self._graded_targets() if external_on else self._graded_only_targets(), self.u, self.x, self.s, self.ad, self.until,
                  self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.slow_graded_input, self.release,
