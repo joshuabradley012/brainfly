@@ -19,8 +19,8 @@ Ran: it closes about half the gap. The fitted Rmax is 173, 293, 307 and 286 spik
 170, 167, 163, 144) and sigma 25, 17, 15 and 18 (16.3, 11.8, 12.4, 44.8). DM4, whose two main PNs get about half the
 median PN's summed receptor weight (77-99 against 160), lands on Olsen's Rmax; the others, near or above the median,
 stay about 1.8 times too high, so evening out the PNs' receptor input wouldn't close the gap either. Lateral input still
-barely divides (0.89-1.26). In odors the PNs fire 199-219 Hz in the first 100 ms and 252-279 Hz over the second half
-second, rising where flies' accommodate; 15-48% of Kenyon cells respond (flies 6 +- 5%) and MBON11 gains 20-68 spikes.
+barely divides (0.89-1.26). In odors the PNs fire 199-219 Hz in the first 100 ms and 252-279 Hz over a whole 1 s
+odor, rising where flies' accommodate; 15-48% of Kenyon cells respond (flies 6 +- 5%) and MBON11 gains 20-68 spikes.
 A fixed factor halves weak and strong input alike. In flies the presynaptic inhibition grows with the local neurons'
 activity, early through GABA-A and late through GABA-B, so it cuts strong drive more, accommodates the response, and
 divides one glomerulus's output by the others' input: the next step is that inhibition itself.
