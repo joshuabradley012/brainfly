@@ -15,6 +15,21 @@ Measured, with the receptor fills alone and with the PN-inferred tier too: odor_
 odor_probe36.measure's (Kenyon cells by class and odor, overlap, MBON11). Seeds 620000 (odor_probe36.measure) and 630000
 (equalization) + 100000 x condition.
 
+Ran: no; with flies' breadth 4-methylcyclohexanol still reaches about a quarter as many Kenyon cells as 3-octanol.
+Without fills (odor_probe52.py) it reaches 2.4% against 9.3% (0.26) and its PNs sum 0.52 of 3-octanol's. With the
+receptor fills: Kenyon cells 2.6% against 11.2% (0.23), PNs 0.46, 11 glomeruli over 10 spikes/s against 15. With the
+PN-inferred tier as well its summed receptor drive is 0.56 of 3-octanol's and its PNs answer in 15 glomeruli over 10
+spikes/s (3-octanol 17; flies' PNs 18 and 13), the inferred ones at 37-77 spikes/s (DA1 77, DL3 61, DL4 56, VM7v 52,
+DA4l 44, DA3 38, VM3 37), but each answers less than 3-octanol's strongest (D 105, VA3 82 against VM5d's and VM5v's
+120 or so), its PNs sum 0.58 of 3-octanol's (flies 0.85-0.98) and its Kenyon cells 3.6% against 13.6% (0.26; flies
+0.73-0.92); Jaccard 0.14 (0.10 with the receptor fills; flies about 0.19). 3-octanol's own fills raise it as much as
+4-methylcyclohexanol's raise it. MBON11 gains 27.4 and 10.6 spikes (flies 118 and 110). The model's antennal lobe carries
+the receptor neurons' 0.56 to the PNs almost unchanged (0.58), where flies' carries 0.45 to 0.85-0.98, and the Kenyon
+cells' threshold then widens the gap. Flies' transform rises steeply and saturates by about 50 spikes/s of receptor
+input (odor_olsen_protocol_check.py), so 3-octanol's strong glomeruli and 4-methylcyclohexanol's moderate ones both
+answer near Rmax; the model's keeps rising, so the stronger input keeps winning. The saturation, not the breadth, looks
+like what the model lacks.
+
     python experiments/odor_probe53.py         (writes experiments/odor_probe53.json)
 """
 from __future__ import annotations
