@@ -36,13 +36,14 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
-* **The antennal lobe now opens and accommodates roughly as flies' does, and Kenyon cells fire as few spikes as
-  flies' (rung 9's groundwork).** Responding Kenyon cells fired about 11 spikes in 1.4 s where flies' fire about 2.
-  The cause was upstream: flies' projection neurons open strongly and fall to about half within half a second, while
-  the model's climbed through the odor. Three changes, each from a measurement, fix most of it. The local neurons are
-  calibrated to their measured odor response. The receptor synapse's slow component takes its measured unitary size.
-  And the projection neurons keep their synaptic current through their spikes. A bug in how the antennal lobe was built
-  is fixed too. Weak odors still reach too few projection neurons, and MBON11 now gets too little input.
+* **The antennal lobe and the mushroom body now answer odors close to flies' (rung 9's groundwork).** Responding
+  Kenyon cells fired about 11 spikes in 1.4 s where flies' fire about 2. The cause was upstream: flies' projection
+  neurons open strongly and fall to about half within half a second, while the model's climbed through the odor. Three
+  changes, each from a measurement, fix most of it. The local neurons are calibrated to their measured odor response.
+  The receptor synapse's slow component takes its measured unitary size. And the projection neurons keep their synaptic
+  current through their spikes. Then the mushroom body's feedback neuron APL and the PN-to-Kenyon cell synapse were set
+  from measurements too, which brings the Kenyon cells and MBON11 close to flies'. Two bugs in how the antennal lobe was
+  built are fixed. Weak odors still reach too few Kenyon cells, and the Kenyon cell classes respond in the wrong order.
   - **The local neurons' onset burst came from all their inputs at once** ([`odor_probe38.py`](experiments/odor_probe38.py),
     [`odor_ln_inputs.py`](experiments/odor_ln_inputs.py), [`odor_probe39.py`](experiments/odor_probe39.py)). Flies'
     GABAergic local neurons answer an odor with a brief onset: 22, 13, 8 and 6 spikes/s per cell over 0–50, 50–100,
@@ -84,6 +85,40 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     the projection neurons' excitability to make up for it, so odor responses barely change when the inhibition is
     fitted after the polishes (odor_probe42.py): 3-octanol's projection neurons peak at 106 spikes/s instead of 105,
     and the Kenyon cells respond at 2.6–10.5% instead of 2.1–10.1%. Earlier conclusions stand.
+  - **Consolidated, and settled before each odor** ([`odor_probe44.py`](experiments/odor_probe44.py),
+    [`odor_warm_check.py`](experiments/odor_warm_check.py), [`al_cells.py`](experiments/al_cells.py),
+    [`warm.py`](experiments/warm.py)). The model had picked its local neurons by a pattern on type names, which missed
+    101 of the 420 neurons MaleCNS classes as antennal lobe local neurons, 25 of the 115 GABAergic ones among them. It
+    now takes MaleCNS's class. And every run had started its odor 1-2 s after a reset, before the antennal lobe settled
+    (the local neurons a quarter above their steady rate, the projection neurons at half theirs). Runs now start from a
+    settled state, in the build and in every measure. The local neurons then match Nagel et al.'s odor response almost
+    exactly, and the projection neurons rest at their target, while the odor responses barely change.
+  - **Weak input, checked** ([`odor_weak_input_check.py`](experiments/odor_weak_input_check.py),
+    [`odor_transform_check.py`](experiments/odor_transform_check.py),
+    [`odor_lateral_check.py`](experiments/odor_lateral_check.py),
+    [notes](research_notes/Rung%209%20learning%20data/lateral_excitation.md)). The model's transform still needs
+    about twice flies' receptor rate to reach half its maximum (σ 20–32, flies 12–16). Presynaptic inhibition isn't the
+    cause, nor is the step the transform is measured with, nor receptor convergence. Electrical coupling from excitatory
+    local neurons, which the model lacks, makes it worse, and in flies lateral input is net inhibitory and PN tuning stays
+    broad without it. Against two other measurements the model's weak-input gain is about right: projection neurons fire
+    about three to four times their receptor neurons' rate near threshold (Jeanne & Wilson 2015), and receptor input under
+    20 spikes/s drives them over 100 (Kazama & Wilson 2008). What stays different is how transient flies' responses to
+    weak input are, and 4-methylcyclohexanol's reach.
+  - **APL's feedback and the PN-to-Kenyon cell synapse, both from measurements**
+    ([`odor_probe45.py`](experiments/odor_probe45.py), [`odor_probe46.py`](experiments/odor_probe46.py),
+    [`mb_calibration.py`](experiments/mb_calibration.py)). APL, the mushroom body's feedback inhibitor, had gone
+    silent: its release started 7 mV above rest, rung 4's default, and Kenyon cells firing few spikes barely moved it.
+    Set from measurements, it releases from 3.5 mV as non-spiking insect neurons do, saturates where Kenyon cells sit
+    11 mV down (Inada et al. 2017), and gets just enough Kenyon cell input that silencing it raises their responses
+    2.5-fold, as blocking it does in flies. That left the Kenyon cells too quiet (0.5–2.1% respond): their match to
+    flies had leaned on a silent APL. The PN-to-Kenyon cell synapse was short. Rung 4's size rule gave one PN spike at
+    one claw a 0.70 mV EPSP where Turner et al. 2008 measured 1.4 mV in vivo. At the measured strength, with APL fitted
+    again, 3.6–15.7% of Kenyon cells respond (flies 6 ± 5%), α/β cells fire 1.9–3.8 spikes per response (flies 2.2), and
+    MBON11 gains 36 spikes to 3-octanol from 176 pC of input (flies 118 from about 250). Still wrong: the classes respond
+    in the wrong order (α/β 17% to 3-octanol, γ 10%, α′/β′ 7%; flies' α′/β′ respond most, 9–14%, and γ least, about
+    2%), and 4-methylcyclohexanol reaches 0.29 as many Kenyon cells as 3-octanol (flies 0.73–0.92). A latent bug turned
+    up on the way: a graded neuron whose output is set from outside still integrates noise, which no run so far
+    triggered.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/al_lns-dark.svg">
