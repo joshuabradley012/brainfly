@@ -14,6 +14,18 @@ Measured, with the fills: odor_equalization_check.py's measures, and odor_probe3
 to six odors by class, their overlap, MBON11's input and spikes). Seeds 580000 for odor_probe36.measure, 590000 for the
 equalization; odor_probe49.py's measures are the same model without the fills.
 
+Ran: no; the fills move 4-methylcyclohexanol further from 3-octanol. Its summed receptor response rises from 0.39 of
+3-octanol's to 0.41 (the first 0.5 s), but its PNs' falls from 0.53 to 0.47 (0.51 to 0.42 over the second) and its
+Kenyon cells' from 0.28 to 0.20 (3-octanol 8.9% to 10.7% of Kenyon cells, 4-methylcyclohexanol 2.5% to 2.2%; flies
+0.85-0.98 and 0.73-0.92). 3-octanol's one fill is strong (VM2 0.69): VM2's PNs answer at 89 spikes/s and the odor reaches
+15 glomeruli over 10 spikes/s (14). 4-methylcyclohexanol's four are weak (0.12-0.175): their PNs answer at 28 (VC1), 26
+(VM2), 9.5 (VA7l) and 0 (VC3) spikes/s, while the extra input recruits more lateral inhibition and every glomerulus the
+odor already drove answers less (D 98 to 91, VA3 74 to 67, DL1 53 to 45, VM5d 27 to 20), so its PNs' summed response
+falls (2175 to 1958 spikes/s) and it still reaches 9 glomeruli over 10 spikes/s (flies 18). In this model adding weak
+input to a broad odor costs the other glomeruli more than it brings, where flies' antennal lobe makes 4-methylcyclohexanol's
+weak, broad input nearly as effective as 3-octanol's strong one. MBON11 gains 17.6 and 6.2 spikes (odor_probe49.py 17.1
+and 6.1); 53% of 4-methylcyclohexanol's responders also answer 3-octanol (flies 30-33%).
+
     python experiments/odor_probe50.py         (writes experiments/odor_probe50.json)
 """
 from __future__ import annotations
