@@ -1,18 +1,26 @@
-"""Exploratory, not pre-registered: learning_pilot2.py again, on the model as it stands after odor_probe33.py and
-odor_probe34.py: does the depression stay as specific to the paired odor?
+"""Exploratory, not pre-registered: learning_pilot2.py again, on the model as it stands after odor_probe33.py to
+odor_probe35.py, with MBON11's spikes counted as Hige et al. counted them (the cell held near 6 Hz): how specific is the
+depression now, against flies' numbers read in full?
 
 learning_pilot2.py, on odor_probe30.py's antennal lobe with MBON11's Kenyon cell synapses from its own measurements: the
 rate that cuts the paired odor's charge by 90% cuts the unpaired odor's by 38% (3-octanol paired) or 11%
 (4-methylcyclohexanol paired), and the unpaired odor's spikes fall 30% or 5.5% (flies about 25%). Since then the Kenyon
 cell classes' distances below threshold come from Inada et al. 2017's offsets (odor_probe33.py: alpha'/beta' and gamma
-cells responding as in flies, MBON11's input a quarter lower), and DEPRESSING says whether the Kenyon cell-to-MBON
-synapses depress as Yamada et al. 2024 measured (odor_probe34.py).
+cells responding as in flies, MBON11's input a quarter lower), MBON11 keeps its synaptic current through its spikes
+(odor_probe35.py: Shiu et al.'s rule threw half its input away), and DEPRESSING says whether the Kenyon cell-to-MBON
+synapses depress as Yamada et al. 2024 measured (odor_probe34.py: held out until the Kenyon cells fire as few spikes as
+flies'). Flies (research_notes/Rung 9 learning data/hige2015_specificity.md): with 3-octanol paired, its spikes fell 80%
+and 4-methylcyclohexanol's 27% (Fig. 1F), 4-methylcyclohexanol's charge 20% (Fig. 3, n = 5) and 35% (Fig. 4, n = 6); with
+4-methylcyclohexanol paired, its spikes fell 76% and 3-octanol's 38% (Fig. S3D); backward pairing within 7%.
 Model: odor_probe30.py's brain (brain_cache.py) with Inada's offsets and odor_probe31.py's Kenyon cell-to-MBON11
 synapses (0.030 pC per synapse), depressing with their Kenyon cells (0.5 of the strength left per spike, recovering over
-1.5 s) if DEPRESSING. Protocol, rule, fit and measures as learning_pilot2.py, except that each Kenyon cell's spikes count,
+1.5 s) if DEPRESSING, and MBON11 keeping its current (keep_current) and held near 6 Hz in every test (its bias lowered by
+the step at which its resting rate crosses 6 Hz, from 0, -4, -8 and -12 mV, interpolated, as odor_probe35.py holds it).
+Protocol, rule, fit and measures as learning_pilot2.py, except that each Kenyon cell's spikes count,
 in the charge, with the strength its depression has left (read from the brain at the start of each 10 ms piece), and
-in the rule's eligibility trace as spikes (responders, for the overlap, by their spikes as before). Seeds 310000 + 10 x odor + seed (pre and post), 310200 + 10 x pairing + seed
-(forward), 310300 + ... (backward); + 900 + round for the Kenyon cells' rest.
+in the rule's eligibility trace as spikes (responders, for the overlap, by their spikes as before). Seeds 310000 + 10 x
+odor + seed (pre and post), 310200 + 10 x pairing + seed (forward), 310300 + ... (backward); + 900 + round for the Kenyon
+cells' rest; + 950 + step for the hold.
 
     python experiments/learning_pilot3.py        (writes experiments/learning_pilot3.json)
 """
@@ -37,7 +45,8 @@ import odor_probe8 as p8
 OUT = Path(__file__).with_suffix(".json")
 SEED = 310000
 CHARGE_PC = 0.030
-DEPRESSING = None                                  # set from odor_probe34.py's result before running
+DEPRESSING = False                                 # odor_probe34.py: held out until the Kenyon cells fire as few spikes as flies'
+HELD_HZ, HOLD_STEPS_MV = 6.0, (-12.0, -8.0, -4.0, 0.0)
 
 
 def trial(o, rec, odor: str, seed: int, mbon: np.ndarray, kc: np.ndarray, f: float, recover_s: float) -> dict:
@@ -75,6 +84,7 @@ def main() -> None:
     o, rec, built = brain_cache.probe30()
     b, types, m = o.brain, o.types, o.m
     kc_rest = p33.set_rest(o, rec, p8.class_gaps(o, p8.OFFSETS["Inada"]), SEED + 900)
+    b.set_type("MBON11", keep_current=1.0)
     kc = np.flatnonzero(m["kc"])
     mbon = np.flatnonzero(types == "MBON11")
     gain = p31.mbon_gain(o, rec, mbon)
@@ -91,7 +101,22 @@ def main() -> None:
     p = b.params[b.cls[kc[0]]]
     f, recover_s = float(p["depression"]), float(p["recovery"])
     per_kc = np.bincount(kc_of, weights=w0[onto], minlength=len(kc))
-    out = {"question": __doc__, "depressing": DEPRESSING, "kc_rest_inada": kc_rest, "mbon11_gain": gain,
+    bias0 = o.own_bias()
+    rates = []
+    for k, d in enumerate(HOLD_STEPS_MV):
+        bias = bias0.copy()
+        bias[mbon] += d
+        b.set_bias(bias)
+        rates.append(float(p10.resting(o, rec, SEED + 950 + k)["hz"][mbon].mean()))
+    k = next((i for i, r in enumerate(rates) if r >= HELD_HZ), 0)
+    step = HOLD_STEPS_MV[k] if k == 0 else float(np.interp(HELD_HZ, rates[k - 1:k + 1], HOLD_STEPS_MV[k - 1:k + 1]))
+    bias = bias0.copy()
+    bias[mbon] += step
+    b.set_bias(bias)                                   # held for the rest of the run
+    held = {"steps_mv": list(HOLD_STEPS_MV), "rest_hz_by_step": [round(r, 2) for r in rates], "bias_step_mv": round(step, 2),
+            "rest_hz": round(float(p10.resting(o, rec, SEED + 949)["hz"][mbon].mean()), 2)}
+    print("held", json.dumps(held), flush=True)
+    out = {"question": __doc__, "depressing": DEPRESSING, "held": held, "kc_rest_inada": kc_rest, "mbon11_gain": gain,
            "charge_pc_per_synapse": CHARGE_PC, "weight_per_synapse_mv": round(w_syn, 4), "pre": {}, "pairings": []}
     print("MBON11 gain", json.dumps(gain), "depressing", DEPRESSING, flush=True)
 
