@@ -1,0 +1,1048 @@
+{
+ "question": "Exploratory check, not pre-registered: how much do the odor measures depend on the transient every run starts in?\n\nodor_offset_check.py: in the window where every run measures its rest and starts its odor (1-2 s after the reset),\nthe antennal lobe hasn't settled (odor_probe30.py's model: the GABAergic LNs about a quarter above their steady rate,\nthe PNs at half theirs); odor_probe43.py: the PNs rest at about 1 spike/s there against 2.9 after 4 s. Flies meet an\nodor from a settled state.\nModel: odor_probe41.py's kw08_kept (its cache).\nMeasured: everything odor_probe40.py measures, on odor_probe41.py's seeds for that condition (391000), with every\nreset replaced by a warm one: the state of all 8 flies after 6 s of spontaneous activity from seed 440000 (taken once,\nbefore the measures), restored with fresh random streams from the run's own seed; each run's own settling time is\nkept. Compared with odor_probe41.py's measures of the same model on the same seeds.\n\n    python experiments/odor_warm_check.py      (writes experiments/odor_warm_check.json)\n",
+ "warm_settle_s": 6.0,
+ "condition": {
+  "ln_response": {
+   "rest_hz_gaba_lns": 3.88,
+   "rest_hz_other_lns": 2.0,
+   "rest_hz_upns": 1.67,
+   "odors": {
+    "2-heptanone": {
+     "ln_hz_50ms": [
+      5.1,
+      21.8,
+      12.5,
+      9.2,
+      7.8,
+      7.0,
+      6.5,
+      6.4,
+      6.2,
+      6.1,
+      6.3
+     ],
+     "ln_hz_nagel_bins": [
+      21.79,
+      12.49,
+      8.53,
+      6.45
+     ]
+    },
+    "3-octanol": {
+     "ln_hz_50ms": [
+      5.8,
+      19.1,
+      10.8,
+      8.2,
+      7.1,
+      6.3,
+      6.0,
+      5.8,
+      5.7,
+      5.5,
+      5.1
+     ],
+     "ln_hz_nagel_bins": [
+      19.07,
+      10.78,
+      7.68,
+      5.72
+     ],
+     "oct_pn_hz_50ms": [
+      57.0,
+      185.1,
+      122.9,
+      106.5,
+      96.4,
+      85.1,
+      78.6,
+      71.9,
+      64.8,
+      62.1,
+      58.9
+     ]
+    }
+   },
+   "rms_log_error": 0.053
+  },
+  "presynaptic_fit": {
+   "k_a": 0.001152,
+   "k_b": 0.006104,
+   "cgp_fraction": [
+    0.546,
+    0.711,
+    0.742,
+    0.736
+   ],
+   "control_fraction": [
+    0.321,
+    0.328,
+    0.327,
+    0.322
+   ],
+   "gaba_b_only_fraction": [
+    0.438,
+    0.378,
+    0.369,
+    0.364
+   ],
+   "trace_a_over_rest": [
+    2.99,
+    1.97,
+    1.84,
+    1.86
+   ],
+   "trace_b_over_rest": [
+    1.58,
+    1.75,
+    1.77,
+    1.79
+   ]
+  },
+  "kc_rest": {
+   "gap_mv": {
+    "KC": 21.46,
+    "KCa'b'-ap1": 15.98,
+    "KCa'b'-ap2": 15.98,
+    "KCa'b'-m": 15.98,
+    "KCab-c": 21.46,
+    "KCab-m": 21.44,
+    "KCab-p": 21.47,
+    "KCab-s": 21.44,
+    "KCg": 23.93,
+    "KCg-d": 23.95,
+    "KCg-m": 23.95,
+    "KCg-s1": 24.1,
+    "KCg-s2": 23.73,
+    "KCg-s3": 23.95,
+    "KCg-s4": 23.77
+   },
+   "rest_hz_by_class": {
+    "alpha/beta": 0.0018,
+    "alpha'/beta'": 0.0,
+    "gamma": 0.0
+   }
+  },
+  "mbon11_gain": {
+   "steps_mv": [
+    0.0,
+    2.0,
+    4.0,
+    6.0,
+    8.0
+   ],
+   "rate_hz": [
+    36.69,
+    43.75,
+    51.44,
+    57.81,
+    64.56
+   ],
+   "slope_hz_per_mv": 3.491
+  },
+  "weight_per_synapse_mv": 0.7047,
+  "course": {
+   "3-octanol": {
+    "bin_s": 0.05,
+    "rest_pn_hz": 1.68,
+    "rest_inhibitors_hz": 343.2,
+    "pn_hz": [
+     32.0,
+     102.2,
+     69.7,
+     66.4,
+     54.5,
+     49.2,
+     44.7,
+     40.1,
+     38.2,
+     36.2,
+     34.5,
+     32.2,
+     28.0,
+     27.1,
+     26.2,
+     26.3,
+     26.2,
+     24.5,
+     23.7,
+     23.5
+    ],
+    "inhibitors_hz": [
+     592.5,
+     1725.0,
+     907.5,
+     735.0,
+     665.0,
+     617.5,
+     542.5,
+     507.5,
+     487.5,
+     465.0,
+     495.0,
+     505.0,
+     510.0,
+     490.0,
+     472.5,
+     447.5,
+     472.5,
+     465.0,
+     447.5,
+     475.0
+    ],
+    "gain": [
+     0.9438,
+     0.4547,
+     0.4515,
+     0.4927,
+     0.4985,
+     0.5053,
+     0.5158,
+     0.519,
+     0.531,
+     0.5392,
+     0.5341,
+     0.529,
+     0.5183,
+     0.5291,
+     0.5274,
+     0.5424,
+     0.5375,
+     0.5364,
+     0.5481,
+     0.5427
+    ],
+    "orn_summed_hz": [
+     30612.5,
+     66252.5,
+     75830.0,
+     75612.5,
+     72832.5,
+     70627.5,
+     68915.0,
+     67145.0,
+     65227.5,
+     64545.0,
+     62977.5,
+     61900.0,
+     60762.5,
+     59830.0,
+     58952.5,
+     58267.5,
+     58265.0,
+     57822.5,
+     56932.5,
+     56290.0
+    ]
+   },
+   "4-methylcyclohexanol": {
+    "bin_s": 0.05,
+    "rest_pn_hz": 1.75,
+    "rest_inhibitors_hz": 348.2,
+    "pn_hz": [
+     12.5,
+     66.0,
+     51.6,
+     40.7,
+     41.9,
+     38.6,
+     34.2,
+     33.0,
+     30.1,
+     24.1,
+     23.4,
+     23.3,
+     20.1,
+     19.8,
+     16.7,
+     17.5,
+     15.8,
+     15.4,
+     15.1,
+     14.9
+    ],
+    "inhibitors_hz": [
+     422.5,
+     990.0,
+     887.5,
+     545.0,
+     475.0,
+     535.0,
+     425.0,
+     380.0,
+     415.0,
+     395.0,
+     387.5,
+     427.5,
+     367.5,
+     365.0,
+     412.5,
+     345.0,
+     432.5,
+     410.0,
+     380.0,
+     410.0
+    ],
+    "gain": [
+     0.9706,
+     0.6924,
+     0.5701,
+     0.6367,
+     0.6914,
+     0.6763,
+     0.6919,
+     0.7234,
+     0.7308,
+     0.7219,
+     0.7351,
+     0.7288,
+     0.7407,
+     0.7421,
+     0.7438,
+     0.7639,
+     0.7519,
+     0.7434,
+     0.7542,
+     0.7558
+    ],
+    "orn_summed_hz": [
+     25377.5,
+     39055.0,
+     43087.5,
+     42880.0,
+     41930.0,
+     40845.0,
+     41015.0,
+     40592.5,
+     39287.5,
+     38750.0,
+     38600.0,
+     38070.0,
+     37367.5,
+     37175.0,
+     36455.0,
+     36560.0,
+     35655.0,
+     36712.5,
+     35580.0,
+     35730.0
+    ]
+   }
+  },
+  "transform": {
+   "DM4": {
+    "alone": {
+     "5": {
+      "whole": 9.06,
+      "first_100ms": 14.62,
+      "rest": 1.62
+     },
+     "10": {
+      "whole": 19.94,
+      "first_100ms": 36.62,
+      "rest": 0.88
+     },
+     "20": {
+      "whole": 33.03,
+      "first_100ms": 61.28,
+      "rest": 1.22
+     },
+     "40": {
+      "whole": 47.19,
+      "first_100ms": 102.12,
+      "rest": 1.31
+     },
+     "80": {
+      "whole": 62.78,
+      "first_100ms": 125.53,
+      "rest": 1.03
+     },
+     "160": {
+      "whole": 78.78,
+      "first_100ms": 135.66,
+      "rest": 1.84
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 0.66,
+      "first_100ms": 6.47,
+      "rest": 1.34,
+      "suppressed_to": 0.033
+     },
+     "20": {
+      "whole": 4.72,
+      "first_100ms": 15.97,
+      "rest": 2.16,
+      "suppressed_to": 0.143
+     },
+     "40": {
+      "whole": 19.09,
+      "first_100ms": 54.09,
+      "rest": 1.53,
+      "suppressed_to": 0.405
+     }
+    },
+    "fit": {
+     "rmax": 78.8,
+     "sigma": 26.0
+    },
+    "olsen": {
+     "rmax": 170,
+     "sigma": 16.3
+    }
+   },
+   "DL5": {
+    "alone": {
+     "5": {
+      "whole": 17.19,
+      "first_100ms": 19.31,
+      "rest": 1.31
+     },
+     "10": {
+      "whole": 41.12,
+      "first_100ms": 54.75,
+      "rest": 1.5
+     },
+     "20": {
+      "whole": 75.0,
+      "first_100ms": 114.25,
+      "rest": 1.38
+     },
+     "40": {
+      "whole": 105.25,
+      "first_100ms": 171.38,
+      "rest": 2.38
+     },
+     "80": {
+      "whole": 138.5,
+      "first_100ms": 220.5,
+      "rest": 1.38
+     },
+     "160": {
+      "whole": 169.5,
+      "first_100ms": 236.88,
+      "rest": 1.88
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": -0.19,
+      "first_100ms": 5.81,
+      "rest": 1.69,
+      "suppressed_to": -0.005
+     },
+     "20": {
+      "whole": 9.19,
+      "first_100ms": 28.31,
+      "rest": 1.69,
+      "suppressed_to": 0.123
+     },
+     "40": {
+      "whole": 43.88,
+      "first_100ms": 91.0,
+      "rest": 1.5,
+      "suppressed_to": 0.417
+     }
+    },
+    "fit": {
+     "rmax": 170.7,
+     "sigma": 25.1
+    },
+    "olsen": {
+     "rmax": 167,
+     "sigma": 11.8
+    }
+   },
+   "VM7d": {
+    "alone": {
+     "5": {
+      "whole": 10.55,
+      "first_100ms": 18.84,
+      "rest": 1.7
+     },
+     "10": {
+      "whole": 28.39,
+      "first_100ms": 39.04,
+      "rest": 1.86
+     },
+     "20": {
+      "whole": 62.88,
+      "first_100ms": 102.73,
+      "rest": 1.55
+     },
+     "40": {
+      "whole": 101.43,
+      "first_100ms": 169.93,
+      "rest": 1.5
+     },
+     "80": {
+      "whole": 136.3,
+      "first_100ms": 218.73,
+      "rest": 1.27
+     },
+     "160": {
+      "whole": 173.96,
+      "first_100ms": 234.36,
+      "rest": 2.07
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": -1.02,
+      "first_100ms": 1.55,
+      "rest": 1.66,
+      "suppressed_to": -0.036
+     },
+     "20": {
+      "whole": 4.12,
+      "first_100ms": 18.77,
+      "rest": 1.05,
+      "suppressed_to": 0.066
+     },
+     "40": {
+      "whole": 25.93,
+      "first_100ms": 74.11,
+      "rest": 1.25,
+      "suppressed_to": 0.256
+     }
+    },
+    "fit": {
+     "rmax": 183.8,
+     "sigma": 33.6
+    },
+    "olsen": {
+     "rmax": 163,
+     "sigma": 12.4
+    }
+   },
+   "DM1": {
+    "alone": {
+     "5": {
+      "whole": 22.94,
+      "first_100ms": 29.81,
+      "rest": 2.06
+     },
+     "10": {
+      "whole": 45.06,
+      "first_100ms": 64.31,
+      "rest": 1.94
+     },
+     "20": {
+      "whole": 82.0,
+      "first_100ms": 112.0,
+      "rest": 1.75
+     },
+     "40": {
+      "whole": 110.5,
+      "first_100ms": 167.0,
+      "rest": 1.75
+     },
+     "80": {
+      "whole": 139.06,
+      "first_100ms": 219.31,
+      "rest": 1.94
+     },
+     "160": {
+      "whole": 168.81,
+      "first_100ms": 233.19,
+      "rest": 1.81
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 1.25,
+      "first_100ms": 12.0,
+      "rest": 1.75,
+      "suppressed_to": 0.028
+     },
+     "20": {
+      "whole": 18.12,
+      "first_100ms": 45.25,
+      "rest": 1.62,
+      "suppressed_to": 0.221
+     },
+     "40": {
+      "whole": 55.94,
+      "first_100ms": 104.06,
+      "rest": 2.19,
+      "suppressed_to": 0.506
+     }
+    },
+    "fit": {
+     "rmax": 166.4,
+     "sigma": 21.4
+    },
+    "olsen": {
+     "rmax": 144,
+     "sigma": 44.8
+    }
+   }
+  },
+  "rest": {
+   "brain_hz": 1.083,
+   "over_100hz": 0,
+   "kc_hz": 0.001,
+   "upn_hz": 1.65,
+   "orn_hz": 8.47,
+   "MBON11_hz": 36.75,
+   "MBON01_hz": 1.62,
+   "MBON18_hz": 10.56
+  },
+  "odors": {
+   "3-octanol": {
+    "kc_share": 0.0468,
+    "kc_share_by_class": {
+     "alpha/beta": 0.0586,
+     "alpha'/beta'": 0.0518,
+     "gamma": 0.0295
+    },
+    "spikes_per_response": {
+     "alpha/beta": 1.93,
+     "alpha'/beta'": 1.28,
+     "gamma": 1.14
+    },
+    "kc_share_1spike_1s": 0.0472,
+    "evoked_spikes_0_1.4s": {
+     "MBON11": 10.5,
+     "MBON01": -0.6,
+     "MBON18": -0.1
+    },
+    "pn_hz": {
+     "rest": 1.64,
+     "first_100ms": 121.2,
+     "odor_second": 71.8,
+     "count": 66,
+     "glomeruli": 12
+    },
+    "apl_release_hz": {
+     "turner": [
+      0.4,
+      0.1
+     ],
+     "hige": [
+      0.3,
+      0.1
+     ]
+    },
+    "pn_share_turner": 0.283,
+    "pn_onset": {
+     "undriven_glomeruli": 23,
+     "undriven_early_rise_hz": -0.4,
+     "undriven_early_rising_10hz": 0,
+     "undriven_whole_rise_hz": -1.1,
+     "driven_early_rise_hz": 52.9,
+     "glomeruli_early_rising_10hz": 14
+    }
+   },
+   "4-methylcyclohexanol": {
+    "kc_share": 0.0101,
+    "kc_share_by_class": {
+     "alpha/beta": 0.011,
+     "alpha'/beta'": 0.0129,
+     "gamma": 0.0064
+    },
+    "spikes_per_response": {
+     "alpha/beta": 1.1,
+     "alpha'/beta'": 1.75,
+     "gamma": 0.86
+    },
+    "kc_share_1spike_1s": 0.0098,
+    "evoked_spikes_0_1.4s": {
+     "MBON11": 2.2,
+     "MBON01": -0.8,
+     "MBON18": 0.9
+    },
+    "pn_hz": {
+     "rest": 1.96,
+     "first_100ms": 125.4,
+     "odor_second": 76.5,
+     "count": 24,
+     "glomeruli": 4
+    },
+    "apl_release_hz": {
+     "turner": [
+      0.0,
+      0.1
+     ],
+     "hige": [
+      0.0,
+      0.1
+     ]
+    },
+    "pn_share_turner": 0.261,
+    "pn_onset": {
+     "undriven_glomeruli": 32,
+     "undriven_early_rise_hz": 1.5,
+     "undriven_early_rising_10hz": 1,
+     "undriven_whole_rise_hz": -0.5,
+     "driven_early_rise_hz": 35.4,
+     "glomeruli_early_rising_10hz": 10
+    }
+   },
+   "ethyl acetate": {
+    "kc_share": 0.0519,
+    "kc_share_by_class": {
+     "alpha/beta": 0.0823,
+     "alpha'/beta'": 0.0676,
+     "gamma": 0.009
+    },
+    "spikes_per_response": {
+     "alpha/beta": 1.69,
+     "alpha'/beta'": 1.35,
+     "gamma": 0.69
+    },
+    "kc_share_1spike_1s": 0.0529,
+    "evoked_spikes_0_1.4s": {
+     "MBON11": 11.1,
+     "MBON01": -1.1,
+     "MBON18": -1.2
+    },
+    "pn_hz": {
+     "rest": 1.77,
+     "first_100ms": 114.4,
+     "odor_second": 60.2,
+     "count": 32,
+     "glomeruli": 8
+    },
+    "apl_release_hz": {
+     "turner": [
+      0.1,
+      0.1
+     ],
+     "hige": [
+      0.2,
+      0.1
+     ]
+    },
+    "pn_share_turner": 0.192,
+    "pn_onset": {
+     "undriven_glomeruli": 18,
+     "undriven_early_rise_hz": -0.8,
+     "undriven_early_rising_10hz": 0,
+     "undriven_whole_rise_hz": -1.2,
+     "driven_early_rise_hz": 33.3,
+     "glomeruli_early_rising_10hz": 12
+    }
+   },
+   "isopentyl acetate": {
+    "kc_share": 0.0642,
+    "kc_share_by_class": {
+     "alpha/beta": 0.0994,
+     "alpha'/beta'": 0.0647,
+     "gamma": 0.0218
+    },
+    "spikes_per_response": {
+     "alpha/beta": 1.66,
+     "alpha'/beta'": 1.36,
+     "gamma": 1.17
+    },
+    "kc_share_1spike_1s": 0.0669,
+    "evoked_spikes_0_1.4s": {
+     "MBON11": 13.6,
+     "MBON01": 0.3,
+     "MBON18": 0.7
+    },
+    "pn_hz": {
+     "rest": 1.75,
+     "first_100ms": 107.6,
+     "odor_second": 62.2,
+     "count": 66,
+     "glomeruli": 13
+    },
+    "apl_release_hz": {
+     "turner": [
+      0.2,
+      0.1
+     ],
+     "hige": [
+      0.2,
+      0.0
+     ]
+    },
+    "pn_share_turner": 0.283,
+    "pn_onset": {
+     "undriven_glomeruli": 18,
+     "undriven_early_rise_hz": -0.5,
+     "undriven_early_rising_10hz": 0,
+     "undriven_whole_rise_hz": -1.2,
+     "driven_early_rise_hz": 45.4,
+     "glomeruli_early_rising_10hz": 18
+    }
+   },
+   "benzaldehyde": {
+    "kc_share": 0.016,
+    "kc_share_by_class": {
+     "alpha/beta": 0.0188,
+     "alpha'/beta'": 0.0173,
+     "gamma": 0.0116
+    },
+    "spikes_per_response": {
+     "alpha/beta": 1.24,
+     "alpha'/beta'": 1.29,
+     "gamma": 1.0
+    },
+    "kc_share_1spike_1s": 0.0197,
+    "evoked_spikes_0_1.4s": {
+     "MBON11": 5.5,
+     "MBON01": 0.0,
+     "MBON18": 0.5
+    },
+    "pn_hz": {
+     "rest": 1.62,
+     "first_100ms": 101.4,
+     "odor_second": 52.7,
+     "count": 30,
+     "glomeruli": 7
+    },
+    "apl_release_hz": {
+     "turner": [
+      0.2,
+      0.1
+     ],
+     "hige": [
+      0.0,
+      0.1
+     ]
+    },
+    "pn_share_turner": 0.274,
+    "pn_onset": {
+     "undriven_glomeruli": 15,
+     "undriven_early_rise_hz": -0.7,
+     "undriven_early_rising_10hz": 0,
+     "undriven_whole_rise_hz": -1.2,
+     "driven_early_rise_hz": 29.3,
+     "glomeruli_early_rising_10hz": 18
+    }
+   },
+   "2-heptanone": {
+    "kc_share": 0.0524,
+    "kc_share_by_class": {
+     "alpha/beta": 0.0713,
+     "alpha'/beta'": 0.0489,
+     "gamma": 0.0308
+    },
+    "spikes_per_response": {
+     "alpha/beta": 1.58,
+     "alpha'/beta'": 1.23,
+     "gamma": 1.02
+    },
+    "kc_share_1spike_1s": 0.0502,
+    "evoked_spikes_0_1.4s": {
+     "MBON11": 9.1,
+     "MBON01": 0.6,
+     "MBON18": -1.4
+    },
+    "pn_hz": {
+     "rest": 1.76,
+     "first_100ms": 109.5,
+     "odor_second": 59.0,
+     "count": 73,
+     "glomeruli": 15
+    },
+    "apl_release_hz": {
+     "turner": [
+      0.4,
+      0.1
+     ],
+     "hige": [
+      0.5,
+      0.1
+     ]
+    },
+    "pn_share_turner": 0.362,
+    "pn_onset": {
+     "undriven_glomeruli": 14,
+     "undriven_early_rise_hz": -0.5,
+     "undriven_early_rising_10hz": 0,
+     "undriven_whole_rise_hz": -1.1,
+     "driven_early_rise_hz": 44.5,
+     "glomeruli_early_rising_10hz": 21
+    }
+   }
+  },
+  "odors_per_cell": {
+   "model": [
+    3490,
+    326,
+    126,
+    91,
+    26,
+    4,
+    1
+   ],
+   "independent": [
+    3172.4,
+    806.4,
+    81.0,
+    4.0,
+    0.1,
+    0.0,
+    0.0
+   ]
+  },
+  "pairs": {
+   "3-octanol | 4-methylcyclohexanol": {
+    "jaccard": 0.105,
+    "share_of_first_in_second": 0.116,
+    "share_of_second_in_first": 0.537,
+    "kc_drive_corr": 0.558,
+    "pn_early_corr": 0.434
+   },
+   "3-octanol | ethyl acetate": {
+    "jaccard": 0.042,
+    "share_of_first_in_second": 0.084,
+    "share_of_second_in_first": 0.076,
+    "kc_drive_corr": 0.229,
+    "pn_early_corr": -0.165
+   },
+   "3-octanol | isopentyl acetate": {
+    "jaccard": 0.307,
+    "share_of_first_in_second": 0.558,
+    "share_of_second_in_first": 0.406,
+    "kc_drive_corr": 0.775,
+    "pn_early_corr": 0.574
+   },
+   "3-octanol | benzaldehyde": {
+    "jaccard": 0.081,
+    "share_of_first_in_second": 0.1,
+    "share_of_second_in_first": 0.292,
+    "kc_drive_corr": 0.469,
+    "pn_early_corr": 0.112
+   },
+   "3-octanol | 2-heptanone": {
+    "jaccard": 0.404,
+    "share_of_first_in_second": 0.611,
+    "share_of_second_in_first": 0.545,
+    "kc_drive_corr": 0.888,
+    "pn_early_corr": 0.767
+   },
+   "4-methylcyclohexanol | ethyl acetate": {
+    "jaccard": 0.012,
+    "share_of_first_in_second": 0.073,
+    "share_of_second_in_first": 0.014,
+    "kc_drive_corr": 0.107,
+    "pn_early_corr": -0.124
+   },
+   "4-methylcyclohexanol | isopentyl acetate": {
+    "jaccard": 0.038,
+    "share_of_first_in_second": 0.268,
+    "share_of_second_in_first": 0.042,
+    "kc_drive_corr": 0.409,
+    "pn_early_corr": 0.108
+   },
+   "4-methylcyclohexanol | benzaldehyde": {
+    "jaccard": 0.218,
+    "share_of_first_in_second": 0.463,
+    "share_of_second_in_first": 0.292,
+    "kc_drive_corr": 0.529,
+    "pn_early_corr": 0.308
+   },
+   "4-methylcyclohexanol | 2-heptanone": {
+    "jaccard": 0.114,
+    "share_of_first_in_second": 0.634,
+    "share_of_second_in_first": 0.122,
+    "kc_drive_corr": 0.498,
+    "pn_early_corr": 0.302
+   },
+   "ethyl acetate | isopentyl acetate": {
+    "jaccard": 0.163,
+    "share_of_first_in_second": 0.313,
+    "share_of_second_in_first": 0.253,
+    "kc_drive_corr": 0.595,
+    "pn_early_corr": 0.258
+   },
+   "ethyl acetate | benzaldehyde": {
+    "jaccard": 0.011,
+    "share_of_first_in_second": 0.014,
+    "share_of_second_in_first": 0.046,
+    "kc_drive_corr": 0.176,
+    "pn_early_corr": 0.045
+   },
+   "ethyl acetate | 2-heptanone": {
+    "jaccard": 0.065,
+    "share_of_first_in_second": 0.123,
+    "share_of_second_in_first": 0.122,
+    "kc_drive_corr": 0.356,
+    "pn_early_corr": 0.183
+   },
+   "isopentyl acetate | benzaldehyde": {
+    "jaccard": 0.079,
+    "share_of_first_in_second": 0.092,
+    "share_of_second_in_first": 0.369,
+    "kc_drive_corr": 0.559,
+    "pn_early_corr": 0.335
+   },
+   "isopentyl acetate | 2-heptanone": {
+    "jaccard": 0.343,
+    "share_of_first_in_second": 0.464,
+    "share_of_second_in_first": 0.568,
+    "kc_drive_corr": 0.809,
+    "pn_early_corr": 0.724
+   },
+   "benzaldehyde | 2-heptanone": {
+    "jaccard": 0.13,
+    "share_of_first_in_second": 0.492,
+    "share_of_second_in_first": 0.15,
+    "kc_drive_corr": 0.572,
+    "pn_early_corr": 0.314
+   }
+  },
+  "mean_jaccard": 0.141,
+  "mean_kc_drive_corr": 0.502,
+  "mean_pn_early_corr": 0.278,
+  "mbon11_input": {
+   "3-octanol": {
+    "MBON11": 11.3,
+    "kc_input_pc_per_cell": 38.7
+   },
+   "4-methylcyclohexanol": {
+    "MBON11": 3.0,
+    "kc_input_pc_per_cell": 6.3
+   },
+   "ethyl acetate": {
+    "MBON11": 10.6,
+    "kc_input_pc_per_cell": 36.7
+   },
+   "isopentyl acetate": {
+    "MBON11": 13.0,
+    "kc_input_pc_per_cell": 47.7
+   },
+   "benzaldehyde": {
+    "MBON11": 4.4,
+    "kc_input_pc_per_cell": 13.8
+   },
+   "2-heptanone": {
+    "MBON11": 10.6,
+    "kc_input_pc_per_cell": 38.5
+   }
+  },
+  "kc_timing": {
+   "3-octanol": {
+    "responding_cells_per_fly": 63.8,
+    "spikes_per_responding_cell": 3.68,
+    "share_of_intervals_under_10ms": 0.0,
+    "share_of_intervals_under_20ms": 0.016,
+    "first_spike_ms_median": 68.0,
+    "spike_time_spread_ms_median": 41.2,
+    "coincidence_ratio_mean": 1.09,
+    "coincidence_ratio_median": 0.96,
+    "windows": 72,
+    "input_share_from_bursts": 0.01
+   },
+   "4-methylcyclohexanol": {
+    "responding_cells_per_fly": 10.1,
+    "spikes_per_responding_cell": 3.07,
+    "share_of_intervals_under_10ms": 0.0,
+    "share_of_intervals_under_20ms": 0.002,
+    "first_spike_ms_median": 82.0,
+    "spike_time_spread_ms_median": 30.0,
+    "coincidence_ratio_mean": 1.02,
+    "coincidence_ratio_median": 0.94,
+    "windows": 29,
+    "input_share_from_bursts": 0.0
+   }
+  }
+ },
+ "seconds": 555
+}
