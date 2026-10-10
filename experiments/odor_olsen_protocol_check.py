@@ -9,7 +9,8 @@ lowers sigma about 1.3-fold and Rmax about 0.88-fold (research_notes/Rung 9 lear
 predicts sigma about 18 for DL5, 24 for VM7d and 22 for DM4 in the model).
 Model: odor_probe49.py's (its cache), with its settled starts.
 Measured: for Olsen et al.'s four glomeruli and receptor rates x of 5-160 spikes/s (odor_probe16.RATES), the PNs' mean
-rate over the 500 ms from the valve's opening less the 500 ms before, and their PSTH (25 ms bins, -0.5 to 1 s), over the
+rate over the 500 ms from the valve's opening less the 500 ms before, and their PSTH (10 ms bins, -0.5 to 1 s, shown
+as 50 ms running means as Olsen et al. smoothed theirs), over the
 glomerulus's cholinergic uniglomerular PNs, the ones flies' recordings are of (orn_pn_glomeruli_check.py: DM4's two
 GABAergic vPNs get almost no receptor input), and over all its uniglomerular PNs as before; with the
 glomerulus's receptor neurons following Olsen et al.'s time course (weak_input_gain.md's: 100 ms latency, then a
@@ -43,7 +44,7 @@ from brainfly.hybrid import consensus_transmitters
 OUT = Path(__file__).with_suffix(".json")
 SEED, SEEDS = 570000, 2
 LATENCY_S, OFFSET_S, OFF_TAU_S, WINDOW_S = 0.1, 0.52, 0.06, 0.5
-PRE_S, POST_S, BIN_S = 0.5, 1.0, 0.025
+PRE_S, POST_S, BIN_S = 0.5, 1.0, 0.01           # BIN_S: odor_probe10.PIECE (the drive's step)
 
 
 def olsen_shape(t: np.ndarray, x: float) -> np.ndarray:
@@ -83,8 +84,8 @@ def run(o, rec, g: str, x: float, sets: dict, seed: int, protocol: str) -> dict:
         c = b.advance(piece, drive=drive)
         for name, pns in sets.items():
             counts[name].append(float(c[:, pns].mean()))
-    per = int(round(BIN_S / p10.PIECE))
-    return {name: np.array(v).reshape(-1, per).mean(1) / p10.PIECE for name, v in counts.items()}
+    assert abs(BIN_S - p10.PIECE) < 1e-12
+    return {name: np.array(v) / p10.PIECE for name, v in counts.items()}
 
 
 def summarize(psth: np.ndarray) -> dict:
@@ -92,12 +93,12 @@ def summarize(psth: np.ndarray) -> dict:
     n_pre, n_win = int(round(PRE_S / BIN_S)), int(round(WINDOW_S / BIN_S))
     rest = float(psth[:n_pre].mean())
     win = psth[n_pre:n_pre + n_win] - rest
-    # Olsen et al.'s PSTHs: 50 ms bins overlapping by 25 ms, i.e. two 25 ms bins averaged
-    smooth = (psth[n_pre:-1] + psth[n_pre + 1:]) / 2 - rest
+    width = int(round(0.05 / BIN_S))                         # Olsen et al.'s PSTHs: 50 ms bins
+    smooth = np.convolve(psth[n_pre:] - rest, np.ones(width) / width, mode="valid")   # smooth[k]: k*BIN_S + 25 ms
     k = int(np.argmax(smooth))
-    at_500 = float(smooth[int(round(WINDOW_S / BIN_S)) - 1])
+    at_500 = float(smooth[int(round((WINDOW_S - 0.025) / BIN_S))])
     return {"window_mean": round(float(win.mean()), 2), "peak": round(float(smooth[k]), 1),
-            "peak_ms": round((k + 1) * BIN_S * 1000), "at_500ms_over_peak": round(at_500 / float(smooth[k]), 3) if smooth[k] > 0 else None,
+            "peak_ms": round((k * BIN_S + 0.025) * 1000), "at_500ms_over_peak": round(at_500 / float(smooth[k]), 3) if smooth[k] > 0 else None,
             "peak_over_window_mean": round(float(smooth[k]) / float(win.mean()), 2) if win.mean() > 0 else None,
             "rest": round(rest, 2)}
 

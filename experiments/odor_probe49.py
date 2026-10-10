@@ -13,6 +13,24 @@ odor_probe48.py), and odor_equalization_check.py's responses to 3-octanol and 4-
 odor_probe44.py for the build (240000; 440000 for the settled states); 550000 for the measures, 560000 for the
 equalization.
 
+Ran: settled properly, the model rests where its build put it and its PNs' transform is steeper but weaker, and their
+response accommodates more. The build settled 62 times (3 s each) and the measures 9; where the runs begin, the PNs rest
+at 2.93 spikes/s (now their settled rate; target 3) and the GABAergic ALLNs at 3.65, the inhibition's fit gives k_A
+0.0015 and k_B 0.0089 (odor_probe44.py: 0.0014 and 0.0084). The LNs answer 2-heptanone with 19.2, 10.3, 7.8 and 6.3
+spikes/s in Nagel et al.'s bins (flies 22, 13, 8, 6; root mean square log ratio 0.14). The transform (odor_probe16.py's
+step, every uniglomerular PN): sigma 20.4, 24.7, 16.7 and 18.5 for DL5, VM7d, DM1 and DM4 (odor_probe44.py: 23.8, 31.9,
+19.9, 28.8; flies 11.8, 12.4, 44.8, 16.3), Rmax 134, 132, 133 and 57 (173, 187, 166, 81; flies 167, 163, 144, 170):
+with the slow component at its resting strength (0.36) instead of twice it, strong input loses more of its sustained
+drive than weak input does. 3-octanol's PNs peak at 94 spikes/s at 50-100 ms as before (96) but fall to 0.20 of it at
+0.40-0.45 s (0.31; flies 0.48) and 0.09 at 0.95 s (0.14): the old model's slower decline leaned on the unsettled slow
+component. With the calibrated mushroom body, 2.5-12.8% of Kenyon cells respond (odor_probe48.py's +11 mV: 2.5-13.1%;
+flies 6 +- 5%), in flies' class order (3-octanol: alpha'/beta' 17.4%, alpha/beta 8.2%, gamma 5.8%), the alpha/beta cells
+firing 1.4-2.4 spikes per response (1.7-3.3; flies 2.2 +- 1.2), mean Jaccard 0.17; MBON11 gains 17 spikes to 3-octanol
+and 6 to 4-methylcyclohexanol (23 and 9; flies 118 and 110). 4-methylcyclohexanol stays at 0.39 of 3-octanol's summed
+receptor response, 0.53 at the PNs (0.51 over the whole second) and 0.28 at the Kenyon cells (flies 0.45, 0.85-0.98,
+0.73-0.92). Each per-glomerulus PN measure here averages the glomerulus's GABAergic vPNs in (orn_pn_glomeruli_check.py),
+which halves DM4's. This is the base model from here on.
+
     python experiments/odor_probe49.py         (writes experiments/odor_probe49.json)
 """
 from __future__ import annotations
