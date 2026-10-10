@@ -36,6 +36,35 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **MBON11's synapses from its own measurements, and learning more specific to the paired odor (rung 9's
+  groundwork).** Rung 4 divides each synapse by its target's size, which left MBON11, the mushroom body output neuron
+  Hige et al. 2015 trained, gaining a few spikes to an odor where flies' gain 110–118. Two measurements on MBON11 itself
+  now set its Kenyon cell synapses without using those counts: the charge a few Kenyon cells deliver to it (Yamada et
+  al. 2024) and the spikes each pA of current adds (Wang et al. 2026)
+  ([notes](research_notes/Rung%209%20learning%20data/mbon11_input.md)). On probe 30's antennal lobe MBON11 then gains
+  60–91 spikes to 3-octanol and 21–35 to 4-methylcyclohexanol across the measured range of charge (flies 118 and 110)
+  ([`odor_probe31.py`](experiments/odor_probe31.py)).
+  - **Two problems remain.** The odors are unbalanced: 3-octanol drives four times as many Kenyon cells as
+    4-methylcyclohexanol, among them too many γ cells (9.4%; flies about 2%), which make 63% of MBON11's Kenyon cell
+    synapses. So 3-octanol's input to each MBON11 is 1.5–3.3 times flies' and 4-methylcyclohexanol's 0.3–0.7 times,
+    where flies' are about equal. And MBON11 makes only 0.11–0.27 spikes per pC of input, where flies' make about 0.45,
+    as their measured gain predicts.
+  - **Learning is more specific to the paired odor** ([`learning_pilot2.py`](experiments/learning_pilot2.py)). The
+    learning pilot again, on this model: at each dopamine pulse every Kenyon cell's synapses onto MBON11 weaken by its
+    recent spikes, the rate set so the paired odor's input falls 90%. Pairing 3-octanol now cuts
+    4-methylcyclohexanol's input by 38% (79% on the old model), and pairing 4-methylcyclohexanol cuts 3-octanol's by
+    11% (51%); flies' unpaired odor didn't change significantly. In spikes the model now behaves like flies when
+    3-octanol is paired: its response falls 81% (flies 80%) and 4-methylcyclohexanol's 30% (flies about 25%). The other
+    way round, the paired odor falls 87% and 3-octanol 5.5%. Backward pairing changes nothing, as in flies. What's left
+    traces to the odors' imbalance: 4-methylcyclohexanol's few responders lie half inside 3-octanol's many.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/learning-dark.svg">
+  <img src="assets/learning-light.svg" width="100%" alt="Three panels. Left two: with 3-octanol paired and with 4-methylcyclohexanol paired, how far each of six odors' Kenyon cell input to MBON11 falls when the rule's rate cuts the paired odor's by 90%. On the old model (grey) the unpaired odor falls 79% and 51% and the other odors 30-80%; on the new model (red) the unpaired odor falls 38% and 11% and the others 1-67%; flies' unpaired odor didn't change significantly (ring at 0%). Right: MBON11's spike drops after pairing, paired odor 81% and 87% (flies 80%), unpaired 30% and 5.5% (flies about 25%); on the old model paired 140% and 83%, unpaired 73% and 73%.">
+</picture>
+
+`python assets/learning.py` redraws it.
+
 * **Measured presynaptic inhibition gives the antennal lobe flies' lateral division, and two readings of one
   measurement bracket its gain (rung 9's groundwork).** In flies the local neurons inhibit the receptor neurons'
   terminals, so each glomerulus's output is divided by the others' input. brainfly can now divide chosen synapses by
@@ -1011,6 +1040,7 @@ a sign that the approach is broken."
 | `experiments/odor_probe6.py` | Exploratory, not pre-registered: plus undepressed Kenyon cell to MBON synapses | MBON11 rises 5–17 Hz per odor (flies: about 84 spikes a second above baseline); the Kenyon cells as in odor_probe5.py. Odors include receptors' spontaneous level. |
 | `experiments/odor_probe7.py` | Exploratory, not pre-registered: odor_probe3–6 rerun with corrections (DoOR's spontaneous level subtracted, ORN-to-PN factor from same-glomerulus connections, excitatory PN-to-KC only, compound DoOR glomeruli), measured with Turner's criterion and Hige's spike count | Projection neurons right; 7–20% of Kenyon cells respond (flies 6 ± 5%), α′/β′ least and γ much (flies: the reverse); MBON11 gains 3.3 and 1.2 spikes to 3-octanol and 4-methylcyclohexanol (flies 118 and 110). With depressed PN-to-KC synapses, 1–2% respond and the output neurons don't move. |
 | `experiments/learning_pilot.py` | Exploratory, not pre-registered: dopamine-gated depression at Kenyon cell to MBON11 synapses in Hige et al. 2015's protocol, its rate fitted to the paired odor's 90% charge drop | Not odor-specific: the unpaired odor's charge falls 51–79% (flies: no significant change) and its spikes 73% (flies: about 25%), because the two odors' Kenyon cells overlap; backward pairing barely changes anything. |
+| `experiments/learning_pilot2.py` | Exploratory, not pre-registered: learning_pilot on odor_probe30's antennal lobe with odor_probe31's MBON11 synapses (0.030 pC per synapse) | More specific: the unpaired odor's charge falls 38% / 11% (pilot 1: 79% / 51%; flies: no significant change); spikes: paired 81-87% lower (flies 80%), unpaired 30% / 5.5% (flies about 25%); backward pairing changes nothing |
 | `experiments/odor_probe8.py` | Exploratory, not pre-registered: APL silenced; the Kenyon cell classes' measured threshold offsets; receptor rates of 100 and 50 Hz | APL silenced: 1.4–1.6 times as many Kenyon cells respond (flies: sparseness drops as about 4 times as many would). Inada's offsets: α′/β′ 8–19%, γ 7–16%; Groschner/Chen's: γ 0.4–1.5% as in flies but α′/β′ 59–80%. At 50 Hz, 3–9% respond (flies 6 ± 5%) but MBON11 gains 0.6–2.1 spikes. |
 | `experiments/odor_probe9.py` | Exploratory, not pre-registered: APL's inhibition split into fast (GABA_A) and slow (GABA_B) parts in Inada et al.'s proportions; with and without the classes' threshold offsets | No sparser: 1.00–1.16 times as many Kenyon cells respond; APL silenced, 1.4–1.6 times. The excess is at the odor's onset, before inhibition arrives. |
 | `experiments/odor_probe10.py` | Exploratory, not pre-registered: receptor neurons with measured dynamics (drive-dependent latency, rise, adaptation, offset silence) and spontaneous firing, the resting state recalibrated | Dynamics alone: 6.5–18.6% of Kenyon cells respond, barely changed. With spontaneous firing, 1.6–5.0%, but because projection neurons fall out of flies' range (65–80 Hz at onset, flies 100–200; 5.3 Hz at rest) under the receptor synapses' measured depression; APL isn't recruited. |
@@ -1036,6 +1066,7 @@ a sign that the approach is broken."
 | `experiments/odor_probe28.py` | Exploratory, not pre-registered: odor_probe27 with alpha-shaped (two-stage) GABA-A and GABA-B onsets | Almost no change: the LNs' onset burst is ~45x their later activity above rest (flies ~6x), so the inhibition fitted to the later EPSCs still swamps the onset; KCs 1-4.5%, mean Jaccard 0.15 |
 | `experiments/odor_probe29.py` | Exploratory, not pre-registered: odor_probe28 with only the receptor-to-PN synapses inhibited | Closest fit to flies' EPSCs (0.32-0.33; GABA-B blocked 0.61-0.71); LNs stay active (burst ~5.5x later rate); PNs open at 130-156 Hz but rise rather than accommodate; KCs 3.4-16%, mean Jaccard 0.19, α/β 6.3 spikes per response; PN breadth 25-38%; σ 28-39 |
 | `experiments/odor_probe30.py` | Exploratory, not pre-registered: odor_probe29 with odor_probe10's measured receptor time course in every odor | Closest EPSC fit (control 0.30-0.33, GABA-B blocked 0.53-0.76); PNs peak ~375 ms and fall to 0.79 of peak by 1 s; KCs 2.4-10.5%, mean Jaccard 0.16, α/β 4.6-5.7 spikes per response; α′/β′ 0.7-3.9%; PN breadth 21-36%; MBONs still far short |
+| `experiments/odor_probe31.py` | Exploratory, not pre-registered: Kenyon cell-to-MBON11 synapses set from Yamada et al. 2024's EPSC charge (0.019-0.042 pC per synapse) and Wang et al. 2026's MBON11 gain (0.41 Hz/pA), on odor_probe30's model | MBON11 gains 60-91 spikes to 3-octanol and 21-35 to 4-methylcyclohexanol (flies 118, 110); input per cell 1.5-3.3x flies' for 3-octanol, 0.3-0.7x for 4-methylcyclohexanol (γ cells over-recruited); 0.11-0.27 spikes per pC (flies ~0.45) |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension fall inside the pre-set windows (flies: about 7 and 3.3 ms), the only 2 of 6 checks that pass, and the timing only with the coxa braced; the launch is steep and slightly backward (79°), head-down, 1.7 times too hard upward and 2.7 times too weak horizontally. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.6). |
@@ -1268,6 +1299,7 @@ how `FlyvisOpticLobe` drives the rest of the brain.
 | `brainfly/eyes.py` | the original 1-D eye, kept so the early eye experiments still run |
 | `experiments/shiu_*.py` | rung 1: the pre-registered attempts and the runaway follow-up, with results in `.json` next to them |
 | `experiments/rest_*.py` | rung 4: probes of the resting state, its functional connectivity against Turner et al.'s flies, and the pre-registered attempts |
+| `experiments/brain_cache.py` | saves a built olfaction model (odor_probe30's antennal lobe takes about 9 minutes to build) under `fly-data/cache/` and restores it in about 35 s; checked spike for spike when saved, and rebuilt whenever the code it came from changes |
 | `experiments/` (the rest) | the experiments on the inherited model, listed [above](#where-it-started) |
 | `scripts/remote/` | experiments on throwaway Hetzner Cloud boxes: `image.sh` bakes a snapshot with every dependency and the data, and `run.sh` runs a file of commands across boxes from one queue, brings back what they changed under `experiments/` and deletes the boxes |
 | `scripts/gpu/` | flyvis training on a rented NVIDIA GPU: `flyvis.sh` (setup, bench, start, status, pull, stop), `bench.py` (first line: how fast the box starts tiny GPU operations) and `breakdown.py` |
