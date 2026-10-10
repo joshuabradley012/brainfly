@@ -36,6 +36,73 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **Measured as flies' were, the antennal lobe's inhibition matches and its projection neurons answer at half to two
+  thirds of flies' strength (rung 9's groundwork).** The model's projection neurons had been compared with flies' on
+  different terms. Its runs started from a state that hadn't settled, and its transform was measured with windows Olsen
+  et al. didn't use, over projection neurons flies' recordings leave out. Measured as flies were, two things stand out.
+  A broad odor divides the model's responses about as it divides flies'. But the responses themselves are half to two
+  thirds of flies' at every input, and 4-methylcyclohexanol's weak, broad input stays far behind 3-octanol's. The
+  receptor synapse now depresses as two pools, as its measured trains require, which gives the responses flies' time
+  course.
+  - **The settled starts hadn't settled** ([`settle_check.py`](experiments/settle_check.py)). Every run starts from the
+    state 6 s of spontaneous activity leave after a reset. A reset leaves every synapse undepressed, and the receptor
+    synapse's slow component recovers over 33 s. After 6 s it still kept 0.80 of its strength, where it settles at 0.37,
+    and the projection neurons fired 3.1 spikes/s where every run began, against 2.05 once settled. The build's
+    polishes met their 3 spikes/s target in that transient. Started with the receptor synapses at their computed
+    resting depression, the antennal lobe settles in about 2 s, so settles now take 3 s instead of 6
+    ([`odor_probe49.py`](experiments/odor_probe49.py) rebuilds the model that way). Settled properly, 3-octanol's
+    projection neurons fall to 0.20 of their peak by 0.4 s, where the old model's 0.31 leaned on the unsettled slow
+    component (flies 0.48).
+  - **Measured as Olsen et al. measured flies, the responses keep flies' timing but not their size**
+    ([`odor_olsen_protocol_check.py`](experiments/odor_olsen_protocol_check.py)). Olsen et al. averaged both rates over
+    the 500 ms from the valve's opening; responses start about 100 ms later and follow the receptor neurons' own time
+    course. Measured that way over the cholinergic projection neurons, the responses peak at 135–155 ms, as flies' do.
+    σ comes to 15.6, 19.9 and 20.3 in DL5, VM7d and DM4 (flies 11.8, 12.4 and 16.3), lower than the old windows gave, as
+    a one-neuron model predicted. But every response is half to two thirds of flies': Rmax 81–118 against 163–170, and
+    DL5 rises 21 spikes/s for 5 spikes/s of receptor input where flies' rise 44. Flies' responses rise steeply and
+    saturate by about 50 spikes/s of input; the model's keep rising. DM1's σ is 13.4 against flies' 45, because flies'
+    DM1 is held down by GABA the model doesn't give it.
+  - **The receptor synapse depresses as two pools** ([`odor_probe51.py`](experiments/odor_probe51.py), the base model
+    from here on). No single pool fits the synapse's measured trains: after a 7-Hz train it recovers over 7.5 s, after a
+    fast one over about 0.4 s. Two pools in parallel, half recovering over 0.3 s and half over 7.5 s, fit both
+    ([notes](research_notes/Rung%209%20learning%20data/orn_pn_depression.md); HybridBrain now has a second pool). With
+    them, strong responses keep 0.31–0.52 of their peak at 500 ms (one pool: 0.17–0.38; flies 0.44), and 3-octanol's
+    projection neurons keep 0.34 of theirs at 0.4 s. Their peaks come down, so σ rises a little (19.5–24.3) and fewer
+    Kenyon cells respond (1.6–8.6%; flies 6 ± 5%). The size stays where it was.
+  - **A broad odor divides the projection neurons as it divides flies'**
+    ([`odor_normalization_check.py`](experiments/odor_normalization_check.py)). Olsen et al. mixed pentyl acetate into
+    a private odor and measured how much of VM7's response was left. At the same share of the glomerulus's Rmax and
+    the same summed receptor input, the model leaves 0.66, 0.45, 0.26 and 0.07 of VM7d's response, against flies' 0.66,
+    0.47, 0.22 and 0.10, and 0.88, 0.78, 0.68 and 0.55 of a stronger one (flies 0.90, 0.84, 0.67 and 0.55). The
+    inhibition was fitted only to Olsen & Wilson's EPSCs, so this is a test it passes. DL5 is suppressed a little more
+    than flies' at the higher levels.
+  - **4-methylcyclohexanol's missing receptor input doesn't help it** ([`receptor_fills.py`](experiments/receptor_fills.py),
+    [`odor_probe50.py`](experiments/odor_probe50.py)). DoOR has no 4-methylcyclohexanol data for 13 receptors, and
+    Barth et al.'s receptor imaging shows it weakly exciting four of them. Filled in, those glomeruli's projection
+    neurons answer at 0–28 spikes/s, while the extra input recruits more inhibition and the odor's other glomeruli
+    answer less. Its summed projection neuron response falls from 0.53 of 3-octanol's to 0.47, and its Kenyon cells'
+    from 0.28 to 0.20 (flies 0.85–0.98 and 0.73–0.92). Weak responses that are too small, divided as flies' are, leave
+    too little.
+  - **A glomerulus's GABAergic projection neurons had been averaged in**
+    ([`orn_pn_glomeruli_check.py`](experiments/orn_pn_glomeruli_check.py)). 43 of the 307 uniglomerular projection
+    neurons, in 22 glomeruli, are GABAergic vPNs that get almost no receptor input; flies' recordings are of the
+    cholinergic ones. DM4's low Rmax in the older measures came from two responding adPNs averaged with two silent
+    vPNs. The model's unitary EPSPs also spread 3.3–16.4 mV across glomeruli, where Kazama & Wilson found them matched
+    (5.4–7.0 mV).
+  - **A latent kernel bug is fixed** ([`brainfly/hybrid.py`](brainfly/hybrid.py)). A graded neuron given an external
+    release also computed a release of its own from its unintegrated state, and ran away. No run had done this, and the
+    base model rebuilt on the fixed kernel came out identical in every attribute.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/al_olsen-dark.svg">
+  <img src="assets/al_olsen-light.svg" width="100%" alt="Top: four panels, one per glomerulus (DM4, DL5, VM7d, DM1), the cholinergic projection neurons' rise over the 500 ms from the valve's opening against the receptor neurons' rise, log axis 5-160 spikes/s. Flies' points and fitted curves rise steeply and saturate near 150-165 spikes/s by about 50 spikes/s of input; the model's (grey: one-pool receptor synapses; red: two pools) rise almost linearly on the log axis to about 120, at half to two thirds of flies' values below 50 spikes/s; in DM1 the model lies above flies', whose DM1 GABA holds down. Bottom left: VM7d's time course for weak input, the model peaking near 60 spikes/s at 0.15 s against flies' 176; for intermediate input, 183 against 296, both falling to about 0.45 of their peak by 0.5 s. Bottom right: the share of VM7d's response that survives pentyl acetate as its summed receptor input rises from 0 to 912 spikes/s: model and flies nearly overlap, from 1 to about 0.1 for a response at half the glomerulus's Rmax and to 0.55 for one at about 0.8.">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/settle-dark.svg">
+  <img src="assets/settle-light.svg" width="100%" alt="Two panels over a minute of spontaneous activity. Left: the receptor synapses' slow component as a share of full strength. From a reset (red) it starts at 1 and falls slowly, still 0.80 at 6 s and reaching its resting value of 0.36 only after 40-50 s; started at its resting depression (the other line) it stays at 0.36 throughout. Right: the projection neurons' mean rate. From a reset it dips below 1 spike/s, rises to 3 at 6 s and drifts down to 2 over the minute; from the resting depression it sits at 2 from the first second.">
+</picture>
+
 * **The antennal lobe and the mushroom body now answer odors close to flies' (rung 9's groundwork).** Responding
   Kenyon cells fired about 11 spikes in 1.4 s where flies' fire about 2. The cause was upstream: flies' projection
   neurons open strongly and fall to about half within half a second, while the model's climbed through the odor. Three
@@ -1271,6 +1338,13 @@ a sign that the approach is broken."
 | `experiments/odor_probe46.py` | Exploratory, not pre-registered: the PN-to-Kenyon cell synapses doubled to Turner et al.'s measured 1.4 mV claw EPSP (they gave 0.70 at the PNs' resting depression), APL's Kenyon cell synapses fitted again to the 2.5-fold block effect | s = 20 (2.48). Kenyon cells back in flies' range: 3.6-15.7% respond, alpha/beta 1.9-3.8 spikes per response (flies 2.2), mean Jaccard 0.19; MBON11 36 spikes to 3-octanol from 176 pC (flies 118 from about 250). Classes in the wrong order (alpha/beta > gamma > alpha'/beta'); 4-methylcyclohexanol still 0.29 of 3-octanol. Settings in mb_calibration.py |
 | `experiments/odor_probe47.py` | Exploratory, not pre-registered: each Kenyon cell class's PN synapses at the measured 1.4 mV unitary EPSP and APL synapses giving every class the same saturation (Inada et al. 2017), instead of rung 4's size rule, APL refitted | The classes' order now matches flies' at the top: alpha'/beta' respond most (17.7% to 3-octanol), alpha/beta 9.0%; but gamma 15.5% (flies about 2-3.5%). MBON11 40 spikes from 205 pC (flies 118 from about 250). mb_calibration.py now holds this version |
 | `experiments/odor_probe48.py` | Exploratory, not pre-registered: the gamma Kenyon cells' threshold at alpha/beta's plus 6.5 or 11 mV (Chen et al. 2026) instead of Inada's 2.5; the one nearest flies' gamma response (3.5% to 3-octanol) chosen | +11: gamma 6.2% to 3-octanol (15.5% with Inada's), the classes in flies' order (alpha'/beta' 17.6% > alpha/beta 9.1% > gamma 6.2%), all Kenyon cells 2.5-13.1%, spikes per response in flies' range; MBON11's input falls to 102 pC (flies about 250), 23 spikes |
+| `experiments/settle_check.py` | Exploratory check: is warm.py's 6 s settled start settled? | No: the receptor synapses' slow component (33 s recovery) still keeps 0.80 of its strength at 6 s (settled 0.37) and the PNs fire 3.1 spikes/s (settled 2.05); started at their computed resting depression the antennal lobe settles in about 2 s |
+| `experiments/odor_probe49.py` | Exploratory, not pre-registered: odor_probe44.py's build with settles started at the receptor synapses' resting depression (3 s) | The PNs rest at their settled 2.93 spikes/s; transform steeper but weaker (sigma 17-25, Rmax 132-134); 3-octanol's PNs 0.20 of peak at 0.4 s (was 0.31; flies 0.48); Kenyon cells 2.5-12.8%, MBON11 17 spikes; MCH/OCT 0.53 at the PNs, 0.28 at the Kenyon cells |
+| `experiments/orn_pn_glomeruli_check.py` | Exploratory check: the model's receptor-to-PN connections glomerulus by glomerulus, against Kazama & Wilson's matched uEPSPs and Grabe et al.'s counts | Unitary EPSPs 3.3-16.4 mV (flies matched 5.4-7.0); 43 GABAergic vPNs in 22 glomeruli get almost no receptor input and had been averaged into every per-glomerulus PN measure (DM4's low Rmax) |
+| `experiments/odor_olsen_protocol_check.py` | Exploratory check: the transform measured with Olsen et al.'s valve-aligned windows and receptor time course, over cholinergic PNs | Sigma 15.6/19.9/20.3 for DL5/VM7d/DM4 (flies 11.8/12.4/16.3), Rmax 81-118 (163-170); peaks at 135-155 ms as in flies; weak responses flies' shape at half the size; strong ones fall to 0.17-0.38 of their peak by 500 ms (flies 0.44) |
+| `experiments/odor_probe50.py` | Exploratory, not pre-registered: 4-methylcyclohexanol's (and 3-octanol's) missing DoOR input filled from Barth et al.'s receptor imaging (receptor_fills.py) | MCH further from OCT: 0.47 at the PNs (was 0.53), 0.20 at the Kenyon cells (0.28); its weak fills answer at 0-28 spikes/s while the extra inhibition weakens its other glomeruli |
+| `experiments/odor_probe51.py` | Exploratory, not pre-registered: the receptor synapse depressing as two pools (half 0.67/0.3 s, half 0.83/7.5 s; HybridBrain's second pool) | Flies' time course: strong responses keep 0.31-0.52 of their peak at 500 ms (flies 0.44); size unchanged (Rmax 83-126), sigma 17-24; Kenyon cells 1.6-8.6%, MBON11 12 spikes. The base model from here on |
+| `experiments/odor_normalization_check.py` | Exploratory check: a private VM7d/DL5 response under pentyl acetate at Olsen et al.'s summed receptor inputs | At matched shares of Rmax the model's suppression matches flies' (VM7d 0.66/0.45/0.26/0.07 against 0.66/0.47/0.22/0.10; 0.88/0.78/0.68/0.55 against 0.90/0.84/0.67/0.55); DL5 a little more suppressed |
 | `experiments/odor_probe41.py` | Exploratory, not pre-registered: on odor_probe42.py's LN-calibrated antennal lobe, the receptor synapse's slow component at Kazama & Wilson's unitary size (0.086) and/or the PNs keeping their synaptic current through their spikes | The slow size decides accommodation, kept current decides onset strength. Both: 3-octanol's PNs peak at 103 spikes/s at onset (strongly driven 186), 0.35 of it 500 ms after the valve (flies 0.48); Rmax 174-198 in three glomeruli (flies 163-170), sigma 23-34; Kenyon cells 1.1-6.0%, alpha/beta 1.1-2.0 spikes per response (flies 2.2). Weak input, PN breadth (29-43%), MCH's reach and MBON11 (13 spikes) still off |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension fall inside the pre-set windows (flies: about 7 and 3.3 ms), the only 2 of 6 checks that pass, and the timing only with the coxa braced; the launch is steep and slightly backward (79°), head-down, 1.7 times too hard upward and 2.7 times too weak horizontally. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
