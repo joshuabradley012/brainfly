@@ -22,6 +22,17 @@ answers; MBON11's evoked spikes; the resting brain). Seeds 100000 + 1000 x condi
 transform; + odor for Turner's protocol, + 50 + odor for Hige's, + 900 for each type's rest, + 997 for the PNs' resting
 rates, + 995 for the resting brain).
 
+Ran: the slow component fixes the transform's shape but doubles its gain, and undepressed it floods the Kenyon cells.
+With it, the fitted sigma is 18.8, 11.5, 10.1 and 12.0 for DM4, DL5, VM7d and DM1 (Olsen: 16.3, 11.8, 12.4, 44.8;
+before, 3.6-4.2), but Rmax is 223-352 spikes/s (Olsen: 144-170; before, 56-115), and lateral input still doesn't divide
+(0.97-1.31 of the response alone). In odors the PNs fire 252-271 Hz in the first 100 ms and 329-351 Hz over the second
+half second (before, 160-175 and 85-97; flies 100-200 at onset, then accommodating), 28-63% of Kenyon cells respond
+(4-16% before), 776 answer all six odors and the mean Jaccard is 0.63; MBON11 gains 50-113 spikes (flies 110-118),
+only because the Kenyon cells are flooded. The approximation fails at odor rates: Nagel et al.'s slow component
+depletes by 0.73% per spike, negligible at 40 Hz but halving it within half a second at the 100-200 Hz the model's
+non-adapting receptor neurons fire, so the slow synapses need their own depression (0.9927 per spike, 33 s to recover)
+rather than none. The PNs' breadth is unchanged (40-63% by Turner's criterion).
+
     python experiments/odor_probe17.py         (writes experiments/odor_probe17.json)
 """
 from __future__ import annotations
