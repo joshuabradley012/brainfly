@@ -1,0 +1,522 @@
+{
+ "question": "Exploratory check, not pre-registered: how do the model's receptor-to-PN connections differ from glomerulus to\nglomerulus, against flies'?\n\nodor_probe7.py scales every receptor neuron-to-PN synapse by one factor, chosen so that the mean same-glomerulus\nconnection gives Kazama & Wilson 2008's 6.19 mV rested unitary EPSP. Each connection's EPSP is then proportional to its\nMaleCNS synapse count, so glomeruli whose connections have more synapses get larger EPSPs. In flies the rested unitary\nEPSPs are matched across glomeruli (DM6 5.5, VM2 5.4, DL5 7.0, DM4 6.9 mV) while the unitary currents differ about\n3-fold (13-41 pA), the PNs' input resistance making up the difference (Kazama & Wilson 2008, \"homeostatic matching\"),\nand every receptor neuron of a glomerulus contacts every PN of it (Kazama & Wilson 2009; Tobin et al. 2017). The\nconvergence sets the transform's weak-input gain (sigma falls about as 1 / sqrt(N) in a one-PN model;\nresearch_notes/Rung 9 learning data/weak_input_gain.md), and the model's DM4 reaches only 81 spikes/s (flies 170).\nModel: odor_probe7.py's connectome (no build needed: the weights are MaleCNS synapse counts times the one factor).\nMeasured, per glomerulus with uniglomerular PNs: receptor neurons and PNs, the share of receptor neuron-PN pairs\nconnected, synapses per connection, the rested unitary EPSP (fast and slow components together, 6.19 mV on average),\nand the summed rested EPSP one spike in every receptor neuron of the glomerulus puts on each PN; against Grabe et al.\n2016's receptor neuron counts (per antenna, female/male) and Kazama & Wilson's uEPSPs.\n\n    python experiments/orn_pn_glomeruli_check.py      (writes experiments/orn_pn_glomeruli_check.json)\n",
+ "glomeruli": 50,
+ "uepsp_mv_quantiles_5_25_50_75_95": [
+  3.34,
+  5.12,
+  7.67,
+  9.38,
+  16.42
+ ],
+ "summed_uepsp_mv_quantiles_5_25_50_75_95": [
+  156.3,
+  223.4,
+  276.5,
+  318.6,
+  394.4
+ ],
+ "orns_quantiles_5_25_50_75_95": [
+  22.4,
+  31.2,
+  35.0,
+  62.8,
+  117.8
+ ],
+ "corr_orns_vs_uepsp": -0.653,
+ "glomeruli_by_name": {
+  "D": {
+   "orns": 28,
+   "upns": 6,
+   "connected_share": 0.988,
+   "synapses_per_connection": 55.8,
+   "uepsp_mv": 12.72,
+   "summed_uepsp_per_pn_mv": 351.9,
+   "spontaneous_hz": 6.0
+  },
+  "DA1": {
+   "orns": 204,
+   "upns": 15,
+   "connected_share": 0.738,
+   "synapses_per_connection": 14.2,
+   "uepsp_mv": 2.57,
+   "summed_uepsp_per_pn_mv": 387.2,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    62.5,
+    62.25
+   ]
+  },
+  "DA2": {
+   "orns": 48,
+   "upns": 10,
+   "connected_share": 0.779,
+   "synapses_per_connection": 12.5,
+   "uepsp_mv": 7.63,
+   "summed_uepsp_per_pn_mv": 285.4,
+   "spontaneous_hz": 6.0
+  },
+  "DA3": {
+   "orns": 34,
+   "upns": 4,
+   "connected_share": 0.787,
+   "synapses_per_connection": 9.9,
+   "uepsp_mv": 5.62,
+   "summed_uepsp_per_pn_mv": 150.3,
+   "spontaneous_hz": 6.0
+  },
+  "DA4l": {
+   "orns": 33,
+   "upns": 2,
+   "connected_share": 0.848,
+   "synapses_per_connection": 51.7,
+   "uepsp_mv": 7.97,
+   "summed_uepsp_per_pn_mv": 223.2,
+   "spontaneous_hz": 6.0
+  },
+  "DA4m": {
+   "orns": 35,
+   "upns": 2,
+   "connected_share": 0.871,
+   "synapses_per_connection": 67.0,
+   "uepsp_mv": 7.69,
+   "summed_uepsp_per_pn_mv": 234.4,
+   "spontaneous_hz": 6.0
+  },
+  "DC1": {
+   "orns": 32,
+   "upns": 2,
+   "connected_share": 0.984,
+   "synapses_per_connection": 114.2,
+   "uepsp_mv": 6.58,
+   "summed_uepsp_per_pn_mv": 207.4,
+   "spontaneous_hz": 6.0
+  },
+  "DC2": {
+   "orns": 22,
+   "upns": 4,
+   "connected_share": 0.932,
+   "synapses_per_connection": 79.8,
+   "uepsp_mv": 12.59,
+   "summed_uepsp_per_pn_mv": 258.1,
+   "spontaneous_hz": 6.0
+  },
+  "DC3": {
+   "orns": 35,
+   "upns": 6,
+   "connected_share": 0.971,
+   "synapses_per_connection": 43.2,
+   "uepsp_mv": 9.51,
+   "summed_uepsp_per_pn_mv": 323.3,
+   "spontaneous_hz": 6.0
+  },
+  "DC4": {
+   "orns": 23,
+   "upns": 4,
+   "connected_share": 0.837,
+   "synapses_per_connection": 77.1,
+   "uepsp_mv": 16.66,
+   "summed_uepsp_per_pn_mv": 320.7,
+   "spontaneous_hz": 6.0
+  },
+  "DL1": {
+   "orns": 83,
+   "upns": 4,
+   "connected_share": 0.892,
+   "synapses_per_connection": 42.2,
+   "uepsp_mv": 5.11,
+   "summed_uepsp_per_pn_mv": 377.9,
+   "spontaneous_hz": 6.0
+  },
+  "DL2d": {
+   "orns": 15,
+   "upns": 13,
+   "connected_share": 0.887,
+   "synapses_per_connection": 56.5,
+   "uepsp_mv": 19.38,
+   "summed_uepsp_per_pn_mv": 257.9,
+   "spontaneous_hz": 19.0
+  },
+  "DL2v": {
+   "orns": 23,
+   "upns": 8,
+   "connected_share": 0.848,
+   "synapses_per_connection": 73.2,
+   "uepsp_mv": 16.19,
+   "summed_uepsp_per_pn_mv": 315.7,
+   "spontaneous_hz": 19.0
+  },
+  "DL3": {
+   "orns": 103,
+   "upns": 11,
+   "connected_share": 0.611,
+   "synapses_per_connection": 10.6,
+   "uepsp_mv": 4.84,
+   "summed_uepsp_per_pn_mv": 304.6,
+   "spontaneous_hz": 6.0
+  },
+  "DL4": {
+   "orns": 62,
+   "upns": 2,
+   "connected_share": 0.669,
+   "synapses_per_connection": 29.9,
+   "uepsp_mv": 5.4,
+   "summed_uepsp_per_pn_mv": 223.9,
+   "spontaneous_hz": 6.0
+  },
+  "DL5": {
+   "orns": 43,
+   "upns": 2,
+   "connected_share": 0.988,
+   "synapses_per_connection": 81.7,
+   "uepsp_mv": 6.85,
+   "summed_uepsp_per_pn_mv": 291.2,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    24,
+    21
+   ],
+   "kw08_uepsp_mv": 7.0
+  },
+  "DM1": {
+   "orns": 74,
+   "upns": 2,
+   "connected_share": 0.98,
+   "synapses_per_connection": 92.3,
+   "uepsp_mv": 3.73,
+   "summed_uepsp_per_pn_mv": 270.6,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    38.5,
+    32
+   ]
+  },
+  "DM2": {
+   "orns": 54,
+   "upns": 4,
+   "connected_share": 0.926,
+   "synapses_per_connection": 49.9,
+   "uepsp_mv": 5.07,
+   "summed_uepsp_per_pn_mv": 253.3,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    8,
+    8
+   ]
+  },
+  "DM3": {
+   "orns": 63,
+   "upns": 4,
+   "connected_share": 0.524,
+   "synapses_per_connection": 31.8,
+   "uepsp_mv": 3.8,
+   "summed_uepsp_per_pn_mv": 125.3,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    34,
+    31
+   ]
+  },
+  "DM4": {
+   "orns": 32,
+   "upns": 4,
+   "connected_share": 0.68,
+   "synapses_per_connection": 55.7,
+   "uepsp_mv": 4.46,
+   "summed_uepsp_per_pn_mv": 97.1,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    23,
+    15.5
+   ],
+   "kw08_uepsp_mv": 6.9
+  },
+  "DM5": {
+   "orns": 35,
+   "upns": 7,
+   "connected_share": 0.792,
+   "synapses_per_connection": 21.8,
+   "uepsp_mv": 8.81,
+   "summed_uepsp_per_pn_mv": 244.2,
+   "spontaneous_hz": 6.0
+  },
+  "DM6": {
+   "orns": 58,
+   "upns": 7,
+   "connected_share": 0.892,
+   "synapses_per_connection": 27.4,
+   "uepsp_mv": 6.97,
+   "summed_uepsp_per_pn_mv": 360.5,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    18,
+    10.5
+   ],
+   "kw08_uepsp_mv": 5.5
+  },
+  "DP1l": {
+   "orns": 33,
+   "upns": 5,
+   "connected_share": 0.691,
+   "synapses_per_connection": 68.8,
+   "uepsp_mv": 8.81,
+   "summed_uepsp_per_pn_mv": 200.8,
+   "spontaneous_hz": 19.0
+  },
+  "DP1m": {
+   "orns": 31,
+   "upns": 6,
+   "connected_share": 0.785,
+   "synapses_per_connection": 109.5,
+   "uepsp_mv": 8.5,
+   "summed_uepsp_per_pn_mv": 206.9,
+   "spontaneous_hz": 6.0
+  },
+  "V": {
+   "orns": 55,
+   "upns": 2,
+   "connected_share": 1.0,
+   "synapses_per_connection": 49.9,
+   "uepsp_mv": 3.61,
+   "summed_uepsp_per_pn_mv": 198.5,
+   "spontaneous_hz": 6.0
+  },
+  "VA1d": {
+   "orns": 132,
+   "upns": 8,
+   "connected_share": 0.697,
+   "synapses_per_connection": 15.3,
+   "uepsp_mv": 3.18,
+   "summed_uepsp_per_pn_mv": 292.6,
+   "spontaneous_hz": 6.0
+  },
+  "VA1v": {
+   "orns": 130,
+   "upns": 12,
+   "connected_share": 0.662,
+   "synapses_per_connection": 15.6,
+   "uepsp_mv": 3.5,
+   "summed_uepsp_per_pn_mv": 301.0,
+   "spontaneous_hz": 6.0
+  },
+  "VA2": {
+   "orns": 83,
+   "upns": 2,
+   "connected_share": 0.898,
+   "synapses_per_connection": 87.9,
+   "uepsp_mv": 4.47,
+   "summed_uepsp_per_pn_mv": 332.7,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    43.5,
+    32
+   ]
+  },
+  "VA3": {
+   "orns": 30,
+   "upns": 4,
+   "connected_share": 0.767,
+   "synapses_per_connection": 57.9,
+   "uepsp_mv": 8.58,
+   "summed_uepsp_per_pn_mv": 197.3,
+   "spontaneous_hz": 6.0
+  },
+  "VA4": {
+   "orns": 34,
+   "upns": 2,
+   "connected_share": 0.941,
+   "synapses_per_connection": 75.1,
+   "uepsp_mv": 7.8,
+   "summed_uepsp_per_pn_mv": 249.5,
+   "spontaneous_hz": 8.0
+  },
+  "VA5": {
+   "orns": 16,
+   "upns": 6,
+   "connected_share": 0.792,
+   "synapses_per_connection": 64.0,
+   "uepsp_mv": 14.95,
+   "summed_uepsp_per_pn_mv": 189.3,
+   "spontaneous_hz": 6.0
+  },
+  "VA6": {
+   "orns": 63,
+   "upns": 2,
+   "connected_share": 0.881,
+   "synapses_per_connection": 74.6,
+   "uepsp_mv": 5.07,
+   "summed_uepsp_per_pn_mv": 281.2,
+   "spontaneous_hz": 6.0
+  },
+  "VA7l": {
+   "orns": 29,
+   "upns": 2,
+   "connected_share": 0.862,
+   "synapses_per_connection": 86.3,
+   "uepsp_mv": 10.88,
+   "summed_uepsp_per_pn_mv": 271.9,
+   "spontaneous_hz": 8.0
+  },
+  "VA7m": {
+   "orns": 24,
+   "upns": 6,
+   "connected_share": 0.764,
+   "synapses_per_connection": 23.9,
+   "uepsp_mv": 8.93,
+   "summed_uepsp_per_pn_mv": 163.6,
+   "spontaneous_hz": 6.0
+  },
+  "VC1": {
+   "orns": 29,
+   "upns": 2,
+   "connected_share": 0.966,
+   "synapses_per_connection": 127.6,
+   "uepsp_mv": 11.15,
+   "summed_uepsp_per_pn_mv": 312.2,
+   "spontaneous_hz": 8.0
+  },
+  "VC2": {
+   "orns": 32,
+   "upns": 2,
+   "connected_share": 0.953,
+   "synapses_per_connection": 81.0,
+   "uepsp_mv": 8.78,
+   "summed_uepsp_per_pn_mv": 267.8,
+   "spontaneous_hz": 8.0
+  },
+  "VC3": {
+   "orns": 34,
+   "upns": 7,
+   "connected_share": 0.937,
+   "synapses_per_connection": 37.2,
+   "uepsp_mv": 8.97,
+   "summed_uepsp_per_pn_mv": 285.7,
+   "spontaneous_hz": 19.0
+  },
+  "VC4": {
+   "orns": 38,
+   "upns": 6,
+   "connected_share": 0.868,
+   "synapses_per_connection": 34.5,
+   "uepsp_mv": 8.82,
+   "summed_uepsp_per_pn_mv": 291.1,
+   "spontaneous_hz": 6.0
+  },
+  "VC5": {
+   "orns": 31,
+   "upns": 6,
+   "connected_share": 1.0,
+   "synapses_per_connection": 45.8,
+   "uepsp_mv": 9.53,
+   "summed_uepsp_per_pn_mv": 295.3,
+   "spontaneous_hz": 19.0
+  },
+  "VL1": {
+   "orns": 82,
+   "upns": 4,
+   "connected_share": 0.698,
+   "synapses_per_connection": 28.4,
+   "uepsp_mv": 3.2,
+   "summed_uepsp_per_pn_mv": 183.0,
+   "spontaneous_hz": 19.0
+  },
+  "VL2a": {
+   "orns": 98,
+   "upns": 8,
+   "connected_share": 0.57,
+   "synapses_per_connection": 26.6,
+   "uepsp_mv": 7.08,
+   "summed_uepsp_per_pn_mv": 395.6,
+   "spontaneous_hz": 19.0
+  },
+  "VL2p": {
+   "orns": 45,
+   "upns": 6,
+   "connected_share": 0.485,
+   "synapses_per_connection": 52.3,
+   "uepsp_mv": 7.65,
+   "summed_uepsp_per_pn_mv": 167.1,
+   "spontaneous_hz": 19.0
+  },
+  "VM1": {
+   "orns": 33,
+   "upns": 2,
+   "connected_share": 0.939,
+   "synapses_per_connection": 52.6,
+   "uepsp_mv": 7.58,
+   "summed_uepsp_per_pn_mv": 235.1,
+   "spontaneous_hz": 19.0
+  },
+  "VM2": {
+   "orns": 41,
+   "upns": 3,
+   "connected_share": 0.87,
+   "synapses_per_connection": 39.6,
+   "uepsp_mv": 8.96,
+   "summed_uepsp_per_pn_mv": 319.6,
+   "spontaneous_hz": 6.0,
+   "grabe_per_antenna_female_male": [
+    18,
+    15
+   ],
+   "kw08_uepsp_mv": 5.4
+  },
+  "VM3": {
+   "orns": 43,
+   "upns": 4,
+   "connected_share": 0.802,
+   "synapses_per_connection": 44.9,
+   "uepsp_mv": 7.15,
+   "summed_uepsp_per_pn_mv": 246.8,
+   "spontaneous_hz": 6.0
+  },
+  "VM4": {
+   "orns": 78,
+   "upns": 8,
+   "connected_share": 0.729,
+   "synapses_per_connection": 12.3,
+   "uepsp_mv": 5.14,
+   "summed_uepsp_per_pn_mv": 292.1,
+   "spontaneous_hz": 19.0
+  },
+  "VM5d": {
+   "orns": 84,
+   "upns": 12,
+   "connected_share": 0.759,
+   "synapses_per_connection": 21.9,
+   "uepsp_mv": 7.07,
+   "summed_uepsp_per_pn_mv": 450.6,
+   "spontaneous_hz": 6.0
+  },
+  "VM5v": {
+   "orns": 34,
+   "upns": 5,
+   "connected_share": 1.0,
+   "synapses_per_connection": 48.5,
+   "uepsp_mv": 12.04,
+   "summed_uepsp_per_pn_mv": 409.4,
+   "spontaneous_hz": 6.0
+  },
+  "VM7d": {
+   "orns": 36,
+   "upns": 7,
+   "connected_share": 1.0,
+   "synapses_per_connection": 40.7,
+   "uepsp_mv": 10.2,
+   "summed_uepsp_per_pn_mv": 367.0,
+   "spontaneous_hz": 8.0,
+   "grabe_per_antenna_female_male": [
+    11.5,
+    15
+   ]
+  },
+  "VM7v": {
+   "orns": 25,
+   "upns": 3,
+   "connected_share": 0.947,
+   "synapses_per_connection": 73.0,
+   "uepsp_mv": 16.6,
+   "summed_uepsp_per_pn_mv": 392.9,
+   "spontaneous_hz": 8.0
+  }
+ }
+}
