@@ -158,6 +158,25 @@ def test_set_type_after_construction_is_the_same_as_building_with_it():
         small([(0, 1, 1.0)], 2).set_type("c1", scale=2.0)
 
 
+def test_slow_synapses_can_depress_on_their_own():
+    """With slow_depression set, a neuron's slow synapses depress as if it had that depression, while its fast ones keep
+    the type's; without it, slow synapses depress with the fast ones."""
+    def two_spikes(depression, slow_depression):
+        brain = small([(0, 1, 1.0)], 3, slow_edges=[(0, 2, 1.0)], tau_slow=10.0, w_poi=100.0,
+                      types={"c0": {"depression": depression, "recovery": 10.0, "slow_depression": slow_depression,
+                                    "slow_recovery": 10.0}})
+        for _ in range(2):                              # two spikes 2 ms apart
+            brain.advance(1, drive=[([0], 1 / DT)])
+            brain.advance(19)
+        brain.advance(20)                               # both have arrived
+        return float(brain.x[0, 1]), float(brain.s[0, 2])
+    own_fast, own_slow = two_spikes(0.5, 0.9)
+    shared_fast, shared_slow = two_spikes(0.5, 0.0)
+    assert own_slow == pytest.approx(two_spikes(0.9, 0.0)[1], rel=1e-6)    # slow at 0.9, as with depression 0.9
+    assert own_fast == pytest.approx(shared_fast, rel=1e-6)                 # fast at the type's 0.5 either way
+    assert shared_slow < own_slow - 0.3
+
+
 def test_slow_full_exempts_slow_synapses_from_depression():
     """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
     neuron without depression would, and an unflagged slow target depressed."""

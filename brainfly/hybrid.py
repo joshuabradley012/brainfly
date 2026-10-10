@@ -37,6 +37,8 @@ brainfly.shiu, and lets each cell type differ:
                   current that holds the neuron about `adaptation` mV lower and decays with time
                   constant adaptation_tau, s (default 0: none, as in Shiu's model; 0.2 s)
     tau_slow      the time constant of the type's slow current, s (default 0: the brain's tau_slow)
+    slow_depression, slow_recovery    depression of the type's outgoing slow synapses, on their own (default 0: with
+                  the fast ones; Nagel, Hong & Wilson 2015's slow receptor component: 0.9927 and 33.2 s)
 
 A spike adds w_syn x (signed synapse count) to a fast current in each target (tau 5 ms, as in
 Shiu), or to a slow current (tau_slow, the target type's) along the edges given as slow, t_dly
@@ -71,7 +73,7 @@ UNIT = {"spiking": False, "graded": True}
 DEFAULTS = {"unit": "spiking", "tau_m": T_MBR, "threshold": V_TH - V0, "reset": V_RST - V0, "refractory": T_RFC,
             "bias": 0.0, "scale": 1.0, "gain": 6.0, "release_at": V_TH - V0, "max_release": np.inf,
             "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0, "adaptation": 0.0,
-            "adaptation_tau": 0.2, "tau_slow": 0.0}
+            "adaptation_tau": 0.2, "tau_slow": 0.0, "slow_depression": 0.0, "slow_recovery": 0.0}
 MONOAMINES = ("dopamine", "octopamine", "serotonin")
 
 
@@ -187,9 +189,10 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
-             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
+             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, depress_s, recover_s,
+             uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
-             u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last,
+             u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last, left_s, last_s,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
@@ -356,6 +359,13 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                     strength = np.float32(1.0 - (1.0 - left[b, i]) * np.exp(-(t - last[b, i]) / recover[cls[i]]))
                     left[b, i] = strength * depress[cls[i]]
                     last[b, i] = t
+                strength_s = strength                   # the slow synapses' strength: the fast one's, unless the
+                if slow and depress_s[cls[i]] > 0.0:    # type depresses them on their own
+                    strength_s = np.float32(1.0)
+                    if depress_s[cls[i]] < 1.0:
+                        strength_s = np.float32(1.0 - (1.0 - left_s[b, i]) * np.exp(-(t - last_s[b, i]) / recover_s[cls[i]]))
+                        left_s[b, i] = strength_s * depress_s[cls[i]]
+                        last_s[b, i] = t
                 if not silenced[i]:
                     count = nt[slot]
                     for e in range(ptr[i], ptr[i + 1]):
@@ -368,7 +378,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                     nt[slot] = count
                     if slow:
                         for e in range(sptr[i], sptr[i + 1]):
-                            srow[sidx[e]] += sw[e] if sfull[e] else sw[e] * strength
+                            srow[sidx[e]] += sw[e] if sfull[e] else sw[e] * strength_s
                     for e in range(gptr[i], gptr[i + 1]):       # electrical synapses: at once, undepressed
                         ub[gidx[e]] += gw[e]
                     for e in range(fptr[i], fptr[i + 1]):       # fast synapses: fdelay steps from now, depressing
@@ -593,6 +603,8 @@ class HybridBrain:
             rfc=np.array([int(round(p["refractory"] / dt)) for p in table], np.int64),
             graded=np.array([UNIT[p["unit"]] for p in table], np.bool_),
             depress=f32(lambda p: p["depression"]), recover=np.array([p["recovery"] / dt for p in table]),
+            depress_s=f32(lambda p: p["slow_depression"]),
+            recover_s=np.array([(p["slow_recovery"] or p["recovery"]) / dt for p in table]),
             noise_lambda=np.array([p["noise_rate"] * dt for p in table]) * np.bincount(self.cls, minlength=len(table)),
             noise_kick=f32(lambda p: p["noise_kick"]))
 
@@ -632,10 +644,18 @@ class HybridBrain:
         self.release = np.zeros((self.trials, len(self.graded)), np.float32)
         self.rng = np.random.SeedSequence(seed).generate_state(self.trials, dtype=np.uint64)
         self.driven = np.zeros(self.n, np.bool_)
-        depressing = any(p["depression"] < 1 for p in self.params)
-        self.left = np.ones(shape if depressing else (self.trials, 0), np.float32)
-        self.last = np.full(shape if depressing else (self.trials, 0), -(1 << 40), np.int64)
+        self._depression_state(fresh=True)
         self.t = 0
+
+    def _depression_state(self, fresh: bool = False) -> None:
+        """The fast synapses' depression state (left, last), and the slow ones' where a type depresses them on their
+        own (left_s, last_s): per neuron when needed, else empty. Made at reset, or when set_type needs them later."""
+        shape = (self.trials, self.n)
+        for name, needed in (("", any(p["depression"] < 1 for p in self.params)),
+                             ("_s", any(0 < p["slow_depression"] < 1 for p in self.params))):
+            if fresh or (needed and getattr(self, "left" + name).shape[1] != self.n):
+                setattr(self, "left" + name, np.ones(shape if needed else (self.trials, 0), np.float32))
+                setattr(self, "last" + name, np.full(shape if needed else (self.trials, 0), -(1 << 40), np.int64))
 
     def advance(self, steps: int, drive=(), silence=(), record=None):
         """Run `steps` steps and return each trial's spike count per neuron, (trials, n). record: neuron
@@ -659,6 +679,7 @@ class HybridBrain:
         silenced = np.zeros(self.n, np.bool_)
         silenced[np.asarray(silence, np.int64)] = True
         k = self._kernel_tables()
+        self._depression_state()
         counts = np.zeros((self.trials, self.n), np.int32)
         rec_pos = np.full(self.n if record is not None else 0, -1, np.int64)
         if record is not None:
@@ -668,11 +689,11 @@ class HybridBrain:
                  self.sptr, self.sidx, self.slow_weights, self.slow_full, self.stargets, self.slow_in, self.gptr, self.gidx, self.gap_mv,
                  self.fptr, self.fcomp, self.fast_mv, self.ftargets, self.fpending, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  k["a_xx"], k["a_ss"], k["theta"],
-                 k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["uniform"],
+                 k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["depress_s"], k["recover_s"], k["uniform"],
                  bool(len(self.graded) or external_on), k["g_list"], k["g_gain"], k["g_at"], k["g_max"],
                  self._graded_targets() if external_on else self._graded_only_targets(), self.u, self.x, self.s, self.ad, self.until,
                  self.pending, self.pending_slow, self.touched, self.n_touched, self.graded_input, self.slow_graded_input, self.release,
-                 self.rng, self.left, self.last,
+                 self.rng, self.left, self.last, self.left_s, self.last_s,
                  drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self._internal_neurons(), self.external_input,
                  k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps),
