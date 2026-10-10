@@ -1,0 +1,20 @@
+{
+ "question": "Exploratory analysis, no simulation: how much odor overlap would an ideal Kenyon cell layer show, given the\nprojection neurons' (PNs') responses?\n\nEach Kenyon cell's input is its PN synapse counts (MaleCNS, excitatory) times the PN responses of their glomeruli,\ndivided by its summed PN synapse count (so every cell is equally excitable per unit of input), and for each odor the\ncells with the most input respond, as many as odor_probe14.py's corrected model has respond (3-octanol 12.6%,\n4-methylcyclohexanol 3.7%, ethyl acetate 12.9%, isopentyl acetate 13.8%, benzaldehyde 11.4%, 2-heptanone 16.2%). The\nPN responses are odor_probe12.py's saved glomerular patterns: the PNs' rise over an odor's first 100 ms, over its 0.5 s,\nor DoOR's receptor responses themselves (as if PNs passed their receptors' pattern through unchanged).\n\n    python experiments/odor_ideal.py           (writes experiments/odor_ideal.json)\n",
+ "sources": {
+  "pn_early": {
+   "oct_mch_jaccard": 0.19,
+   "mch_responders_answering_oct": 0.702,
+   "mean_jaccard": 0.264
+  },
+  "pn": {
+   "oct_mch_jaccard": 0.214,
+   "mch_responders_answering_oct": 0.775,
+   "mean_jaccard": 0.302
+  },
+  "door": {
+   "oct_mch_jaccard": 0.082,
+   "mch_responders_answering_oct": 0.331,
+   "mean_jaccard": 0.156
+  }
+ }
+}
