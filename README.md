@@ -119,6 +119,18 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     2%), and 4-methylcyclohexanol reaches 0.29 as many Kenyon cells as 3-octanol (flies 0.73–0.92). A latent bug turned
     up on the way: a graded neuron whose output is set from outside still integrates noise, which no run so far
     triggered.
+  - **Learning on the new model** ([`learning_pilot4.py`](experiments/learning_pilot4.py),
+    [`learning_pilot5.py`](experiments/learning_pilot5.py), [notes](research_notes/Rung%209%20learning%20data/mbon11_kc_activity.md)).
+    Hige et al.'s experiment again: at each dopamine pulse the Kenyon cells' synapses onto MBON11 weaken by their recent
+    spikes, at the rate that cuts the paired odor's input 90%. With the Kenyon cell-to-MBON synapses undepressed,
+    pairing 3-octanol cuts its own response 86–89% (flies 80%) and 4-methylcyclohexanol's 35–36% (flies 27%). Pairing
+    4-methylcyclohexanol cuts its own 87–96% (flies 76%) and 3-octanol's 14.5–17% (flies 38%; 5.6% on the old model).
+    Backward pairing changes nothing. With the synapses depressing as Yamada et al. measured, the reciprocal falls to
+    9–10%. The reciprocal pairing is held back by how few Kenyon cells 4-methylcyclohexanol reaches: 99 against
+    3-octanol's 383, where flies' two odors reach about as many and share about a third of them. MBON11 itself now
+    answers weakly: 38 spikes to 3-octanol held near 6 Hz, against flies' 118. Its Kenyon cell synapses now carry the
+    charge Yamada et al.'s population EPSCs give once their slow tail is counted (0.054 pC, up from 0.030), and its
+    Kenyon cells fire as few spikes as flies' do.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/al_lns-dark.svg">
