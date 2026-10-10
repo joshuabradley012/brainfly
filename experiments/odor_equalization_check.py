@@ -67,33 +67,40 @@ def run(o, rec, odor: str, seed: int) -> dict:
     return {"rest": rest.mean(0), "first": first.mean(0), "whole": whole.mean(0)}
 
 
-def main() -> None:
-    t0 = time.perf_counter()
-    o, rec, built = brain_cache.load("odor_probe44", p44.build, p44.prepare)
-    mb_calibration.apply(o)
+def measure(o, rec, seed: int = SEED, seeds: int = SEEDS) -> dict:
+    """The summed and per-glomerulus responses to both odors and their ratios (call within warm.tracking)."""
     types, m = o.types, o.m
     gloms = sorted({t.split("_")[0] for t in types[m["upn"]]})
     pn_of = {g: np.flatnonzero(m["upn"] & np.char.startswith(types, f"{g}_")) for g in gloms}
     orn, upn = np.flatnonzero(m["orn"]), np.flatnonzero(m["upn"])
-    out = {"question": __doc__, "odors": {}}
-    with warm.tracking(o, rec):
-        for j, odor in enumerate(ODORS):
-            rs = [run(o, rec, odor, SEED + 10 * j + k) for k in range(SEEDS)]
-            rest, first, whole = (np.mean([r[x] for r in rs], 0) for x in ("rest", "first", "whole"))
-            ev_first, ev_whole = first / 0.5 - rest, whole - rest            # Hz per neuron, over the rest
-            per_glom = {g: round(float(ev_first[idx].mean()), 1) for g, idx in pn_of.items() if len(idx)}
-            out["odors"][odor] = {"orn_summed_evoked_hz": {"first_0.5s": round(float(ev_first[orn].sum()), 1), "1s": round(float(ev_whole[orn].sum()), 1)},
-                                  "upn_summed_evoked_hz": {"first_0.5s": round(float(ev_first[upn].sum()), 1), "1s": round(float(ev_whole[upn].sum()), 1)},
-                                  "glomeruli_over_10hz": int(sum(v > 10 for v in per_glom.values())),
-                                  "glomeruli_over_30hz": int(sum(v > 30 for v in per_glom.values())),
-                                  "pn_evoked_hz_by_glomerulus_first_0.5s": dict(sorted(per_glom.items(), key=lambda kv: -kv[1]))}
-            r = out["odors"][odor]
-            print(odor, json.dumps({k: r[k] for k in ("orn_summed_evoked_hz", "upn_summed_evoked_hz", "glomeruli_over_10hz", "glomeruli_over_30hz")}), flush=True)
+    out = {"odors": {}}
+    for j, odor in enumerate(ODORS):
+        rs = [run(o, rec, odor, seed + 10 * j + k) for k in range(seeds)]
+        rest, first, whole = (np.mean([r[x] for r in rs], 0) for x in ("rest", "first", "whole"))
+        ev_first, ev_whole = first / 0.5 - rest, whole - rest            # Hz per neuron, over the rest
+        per_glom = {g: round(float(ev_first[idx].mean()), 1) for g, idx in pn_of.items() if len(idx)}
+        out["odors"][odor] = {"orn_summed_evoked_hz": {"first_0.5s": round(float(ev_first[orn].sum()), 1), "1s": round(float(ev_whole[orn].sum()), 1)},
+                              "upn_summed_evoked_hz": {"first_0.5s": round(float(ev_first[upn].sum()), 1), "1s": round(float(ev_whole[upn].sum()), 1)},
+                              "glomeruli_over_10hz": int(sum(v > 10 for v in per_glom.values())),
+                              "glomeruli_over_30hz": int(sum(v > 30 for v in per_glom.values())),
+                              "pn_evoked_hz_by_glomerulus_first_0.5s": dict(sorted(per_glom.items(), key=lambda kv: -kv[1]))}
+        r = out["odors"][odor]
+        print(odor, json.dumps({k: r[k] for k in ("orn_summed_evoked_hz", "upn_summed_evoked_hz", "glomeruli_over_10hz", "glomeruli_over_30hz")}), flush=True)
     a, b2 = out["odors"]["4-methylcyclohexanol"], out["odors"]["3-octanol"]
     out["mch_over_oct"] = {"orn_first": round(a["orn_summed_evoked_hz"]["first_0.5s"] / b2["orn_summed_evoked_hz"]["first_0.5s"], 3),
                            "upn_first": round(a["upn_summed_evoked_hz"]["first_0.5s"] / b2["upn_summed_evoked_hz"]["first_0.5s"], 3),
                            "upn_1s": round(a["upn_summed_evoked_hz"]["1s"] / b2["upn_summed_evoked_hz"]["1s"], 3)}
     print("MCH/OCT", json.dumps(out["mch_over_oct"]), flush=True)
+    return out
+
+
+def main() -> None:
+    t0 = time.perf_counter()
+    o, rec, built = brain_cache.load("odor_probe44", p44.build, p44.prepare)
+    mb_calibration.apply(o)
+    out = {"question": __doc__}
+    with warm.tracking(o, rec):
+        out.update(measure(o, rec))
     out["seconds"] = round(time.perf_counter() - t0)
     OUT.write_text(json.dumps(out, indent=1))
 

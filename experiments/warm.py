@@ -14,6 +14,14 @@ at each reset, with fresh random streams from the reset's own seed, so runs keep
 
 It lives outside brainfly/hybrid.py so that the cached models (brain_cache.py, keyed on every loaded module's code)
 stay valid.
+
+A reset leaves every synapse undepressed, and the receptor synapses' slow component recovers over 33 s, so 6 s from a
+reset leave it at 0.80 of its strength where it settles at 0.37, and the PNs firing 1.5 times their settled rate
+(settle_check.py). A model whose `settling` attribute says {"rested": True} starts each settle with the receptor neurons'
+synapses at their mean depression at their spontaneous rates (rest_depression), from which the antennal lobe settles
+within about 2 s, and settles for settling["seconds"] (RESTED_SETTLE_S). A model carries the attribute in its cache, so
+every run on it settles the same way; models without it (odor_probe44.py's and earlier) settle as they were built, 6 s
+from the undepressed reset.
 """
 from __future__ import annotations
 
@@ -28,7 +36,7 @@ from brainfly.hybrid import HybridBrain
 STATE = ("u", "x", "s", "until", "ad", "pending", "fpending", "pending_slow", "touched", "n_touched", "graded_input",
          "slow_graded_input", "_external_release", "external_input", "release", "driven", "left", "last", "left_s",
          "last_s", "presynaptic_state", "t")
-SEED, SETTLE_S = 440000, 6.0
+SEED, SETTLE_S, RESTED_SETTLE_S = 440000, 6.0, 3.0
 
 
 def snapshot(b: HybridBrain) -> dict:
@@ -48,19 +56,68 @@ def restore(b: HybridBrain, state: dict, seed: int) -> None:
     b.rng = np.random.SeedSequence(seed).generate_state(b.trials, dtype=np.uint64)
 
 
-def settle(o, rec, seed: int = SEED, seconds: float = SETTLE_S) -> dict:
-    """The state after `seconds` of spontaneous activity from a reset with `seed`."""
+def resting_gain(b: HybridBrain) -> float:
+    """The presynaptic gain with every trace at its resting start (1 without presynaptic inhibition)."""
+    pres = b._presynaptic
+    if pres is None:
+        return 1.0
+    a = np.maximum(np.asarray(pres["start"], float) - pres["offset"], 0.0)
+    return float(1.0 / (1.0 + np.sum(pres["k"] * a ** pres["power"])))
+
+
+def rest_depression(o, rec) -> dict:
+    """The receptor neurons' fast and slow synapses set to their mean depression at their spontaneous rates: at rate r,
+    using (1 - f) g of what is left per spike (g the resting presynaptic gain, for the neurons whose depletion follows it)
+    and recovering over tau, a synapse keeps 1 / (1 + r tau (1 - f) g) of its strength on average."""
     b = o.brain
-    b.reset(seed)
+    rate = np.zeros(b.n)
+    for g, cells in rec.cells.items():
+        rate[cells] = rec.spont[g]
+    gain = np.ones(b.n)
+    if b._presynaptic is not None:
+        gain[b._presynaptic["depleting"]] = resting_gain(b)
+    cells = np.flatnonzero(rate > 0)
+    out = {}
+    for c in np.unique(b.cls[cells]):
+        sel = cells[b.cls[cells] == c]
+        p = b.params[c]
+        for name, f, tau in (("fast", p["depression"], p["recovery"]),
+                             ("slow", p["slow_depression"], p["slow_recovery"] or p["recovery"])):
+            left, last = (b.left, b.last) if name == "fast" else (b.left_s, b.last_s)
+            if left.shape[1] and 0 < f < 1:
+                strength = 1.0 / (1.0 + rate[sel] * tau * (1 - f) * gain[sel])
+                left[:, sel], last[:, sel] = strength, b.t
+                out[name] = round(float(strength.mean()), 4)
+    return out
+
+
+def settling(o, seconds=None, rested=None) -> tuple:
+    """(seconds, rested): as given, else as the model's `settling` attribute says, else 6 s from the reset."""
+    how = getattr(o, "settling", None) or {}
+    rested = bool(how.get("rested", False)) if rested is None else rested
+    seconds = how.get("seconds", RESTED_SETTLE_S if rested else SETTLE_S) if seconds is None else seconds
+    return seconds, rested
+
+
+def _settle(b: HybridBrain, o, rec, reset, seed: int, seconds: float, rested: bool) -> dict:
+    reset(b, seed)
     b.set_release(o.s.ol.neurons, o.s.silent)
+    if rested:
+        rest_depression(o, rec)
     b.advance(int(round(seconds / b.dt)), drive=p24.spontaneous(rec))
     return snapshot(b)
 
 
+def settle(o, rec, seed: int = SEED, seconds: float | None = None, rested: bool | None = None) -> dict:
+    """The state after `seconds` of spontaneous activity from a reset with `seed` (see settling)."""
+    seconds, rested = settling(o, seconds, rested)
+    return _settle(o.brain, o, rec, HybridBrain.reset, seed, seconds, rested)
+
+
 @contextlib.contextmanager
-def settled(o, rec, seed: int = SEED, seconds: float = SETTLE_S):
+def settled(o, rec, seed: int = SEED, seconds: float | None = None, rested: bool | None = None):
     """Within the block, HybridBrain.reset(seed') restores the settled state with fresh streams from seed'."""
-    state = settle(o, rec, seed, seconds)
+    state = settle(o, rec, seed, seconds, rested)
     cold = HybridBrain.reset
 
     def warm_reset(self, seed: int = 0) -> None:
@@ -83,19 +140,18 @@ def fingerprint(b: HybridBrain) -> tuple:
 
 
 @contextlib.contextmanager
-def tracking(o, rec, seed: int = SEED, seconds: float = SETTLE_S):
+def tracking(o, rec, seed: int = SEED, seconds: float | None = None, rested: bool | None = None):
     """Within the block, HybridBrain.reset(seed') restores a settled state with fresh streams from seed', settling
-    again (from a cold reset with `seed`) whenever the model's fingerprint has changed since the last settle."""
+    again (from a cold reset with `seed`; see settling) whenever the model's fingerprint has changed since the last
+    settle."""
+    seconds, rested = settling(o, seconds, rested)
     cold = HybridBrain.reset
     held = {"key": None, "state": None, "settles": 0}
 
     def warm_reset(self, seed_: int = 0) -> None:
         key = fingerprint(self)
         if key != held["key"]:
-            cold(self, seed)
-            self.set_release(o.s.ol.neurons, o.s.silent)
-            self.advance(int(round(seconds / self.dt)), drive=p24.spontaneous(rec))
-            held["key"], held["state"] = key, snapshot(self)
+            held["key"], held["state"] = key, _settle(self, o, rec, cold, seed, seconds, rested)
             held["settles"] += 1
         cold(self, seed_)
         restore(self, held["state"], seed_)
