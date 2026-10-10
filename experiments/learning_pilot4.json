@@ -1,0 +1,500 @@
+{
+ "question": "Exploratory, not pre-registered: learning_pilot3.py again, on the model as it stands after odor_probe36.py to\nodor_probe48.py: how specific is the depression now, with and without the Kenyon cell-to-MBON synapses' measured\ndepression?\n\nlearning_pilot3.py, on odor_probe30.py's model: with 3-octanol paired the model matched flies on every measure (its\nspikes 85% down, flies 80%; 4-methylcyclohexanol's 29.5%, flies 27%), but with 4-methylcyclohexanol paired 3-octanol's\nspikes fell only 5.6% (flies 38%), because 4-methylcyclohexanol reached too few Kenyon cells; the Kenyon cell-to-MBON\nsynapses' measured depression was held out until the Kenyon cells fired as few spikes as flies' (odor_probe34.py). Since\nthen the antennal lobe has been rebuilt (odor_probe44.py: its local neurons calibrated to flies' odor response, the\nreceptor synapse's slow component at its unitary size, the PNs keeping their current, the inhibition fitted after the\npolishes, MaleCNS's ALLNs, settled starts) and the mushroom body calibrated (mb_calibration.py: each class's PN synapses at\nTurner et al.'s 1.4 mV, APL from its measured release onset, saturation and block effect, the classes' thresholds from\nInada et al. and Chen et al.). The Kenyon cells now respond at 2.5-13.1% of cells, firing 1.7-3.3 spikes per response\n(alpha/beta; flies 2.2), so the depression is no longer held out; both are run.\nModel: odor_probe44.py's (its cache) with mb_calibration.py's calibration, settled starts (warm.tracking), MBON11 keeping\nits current and held near 6 Hz, its Kenyon cell synapses at 0.030 pC each (learning_pilot3.py), undepressed or depressing\nwith their Kenyon cells as rung 4 has them (0.5 of the strength left per spike, recovering over 1.5 s; Yamada et al.'s\npaired-pulse ratio).\nProtocol, rule, fit and measures as learning_pilot3.py. Seeds 520000 (learning_pilot3.py's offsets), the same for both\nvariants.\n\n    python experiments/learning_pilot4.py        (writes experiments/learning_pilot4.json)\n",
+ "mb_calibration": {
+  "classes": {
+   "alpha/beta": {
+    "pn_scale": 1.657,
+    "apl_scale": 1.125,
+    "cells": 1810
+   },
+   "alpha'/beta'": {
+    "pn_scale": 2.523,
+    "apl_scale": 0.831,
+    "cells": 695
+   },
+   "gamma": {
+    "pn_scale": 2.291,
+    "apl_scale": 0.963,
+    "cells": 1557
+   },
+   "other": {
+    "pn_scale": 0.297,
+    "apl_scale": 0.741,
+    "cells": 2
+   }
+  },
+  "kc_apl_scale": 10.0,
+  "apl_release_at_mv": 3.5,
+  "apl_max_hz": 38.29,
+  "kc_gaps_mv": {
+   "KCab": 21.5,
+   "KCa'b'": 16.0,
+   "KCg": 32.5
+  }
+ },
+ "variants": {
+  "undepressed": {
+   "depressing": false,
+   "held": {
+    "rest_hz_by_step": [
+     0.06,
+     4.81,
+     21.31,
+     35.94
+    ],
+    "bias_step_mv": -7.71,
+    "rest_hz": 6.31
+   },
+   "mbon11_gain": {
+    "steps_mv": [
+     0.0,
+     2.0,
+     4.0,
+     6.0,
+     8.0
+    ],
+    "rate_hz": [
+     36.31,
+     43.44,
+     51.12,
+     57.44,
+     64.19
+    ],
+    "slope_hz_per_mv": 3.487
+   },
+   "weight_per_synapse_mv": 0.7055,
+   "pre": {
+    "3-octanol": {
+     "mbon11_evoked_spikes": 25.79,
+     "sem": 0.51,
+     "charge": 4826.8,
+     "kcs_with_evoked_spikes_over_0.5": 380
+    },
+    "4-methylcyclohexanol": {
+     "mbon11_evoked_spikes": 8.49,
+     "sem": 0.42,
+     "charge": 1160.2,
+     "kcs_with_evoked_spikes_over_0.5": 91
+    },
+    "ethyl acetate": {
+     "mbon11_evoked_spikes": 35.73,
+     "sem": 0.78,
+     "charge": 5466.4,
+     "kcs_with_evoked_spikes_over_0.5": 397
+    },
+    "isopentyl acetate": {
+     "mbon11_evoked_spikes": 25.67,
+     "sem": 0.66,
+     "charge": 5275.2,
+     "kcs_with_evoked_spikes_over_0.5": 507
+    },
+    "benzaldehyde": {
+     "mbon11_evoked_spikes": 11.97,
+     "sem": 0.55,
+     "charge": 1867.9,
+     "kcs_with_evoked_spikes_over_0.5": 169
+    },
+    "2-heptanone": {
+     "mbon11_evoked_spikes": 22.09,
+     "sem": 0.54,
+     "charge": 5060.4,
+     "kcs_with_evoked_spikes_over_0.5": 439
+    }
+   },
+   "pairings": [
+    {
+     "paired": "3-octanol",
+     "unpaired": "4-methylcyclohexanol",
+     "by_tau": {
+      "0.2": {
+       "eta": 2.8766,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.9,
+        "4-methylcyclohexanol": 0.395,
+        "ethyl acetate": 0.098,
+        "isopentyl acetate": 0.52,
+        "benzaldehyde": 0.257,
+        "2-heptanone": 0.639
+       },
+       "backward_charge_drop": 0.0,
+       "kcs_losing_half": 414
+      },
+      "0.5": {
+       "eta": 1.3922,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.9,
+        "4-methylcyclohexanol": 0.397,
+        "ethyl acetate": 0.098,
+        "isopentyl acetate": 0.519,
+        "benzaldehyde": 0.256,
+        "2-heptanone": 0.639
+       },
+       "backward_charge_drop": 0.001,
+       "kcs_losing_half": 413
+      },
+      "1.0": {
+       "eta": 0.8672,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.9,
+        "4-methylcyclohexanol": 0.398,
+        "ethyl acetate": 0.099,
+        "isopentyl acetate": 0.519,
+        "benzaldehyde": 0.256,
+        "2-heptanone": 0.639
+       },
+       "backward_charge_drop": 0.001,
+       "kcs_losing_half": 408
+      }
+     },
+     "spikes": {
+      "3-octanol": {
+       "pre": 25.79,
+       "post": 2.9,
+       "sem": [
+        0.51,
+        0.32
+       ],
+       "drop": 0.888
+      },
+      "4-methylcyclohexanol": {
+       "pre": 8.49,
+       "post": 5.43,
+       "sem": [
+        0.42,
+        0.38
+       ],
+       "drop": 0.361
+      }
+     }
+    },
+    {
+     "paired": "4-methylcyclohexanol",
+     "unpaired": "3-octanol",
+     "by_tau": {
+      "0.2": {
+       "eta": 3.0513,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.17,
+        "4-methylcyclohexanol": 0.9,
+        "ethyl acetate": 0.023,
+        "isopentyl acetate": 0.108,
+        "benzaldehyde": 0.334,
+        "2-heptanone": 0.165
+       },
+       "backward_charge_drop": 0.014,
+       "kcs_losing_half": 109
+      },
+      "0.5": {
+       "eta": 1.4914,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.17,
+        "4-methylcyclohexanol": 0.9,
+        "ethyl acetate": 0.024,
+        "isopentyl acetate": 0.108,
+        "benzaldehyde": 0.335,
+        "2-heptanone": 0.165
+       },
+       "backward_charge_drop": 0.016,
+       "kcs_losing_half": 110
+      },
+      "1.0": {
+       "eta": 0.9309,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.17,
+        "4-methylcyclohexanol": 0.9,
+        "ethyl acetate": 0.026,
+        "isopentyl acetate": 0.108,
+        "benzaldehyde": 0.335,
+        "2-heptanone": 0.165
+       },
+       "backward_charge_drop": 0.016,
+       "kcs_losing_half": 110
+      }
+     },
+     "spikes": {
+      "4-methylcyclohexanol": {
+       "pre": 8.49,
+       "post": 0.36,
+       "sem": [
+        0.42,
+        0.37
+       ],
+       "drop": 0.958
+      },
+      "3-octanol": {
+       "pre": 25.79,
+       "post": 21.51,
+       "sem": [
+        0.51,
+        0.44
+       ],
+       "drop": 0.166
+      }
+     }
+    }
+   ],
+   "overlap": {
+    "4-methylcyclohexanol in 3-octanol": {
+     "share_of_responders": 0.505,
+     "jaccard": 0.108,
+     "share_of_charge": 0.412
+    },
+    "3-octanol in 4-methylcyclohexanol": {
+     "share_of_responders": 0.121,
+     "jaccard": 0.108,
+     "share_of_charge": 0.152
+    }
+   }
+  },
+  "depressing": {
+   "depressing": true,
+   "held": {
+    "rest_hz_by_step": [
+     0.06,
+     4.81,
+     21.38,
+     36.19
+    ],
+    "bias_step_mv": -7.71,
+    "rest_hz": 6.5
+   },
+   "mbon11_gain": {
+    "steps_mv": [
+     0.0,
+     2.0,
+     4.0,
+     6.0,
+     8.0
+    ],
+    "rate_hz": [
+     36.69,
+     43.38,
+     51.0,
+     57.38,
+     64.31
+    ],
+    "slope_hz_per_mv": 3.462
+   },
+   "weight_per_synapse_mv": 0.7106,
+   "pre": {
+    "3-octanol": {
+     "mbon11_evoked_spikes": 14.2,
+     "sem": 0.36,
+     "charge": 2963.4,
+     "kcs_with_evoked_spikes_over_0.5": 375
+    },
+    "4-methylcyclohexanol": {
+     "mbon11_evoked_spikes": 5.4,
+     "sem": 0.35,
+     "charge": 757.7,
+     "kcs_with_evoked_spikes_over_0.5": 91
+    },
+    "ethyl acetate": {
+     "mbon11_evoked_spikes": 15.18,
+     "sem": 0.44,
+     "charge": 2657.5,
+     "kcs_with_evoked_spikes_over_0.5": 392
+    },
+    "isopentyl acetate": {
+     "mbon11_evoked_spikes": 15.12,
+     "sem": 0.45,
+     "charge": 3645.3,
+     "kcs_with_evoked_spikes_over_0.5": 504
+    },
+    "benzaldehyde": {
+     "mbon11_evoked_spikes": 8.38,
+     "sem": 0.56,
+     "charge": 1384.0,
+     "kcs_with_evoked_spikes_over_0.5": 172
+    },
+    "2-heptanone": {
+     "mbon11_evoked_spikes": 13.86,
+     "sem": 0.45,
+     "charge": 3532.9,
+     "kcs_with_evoked_spikes_over_0.5": 437
+    }
+   },
+   "pairings": [
+    {
+     "paired": "3-octanol",
+     "unpaired": "4-methylcyclohexanol",
+     "by_tau": {
+      "0.2": {
+       "eta": 3.9104,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.9,
+        "4-methylcyclohexanol": 0.448,
+        "ethyl acetate": 0.1,
+        "isopentyl acetate": 0.456,
+        "benzaldehyde": 0.274,
+        "2-heptanone": 0.607
+       },
+       "backward_charge_drop": 0.0,
+       "kcs_losing_half": 446
+      },
+      "0.5": {
+       "eta": 1.8938,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.9,
+        "4-methylcyclohexanol": 0.45,
+        "ethyl acetate": 0.099,
+        "isopentyl acetate": 0.455,
+        "benzaldehyde": 0.273,
+        "2-heptanone": 0.607
+       },
+       "backward_charge_drop": 0.0,
+       "kcs_losing_half": 447
+      },
+      "1.0": {
+       "eta": 1.1811,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.9,
+        "4-methylcyclohexanol": 0.451,
+        "ethyl acetate": 0.099,
+        "isopentyl acetate": 0.455,
+        "benzaldehyde": 0.273,
+        "2-heptanone": 0.607
+       },
+       "backward_charge_drop": 0.0,
+       "kcs_losing_half": 447
+      }
+     },
+     "spikes": {
+      "3-octanol": {
+       "pre": 14.2,
+       "post": 1.56,
+       "sem": [
+        0.36,
+        0.35
+       ],
+       "drop": 0.89
+      },
+      "4-methylcyclohexanol": {
+       "pre": 5.4,
+       "post": 2.93,
+       "sem": [
+        0.35,
+        0.35
+       ],
+       "drop": 0.457
+      }
+     }
+    },
+    {
+     "paired": "4-methylcyclohexanol",
+     "unpaired": "3-octanol",
+     "by_tau": {
+      "0.2": {
+       "eta": 4.4645,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.138,
+        "4-methylcyclohexanol": 0.9,
+        "ethyl acetate": 0.024,
+        "isopentyl acetate": 0.061,
+        "benzaldehyde": 0.245,
+        "2-heptanone": 0.134
+       },
+       "backward_charge_drop": 0.004,
+       "kcs_losing_half": 120
+      },
+      "0.5": {
+       "eta": 2.1765,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.138,
+        "4-methylcyclohexanol": 0.9,
+        "ethyl acetate": 0.024,
+        "isopentyl acetate": 0.061,
+        "benzaldehyde": 0.246,
+        "2-heptanone": 0.134
+       },
+       "backward_charge_drop": 0.004,
+       "kcs_losing_half": 121
+      },
+      "1.0": {
+       "eta": 1.3567,
+       "reachable": true,
+       "charge_drop": {
+        "3-octanol": 0.138,
+        "4-methylcyclohexanol": 0.9,
+        "ethyl acetate": 0.024,
+        "isopentyl acetate": 0.062,
+        "benzaldehyde": 0.246,
+        "2-heptanone": 0.134
+       },
+       "backward_charge_drop": 0.004,
+       "kcs_losing_half": 121
+      }
+     },
+     "spikes": {
+      "4-methylcyclohexanol": {
+       "pre": 5.4,
+       "post": -0.06,
+       "sem": [
+        0.35,
+        0.33
+       ],
+       "drop": 1.01
+      },
+      "3-octanol": {
+       "pre": 14.2,
+       "post": 12.75,
+       "sem": [
+        0.36,
+        0.34
+       ],
+       "drop": 0.102
+      }
+     }
+    }
+   ],
+   "overlap": {
+    "4-methylcyclohexanol in 3-octanol": {
+     "share_of_responders": 0.473,
+     "jaccard": 0.102,
+     "share_of_charge": 0.395
+    },
+    "3-octanol in 4-methylcyclohexanol": {
+     "share_of_responders": 0.115,
+     "jaccard": 0.102,
+     "share_of_charge": 0.111
+    }
+   }
+  }
+ },
+ "kc_rest": {
+  "gap_mv": {
+   "KC": 21.21,
+   "KCa'b'-ap1": 15.96,
+   "KCa'b'-ap2": 15.99,
+   "KCa'b'-m": 15.95,
+   "KCab-c": 21.44,
+   "KCab-m": 21.45,
+   "KCab-p": 21.51,
+   "KCab-s": 21.45,
+   "KCg": 32.48,
+   "KCg-d": 32.53,
+   "KCg-m": 32.41,
+   "KCg-s1": 32.44,
+   "KCg-s2": 32.71,
+   "KCg-s3": 32.29,
+   "KCg-s4": 32.4
+  },
+  "rest_hz_by_class": {
+   "alpha/beta": 0.0019,
+   "alpha'/beta'": 0.0022,
+   "gamma": 0.0
+  }
+ },
+ "seconds": 1859
+}
