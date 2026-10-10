@@ -1,0 +1,979 @@
+{
+ "question": "Exploratory, not pre-registered: do the antennal lobe's cholinergic local neurons, which the model lets excite\nprojection neurons chemically, cause the onset spillover that makes Kenyon cells answer every odor?\n\nodor_probe12.py: in an odor's first 100 ms, projection neurons (PNs) of glomeruli whose receptors aren't driven rise\nby 16-26 Hz on average (for 4-methylcyclohexanol 24 of its 32 undriven glomeruli rise by at least 10 Hz), though\nhardly at all over the whole 0.5 s, and most Kenyon cell spikes come in those first 100 ms. The model takes the\nconnectome's synapses from cholinergic local neurons (LNs) onto PNs as chemical excitation: 36% as many synapses as\nthe receptor neurons give PNs. In flies \"eLN-to-iLN synapses are largely cholinergic, whereas eLN-to-PN synapses are\nmainly or purely electrical\", with a coupling coefficient of about 0.01 (Yaksi & Wilson 2010; research_notes/Rung 4\nresting state data/short_term_plasticity.md), so the connectome's cholinergic LN-to-PN synapses probably overstate\nlateral excitation. (Huang et al. 2010 report cholinergic synapses as well, in an abstract.)\nConditions:\n  current                odor_probe7.py's current model\n  no cholinergic LN->PN  its synapses from cholinergic antennal lobe LNs onto uniglomerular PNs removed (types lLN,\n                         ilNLN, vNLN, vLN, lvLN, lNLN, LN with consensus transmitter acetylcholine), the weak\n                         electrical coupling left out; each PN's bias raised by the mean input it lost at rest (their\n                         resting rates x weight x the 5 ms synaptic time constant), so that the resting brain stays put\nMeasured for each: the PNs as odor_probe12.py measures them (the share responding by Turner's criterion, flies\n59 +- 14%; the rise in undriven glomeruli in the first 100 ms and over 0.5 s; the glomerular patterns' correlations\nbetween odors), the Kenyon cells as odor_probe11.py measures them (shares, classes, the overlaps, how many odors each\nanswers, the drives' correlation), MBON11's evoked spikes (Hige et al.'s protocol), and the resting brain. Seeds\n70000 + 100 x condition + odor (Turner's protocol), + 50 + odor (Hige's), + 90 (the Kenyon cells' rest), + 95 (the\nresting brain), + 97 (the PNs' resting rates).\n\n    python experiments/odor_probe14.py         (writes experiments/odor_probe14.json)\n",
+ "flies": {
+  "kc_share": "6 +- 5%",
+  "spikes_per_response": {
+   "alpha/beta": "2.2 +- 1.2",
+   "alpha'/beta'": "4.9 +- 3.0"
+  },
+  "MBON11_evoked_spikes": {
+   "3-octanol": "118 +- 8.3",
+   "4-methylcyclohexanol": "110 +- 11"
+  }
+ },
+ "glomeruli": 50,
+ "conditions": {
+  "current": {
+   "kc_rest_calibration": {
+    "KC": 20.97,
+    "KCa'b'-ap1": 21.42,
+    "KCa'b'-ap2": 21.44,
+    "KCa'b'-m": 21.43,
+    "KCab-c": 21.41,
+    "KCab-m": 21.4,
+    "KCab-p": 21.49,
+    "KCab-s": 21.45,
+    "KCg": 21.4,
+    "KCg-d": 21.48,
+    "KCg-m": 21.39,
+    "KCg-s1": 21.41,
+    "KCg-s2": 21.68,
+    "KCg-s3": 21.39,
+    "KCg-s4": 21.2
+   },
+   "rest": {
+    "brain_hz": 0.96,
+    "over_100hz": 0,
+    "kc_hz": 0.003,
+    "upn_hz": 2.9,
+    "MBON11_hz": 36.94,
+    "MBON01_hz": 2.38,
+    "MBON18_hz": 10.88
+   },
+   "odors": {
+    "3-octanol": {
+     "kc_share": 0.171,
+     "kc_share_by_class": {
+      "alpha/beta": 0.195,
+      "alpha'/beta'": 0.0259,
+      "gamma": 0.2068
+     },
+     "spikes_per_response": {
+      "alpha/beta": 2.74,
+      "alpha'/beta'": 0.9,
+      "gamma": 1.86
+     },
+     "kc_share_1spike_1s": 0.1713,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 3.7,
+      "MBON01": 2.7,
+      "MBON18": 7.5
+     },
+     "pn_hz": {
+      "rest": 2.95,
+      "first_100ms": 179.8,
+      "odor_second": 96.5,
+      "count": 66,
+      "glomeruli": 12
+     },
+     "apl_release_hz": {
+      "turner": [
+       20.5,
+       4.2
+      ],
+      "hige": [
+       19.0,
+       2.0
+      ]
+     },
+     "pn_share_turner": 0.541,
+     "pn_onset": {
+      "undriven_glomeruli": 23,
+      "undriven_early_rise_hz": 16.8,
+      "undriven_early_rising_10hz": 13,
+      "undriven_whole_rise_hz": 2.0,
+      "driven_early_rise_hz": 133.1,
+      "glomeruli_early_rising_10hz": 40
+     }
+    },
+    "4-methylcyclohexanol": {
+     "kc_share": 0.065,
+     "kc_share_by_class": {
+      "alpha/beta": 0.0564,
+      "alpha'/beta'": 0.0144,
+      "gamma": 0.0963
+     },
+     "spikes_per_response": {
+      "alpha/beta": 1.62,
+      "alpha'/beta'": 0.78,
+      "gamma": 1.37
+     },
+     "kc_share_1spike_1s": 0.0709,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 2.2,
+      "MBON01": 0.7,
+      "MBON18": -1.0
+     },
+     "pn_hz": {
+      "rest": 3.08,
+      "first_100ms": 168.0,
+      "odor_second": 90.6,
+      "count": 24,
+      "glomeruli": 4
+     },
+     "apl_release_hz": {
+      "turner": [
+       5.1,
+       1.0
+      ],
+      "hige": [
+       6.8,
+       0.7
+      ]
+     },
+     "pn_share_turner": 0.433,
+     "pn_onset": {
+      "undriven_glomeruli": 32,
+      "undriven_early_rise_hz": 20.7,
+      "undriven_early_rising_10hz": 21,
+      "undriven_whole_rise_hz": 4.2,
+      "driven_early_rise_hz": 110.2,
+      "glomeruli_early_rising_10hz": 39
+     }
+    },
+    "ethyl acetate": {
+     "kc_share": 0.1656,
+     "kc_share_by_class": {
+      "alpha/beta": 0.2442,
+      "alpha'/beta'": 0.0417,
+      "gamma": 0.1285
+     },
+     "spikes_per_response": {
+      "alpha/beta": 3.57,
+      "alpha'/beta'": 1.1,
+      "gamma": 1.78
+     },
+     "kc_share_1spike_1s": 0.1668,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 4.5,
+      "MBON01": 1.4,
+      "MBON18": 7.8
+     },
+     "pn_hz": {
+      "rest": 2.75,
+      "first_100ms": 163.7,
+      "odor_second": 86.0,
+      "count": 32,
+      "glomeruli": 8
+     },
+     "apl_release_hz": {
+      "turner": [
+       21.0,
+       4.4
+      ],
+      "hige": [
+       19.7,
+       2.1
+      ]
+     },
+     "pn_share_turner": 0.713,
+     "pn_onset": {
+      "undriven_glomeruli": 18,
+      "undriven_early_rise_hz": 23.6,
+      "undriven_early_rising_10hz": 15,
+      "undriven_whole_rise_hz": 4.6,
+      "driven_early_rise_hz": 109.9,
+      "glomeruli_early_rising_10hz": 47
+     }
+    },
+    "isopentyl acetate": {
+     "kc_share": 0.172,
+     "kc_share_by_class": {
+      "alpha/beta": 0.2221,
+      "alpha'/beta'": 0.0245,
+      "gamma": 0.1785
+     },
+     "spikes_per_response": {
+      "alpha/beta": 3.39,
+      "alpha'/beta'": 1.39,
+      "gamma": 2.16
+     },
+     "kc_share_1spike_1s": 0.1777,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 4.9,
+      "MBON01": 2.4,
+      "MBON18": 9.4
+     },
+     "pn_hz": {
+      "rest": 3.05,
+      "first_100ms": 178.0,
+      "odor_second": 97.5,
+      "count": 66,
+      "glomeruli": 13
+     },
+     "apl_release_hz": {
+      "turner": [
+       21.7,
+       4.6
+      ],
+      "hige": [
+       21.4,
+       2.3
+      ]
+     },
+     "pn_share_turner": 0.573,
+     "pn_onset": {
+      "undriven_glomeruli": 18,
+      "undriven_early_rise_hz": 16.3,
+      "undriven_early_rising_10hz": 11,
+      "undriven_whole_rise_hz": 1.7,
+      "driven_early_rise_hz": 128.1,
+      "glomeruli_early_rising_10hz": 43
+     }
+    },
+    "benzaldehyde": {
+     "kc_share": 0.1604,
+     "kc_share_by_class": {
+      "alpha/beta": 0.195,
+      "alpha'/beta'": 0.0216,
+      "gamma": 0.1811
+     },
+     "spikes_per_response": {
+      "alpha/beta": 2.85,
+      "alpha'/beta'": 1.29,
+      "gamma": 2.31
+     },
+     "kc_share_1spike_1s": 0.1597,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 5.3,
+      "MBON01": 3.5,
+      "MBON18": 6.9
+     },
+     "pn_hz": {
+      "rest": 2.79,
+      "first_100ms": 174.2,
+      "odor_second": 93.0,
+      "count": 30,
+      "glomeruli": 7
+     },
+     "apl_release_hz": {
+      "turner": [
+       16.9,
+       3.6
+      ],
+      "hige": [
+       15.8,
+       1.8
+      ]
+     },
+     "pn_share_turner": 0.687,
+     "pn_onset": {
+      "undriven_glomeruli": 15,
+      "undriven_early_rise_hz": 16.3,
+      "undriven_early_rising_10hz": 8,
+      "undriven_whole_rise_hz": 2.3,
+      "driven_early_rise_hz": 110.1,
+      "glomeruli_early_rising_10hz": 43
+     }
+    },
+    "2-heptanone": {
+     "kc_share": 0.1973,
+     "kc_share_by_class": {
+      "alpha/beta": 0.2448,
+      "alpha'/beta'": 0.0331,
+      "gamma": 0.2145
+     },
+     "spikes_per_response": {
+      "alpha/beta": 3.42,
+      "alpha'/beta'": 1.03,
+      "gamma": 2.23
+     },
+     "kc_share_1spike_1s": 0.2047,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 6.0,
+      "MBON01": 4.5,
+      "MBON18": 10.4
+     },
+     "pn_hz": {
+      "rest": 2.78,
+      "first_100ms": 178.7,
+      "odor_second": 95.2,
+      "count": 73,
+      "glomeruli": 15
+     },
+     "apl_release_hz": {
+      "turner": [
+       24.6,
+       5.1
+      ],
+      "hige": [
+       26.0,
+       2.9
+      ]
+     },
+     "pn_share_turner": 0.664,
+     "pn_onset": {
+      "undriven_glomeruli": 14,
+      "undriven_early_rise_hz": 16.5,
+      "undriven_early_rising_10hz": 7,
+      "undriven_whole_rise_hz": 1.6,
+      "driven_early_rise_hz": 129.2,
+      "glomeruli_early_rising_10hz": 43
+     }
+    }
+   },
+   "odors_per_cell": {
+    "model": [
+     2851,
+     301,
+     200,
+     184,
+     214,
+     208,
+     106
+    ],
+    "independent": [
+     1466.6,
+     1641.0,
+     751.7,
+     179.6,
+     23.4,
+     1.6,
+     0.0
+    ],
+    "sd_share_of_odors": 0.2825
+   },
+   "pairs": {
+    "3-octanol | 4-methylcyclohexanol": {
+     "jaccard": 0.301,
+     "share_of_first_in_second": 0.319,
+     "share_of_second_in_first": 0.841,
+     "kc_drive_corr": 0.729,
+     "pn_early_corr": 0.62
+    },
+    "3-octanol | ethyl acetate": {
+     "jaccard": 0.346,
+     "share_of_first_in_second": 0.506,
+     "share_of_second_in_first": 0.523,
+     "kc_drive_corr": 0.771,
+     "pn_early_corr": 0.343
+    },
+    "3-octanol | isopentyl acetate": {
+     "jaccard": 0.602,
+     "share_of_first_in_second": 0.754,
+     "share_of_second_in_first": 0.75,
+     "kc_drive_corr": 0.924,
+     "pn_early_corr": 0.736
+    },
+    "3-octanol | benzaldehyde": {
+     "jaccard": 0.512,
+     "share_of_first_in_second": 0.656,
+     "share_of_second_in_first": 0.699,
+     "kc_drive_corr": 0.895,
+     "pn_early_corr": 0.637
+    },
+    "3-octanol | 2-heptanone": {
+     "jaccard": 0.643,
+     "share_of_first_in_second": 0.843,
+     "share_of_second_in_first": 0.731,
+     "kc_drive_corr": 0.921,
+     "pn_early_corr": 0.761
+    },
+    "4-methylcyclohexanol | ethyl acetate": {
+     "jaccard": 0.18,
+     "share_of_first_in_second": 0.542,
+     "share_of_second_in_first": 0.212,
+     "kc_drive_corr": 0.52,
+     "pn_early_corr": 0.143
+    },
+    "4-methylcyclohexanol | isopentyl acetate": {
+     "jaccard": 0.246,
+     "share_of_first_in_second": 0.72,
+     "share_of_second_in_first": 0.272,
+     "kc_drive_corr": 0.622,
+     "pn_early_corr": 0.406
+    },
+    "4-methylcyclohexanol | benzaldehyde": {
+     "jaccard": 0.287,
+     "share_of_first_in_second": 0.773,
+     "share_of_second_in_first": 0.313,
+     "kc_drive_corr": 0.654,
+     "pn_early_corr": 0.441
+    },
+    "4-methylcyclohexanol | 2-heptanone": {
+     "jaccard": 0.259,
+     "share_of_first_in_second": 0.83,
+     "share_of_second_in_first": 0.273,
+     "kc_drive_corr": 0.668,
+     "pn_early_corr": 0.423
+    },
+    "ethyl acetate | isopentyl acetate": {
+     "jaccard": 0.471,
+     "share_of_first_in_second": 0.652,
+     "share_of_second_in_first": 0.628,
+     "kc_drive_corr": 0.853,
+     "pn_early_corr": 0.564
+    },
+    "ethyl acetate | benzaldehyde": {
+     "jaccard": 0.374,
+     "share_of_first_in_second": 0.536,
+     "share_of_second_in_first": 0.554,
+     "kc_drive_corr": 0.816,
+     "pn_early_corr": 0.445
+    },
+    "ethyl acetate | 2-heptanone": {
+     "jaccard": 0.405,
+     "share_of_first_in_second": 0.632,
+     "share_of_second_in_first": 0.53,
+     "kc_drive_corr": 0.81,
+     "pn_early_corr": 0.454
+    },
+    "isopentyl acetate | benzaldehyde": {
+     "jaccard": 0.528,
+     "share_of_first_in_second": 0.668,
+     "share_of_second_in_first": 0.716,
+     "kc_drive_corr": 0.91,
+     "pn_early_corr": 0.667
+    },
+    "isopentyl acetate | 2-heptanone": {
+     "jaccard": 0.644,
+     "share_of_first_in_second": 0.841,
+     "share_of_second_in_first": 0.733,
+     "kc_drive_corr": 0.942,
+     "pn_early_corr": 0.818
+    },
+    "benzaldehyde | 2-heptanone": {
+     "jaccard": 0.574,
+     "share_of_first_in_second": 0.813,
+     "share_of_second_in_first": 0.661,
+     "kc_drive_corr": 0.938,
+     "pn_early_corr": 0.708
+    }
+   },
+   "mean_jaccard": 0.425,
+   "mean_kc_drive_corr": 0.798,
+   "mean_pn_early_corr": 0.544,
+   "kc_responses_vs_pn_weight": [
+    {
+     "x": [
+      0.0,
+      21.35
+     ],
+     "mean": 0.0082
+    },
+    {
+     "x": [
+      21.363,
+      30.697
+     ],
+     "mean": 0.042
+    },
+    {
+     "x": [
+      30.704,
+      36.873
+     ],
+     "mean": 0.0904
+    },
+    {
+     "x": [
+      36.891,
+      43.454
+     ],
+     "mean": 0.204
+    },
+    {
+     "x": [
+      43.454,
+      246.539
+     ],
+     "mean": 0.4319
+    }
+   ]
+  },
+  "no cholinergic LN->PN": {
+   "kc_rest_calibration": {
+    "KC": 21.68,
+    "KCa'b'-ap1": 21.5,
+    "KCa'b'-ap2": 21.51,
+    "KCa'b'-m": 21.51,
+    "KCab-c": 21.51,
+    "KCab-m": 21.52,
+    "KCab-p": 21.55,
+    "KCab-s": 21.51,
+    "KCg": 21.19,
+    "KCg-d": 21.5,
+    "KCg-m": 21.53,
+    "KCg-s1": 21.48,
+    "KCg-s2": 21.41,
+    "KCg-s3": 21.69,
+    "KCg-s4": 21.53
+   },
+   "removed": {
+    "edges": 10750,
+    "synapses": 152952,
+    "lost_mean_input_mv": {
+     "upn_mean": 0.921,
+     "upn_max": 2.039
+    }
+   },
+   "kc_rest_recalibration": {
+    "KC": 21.86,
+    "KCa'b'-ap1": 21.55,
+    "KCa'b'-ap2": 21.54,
+    "KCa'b'-m": 21.52,
+    "KCab-c": 21.56,
+    "KCab-m": 21.59,
+    "KCab-p": 21.61,
+    "KCab-s": 21.58,
+    "KCg": 21.2,
+    "KCg-d": 21.51,
+    "KCg-m": 21.57,
+    "KCg-s1": 21.44,
+    "KCg-s2": 21.5,
+    "KCg-s3": 21.8,
+    "KCg-s4": 21.69
+   },
+   "rest": {
+    "brain_hz": 0.979,
+    "over_100hz": 0,
+    "kc_hz": 0.002,
+    "upn_hz": 3.83,
+    "MBON11_hz": 37.5,
+    "MBON01_hz": 1.94,
+    "MBON18_hz": 10.25
+   },
+   "odors": {
+    "3-octanol": {
+     "kc_share": 0.1257,
+     "kc_share_by_class": {
+      "alpha/beta": 0.1569,
+      "alpha'/beta'": 0.0187,
+      "gamma": 0.1362
+     },
+     "spikes_per_response": {
+      "alpha/beta": 2.96,
+      "alpha'/beta'": 1.04,
+      "gamma": 2.17
+     },
+     "kc_share_1spike_1s": 0.1238,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 3.2,
+      "MBON01": 2.4,
+      "MBON18": 7.1
+     },
+     "pn_hz": {
+      "rest": 3.81,
+      "first_100ms": 176.2,
+      "odor_second": 96.3,
+      "count": 66,
+      "glomeruli": 12
+     },
+     "apl_release_hz": {
+      "turner": [
+       10.3,
+       2.2
+      ],
+      "hige": [
+       10.0,
+       1.1
+      ]
+     },
+     "pn_share_turner": 0.414,
+     "pn_onset": {
+      "undriven_glomeruli": 23,
+      "undriven_early_rise_hz": -3.3,
+      "undriven_early_rising_10hz": 0,
+      "undriven_whole_rise_hz": -3.1,
+      "driven_early_rise_hz": 122.3,
+      "glomeruli_early_rising_10hz": 27
+     }
+    },
+    "4-methylcyclohexanol": {
+     "kc_share": 0.0372,
+     "kc_share_by_class": {
+      "alpha/beta": 0.0331,
+      "alpha'/beta'": 0.0101,
+      "gamma": 0.0527
+     },
+     "spikes_per_response": {
+      "alpha/beta": 1.64,
+      "alpha'/beta'": 1.05,
+      "gamma": 1.64
+     },
+     "kc_share_1spike_1s": 0.0367,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 2.3,
+      "MBON01": 0.9,
+      "MBON18": 0.7
+     },
+     "pn_hz": {
+      "rest": 3.45,
+      "first_100ms": 164.9,
+      "odor_second": 90.6,
+      "count": 24,
+      "glomeruli": 4
+     },
+     "apl_release_hz": {
+      "turner": [
+       0.5,
+       0.2
+      ],
+      "hige": [
+       0.6,
+       0.1
+      ]
+     },
+     "pn_share_turner": 0.358,
+     "pn_onset": {
+      "undriven_glomeruli": 32,
+      "undriven_early_rise_hz": 1.4,
+      "undriven_early_rising_10hz": 2,
+      "undriven_whole_rise_hz": -0.2,
+      "driven_early_rise_hz": 97.2,
+      "glomeruli_early_rising_10hz": 20
+     }
+    },
+    "ethyl acetate": {
+     "kc_share": 0.1292,
+     "kc_share_by_class": {
+      "alpha/beta": 0.2138,
+      "alpha'/beta'": 0.0273,
+      "gamma": 0.0751
+     },
+     "spikes_per_response": {
+      "alpha/beta": 3.84,
+      "alpha'/beta'": 1.47,
+      "gamma": 2.15
+     },
+     "kc_share_1spike_1s": 0.127,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 4.0,
+      "MBON01": 0.5,
+      "MBON18": 8.1
+     },
+     "pn_hz": {
+      "rest": 3.98,
+      "first_100ms": 159.4,
+      "odor_second": 85.4,
+      "count": 32,
+      "glomeruli": 8
+     },
+     "apl_release_hz": {
+      "turner": [
+       8.7,
+       1.9
+      ],
+      "hige": [
+       7.8,
+       0.8
+      ]
+     },
+     "pn_share_turner": 0.502,
+     "pn_onset": {
+      "undriven_glomeruli": 18,
+      "undriven_early_rise_hz": -2.9,
+      "undriven_early_rising_10hz": 0,
+      "undriven_whole_rise_hz": -2.8,
+      "driven_early_rise_hz": 93.1,
+      "glomeruli_early_rising_10hz": 31
+     }
+    },
+    "isopentyl acetate": {
+     "kc_share": 0.1378,
+     "kc_share_by_class": {
+      "alpha/beta": 0.1901,
+      "alpha'/beta'": 0.023,
+      "gamma": 0.1272
+     },
+     "spikes_per_response": {
+      "alpha/beta": 3.66,
+      "alpha'/beta'": 1.47,
+      "gamma": 2.46
+     },
+     "kc_share_1spike_1s": 0.1351,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 4.6,
+      "MBON01": 1.9,
+      "MBON18": 6.1
+     },
+     "pn_hz": {
+      "rest": 3.86,
+      "first_100ms": 174.7,
+      "odor_second": 97.2,
+      "count": 66,
+      "glomeruli": 13
+     },
+     "apl_release_hz": {
+      "turner": [
+       12.0,
+       2.6
+      ],
+      "hige": [
+       11.8,
+       1.3
+      ]
+     },
+     "pn_share_turner": 0.482,
+     "pn_onset": {
+      "undriven_glomeruli": 18,
+      "undriven_early_rise_hz": -3.6,
+      "undriven_early_rising_10hz": 0,
+      "undriven_whole_rise_hz": -3.5,
+      "driven_early_rise_hz": 115.0,
+      "glomeruli_early_rising_10hz": 32
+     }
+    },
+    "benzaldehyde": {
+     "kc_share": 0.1142,
+     "kc_share_by_class": {
+      "alpha/beta": 0.142,
+      "alpha'/beta'": 0.0144,
+      "gamma": 0.1252
+     },
+     "spikes_per_response": {
+      "alpha/beta": 2.98,
+      "alpha'/beta'": 1.32,
+      "gamma": 2.49
+     },
+     "kc_share_1spike_1s": 0.1206,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 4.0,
+      "MBON01": 1.7,
+      "MBON18": 5.4
+     },
+     "pn_hz": {
+      "rest": 3.73,
+      "first_100ms": 168.1,
+      "odor_second": 91.8,
+      "count": 30,
+      "glomeruli": 7
+     },
+     "apl_release_hz": {
+      "turner": [
+       6.8,
+       1.5
+      ],
+      "hige": [
+       6.8,
+       0.8
+      ]
+     },
+     "pn_share_turner": 0.537,
+     "pn_onset": {
+      "undriven_glomeruli": 15,
+      "undriven_early_rise_hz": -3.3,
+      "undriven_early_rising_10hz": 0,
+      "undriven_whole_rise_hz": -3.4,
+      "driven_early_rise_hz": 93.0,
+      "glomeruli_early_rising_10hz": 32
+     }
+    },
+    "2-heptanone": {
+     "kc_share": 0.1617,
+     "kc_share_by_class": {
+      "alpha/beta": 0.2105,
+      "alpha'/beta'": 0.0216,
+      "gamma": 0.1663
+     },
+     "spikes_per_response": {
+      "alpha/beta": 3.49,
+      "alpha'/beta'": 0.86,
+      "gamma": 2.39
+     },
+     "kc_share_1spike_1s": 0.1612,
+     "evoked_spikes_0_1.4s": {
+      "MBON11": 6.1,
+      "MBON01": 3.5,
+      "MBON18": 10.1
+     },
+     "pn_hz": {
+      "rest": 3.81,
+      "first_100ms": 174.7,
+      "odor_second": 94.4,
+      "count": 73,
+      "glomeruli": 15
+     },
+     "apl_release_hz": {
+      "turner": [
+       14.2,
+       3.0
+      ],
+      "hige": [
+       13.6,
+       1.5
+      ]
+     },
+     "pn_share_turner": 0.599,
+     "pn_onset": {
+      "undriven_glomeruli": 14,
+      "undriven_early_rise_hz": -3.3,
+      "undriven_early_rising_10hz": 0,
+      "undriven_whole_rise_hz": -3.6,
+      "driven_early_rise_hz": 116.3,
+      "glomeruli_early_rising_10hz": 34
+     }
+    }
+   },
+   "odors_per_cell": {
+    "model": [
+     3027,
+     308,
+     194,
+     181,
+     184,
+     127,
+     43
+    ],
+    "independent": [
+     1907.5,
+     1549.4,
+     511.5,
+     87.2,
+     8.0,
+     0.4,
+     0.0
+    ],
+    "sd_share_of_odors": 0.239
+   },
+   "pairs": {
+    "3-octanol | 4-methylcyclohexanol": {
+     "jaccard": 0.23,
+     "share_of_first_in_second": 0.243,
+     "share_of_second_in_first": 0.821,
+     "kc_drive_corr": 0.693,
+     "pn_early_corr": 0.601
+    },
+    "3-octanol | ethyl acetate": {
+     "jaccard": 0.282,
+     "share_of_first_in_second": 0.446,
+     "share_of_second_in_first": 0.434,
+     "kc_drive_corr": 0.736,
+     "pn_early_corr": 0.341
+    },
+    "3-octanol | isopentyl acetate": {
+     "jaccard": 0.545,
+     "share_of_first_in_second": 0.74,
+     "share_of_second_in_first": 0.675,
+     "kc_drive_corr": 0.916,
+     "pn_early_corr": 0.735
+    },
+    "3-octanol | benzaldehyde": {
+     "jaccard": 0.423,
+     "share_of_first_in_second": 0.568,
+     "share_of_second_in_first": 0.625,
+     "kc_drive_corr": 0.88,
+     "pn_early_corr": 0.591
+    },
+    "3-octanol | 2-heptanone": {
+     "jaccard": 0.568,
+     "share_of_first_in_second": 0.828,
+     "share_of_second_in_first": 0.644,
+     "kc_drive_corr": 0.913,
+     "pn_early_corr": 0.777
+    },
+    "4-methylcyclohexanol | ethyl acetate": {
+     "jaccard": 0.101,
+     "share_of_first_in_second": 0.411,
+     "share_of_second_in_first": 0.118,
+     "kc_drive_corr": 0.469,
+     "pn_early_corr": 0.139
+    },
+    "4-methylcyclohexanol | isopentyl acetate": {
+     "jaccard": 0.152,
+     "share_of_first_in_second": 0.623,
+     "share_of_second_in_first": 0.168,
+     "kc_drive_corr": 0.577,
+     "pn_early_corr": 0.399
+    },
+    "4-methylcyclohexanol | benzaldehyde": {
+     "jaccard": 0.204,
+     "share_of_first_in_second": 0.689,
+     "share_of_second_in_first": 0.224,
+     "kc_drive_corr": 0.615,
+     "pn_early_corr": 0.41
+    },
+    "4-methylcyclohexanol | 2-heptanone": {
+     "jaccard": 0.169,
+     "share_of_first_in_second": 0.775,
+     "share_of_second_in_first": 0.178,
+     "kc_drive_corr": 0.627,
+     "pn_early_corr": 0.435
+    },
+    "ethyl acetate | isopentyl acetate": {
+     "jaccard": 0.413,
+     "share_of_first_in_second": 0.604,
+     "share_of_second_in_first": 0.566,
+     "kc_drive_corr": 0.829,
+     "pn_early_corr": 0.544
+    },
+    "ethyl acetate | benzaldehyde": {
+     "jaccard": 0.279,
+     "share_of_first_in_second": 0.411,
+     "share_of_second_in_first": 0.466,
+     "kc_drive_corr": 0.779,
+     "pn_early_corr": 0.422
+    },
+    "ethyl acetate | 2-heptanone": {
+     "jaccard": 0.327,
+     "share_of_first_in_second": 0.554,
+     "share_of_second_in_first": 0.443,
+     "kc_drive_corr": 0.784,
+     "pn_early_corr": 0.477
+    },
+    "isopentyl acetate | benzaldehyde": {
+     "jaccard": 0.414,
+     "share_of_first_in_second": 0.536,
+     "share_of_second_in_first": 0.647,
+     "kc_drive_corr": 0.894,
+     "pn_early_corr": 0.618
+    },
+    "isopentyl acetate | 2-heptanone": {
+     "jaccard": 0.56,
+     "share_of_first_in_second": 0.78,
+     "share_of_second_in_first": 0.665,
+     "kc_drive_corr": 0.932,
+     "pn_early_corr": 0.798
+    },
+    "benzaldehyde | 2-heptanone": {
+     "jaccard": 0.503,
+     "share_of_first_in_second": 0.808,
+     "share_of_second_in_first": 0.571,
+     "kc_drive_corr": 0.929,
+     "pn_early_corr": 0.686
+    }
+   },
+   "mean_jaccard": 0.345,
+   "mean_kc_drive_corr": 0.772,
+   "mean_pn_early_corr": 0.532,
+   "kc_responses_vs_pn_weight": [
+    {
+     "x": [
+      0.0,
+      21.35
+     ],
+     "mean": 0.0078
+    },
+    {
+     "x": [
+      21.363,
+      30.697
+     ],
+     "mean": 0.0392
+    },
+    {
+     "x": [
+      30.704,
+      36.873
+     ],
+     "mean": 0.0736
+    },
+    {
+     "x": [
+      36.891,
+      43.454
+     ],
+     "mean": 0.1515
+    },
+    {
+     "x": [
+      43.454,
+      246.539
+     ],
+     "mean": 0.3163
+    }
+   ]
+  }
+ },
+ "seconds": 677
+}
