@@ -81,20 +81,22 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     responding Kenyon cells fire steadily at about 8 Hz, about 11 spikes in 1.4 s, which holds their synapses at about
     0.15 of full strength. Flies' α/β cells fire about 2 spikes per response. The depression stays out of the model
     until the Kenyon cells fire as few spikes as flies'.
-  - **With 3-octanol paired, the model's learning is now as specific as flies'** ([`learning_pilot2.py`](experiments/learning_pilot2.py)).
-    The learning pilot again, on this model: at each dopamine pulse every Kenyon cell's synapses onto MBON11 weaken by
-    its recent spikes, the rate set so the paired odor's input falls 90%. Pairing 3-octanol now cuts
-    4-methylcyclohexanol's input by 38% (79% on the old model). Flies' falls 20–35%
-    ([notes](research_notes/Rung%209%20learning%20data/hige2015_specificity.md); I had earlier written "no significant
-    change", which holds only for the n = 5 experiment of Hige et al.'s Fig. 3). In spikes it falls 30% (flies 27%) and
-    3-octanol's own response 81% (flies 80%). Backward pairing changes nothing, as in flies. The other way round, flies'
-    depression is about as specific: pairing 4-methylcyclohexanol cuts its own spikes 76% and 3-octanol's 38%. The
-    model cuts 3-octanol's only 5.5%, because 3-octanol drives four times as many Kenyon cells and few of them answer
-    4-methylcyclohexanol.
+  - **With 3-octanol paired, the model's learning now matches flies'** ([`learning_pilot2.py`](experiments/learning_pilot2.py),
+    [`learning_pilot3.py`](experiments/learning_pilot3.py)). This is Hige et al.'s experiment in the model: at each
+    dopamine pulse every Kenyon cell's synapses onto MBON11 weaken by its recent spikes, with the rate set so the paired
+    odor's input falls 90%. On the current model, with spikes counted as Hige et al. counted them (MBON11 held near
+    6 Hz), pairing 3-octanol cuts its own response 85% (flies 80%). It cuts 4-methylcyclohexanol's 29.5% (flies 27%) and
+    4-methylcyclohexanol's input 33% (flies 20% and 35% in two experiments;
+    [notes](research_notes/Rung%209%20learning%20data/hige2015_specificity.md)). Backward pairing changes nothing, as in
+    flies. The first pilot, on the old antennal lobe, cut the unpaired odor's input 79%. (I had earlier written that
+    flies' unpaired odor didn't change; that holds only for the n = 5 experiment of Hige et al.'s Fig. 3.) The other way
+    round, flies' depression is about as specific: pairing 4-methylcyclohexanol cuts its own response 76% and
+    3-octanol's 38%. The model cuts 3-octanol's only 5.6%. 3-octanol drives four times as many Kenyon cells, and few of
+    them answer 4-methylcyclohexanol (DoOR's data give it 4 glomeruli above 0.2, against 3-octanol's 12).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/learning-dark.svg">
-  <img src="assets/learning-light.svg" width="100%" alt="Three panels. Left two: with 3-octanol paired and with 4-methylcyclohexanol paired, how far each of six odors' Kenyon cell input to MBON11 falls when the rule's rate cuts the paired odor's by 90%. On the old model (grey) the unpaired odor falls 79% and 51% and the other odors 30-80%; on the new model (red) the unpaired odor falls 38% and 11% and the others 1-67%; flies' unpaired odor fell 20% and 35% in two experiments (rings; no charge was measured with 4-methylcyclohexanol paired). Right: MBON11's spike drops after pairing, paired odor 81% and 87% (flies 80% and 76%), unpaired 30% and 5.5% (flies 27% and 38%); on the old model paired 140% and 83%, unpaired 73% and 73%.">
+  <img src="assets/learning-light.svg" width="100%" alt="Three panels. Left two: with 3-octanol paired and with 4-methylcyclohexanol paired, how far each of six odors' Kenyon cell input to MBON11 falls when the rule's rate cuts the paired odor's by 90%. On the old model (light grey) the unpaired odor falls 79% and 51% and the other odors 30-80%; with the new antennal lobe (dark grey, pilot 2) 38% and 11%, and on the current model (red, pilot 3) 33% and 9%, the others 1-65%; flies' unpaired odor fell 20% and 35% in two experiments (rings; no charge was measured with 4-methylcyclohexanol paired). Right: MBON11's spike drops after pairing on the current model, paired odor 85% and 90% (flies 80% and 76%), unpaired 29.5% and 5.6% (flies 27% and 38%); on the old model paired 140% and 83%, unpaired 73% and 73%.">
 </picture>
 
 `python assets/learning.py` redraws it.
@@ -1089,6 +1091,7 @@ a sign that the approach is broken."
 | `experiments/odor_probe7.py` | Exploratory, not pre-registered: odor_probe3–6 rerun with corrections (DoOR's spontaneous level subtracted, ORN-to-PN factor from same-glomerulus connections, excitatory PN-to-KC only, compound DoOR glomeruli), measured with Turner's criterion and Hige's spike count | Projection neurons right; 7–20% of Kenyon cells respond (flies 6 ± 5%), α′/β′ least and γ much (flies: the reverse); MBON11 gains 3.3 and 1.2 spikes to 3-octanol and 4-methylcyclohexanol (flies 118 and 110). With depressed PN-to-KC synapses, 1–2% respond and the output neurons don't move. |
 | `experiments/learning_pilot.py` | Exploratory, not pre-registered: dopamine-gated depression at Kenyon cell to MBON11 synapses in Hige et al. 2015's protocol, its rate fitted to the paired odor's 90% charge drop | Not odor-specific: the unpaired odor's charge falls 51–79% (flies: no significant change) and its spikes 73% (flies: about 25%), because the two odors' Kenyon cells overlap; backward pairing barely changes anything. |
 | `experiments/learning_pilot2.py` | Exploratory, not pre-registered: learning_pilot on odor_probe30's antennal lobe with odor_probe31's MBON11 synapses (0.030 pC per synapse) | 3-octanol paired: the unpaired odor's charge falls 38% (flies 20-35%), spikes 30% (27%), paired 81% (80%); 4-methylcyclohexanol paired: 3-octanol's spikes fall 5.5% (flies 38%); backward pairing changes nothing |
+| `experiments/learning_pilot3.py` | Exploratory, not pre-registered: learning_pilot2 on the current model (Inada classes, MBON11 keeping its current, undepressed), spikes counted with MBON11 held near 6 Hz as Hige et al. counted them | 3-octanol paired: own spikes -85% (flies 80%), 4-methylcyclohexanol's -29.5% (27%) and charge -33% (20-35%), backward 0; 4-methylcyclohexanol paired: 3-octanol's spikes -5.6% (flies 38%). Before pairing 132 and 41 spikes (flies 118, 110) |
 | `experiments/odor_probe8.py` | Exploratory, not pre-registered: APL silenced; the Kenyon cell classes' measured threshold offsets; receptor rates of 100 and 50 Hz | APL silenced: 1.4–1.6 times as many Kenyon cells respond (flies: sparseness drops as about 4 times as many would). Inada's offsets: α′/β′ 8–19%, γ 7–16%; Groschner/Chen's: γ 0.4–1.5% as in flies but α′/β′ 59–80%. At 50 Hz, 3–9% respond (flies 6 ± 5%) but MBON11 gains 0.6–2.1 spikes. |
 | `experiments/odor_probe9.py` | Exploratory, not pre-registered: APL's inhibition split into fast (GABA_A) and slow (GABA_B) parts in Inada et al.'s proportions; with and without the classes' threshold offsets | No sparser: 1.00–1.16 times as many Kenyon cells respond; APL silenced, 1.4–1.6 times. The excess is at the odor's onset, before inhibition arrives. |
 | `experiments/odor_probe10.py` | Exploratory, not pre-registered: receptor neurons with measured dynamics (drive-dependent latency, rise, adaptation, offset silence) and spontaneous firing, the resting state recalibrated | Dynamics alone: 6.5–18.6% of Kenyon cells respond, barely changed. With spontaneous firing, 1.6–5.0%, but because projection neurons fall out of flies' range (65–80 Hz at onset, flies 100–200; 5.3 Hz at rest) under the receptor synapses' measured depression; APL isn't recruited. |
