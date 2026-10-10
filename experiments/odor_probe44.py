@@ -19,6 +19,22 @@ odor_probe44.
 Measured as odor_probe42.py measures (the LN measures over the GABAergic ALLNs). Seeds 240000 for the build (as
 odor_probe42.py offsets them; 440000 for the settled states); 450000 for the measures (odor_probe40.py's offsets).
 
+Ran: the corrections hold the model's resting state to its targets and change its odor responses only a little, mostly
+weakening them. The build scales the 187,358 synapses onto all 420 ALLNs; with all 115 GABAergic ALLNs as inhibitors
+the inhibition's fit gives k_A 0.0014 and k_B 0.0084 per spike/s (control 0.31-0.34 of baseline, GABA-B blocked
+0.56-0.73; flies 0.27-0.37 and 0.52-0.81), and the receptor synapses rest at 0.95 of their strength. Settled 62 times in
+the build and 9 in the measures, the PNs now rest at 2.8-2.95 spikes/s where the odor runs start (rung 4's target 3;
+0.4-0.6 in odor_probe41.py's runs, 1.6-2.0 in odor_warm_check.py's) and the GABAergic LNs at 3.7. The LNs answer
+2-heptanone with 18.7, 11.2, 8.2 and 6.5 spikes/s per cell in Nagel et al.'s bins (flies 22, 13, 8 and 6; root mean
+square log ratio 0.12). 3-octanol's PNs peak at 96 spikes/s at 50-100 ms and fall to 0.31 of it at 0.40-0.45 s (flies
+0.48) and 0.14 at 0.95 s; the transform's Rmax is 166-187 in DL5, VM7d and DM1 (flies 163-170) and 81 in DM4 (170), its
+sigma 20-32 (12-16); 0.8-4.9% of Kenyon cells respond (flies 6 +- 5%), mean Jaccard 0.13, the alpha/beta cells firing
+0.95-1.7 spikes per response (flies 2.2); 4-methylcyclohexanol reaches 0.27 as many Kenyon cells as 3-octanol (flies
+0.73-0.92); 16-25% of PNs pass Turner's criterion over their higher rest (flies 59 +- 14%); MBON11 gains 8.5 spikes to
+3-octanol (flies 118). Against odor_probe41.py's kw08_kept measured from settled states (odor_warm_check.py), 3-octanol's
+PNs peak at 96 instead of 102 and accommodate a little more (0.31 against 0.37), and the Kenyon cells respond a little
+less (3.1% to 3-octanol against 4.7%). This is the base model from here on.
+
     python experiments/odor_probe44.py         (writes experiments/odor_probe44.json)
 """
 from __future__ import annotations
