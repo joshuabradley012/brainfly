@@ -21,6 +21,20 @@ Wilson 2008's EPSCs fitted again. Conditions:
 Measured as odor_probe36.py measures. Seeds 240000 for the builds (odor_probe30.py's); 340000 + 1000 x condition for the
 measures (with odor_probe36.py's offsets).
 
+Ran: the inhibition's measured onset helps the projection neurons' onset only a little, and the intermediate slow
+component gives neither flies' strong onset nor their accommodation. With GABA-A as two 38 ms stages (refitted: k_A
+0.00042, k_B 0.0023 per spike/s above rest; Olsen & Wilson's EPSCs met as before), 3-octanol's PNs fire 76 spikes/s at
+50-100 ms (71 before) and still climb to 107 at 0.3-0.35 s, 0.97 of that at 0.5 s and 0.78 at 0.95 s; the transform
+(Rmax 193-336, sigma 31-41), the Kenyon cells (2.2-11.1% respond, 11 spikes per responding cell to 3-octanol) and MBON11
+(123 and 35 spikes) are as before. With the slow component also at 0.30 (refitted: k_A 0.00038, k_B 0.0021), the PNs
+peak at 67 spikes/s at 0.2-0.25 s and hold 0.93 of that at 0.5 s and 0.69 at 0.95 s; the transform's Rmax comes to
+116-260 (mean 203, not the 161 the linear interpolation aimed at; sigma 33-50); only 0.3-2.1% of Kenyon cells respond
+(37 responding cells per fly to 3-octanol, 8 spikes each) and MBON11 gains 10 and 2 spikes. The Kenyon cells need PNs
+near 100 spikes/s, and flies' odor-driven PNs open at 100-200 and then fall; what the model's PNs lack is that strong
+onset. The presynaptic inhibition still takes hold early because the LNs' onset burst is about three times flies' (57
+spikes/s per LN at 50-100 ms, then 12-13 over 0.2-0.5 s, where flies' LNs fire about 22 over the first 50 ms, 13 at
+50-100 ms and 6-8 later; Nagel et al. 2015, Fig. 5b).
+
     python experiments/odor_probe37.py         (writes experiments/odor_probe37.json)
 """
 from __future__ import annotations
