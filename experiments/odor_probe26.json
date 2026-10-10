@@ -1,0 +1,380 @@
+{
+ "question": "Exploratory, not pre-registered: if the receptor terminals' GABA-B inhibition grows faster than linearly with the local\nneurons' activity, can measured presynaptic inhibition work with the receptor neurons firing spontaneously, as flies'\ndo, and does the antennal lobe then transform receptor input as flies' does?\n\nodor_probe24.py: with spontaneous receptor firing the synapses rest as flies' do (0.66 and 0.62 of full strength), but a\nlateral odor raises the GABAergic LNs' rate only 2-3 times above rest, so inhibition linear in that rate can't divide\nthe synapses threefold, as flies' EPSCs fall (Olsen & Wilson 2008); flies' LNs are modulated no more (sustained odor\nrates about 1.5 times their resting rate). Wilson & Laurent 2005: GABA-B inhibition \"is known to depend strongly on the\nnumber of presynaptic action potentials\" (in mammals it needs transmitter pooled from many release sites).\nodor_probe25.py (the weights uninhibited, no spontaneous firing): flies' Rmax but three times their sigma.\nModel: odor_probe24.py's (spontaneous receptor firing at each sensillum class's median rate; the receptor synapses at\ntheir calibrated, uninhibited strength, divided in vivo by the presynaptic divisor; depletion lowered with release; the\nresting state recalibrated) with the divisor 1 + k_A A_A + k_B A_B^n: A_A the GABAergic antennal lobe LNs' summed rate\nthrough GABA-A's difference of 40 and 15 ms exponentials, linear; A_B the same rate low-passed over 1 s (GABA-B's decay\nafter an odor, Olsen & Wilson 2008), raised to a power n. k_A is fitted to Olsen & Wilson's GABA-B-blocked EPSCs as\nbefore; then the GABA-B divisor at rest, k_B A_rest^n, and n are fitted together to their control EPSCs (least squares on\nthe log divisor relative to rest at their four sample times, n from 1 to 4), iterated four times. The resting polish runs\nlonger than odor_probe24.py's (20 rounds, then 10 more after the fit), since easing the LNs toward their targets also\neases the tonic inhibition of the receptor terminals.\nMeasured as odor_probe24.py measures. Seeds 200000 (otherwise as odor_probe24.py's, with its offsets).\n\n    python experiments/odor_probe26.py         (writes experiments/odor_probe26.json)\n",
+ "flies": {
+  "kc_share": "6 +- 5%",
+  "spikes_per_response": {
+   "alpha/beta": "2.2 +- 1.2",
+   "alpha'/beta'": "4.9 +- 3.0"
+  },
+  "MBON11_evoked_spikes": {
+   "3-octanol": "118 +- 8.3",
+   "4-methylcyclohexanol": "110 +- 11"
+  }
+ },
+ "build": {
+  "kc_rest_calibration": {
+   "KC": 21.5,
+   "KCa'b'-ap1": 21.48,
+   "KCa'b'-ap2": 21.49,
+   "KCa'b'-m": 21.49,
+   "KCab-c": 21.46,
+   "KCab-m": 21.46,
+   "KCab-p": 21.43,
+   "KCab-s": 21.5,
+   "KCg": 21.32,
+   "KCg-d": 21.49,
+   "KCg-m": 21.47,
+   "KCg-s1": 21.65,
+   "KCg-s2": 21.59,
+   "KCg-s3": 21.43,
+   "KCg-s4": 21.44
+  },
+  "removed": {
+   "edges": 10750,
+   "rest_windows": 4,
+   "lost_mean_input_mv": {
+    "upn_mean": 1.142,
+    "upn_max": 3.642
+   }
+  },
+  "slow": {
+   "edges": 16265,
+   "receptor_factor": 7.281,
+   "slow_edges": 16265,
+   "pn_tau_slow_s": 0.08,
+   "slow_over_fast_charge": 0.774
+  },
+  "unitary": {
+   "combined_over_fast_peak": 1.1104,
+   "pn_tau_m_s": 0.02,
+   "fast_edges": 16265,
+   "slow_edges": 16265
+  },
+  "kc_rest_recalibration": {
+   "KC": 20.73,
+   "KCa'b'-ap1": 21.48,
+   "KCa'b'-ap2": 21.48,
+   "KCa'b'-m": 21.48,
+   "KCab-c": 21.45,
+   "KCab-m": 21.49,
+   "KCab-p": 21.52,
+   "KCab-s": 21.5,
+   "KCg": 21.25,
+   "KCg-d": 21.51,
+   "KCg-m": 21.48,
+   "KCg-s1": 21.52,
+   "KCg-s2": 21.69,
+   "KCg-s3": 21.52,
+   "KCg-s4": 21.26
+  }
+ },
+ "spontaneous_hz": {
+  "D": 6.0,
+  "DA1": 6.0,
+  "DA2": 6.0,
+  "DA3": 6.0,
+  "DA4l": 6.0,
+  "DA4m": 6.0,
+  "DC1": 6.0,
+  "DC2": 6.0,
+  "DC3": 6.0,
+  "DC4": 6.0,
+  "DL1": 6.0,
+  "DL2d": 19.0,
+  "DL2v": 19.0,
+  "DL3": 6.0,
+  "DL4": 6.0,
+  "DL5": 6.0,
+  "DM1": 6.0,
+  "DM2": 6.0,
+  "DM3": 6.0,
+  "DM4": 6.0,
+  "DM5": 6.0,
+  "DM6": 6.0,
+  "DP1l": 19.0,
+  "DP1m": 6.0,
+  "V": 6.0,
+  "VA1d": 6.0,
+  "VA1v": 6.0,
+  "VA2": 6.0,
+  "VA3": 6.0,
+  "VA4": 8.0,
+  "VA5": 6.0,
+  "VA6": 6.0,
+  "VA7l": 8.0,
+  "VA7m": 6.0,
+  "VC1": 8.0,
+  "VC2": 8.0,
+  "VC3": 19.0,
+  "VC4": 6.0,
+  "VC5": 19.0,
+  "VL1": 19.0,
+  "VL2a": 19.0,
+  "VL2p": 19.0,
+  "VM1": 19.0,
+  "VM2": 6.0,
+  "VM3": 6.0,
+  "VM4": 19.0,
+  "VM5d": 6.0,
+  "VM5v": 6.0,
+  "VM6l": 6.0,
+  "VM6m": 6.0,
+  "VM6v": 6.0,
+  "VM7d": 8.0,
+  "VM7v": 8.0
+ },
+ "resting_recalibration": {
+  "mean_input_mv": {
+   "uPN": 21.22,
+   "uPN_slow": 8.86,
+   "max": 73.3,
+   "neurons_over_1mv": 658
+  },
+  "resting_strength": {
+   "fast": 0.701,
+   "slow": 0.659
+  },
+  "polish": [
+   {
+    "round": 1,
+    "upn_hz": 7.7,
+    "orn_hz": 8.44,
+    "groups_within_2x": 0.9886
+   },
+   {
+    "round": 2,
+    "upn_hz": 10.11,
+    "orn_hz": 8.48,
+    "groups_within_2x": 0.9884
+   },
+   {
+    "round": 3,
+    "upn_hz": 11.91,
+    "orn_hz": 8.47,
+    "groups_within_2x": 0.9853
+   },
+   {
+    "round": 4,
+    "upn_hz": 12.33,
+    "orn_hz": 8.52,
+    "groups_within_2x": 0.9895
+   },
+   {
+    "round": 5,
+    "upn_hz": 13.78,
+    "orn_hz": 8.46,
+    "groups_within_2x": 0.9887
+   },
+   {
+    "round": 6,
+    "upn_hz": 13.82,
+    "orn_hz": 8.47,
+    "groups_within_2x": 0.9893
+   },
+   {
+    "round": 7,
+    "upn_hz": 14.04,
+    "orn_hz": 8.44,
+    "groups_within_2x": 0.9901
+   },
+   {
+    "round": 8,
+    "upn_hz": 15.11,
+    "orn_hz": 8.44,
+    "groups_within_2x": 0.9885
+   },
+   {
+    "round": 9,
+    "upn_hz": 13.2,
+    "orn_hz": 8.44,
+    "groups_within_2x": 0.9895
+   },
+   {
+    "round": 10,
+    "upn_hz": 14.38,
+    "orn_hz": 8.45,
+    "groups_within_2x": 0.9903
+   },
+   {
+    "round": 11,
+    "upn_hz": 13.21,
+    "orn_hz": 8.47,
+    "groups_within_2x": 0.9911
+   },
+   {
+    "round": 12,
+    "upn_hz": 13.35,
+    "orn_hz": 8.48,
+    "groups_within_2x": 0.9916
+   },
+   {
+    "round": 13,
+    "upn_hz": 14.33,
+    "orn_hz": 8.46,
+    "groups_within_2x": 0.9912
+   },
+   {
+    "round": 14,
+    "upn_hz": 14.15,
+    "orn_hz": 8.44,
+    "groups_within_2x": 0.9911
+   },
+   {
+    "round": 15,
+    "upn_hz": 12.28,
+    "orn_hz": 8.44,
+    "groups_within_2x": 0.9924
+   },
+   {
+    "round": 16,
+    "upn_hz": 12.97,
+    "orn_hz": 8.47,
+    "groups_within_2x": 0.9913
+   },
+   {
+    "round": 17,
+    "upn_hz": 13.23,
+    "orn_hz": 8.46,
+    "groups_within_2x": 0.992
+   },
+   {
+    "round": 18,
+    "upn_hz": 13.28,
+    "orn_hz": 8.43,
+    "groups_within_2x": 0.9915
+   },
+   {
+    "round": 19,
+    "upn_hz": 12.93,
+    "orn_hz": 8.44,
+    "groups_within_2x": 0.9925
+   },
+   {
+    "round": 20,
+    "upn_hz": 12.41,
+    "orn_hz": 8.48,
+    "groups_within_2x": 0.9929
+   }
+  ],
+  "kc_gap_mv": {
+   "KC": 21.36,
+   "KCa'b'-ap1": 21.5,
+   "KCa'b'-ap2": 21.44,
+   "KCa'b'-m": 21.39,
+   "KCab-c": 21.37,
+   "KCab-m": 21.36,
+   "KCab-p": 21.44,
+   "KCab-s": 21.39,
+   "KCg": 21.74,
+   "KCg-d": 21.52,
+   "KCg-m": 21.41,
+   "KCg-s1": 21.58,
+   "KCg-s2": 21.52,
+   "KCg-s3": 21.49,
+   "KCg-s4": 21.45
+  }
+ },
+ "condition": {
+  "presynaptic": {
+   "failed": "the fit degenerated or reached its bound",
+   "inhibitors_rest_hz": 176.7,
+   "calibration": [
+    {
+     "k_a": 0.011688,
+     "k_b": 0.03424,
+     "n": 1.4,
+     "gaba_b_divisor_at_rest": 47.934,
+     "sse": 0.0253,
+     "cgp_fraction": [
+      0.466,
+      0.859,
+      0.87,
+      0.88
+     ],
+     "control_fraction": [
+      0.248,
+      0.297,
+      0.351,
+      0.406
+     ],
+     "gaba_b_only_fraction": [
+      0.244,
+      0.29,
+      0.343,
+      0.398
+     ],
+     "trace_a_over_rest": [
+      2.7,
+      1.24,
+      1.22,
+      1.2
+     ],
+     "trace_b_over_rest": [
+      2.77,
+      2.45,
+      2.17,
+      1.95
+     ]
+    },
+    {
+     "k_a": 6e-06,
+     "k_b": 1.702e-10,
+     "n": 4.0,
+     "gaba_b_divisor_at_rest": 0.166,
+     "sse": 5.06911,
+     "cgp_fraction": [
+      1.0,
+      1.001,
+      1.001,
+      1.001
+     ],
+     "control_fraction": [
+      0.783,
+      0.983,
+      1.088,
+      1.133
+     ],
+     "gaba_b_only_fraction": [
+      0.782,
+      0.983,
+      1.087,
+      1.132
+     ],
+     "trace_a_over_rest": [
+      0.55,
+      0.03,
+      0.06,
+      0.08
+     ],
+     "trace_b_over_rest": [
+      1.31,
+      1.03,
+      0.81,
+      0.65
+     ]
+    }
+   ],
+   "flies": {
+    "times_s": [
+     0.32,
+     0.57,
+     0.82,
+     1.07
+    ],
+    "control_fraction": [
+     0.27,
+     0.32,
+     0.33,
+     0.37
+    ],
+    "cgp_fraction": [
+     0.52,
+     0.68,
+     0.77,
+     0.81
+    ]
+   }
+  }
+ },
+ "seconds": 531
+}
