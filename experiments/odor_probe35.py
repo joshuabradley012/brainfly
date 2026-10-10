@@ -21,6 +21,22 @@ lowered by the step at which its rate crosses 6 Hz, from its rate at 0, -4, -8 a
 near rest (bias steps, unaffected by keep_current) and its resting rate are reported. Seeds 320000 + 1000 x condition +
 10 x odor + seed (+ 400 + ... held; + 900 + round for the Kenyon cells' rest; + 950 + step for the hold).
 
+Ran: kept through its spikes, MBON11's synaptic current drives it about as flies' does, and what is left is its input.
+(Its gain near rest 3.51 spikes/s per mV, rest 33.9 Hz; 0.70 mV per synapse.) Undepressed, MBON11 gains 114.9 spikes to
+3-octanol from 441 pC per cell and 35.3 to 4-methylcyclohexanol from 102 pC (odor_probe34.py, with Shiu et al.'s spike
+rule: 64.5 and 22.1), 0.26-0.36 spikes per pC over the six odors, the least for the largest inputs, where its F-I curve
+bends (flies about 0.45). Its rate to 3-octanol peaks at 195 spikes/s at 0.35-0.4 s and is 112 at 0.95 s (flies, on a 6
+Hz baseline: 135-140 and 95-100). Held at about 5 Hz as Hige et al. held their cells (bias 7.37 mV lower), it gains
+128.4 spikes to 3-octanol (flies 118 +- 8.3) and 40.0 to 4-methylcyclohexanol (flies 110 +- 11). With the measured
+depression it gains 39.0 and 10.1 spikes from 115 and 25 pC (0.34-0.41 spikes per pC, near flies'), 44.9 and 11.2 held;
+its rate to 3-octanol peaks at 123 spikes/s at 0.2-0.25 s and falls to 45 by 0.95 s, its input from 287 pA to 24.
+keep_current is carried forward for MBON11: flies' MBON11 makes as many spikes per pC of synaptic charge as per pA of
+injected current, and the model's now does where its F-I curve is straight. The input is what stays wrong: undepressed,
+3-octanol's is 1.8 times flies' and 4-methylcyclohexanol's 0.4 times; depressing, both are about half and fall away
+during the odor, because the model's responding Kenyon cells fire about 11 spikes over 1.4 s (odor_kc_timing.py; flies'
+alpha/beta 2.2) and 4-methylcyclohexanol reaches too few of them (DoOR's data give it 4 glomeruli above 0.2 against
+3-octanol's 12).
+
     python experiments/odor_probe35.py         (writes experiments/odor_probe35.json)
 """
 from __future__ import annotations
