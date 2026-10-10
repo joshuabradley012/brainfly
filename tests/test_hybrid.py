@@ -177,6 +177,31 @@ def test_slow_synapses_can_depress_on_their_own():
     assert shared_slow < own_slow - 0.3
 
 
+def test_presynaptic_inhibition_divides_flagged_synapses_by_the_inhibitors_low_passed_rate():
+    """One inhibitor spike adds 1/tau to the trace, which decays by exp(-dt/tau) a step; a flagged synapse's spike ten
+    steps later arrives divided by 1 + k A, an unflagged one undivided."""
+    tau, k = 0.05, 0.02
+    def run(flag, inhibit):
+        brain = small([(0, 1, 1.0), (0, 2, 1.0)], 4, w_poi=100.0)
+        if inhibit:
+            pre = np.repeat(np.arange(brain.n), np.diff(brain.ptr))
+            brain.set_presynaptic(fast=(pre == 0) & (brain.idx == 1) & flag, inhibitors=[3], tau=tau, k=k)
+        brain.reset(0)
+        brain.advance(1, drive=[([3], 1 / DT)])         # step 0: kick the inhibitor
+        assert brain.advance(1)[0, 3] == 1              # step 1: it fires; its trace is 1/tau after the step
+        brain.advance(8)                                # steps 2-9
+        brain.advance(1, drive=[([0], 1 / DT)])         # step 10: kick neuron 0
+        assert brain.advance(1)[0, 0] == 1              # step 11: it fires, with the trace decayed 9 steps
+        brain.advance(20)                               # its input has arrived
+        return float(brain.x[0, 1]), float(brain.x[0, 2])
+    plain = run(True, False)
+    flagged = run(True, True)
+    expected = 1.0 / (1.0 + k * (1 / tau) * np.exp(-DT / tau) ** 9)
+    assert flagged[0] / plain[0] == pytest.approx(expected, rel=1e-5)
+    assert flagged[1] == pytest.approx(plain[1], rel=1e-6)      # the unflagged synapse
+    assert run(False, True)[0] == pytest.approx(plain[0], rel=1e-6)
+
+
 def test_slow_full_exempts_slow_synapses_from_depression():
     """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
     neuron without depression would, and an unflagged slow target depressed."""
