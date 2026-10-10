@@ -19,6 +19,19 @@ for 2-heptanone, the model's bins taken 50 ms later for its receptor neurons' la
 al.'s LNs peak 15-25 ms after their fast valve). Also: 3-octanol's driven uniglomerular PNs in the same bins. Seeds
 370000 + 100 x scale index (+ round for the rest; + 50 + 10 x odor + seed for the odors).
 
+Ran: one scale on all of the LNs' inputs brings the GABAergic LNs' onset to flies', but their later firing stays above
+flies'. To 2-heptanone the GABAergic LNs fire 64.5, 47, 31 and 18 spikes/s per cell in the four bins at full strength
+(flies 22, 13, 8 and 6; root mean square log ratio 1.21), 51, 37, 20 and 11 at 0.6 (0.87), 41, 31, 15 and 8.7 at 0.45
+(0.65), 32, 28, 16 and 10.5 at 0.35 (0.62), and 23, 19, 13 and 8.8 at 0.25 (0.36), the best of the five and the sweep's
+lowest; 3-octanol alike, a little weaker. The rest correction missed its target both ways (the GABAergic LNs resting at
+3.8, 2.7, 2.6, 4.65 and 4.65 spikes/s against 4), which moves the later bins. The response less its rest grows about in
+proportion to s (75-78, 58-67, 33 and 17 spikes/s per unit of s in the four bins at 0.25 and 0.35), so with the LNs
+resting at flies' 4 spikes/s the best scale would be about 0.17 (17, 15, 10 and 7 spikes/s; 0.18): the model's response
+is less phasic than flies', and no one scale gives both their onset and their later firing. With the presynaptic
+inhibition as built, weaker LN inputs lift 3-octanol's strongly driven PNs (glomeruli driven over 0.2) from a plateau of
+167 spikes/s at full strength to 223 at 0.25, still climbing through the first 0.35 s; odor_probe40.py rebuilds the
+antennal lobe around the scaled LNs, the inhibition refitted to Olsen & Wilson's EPSCs.
+
     python experiments/odor_probe39.py         (writes experiments/odor_probe39.json)
 """
 from __future__ import annotations

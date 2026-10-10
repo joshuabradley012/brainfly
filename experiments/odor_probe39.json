@@ -1,0 +1,366 @@
+{
+ "question": "Exploratory, not pre-registered: what one strength for all of the local neurons' synaptic inputs gives the GABAergic\nLNs flies' odor response?\n\nodor_ln_inputs.py: the GABAergic LNs' onset burst (63 spikes/s per cell at 50-100 ms to 2-heptanone; flies about 22 over\nthe first 50 ms and 13 at 50-100 ms, Nagel et al. 2015, Fig. 5b) comes from all their inputs at once, receptor neurons,\nuniglomerular and other PNs and the LNs themselves, each from its synapses' rested strength, so scaling the receptor\nneurons' synapses alone (odor_probe38.py) leaves the onset 2.7 times flies'. None of these strengths is measured; all\ncarry rung 4's size rule.\nModel: odor_probe30.py's brain (brain_cache.py) with every synapse onto every antennal lobe LN (GABAergic and\ncholinergic) multiplied by s, for s = 1, 0.6, 0.45, 0.35 and 0.25. For each s the LNs' biases are moved (six rounds,\neach cell by its rate's distance from its target at 2 spikes/s per mV) so that every GABAergic LN rests at 4/2.8 times\nits rate in the built model (their mean 4 spikes/s, flies' baseline) and every other LN at its rate in the built model;\nthe presynaptic inhibition stays as built (its offset at the built LNs' resting rate), so the PN measures here only\nindicate the direction.\nMeasured: the GABAergic LNs' mean rate per cell in 50 ms bins over the odor's first 0.55 s, for 2-heptanone (Nagel et\nal.'s odor) and 3-octanol (4 seeds of 8 flies); the fit, stated before running, is the root mean square of the log\nratio of the model's 50-100, 100-150, 150-250 and 250-550 ms to flies' 0-50, 50-100, 100-200 and 200-500 ms (22, 13, 8, 6)\nfor 2-heptanone, the model's bins taken 50 ms later for its receptor neurons' latency (up to 50 ms, where Nagel et\nal.'s LNs peak 15-25 ms after their fast valve). Also: 3-octanol's driven uniglomerular PNs in the same bins. Seeds\n370000 + 100 x scale index (+ round for the rest; + 50 + 10 x odor + seed for the odors).\n\n    python experiments/odor_probe39.py         (writes experiments/odor_probe39.json)\n",
+ "flies": {
+  "nagel_2015_hz": [
+   22.0,
+   13.0,
+   8.0,
+   6.0
+  ],
+  "bins_s": [
+   [
+    0,
+    0.05
+   ],
+   [
+    0.05,
+    0.1
+   ],
+   [
+    0.1,
+    0.2
+   ],
+   [
+    0.2,
+    0.5
+   ]
+  ],
+  "baseline_hz": 4.0
+ },
+ "model_bins_s": [
+  [
+   0.05,
+   0.1
+  ],
+  [
+   0.1,
+   0.15
+  ],
+  [
+   0.15,
+   0.25
+  ],
+  [
+   0.25,
+   0.55
+  ]
+ ],
+ "ln_edges": 167502,
+ "lns": 321,
+ "gaba_lns": 90,
+ "built_rest_hz_gaba_lns": 2.88,
+ "scales": {
+  "1": {
+   "rest_hz_gaba_lns": 3.83,
+   "rest_hz_other_lns": 3.3,
+   "odors": {
+    "2-heptanone": {
+     "ln_hz_50ms": [
+      11.0,
+      64.5,
+      47.1,
+      34.8,
+      28.1,
+      22.1,
+      19.5,
+      17.5,
+      16.4,
+      15.7,
+      15.2
+     ],
+     "ln_hz_nagel_bins": [
+      64.5,
+      47.13,
+      31.42,
+      17.73
+     ]
+    },
+    "3-octanol": {
+     "ln_hz_50ms": [
+      13.8,
+      60.6,
+      40.7,
+      29.0,
+      22.6,
+      18.1,
+      15.3,
+      13.8,
+      13.0,
+      12.4,
+      12.0
+     ],
+     "ln_hz_nagel_bins": [
+      60.6,
+      40.7,
+      25.77,
+      14.09
+     ],
+     "oct_pn_hz_50ms": [
+      23.8,
+      118.3,
+      142.8,
+      155.8,
+      162.3,
+      166.1,
+      167.3,
+      166.2,
+      163.6,
+      160.3,
+      157.2
+     ]
+    }
+   },
+   "rms_log_error": 1.21
+  },
+  "0.6": {
+   "rest_hz_gaba_lns": 2.67,
+   "rest_hz_other_lns": 2.26,
+   "odors": {
+    "2-heptanone": {
+     "ln_hz_50ms": [
+      6.9,
+      51.3,
+      37.0,
+      23.4,
+      16.6,
+      13.5,
+      12.1,
+      10.8,
+      10.0,
+      9.9,
+      9.4
+     ],
+     "ln_hz_nagel_bins": [
+      51.32,
+      37.01,
+      20.01,
+      10.95
+     ]
+    },
+    "3-octanol": {
+     "ln_hz_50ms": [
+      8.7,
+      48.5,
+      30.9,
+      20.1,
+      13.6,
+      10.9,
+      9.8,
+      8.7,
+      8.0,
+      8.0,
+      7.5
+     ],
+     "ln_hz_nagel_bins": [
+      48.51,
+      30.93,
+      16.86,
+      8.81
+     ],
+     "oct_pn_hz_50ms": [
+      31.5,
+      142.3,
+      168.7,
+      182.7,
+      192.0,
+      198.4,
+      200.4,
+      201.8,
+      200.8,
+      198.6,
+      194.9
+     ]
+    }
+   },
+   "rms_log_error": 0.868
+  },
+  "0.45": {
+   "rest_hz_gaba_lns": 2.58,
+   "rest_hz_other_lns": 2.04,
+   "odors": {
+    "2-heptanone": {
+     "ln_hz_50ms": [
+      5.8,
+      41.4,
+      31.3,
+      17.7,
+      12.3,
+      10.5,
+      9.3,
+      8.6,
+      8.2,
+      7.8,
+      7.6
+     ],
+     "ln_hz_nagel_bins": [
+      41.39,
+      31.31,
+      15.01,
+      8.66
+     ]
+    },
+    "3-octanol": {
+     "ln_hz_50ms": [
+      6.9,
+      37.7,
+      27.2,
+      14.6,
+      10.4,
+      8.5,
+      7.7,
+      7.1,
+      6.6,
+      6.1,
+      6.1
+     ],
+     "ln_hz_nagel_bins": [
+      37.69,
+      27.16,
+      12.54,
+      7.03
+     ],
+     "oct_pn_hz_50ms": [
+      33.7,
+      150.8,
+      181.6,
+      196.1,
+      207.1,
+      213.7,
+      217.0,
+      217.8,
+      217.1,
+      215.2,
+      212.4
+     ]
+    }
+   },
+   "rms_log_error": 0.652
+  },
+  "0.35": {
+   "rest_hz_gaba_lns": 4.65,
+   "rest_hz_other_lns": 4.03,
+   "odors": {
+    "2-heptanone": {
+     "ln_hz_50ms": [
+      6.8,
+      31.9,
+      28.1,
+      18.5,
+      13.8,
+      11.8,
+      11.3,
+      10.2,
+      10.2,
+      9.9,
+      9.7
+     ],
+     "ln_hz_nagel_bins": [
+      31.9,
+      28.07,
+      16.11,
+      10.51
+     ]
+    },
+    "3-octanol": {
+     "ln_hz_50ms": [
+      7.7,
+      27.3,
+      21.1,
+      15.2,
+      12.2,
+      10.5,
+      9.7,
+      9.2,
+      8.6,
+      8.5,
+      8.2
+     ],
+     "ln_hz_nagel_bins": [
+      27.35,
+      21.1,
+      13.7,
+      9.13
+     ],
+     "oct_pn_hz_50ms": [
+      23.6,
+      137.1,
+      175.9,
+      193.2,
+      203.3,
+      208.4,
+      209.6,
+      209.5,
+      208.0,
+      204.5,
+      200.8
+     ]
+    }
+   },
+   "rms_log_error": 0.619
+  },
+  "0.25": {
+   "rest_hz_gaba_lns": 4.65,
+   "rest_hz_other_lns": 4.54,
+   "odors": {
+    "2-heptanone": {
+     "ln_hz_50ms": [
+      5.7,
+      23.3,
+      19.1,
+      13.9,
+      11.7,
+      10.0,
+      9.2,
+      8.9,
+      8.6,
+      8.3,
+      7.9
+     ],
+     "ln_hz_nagel_bins": [
+      23.33,
+      19.08,
+      12.81,
+      8.81
+     ]
+    },
+    "3-octanol": {
+     "ln_hz_50ms": [
+      6.6,
+      20.1,
+      15.7,
+      11.9,
+      10.2,
+      8.9,
+      8.0,
+      7.5,
+      7.3,
+      7.3,
+      7.2
+     ],
+     "ln_hz_nagel_bins": [
+      20.1,
+      15.71,
+      11.08,
+      7.7
+     ],
+     "oct_pn_hz_50ms": [
+      23.6,
+      141.7,
+      184.7,
+      205.1,
+      215.6,
+      221.0,
+      223.0,
+      222.0,
+      220.4,
+      217.6,
+      213.8
+     ]
+    }
+   },
+   "rms_log_error": 0.361
+  }
+ },
+ "best_scale": 0.25,
+ "seconds": 419
+}
