@@ -25,6 +25,21 @@ measures), with MBON11's input and evoked spikes per odor (odor_probe33.py's mea
 240000 for the builds (odor_probe30.py's); 330000 + 1000 x condition for the measures (+ odor_probe30.py's offsets;
 + 900 + round for the Kenyon cells' rest; + 200 + odor for MBON11; + 500 + odor for the timing).
 
+Ran: the slow component's size sets whether the projection neurons accommodate, but neither measurement gives flies'
+strong onset and accommodation together. With Nagel et al.'s (0.774), 3-octanol's PNs climb to 105 spikes/s at 0.3-0.35
+s and are at 0.97 of that at 0.5 s and 0.78 at 0.95 s (43 in the first 100 ms); the transform's Rmax is 184-355 (flies
+144-170), sigma 28-38; 2.1-10.1% of Kenyon cells respond, those answering 3-octanol firing 10.8 spikes over 1.4 s, and
+MBON11 gains 112 spikes from 429 pC per cell. With Kazama & Wilson's (0.086; presynaptic inhibition refitted to k_A
+0.00042 and k_B 0.0021 per spike/s above rest, Olsen & Wilson's EPSCs met as well: control 0.30-0.34, GABA-B blocked
+0.53-0.76), the PNs peak early, at 51 spikes/s at 50-100 ms, and fall to 0.61 of that by 0.5 s and 0.48 by 0.95 s
+(flies: a peak about 75 ms after their receptors start, 0.48 by 500 ms); but at half the rate the transform's Rmax falls
+to 62-124 (sigma 22-34), and the Kenyon cells nearly fall silent (0.1-0.4% respond; 5 responding cells per fly to
+3-octanol; MBON11 gains about 1 spike). So the slow component carries the PNs' sustained drive, and its size, between
+the two measurements' 0.086 and 0.774, trades accommodation against strength. What holds the onset down in both is the
+presynaptic inhibition, which here takes hold within 50-100 ms of the LNs' onset burst (the synapses at 0.25-0.28 of
+their strength), where flies' builds over 50-150 ms (half at 50-70 ms and 90% at 150-160 ms of a step of LN firing;
+Nagel et al. 2015; research_notes/Rung 9 learning data/pn_ln_dynamics.md).
+
     python experiments/odor_probe36.py         (writes experiments/odor_probe36.json)
 """
 from __future__ import annotations
