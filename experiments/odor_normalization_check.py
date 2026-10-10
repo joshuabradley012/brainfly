@@ -19,6 +19,19 @@ every other glomerulus's receptor neurons driven by pentyl acetate's DoOR patter
 the same time course for strong input, scaled to 0, 133, 228, 418 and 912 spikes/s of summed evoked receptor input; the
 share of the response alone each keeps. Two seeds per point: 600000 + 1000 x glomerulus + 100 x rate + 10 x level + seed.
 
+Ran (on odor_probe51.py's model): yes, for a response at the same share of the glomerulus's Rmax; the model's lateral
+inhibition, fitted only to Olsen & Wilson 2008's EPSCs, reproduces Olsen et al.'s suppression. VM7d at x = 20 (56
+spikes/s alone, 0.47 of the model's Rmax, as flies' 77 is of theirs) keeps 0.66, 0.45, 0.26 and 0.07 of it at 133, 228,
+418 and 912 spikes/s of pentyl acetate input (flies 0.66, 0.47, 0.22, 0.10); at x = 80 (102, 0.81) 0.88, 0.78, 0.68 and
+0.55 (flies, at 0.83: 0.90, 0.84, 0.67, 0.55); at x = 10 (30, 0.25) 0.46, 0.18, 0.02 and -0.07 (no fly point at that
+share in VM7). DL5 at x = 10 (37, 0.31) keeps 0.58, 0.33, 0.13 and -0.04 (flies, 41 at 0.25: 0.66, 0.44, 0.12-0.29); at x
+= 20 (61, 0.50) 0.74, 0.58, 0.40 and 0.19 (flies, 83 at 0.50: 0.75, 0.65, 0.54); at x = 80 (103, 0.85) 0.90, 0.83, 0.75
+and 0.64 (flies, 147 at 0.88: 0.94, 0.88, 0.76): a little more suppression than flies' at the higher levels, and less
+than VM7d's, as in flies (Olsen et al.'s m 4.19 against 10.63). So a broad odor divides the model's PN responses about
+as flies' are divided. What differs is the responses themselves: the model's are half to two thirds of flies' at every
+input (odor_olsen_protocol_check.py), so 4-methylcyclohexanol's weak glomeruli sit low on the transform, where the same
+division leaves less, and its weak fills (odor_probe50.py) add little of their own.
+
     python experiments/odor_normalization_check.py [odor_probe51]     (writes experiments/odor_normalization_check[_<model>].json)
 """
 from __future__ import annotations
@@ -86,7 +99,7 @@ def main() -> None:
     probe = importlib.import_module(name)
     o, rec, built = brain_cache.load(name, probe.build, p44.prepare)
     import odor_olsen_protocol_check as olsen               # after the cache, so that its edits don't invalidate it
-    out_path = Path(__file__).with_name(Path(__file__).stem + ("" if name == "odor_probe49" else f"_{name[6:]}") + ".json")
+    out_path = Path(__file__).with_name(Path(__file__).stem + ("" if name == "odor_probe49" else f"_{name[len('odor_'):]}") + ".json")
     types, m = o.types, o.m
     cholinergic = np.asarray(consensus_transmitters()) == "acetylcholine"
     public = {h: v * p10.PEAK_HZ for h, v in odors.glomeruli(PUBLIC).items() if h in rec.cells and len(rec.cells[h])}
