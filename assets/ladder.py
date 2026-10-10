@@ -51,9 +51,10 @@ def rungs() -> list[dict]:
                    (bool(verdict("rung3_001", "POLARITY")), "31 of 32 polarities (fitted)")]},
         {"name": "Central brain at rest", "status": "passed" if verdict("rung4_scaling", "pass") else "in progress",
          "marks": rung4},
-        {"name": "Nerve cord", "status": "passed" if verdict("rung5_vnc2", "pass") else "in progress",
-         "marks": [(bool(verdict("rung5_vnc2", "DNG100") and verdict("rung5_vnc2", "NULL")), "DNg100 drives 7-15 Hz leg rhythms; scrambled wiring at its drive doesn't"),
-                   (bool(verdict("rung5_vnc2", "DNB08")), "DNb08 drives them reliably too")]},
+        {"name": "Nerve cord", "status": "passed" if verdict("rung5_vnc3", "pass") else "in progress",     # attempt 3
+         "marks": [(bool(verdict("rung5_vnc3", "DNG100")), "DNg100 drives 7-15 Hz leg rhythms (attempt 3: one side a run short)"),
+                   (bool(verdict("rung5_vnc3", "DNB08")), "DNb08 drives them"),
+                   (bool(verdict("rung5_vnc3", "NULL")), "scrambled wiring doesn't, at any drive")]},
         {"name": "Gap junctions and proprioception", "status": "passed" if verdict("rung6_relay", "pass") else "started",
          "pill": "half passed" if verdict("rung6_relay", "pass") else None,     # its test has no proprioception
          "marks": [(True, "electrical synapses in the model"),

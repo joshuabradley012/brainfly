@@ -31,6 +31,28 @@ Pass: all three.
 Reported: for every neuron, network and drive, the rhythmic replicates and their frequencies, the score, the rule's
 verdict, the active neurons and motor neurons, and the descending neuron's own rate.
 
+
+Ran (2026-10-09, 2.2 hours; the text above is the pre-registration as it ran): fail, on DNG100, by one replicate.
+  DNG100  fails. In the real network each DNg100 counts only at 400: at 200 and below one to four neurons are active,
+          at 800 about 2,000-2,300 of the 4,309 (770-1,030 above 100 Hz). At 400 the right DNg100 is rhythmic in 32 of
+          32 replicates at a median of 11.6 Hz, and the left in 23 of 32 at 13.7 Hz, one short of the 24 required.
+          (Attempts 1 and 2, at the same drive on other seeds: left 30 and 30 of 32, right 31 and 32.)
+  DNB08   passes. The left VES082 DNb08 is rhythmic in 15 of 16 replicates at 200 (13.2 Hz), 8 at 400 (14.2 Hz) and
+          3 at 100; the left VES083 in 8 of 16 at 200 (16.0 Hz) and 7 at 400 (18.2 Hz). The right two are rhythmic in
+          none at the drives that count for them (100 and 200; 1 of 16 at 400, which doesn't count).
+  NULL    holds, partly vacuously. No rewired replicate is rhythmic at any drive, counting or not (0 of 1,280). But a
+          drive counts for only 7 of the 12 neuron-rewiring pairs, each time one at which the motor neurons barely
+          respond (a median of 0-2 active), and for the other 5 no drive counts, so the test there asks nothing. At
+          every drive with more response than that, the rewired networks run away (about 3,000 of the 4,309 neurons
+          active, 1,600-2,000 above 100 Hz, about 100 motor neurons). On this grid they go from nearly silent motor
+          neurons to runaway within one doubling of the drive, so the grid never samples them in between, where
+          rung5_drive_check.py's rule-tuned drives found one slow rhythm in another rewiring.
+
+Checked afterwards (2026-10-09, exploratory): rerun on the same seeds, the left DNg100 at 400 again gives 23 of 32. Of
+  its nine misses, six oscillate at 13.0-15.4 Hz but score 0.43-0.50, at or just under the 0.5 cutoff (with four to
+  seven motor neurons active, one or two arrhythmic ones pull the mean under it); two are broad and slow (31 and 78
+  motor neurons active, 0.6-0.8 Hz), and in one no motor neuron is active.
+
     python experiments/rung5_vnc3.py            (writes experiments/rung5_vnc3.json; about 2 hours)
 """
 from __future__ import annotations

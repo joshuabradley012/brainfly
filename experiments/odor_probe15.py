@@ -23,10 +23,10 @@ respond to each odor, inside flies' 6 +- 5% for all six; alpha/beta cells respon
 25.2 mV). gamma cells still respond too often (6.8-15.2%; flies about 2%). The overlap falls only somewhat: the mean
 Jaccard over odor pairs is 0.31 (0.34 with the correction alone, 0.30 matched within types), 58% of 4-methylcyclohexanol's
 responders also answer 3-octanol (71% within types), and 40-44 cells answer all six odors. MBON11 gains -0.2-2.2 spikes,
-less than before, and Kenyon cells rest at 0.07 Hz. A static check (each Kenyon cell's input, normalized by its total,
-with the top share for each odor responding) shows why the overlap can't go much lower here: with odor_probe12.py's PN
-patterns even that ideal layer has 70-77% of 4-methylcyclohexanol's responders answering 3-octanol, against 33% with
-DoOR's receptor patterns. The PNs, not the Kenyon cells, now set most of the overlap.
+less than before, and Kenyon cells rest at 0.07 Hz. A static check (odor_ideal.py: each Kenyon cell's input, normalized
+by its total, with the top share for each odor responding) shows why the overlap can't go much lower here: with
+odor_probe12.py's PN patterns even that ideal layer has 70-77% of 4-methylcyclohexanol's responders answering
+3-octanol, against 33% with DoOR's receptor patterns. The PNs, not the Kenyon cells, now set most of the overlap.
 
     python experiments/odor_probe15.py         (writes experiments/odor_probe15.json)
 """
