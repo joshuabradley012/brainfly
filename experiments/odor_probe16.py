@@ -17,6 +17,16 @@ Olsen fitted them. Then lateral input: the same glomerulus at 10, 20 and 40 Hz w
 fire at 20 Hz, and the factor s that the suppression implies (from Eq. 2 with the fitted Rmax and sigma).
 Seeds 90000 + 1000 x condition + 10 x glomerulus + rate.
 
+Ran: no, at either end. Alone, every glomerulus saturates early and answers weak input too strongly: fitted Rmax 56-116
+spikes/s (Olsen: 144-170) and sigma 3.6-4.2 (11.8-44.8). 5 Hz of ORN input gives 32-67 Hz (Olsen's fits: 24-36), while
+160 Hz gives only 52-110 Hz over the 0.5 s, though 108-185 Hz in its first 100 ms: the PNs answer the onset, then
+collapse as the receptor synapses depress. Lateral input from every other glomerulus at 20 Hz barely divides the
+response (0.86-0.99 of it alone with the cholinergic local neurons' synapses removed; with them, 0.93-1.20, DM4 even
+rising), where Olsen et al. found it divisive and growing with the summed ORN activity. Removing those synapses leaves
+the fits unchanged (Rmax 56-116, sigma 3.6-4.2). The shape points at the receptor synapse: the model has only the fast,
+depressing component of Nagel et al. 2015's fit, so sustained input has little left to drive PNs with (odor_probe17.py
+adds the slow component).
+
     python experiments/odor_probe16.py         (writes experiments/odor_probe16.json)
 """
 from __future__ import annotations
@@ -34,10 +44,10 @@ import odor_probe7 as p7
 
 OUT = Path(__file__).with_suffix(".json")
 SEED = 90000
-GLOMERULI = ("DM4", "DL5", "VM7", "DM1")
+GLOMERULI = ("DM4", "DL5", "VM7d", "DM1")            # Olsen's VM7 is Or42a's glomerulus, VM7d in MaleCNS
 RATES = (5.0, 10.0, 20.0, 40.0, 80.0, 160.0)
 LATERAL_RATES, BACKGROUND_HZ = (10.0, 20.0, 40.0), 20.0
-OLSEN = {"DM4": (170, 16.3), "DL5": (167, 11.8), "VM7": (163, 12.4), "DM1": (144, 44.8)}
+OLSEN = {"DM4": (170, 16.3), "DL5": (167, 11.8), "VM7d": (163, 12.4), "DM1": (144, 44.8)}
 CONDITIONS = ("current", "no cholinergic LN->PN")
 
 

@@ -1,0 +1,578 @@
+{
+ "question": "Exploratory, not pre-registered: does the model's antennal lobe turn receptor input into projection neuron output as\nflies' does?\n\nodor_probe12.py and odor_probe15.py: weak DoOR responses become strong projection neuron (PN) responses at an odor's\nonset (DoOR 0.05-0.08, receptors 10-16 Hz above spontaneous, give 94-142 Hz in the first 100 ms), so different odors'\nPN patterns correlate more than their receptor patterns (3-octanol against 4-methylcyclohexanol: r = 0.62 against\n0.35), and the Kenyon cells inherit the overlap. Olsen, Bhandawat & Wilson 2010 measured the transformation: with one\nglomerulus's receptor neurons (ORNs) driven by a private odor, the PN's rise over the 500 ms stimulus follows\nPN = Rmax ORN^1.5 / (ORN^1.5 + sigma^1.5), Rmax 163-170 and sigma 11.8-16.3 spikes/s in DM4, DL5 and VM7 (DM1: 144 and\n44.8), in control saline; lateral input from other glomeruli divides it, as PN = Rmax ORN^1.5 / (ORN^1.5 + s^1.5 +\nsigma^1.5) with s rising linearly with the summed ORN activity (research_notes/Embodied fly connectome simulation/\nsensory_periphery.md).\nMeasured in odor_probe7.py's current model and with odor_probe14.py's correction (the cholinergic local neurons'\nsynapses onto PNs removed): each of Olsen's four glomeruli's ORNs driven alone at 5, 10, 20, 40, 80 and 160 Hz for\n0.5 s, its uniglomerular PNs' rise over the 0.5 s (and over the first 100 ms); Rmax and sigma fitted by least squares as\nOlsen fitted them. Then lateral input: the same glomerulus at 10, 20 and 40 Hz while every other glomerulus's ORNs\nfire at 20 Hz, and the factor s that the suppression implies (from Eq. 2 with the fitted Rmax and sigma).\nSeeds 90000 + 1000 x condition + 10 x glomerulus + rate.\n\n    python experiments/odor_probe16.py         (writes experiments/odor_probe16.json)\n",
+ "conditions": {
+  "current": {
+   "DM4": {
+    "orns": 32,
+    "pns": 4,
+    "alone": {
+     "5": {
+      "whole": 31.88,
+      "first_100ms": 40.38,
+      "rest": 2.75
+     },
+     "10": {
+      "whole": 43.91,
+      "first_100ms": 53.91,
+      "rest": 2.66
+     },
+     "20": {
+      "whole": 52.81,
+      "first_100ms": 74.12,
+      "rest": 3.06
+     },
+     "40": {
+      "whole": 57.0,
+      "first_100ms": 95.75,
+      "rest": 2.38
+     },
+     "80": {
+      "whole": 55.97,
+      "first_100ms": 108.34,
+      "rest": 2.59
+     },
+     "160": {
+      "whole": 52.16,
+      "first_100ms": 107.84,
+      "rest": 2.78
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 52.59,
+      "first_100ms": 73.28,
+      "rest": 3.59,
+      "alone_whole": 43.91,
+      "suppressed_to": 1.198,
+      "s": 0.0
+     },
+     "20": {
+      "whole": 61.78,
+      "first_100ms": 93.09,
+      "rest": 3.16,
+      "alone_whole": 52.81,
+      "suppressed_to": 1.17,
+      "s": null
+     },
+     "40": {
+      "whole": 65.47,
+      "first_100ms": 108.34,
+      "rest": 2.91,
+      "alone_whole": 57.0,
+      "suppressed_to": 1.149,
+      "s": null
+     }
+    },
+    "fit": {
+     "rmax": 56.1,
+     "sigma": 4.1
+    },
+    "olsen": {
+     "rmax": 170,
+     "sigma": 16.3
+    }
+   },
+   "DL5": {
+    "orns": 43,
+    "pns": 2,
+    "alone": {
+     "5": {
+      "whole": 61.31,
+      "first_100ms": 59.06,
+      "rest": 2.81
+     },
+     "10": {
+      "whole": 83.81,
+      "first_100ms": 100.19,
+      "rest": 2.94
+     },
+     "20": {
+      "whole": 99.31,
+      "first_100ms": 128.31,
+      "rest": 2.31
+     },
+     "40": {
+      "whole": 105.69,
+      "first_100ms": 153.69,
+      "rest": 2.56
+     },
+     "80": {
+      "whole": 104.0,
+      "first_100ms": 175.0,
+      "rest": 4.38
+     },
+     "160": {
+      "whole": 101.56,
+      "first_100ms": 177.19,
+      "rest": 2.19
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 77.5,
+      "first_100ms": 95.12,
+      "rest": 2.38,
+      "alone_whole": 83.81,
+      "suppressed_to": 0.925,
+      "s": 2.3
+     },
+     "20": {
+      "whole": 95.56,
+      "first_100ms": 124.69,
+      "rest": 2.81,
+      "alone_whole": 99.31,
+      "suppressed_to": 0.962,
+      "s": 1.3
+     },
+     "40": {
+      "whole": 104.5,
+      "first_100ms": 154.25,
+      "rest": 2.62,
+      "alone_whole": 105.69,
+      "suppressed_to": 0.989,
+      "s": 0.0
+     }
+    },
+    "fit": {
+     "rmax": 105.7,
+     "sigma": 4.0
+    },
+    "olsen": {
+     "rmax": 167,
+     "sigma": 11.8
+    }
+   },
+   "VM7d": {
+    "orns": 36,
+    "pns": 7,
+    "alone": {
+     "5": {
+      "whole": 67.18,
+      "first_100ms": 65.82,
+      "rest": 2.75
+     },
+     "10": {
+      "whole": 89.34,
+      "first_100ms": 99.52,
+      "rest": 2.98
+     },
+     "20": {
+      "whole": 107.75,
+      "first_100ms": 137.0,
+      "rest": 3.0
+     },
+     "40": {
+      "whole": 115.09,
+      "first_100ms": 164.95,
+      "rest": 3.45
+     },
+     "80": {
+      "whole": 115.54,
+      "first_100ms": 188.32,
+      "rest": 2.75
+     },
+     "160": {
+      "whole": 109.55,
+      "first_100ms": 184.45,
+      "rest": 2.88
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 85.88,
+      "first_100ms": 95.59,
+      "rest": 2.98,
+      "alone_whole": 89.34,
+      "suppressed_to": 0.961,
+      "s": 2.0
+     },
+     "20": {
+      "whole": 105.34,
+      "first_100ms": 131.02,
+      "rest": 2.91,
+      "alone_whole": 107.75,
+      "suppressed_to": 0.978,
+      "s": 0.6
+     },
+     "40": {
+      "whole": 112.29,
+      "first_100ms": 165.25,
+      "rest": 3.32,
+      "alone_whole": 115.09,
+      "suppressed_to": 0.976,
+      "s": 0.0
+     }
+    },
+    "fit": {
+     "rmax": 115.3,
+     "sigma": 4.0
+    },
+    "olsen": {
+     "rmax": 163,
+     "sigma": 12.4
+    }
+   },
+   "DM1": {
+    "orns": 74,
+    "pns": 2,
+    "alone": {
+     "5": {
+      "whole": 62.19,
+      "first_100ms": 66.56,
+      "rest": 2.81
+     },
+     "10": {
+      "whole": 83.56,
+      "first_100ms": 99.19,
+      "rest": 2.69
+     },
+     "20": {
+      "whole": 99.0,
+      "first_100ms": 129.25,
+      "rest": 3.25
+     },
+     "40": {
+      "whole": 106.19,
+      "first_100ms": 156.69,
+      "rest": 2.69
+     },
+     "80": {
+      "whole": 102.81,
+      "first_100ms": 172.94,
+      "rest": 2.69
+     },
+     "160": {
+      "whole": 95.31,
+      "first_100ms": 170.06,
+      "rest": 4.31
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 82.5,
+      "first_100ms": 103.25,
+      "rest": 3.62,
+      "alone_whole": 83.56,
+      "suppressed_to": 0.987,
+      "s": 0.9
+     },
+     "20": {
+      "whole": 97.69,
+      "first_100ms": 130.31,
+      "rest": 2.81,
+      "alone_whole": 99.0,
+      "suppressed_to": 0.987,
+      "s": 0.0
+     },
+     "40": {
+      "whole": 104.06,
+      "first_100ms": 156.81,
+      "rest": 2.56,
+      "alone_whole": 106.19,
+      "suppressed_to": 0.98,
+      "s": null
+     }
+    },
+    "fit": {
+     "rmax": 103.4,
+     "sigma": 3.7
+    },
+    "olsen": {
+     "rmax": 144,
+     "sigma": 44.8
+    }
+   }
+  },
+  "no cholinergic LN->PN": {
+   "removed": {
+    "edges": 10750,
+    "synapses": 152952,
+    "lost_mean_input_mv": {
+     "upn_mean": 0.385,
+     "upn_max": 1.15
+    }
+   },
+   "DM4": {
+    "orns": 32,
+    "pns": 4,
+    "alone": {
+     "5": {
+      "whole": 32.31,
+      "first_100ms": 37.94,
+      "rest": 3.31
+     },
+     "10": {
+      "whole": 44.31,
+      "first_100ms": 56.94,
+      "rest": 2.75
+     },
+     "20": {
+      "whole": 53.0,
+      "first_100ms": 79.5,
+      "rest": 2.69
+     },
+     "40": {
+      "whole": 55.03,
+      "first_100ms": 95.47,
+      "rest": 3.59
+     },
+     "80": {
+      "whole": 55.72,
+      "first_100ms": 108.16,
+      "rest": 2.78
+     },
+     "160": {
+      "whole": 53.78,
+      "first_100ms": 110.16,
+      "rest": 2.34
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 46.09,
+      "first_100ms": 49.53,
+      "rest": 3.28,
+      "alone_whole": 44.31,
+      "suppressed_to": 1.04,
+      "s": 0.0
+     },
+     "20": {
+      "whole": 56.62,
+      "first_100ms": 74.19,
+      "rest": 3.0,
+      "alone_whole": 53.0,
+      "suppressed_to": 1.068,
+      "s": null
+     },
+     "40": {
+      "whole": 61.25,
+      "first_100ms": 95.81,
+      "rest": 2.94,
+      "alone_whole": 55.03,
+      "suppressed_to": 1.113,
+      "s": null
+     }
+    },
+    "fit": {
+     "rmax": 56.0,
+     "sigma": 4.0
+    },
+    "olsen": {
+     "rmax": 170,
+     "sigma": 16.3
+    }
+   },
+   "DL5": {
+    "orns": 43,
+    "pns": 2,
+    "alone": {
+     "5": {
+      "whole": 61.56,
+      "first_100ms": 62.81,
+      "rest": 2.19
+     },
+     "10": {
+      "whole": 82.06,
+      "first_100ms": 95.69,
+      "rest": 2.44
+     },
+     "20": {
+      "whole": 99.75,
+      "first_100ms": 124.88,
+      "rest": 2.62
+     },
+     "40": {
+      "whole": 106.75,
+      "first_100ms": 155.12,
+      "rest": 2.38
+     },
+     "80": {
+      "whole": 105.25,
+      "first_100ms": 174.75,
+      "rest": 2.75
+     },
+     "160": {
+      "whole": 99.81,
+      "first_100ms": 170.81,
+      "rest": 2.31
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 71.06,
+      "first_100ms": 69.56,
+      "rest": 2.94,
+      "alone_whole": 82.06,
+      "suppressed_to": 0.866,
+      "s": 3.8
+     },
+     "20": {
+      "whole": 93.25,
+      "first_100ms": 118.0,
+      "rest": 2.62,
+      "alone_whole": 99.75,
+      "suppressed_to": 0.935,
+      "s": 2.5
+     },
+     "40": {
+      "whole": 100.81,
+      "first_100ms": 146.56,
+      "rest": 2.81,
+      "alone_whole": 106.75,
+      "suppressed_to": 0.944,
+      "s": 2.7
+     }
+    },
+    "fit": {
+     "rmax": 105.8,
+     "sigma": 4.0
+    },
+    "olsen": {
+     "rmax": 167,
+     "sigma": 11.8
+    }
+   },
+   "VM7d": {
+    "orns": 36,
+    "pns": 7,
+    "alone": {
+     "5": {
+      "whole": 64.88,
+      "first_100ms": 71.45,
+      "rest": 3.2
+     },
+     "10": {
+      "whole": 88.77,
+      "first_100ms": 102.2,
+      "rest": 3.16
+     },
+     "20": {
+      "whole": 107.29,
+      "first_100ms": 132.5,
+      "rest": 3.39
+     },
+     "40": {
+      "whole": 115.62,
+      "first_100ms": 162.27,
+      "rest": 3.09
+     },
+     "80": {
+      "whole": 115.27,
+      "first_100ms": 185.7,
+      "rest": 3.05
+     },
+     "160": {
+      "whole": 109.57,
+      "first_100ms": 184.86,
+      "rest": 3.36
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 76.5,
+      "first_100ms": 70.46,
+      "rest": 3.29,
+      "alone_whole": 88.77,
+      "suppressed_to": 0.862,
+      "s": 3.8
+     },
+     "20": {
+      "whole": 99.89,
+      "first_100ms": 117.14,
+      "rest": 3.21,
+      "alone_whole": 107.29,
+      "suppressed_to": 0.931,
+      "s": 3.1
+     },
+     "40": {
+      "whole": 109.41,
+      "first_100ms": 160.16,
+      "rest": 3.23,
+      "alone_whole": 115.62,
+      "suppressed_to": 0.946,
+      "s": 3.1
+     }
+    },
+    "fit": {
+     "rmax": 115.5,
+     "sigma": 4.2
+    },
+    "olsen": {
+     "rmax": 163,
+     "sigma": 12.4
+    }
+   },
+   "DM1": {
+    "orns": 74,
+    "pns": 2,
+    "alone": {
+     "5": {
+      "whole": 63.12,
+      "first_100ms": 63.25,
+      "rest": 3.0
+     },
+     "10": {
+      "whole": 84.0,
+      "first_100ms": 95.5,
+      "rest": 2.62
+     },
+     "20": {
+      "whole": 99.44,
+      "first_100ms": 123.81,
+      "rest": 2.44
+     },
+     "40": {
+      "whole": 104.75,
+      "first_100ms": 156.5,
+      "rest": 2.88
+     },
+     "80": {
+      "whole": 102.5,
+      "first_100ms": 170.5,
+      "rest": 3.25
+     },
+     "160": {
+      "whole": 96.62,
+      "first_100ms": 169.75,
+      "rest": 2.75
+     }
+    },
+    "lateral": {
+     "10": {
+      "whole": 77.44,
+      "first_100ms": 81.69,
+      "rest": 3.31,
+      "alone_whole": 84.0,
+      "suppressed_to": 0.922,
+      "s": 2.4
+     },
+     "20": {
+      "whole": 94.31,
+      "first_100ms": 120.06,
+      "rest": 3.06,
+      "alone_whole": 99.44,
+      "suppressed_to": 0.948,
+      "s": 1.4
+     },
+     "40": {
+      "whole": 101.56,
+      "first_100ms": 151.19,
+      "rest": 3.19,
+      "alone_whole": 104.75,
+      "suppressed_to": 0.97,
+      "s": 0.0
+     }
+    },
+    "fit": {
+     "rmax": 103.3,
+     "sigma": 3.6
+    },
+    "olsen": {
+     "rmax": 144,
+     "sigma": 44.8
+    }
+   }
+  }
+ },
+ "seconds": 788
+}
