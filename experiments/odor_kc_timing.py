@@ -3,8 +3,8 @@ across Kenyon cells, or each Kenyon cell's own burst?
 
 odor_probe32.py: the same mean drive given as a steady current adds about twice the spikes the odor's Kenyon cell input
 does (163 against 72 to 3-octanol, 50 against 27 to 4-methylcyclohexanol), and MBON11's other inputs don't matter.
-Model: odor_probe30.py's brain (brain_cache.py) with odor_probe31.py's Kenyon cell-to-MBON11 synapses (0.030 pC per
-synapse). For 3-octanol and 4-methylcyclohexanol (2 seeds of 8 flies), the Kenyon cells' spikes in 1 ms bins over the
+Model: odor_probe30.py's brain (brain_cache.py) with Inada et al.'s Kenyon cell class offsets (odor_probe33.py) and
+odor_probe31.py's Kenyon cell-to-MBON11 synapses (0.030 pC per synapse). For 3-octanol and 4-methylcyclohexanol (2 seeds of 8 flies), the Kenyon cells' spikes in 1 ms bins over the
 odor's first 1.4 s, and:
   1. each responding Kenyon cell's spikes (cells with at least 2 spikes in a fly): how many, the share of its
      intervals under 10 and under 20 ms, its first spike's time, and the spread of its spike times;
@@ -14,7 +14,7 @@ odor's first 1.4 s, and:
      input, over flies and both MBON11s);
   3. bursts: the share of the input's synapse-weighted spikes that come within 20 ms of the same Kenyon cell's previous
      spike.
-Seeds 300000 + 10 x odor + seed.
+Seeds 300000 + 10 x odor + seed (+ 900 + round for the Kenyon cells' rest).
 
     python experiments/odor_kc_timing.py       (writes experiments/odor_kc_timing.json)
 """
@@ -29,6 +29,8 @@ import numpy as np
 import brain_cache
 import odor_probe10 as p10
 import odor_probe24 as p24
+import odor_probe33 as p33
+import odor_probe8 as p8
 
 OUT = Path(__file__).with_suffix(".json")
 SEED = 300000
@@ -94,12 +96,14 @@ def main() -> None:
     t0 = time.perf_counter()
     o, rec, built = brain_cache.probe30()
     b, types, m = o.brain, o.types, o.m
+    kc_rest = p33.set_rest(o, rec, p8.class_gaps(o, p8.OFFSETS["Inada"]), SEED + 900)
     kc, mb = np.flatnonzero(m["kc"]), np.flatnonzero(types == "MBON11")
     pre = np.repeat(np.arange(b.n), np.diff(b.ptr))
     onto = np.flatnonzero(m["kc"][pre] & np.isin(b.idx, mb))
     syn = np.zeros((len(kc), len(mb)))
     np.add.at(syn, (np.searchsorted(kc, pre[onto]), np.searchsorted(mb, b.idx[onto])), b._counts[onto])
-    out = {"question": __doc__, "flies": {"spikes_per_response": {"alpha/beta": "2.2 +- 1.2", "alpha'/beta'": "4.9 +- 3.0"}}, "odors": {}}
+    out = {"question": __doc__, "flies": {"spikes_per_response": {"alpha/beta": "2.2 +- 1.2", "alpha'/beta'": "4.9 +- 3.0"}},
+           "kc_rest_inada": kc_rest, "odors": {}}
     for j, odor in enumerate(ODORS):
         S = np.concatenate([record(o, rec, odor, SEED + 10 * j + s, kc) for s in range(SEEDS)], axis=1)
         out["odors"][odor] = measures(S, syn)
