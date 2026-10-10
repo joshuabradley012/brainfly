@@ -2,12 +2,12 @@
 
     python assets/learning.py      # writes assets/learning-light.svg and assets/learning-dark.svg
 
-Hige et al. 2015's protocol in the model (learning_pilot.py, learning_pilot2.py): dopamine-gated depression at the Kenyon
-cell-to-MBON11 synapses, its rate set so that the paired odor's charge (the current its Kenyon cells deliver) falls 90%.
-Left two panels: for each odor, how far its charge falls with the same rate (tau_e 0.5 s), on odor_probe7.py's model
-(learning_pilot), on odor_probe30.py's antennal lobe with MBON11's synapses from its own measurements
-(learning_pilot2), and with Inada et al.'s Kenyon cell classes and MBON11 keeping its synaptic current, its spikes counted
-held near 6 Hz as Hige et al. counted them (learning_pilot3). Right: MBON11's evoked spikes after pairing, as a drop from before, for the paired and the unpaired
+Hige et al. 2015's protocol in the model (learning_pilot.py): dopamine-gated depression at the Kenyon cell-to-MBON11
+synapses, its rate set so that the paired odor's charge (the current its Kenyon cells deliver) falls 90%. Left two
+panels: for each odor, how far its charge falls with the same rate (tau_e 0.5 s), on odor_probe30.py's model
+(learning_pilot3) and on the rebuilt model (odor_probe44.py's antennal lobe with mb_calibration.py's mushroom body;
+learning_pilot5), its Kenyon cell-to-MBON synapses undepressed or depressing as Yamada et al. 2024 measured, MBON11's spikes
+counted held near 6 Hz as Hige et al. counted them. Right: MBON11's evoked spikes after pairing, as a drop from before, for the paired and the unpaired
 odor. Flies (Hige et al. 2015, read off the figures in research_notes/Rung 9 learning data/hige2015_specificity.md): with
 3-octanol paired, its spikes fell 80% and 4-methylcyclohexanol's 27% (Fig. 1F, n = 7), and 4-methylcyclohexanol's charge
 fell 20% (Fig. 3, n = 5, not significant) and 35% (Fig. 4, n = 6, every cell); with 4-methylcyclohexanol paired, its
@@ -27,9 +27,9 @@ THEMES = {  # as in assets/al_transform.py
 }
 W, H = 1120, 412
 ODORS = ("3-octanol", "4-methylcyclohexanol", "ethyl acetate", "isopentyl acetate", "benzaldehyde", "2-heptanone")
-RUNS = [("learning_pilot", "odor_probe7's model (pilot 1)", "faint"),
-        ("learning_pilot2", "probe 30's antennal lobe, MBON11's measured synapses (pilot 2)", "muted"),
-        ("learning_pilot3", "+ Inada's classes, MBON11 keeping its current, held at 6 Hz (pilot 3)", "red")]
+RUNS = [("learning_pilot3", None, "old model (pilot 3)", "faint"),
+        ("learning_pilot5", "undepressed", "rebuilt model, Kenyon cell-to-MBON synapses undepressed (pilot 5)", "red"),
+        ("learning_pilot5", "depressing", "rebuilt model, the synapses depressing as measured (pilot 5)", "muted")]
 FLIES_SPIKES = {("3-octanol", "paired"): 0.80, ("3-octanol", "unpaired"): 0.27,               # Fig. 1F
                 ("4-methylcyclohexanol", "paired"): 0.76, ("4-methylcyclohexanol", "unpaired"): 0.38}  # Fig. S3D
 FLIES_CHARGE = {"3-octanol": [(0.20, "Fig. 3, n = 5, not significant"), (0.35, "Fig. 4, n = 6")]}   # the unpaired odor's
@@ -45,8 +45,10 @@ def text(x, y, s, cls, anchor="start"):
 
 def load() -> list[dict]:
     out = []
-    for name, label, colour in RUNS:
+    for name, variant, label, colour in RUNS:
         d = json.loads((ROOT / "experiments" / f"{name}.json").read_text())
+        if variant:
+            d = d["variants"][variant]
         out.append({"label": label, "colour": colour,
                     "pairings": {p["paired"]: {"unpaired": p["unpaired"], "drop": p["by_tau"]["0.5"]["charge_drop"],
                                                "spikes": p["spikes"]} for p in d["pairings"]}})
@@ -113,13 +115,13 @@ def spike_panel(c, runs) -> list[str]:
 
 def figure(theme: str, runs: list[dict]) -> str:
     c = THEMES[theme]
-    out = [text(24, 32, "With 3-octanol paired the model's learning now matches flies'; the other way round it is too specific", "lab"),
+    out = [text(24, 32, "On the rebuilt model learning is about as specific as flies' both ways; with 4-methylcyclohexanol paired, still too narrow", "lab"),
            text(24, 52, "Dopamine-gated depression at Kenyon cell-to-MBON11 synapses, its rate set to cut the paired odor's input by 90%. "
                 "Left: how far each odor's input falls.", "note"),
            text(24, 70, "Right: MBON11's odor-evoked spikes afterwards. Rings: flies (Hige et al. 2015; no charge was measured with "
                 "4-methylcyclohexanol paired).", "note")]
     lx = 24
-    items = [(label, c[colour], False) for _, label, colour in RUNS] + [("flies", c["ink"], True)]
+    items = [(label, c[colour], False) for _, _, label, colour in RUNS] + [("flies", c["ink"], True)]
     for label, col, ring in items:                 # legend, one row above the panels
         out.append(f'<circle cx="{lx + 6}" cy="100" r="6" fill="{"none" if ring else col}" stroke="{col}" stroke-width="2"/>')
         out.append(text(lx + 18, 104, label, "tick"))
@@ -138,11 +140,10 @@ def figure(theme: str, runs: list[dict]) -> str:
     .note {{ font-size: 13px; fill: {c["muted"]}; }}
     .tick {{ font-size: 11px; fill: {c["muted"]}; }}
     """
-    new, old = runs[-1]["pairings"], runs[0]["pairings"]
-    title = ("Learning's specificity in the model: pairing 3-octanol cuts 4-methylcyclohexanol's Kenyon cell input to MBON11 by "
-             f'{new["3-octanol"]["drop"]["4-methylcyclohexanol"]:.0%} (first pilot {old["3-octanol"]["drop"]["4-methylcyclohexanol"]:.0%}) '
-             f'and its spikes by {new["3-octanol"]["spikes"]["4-methylcyclohexanol"]["drop"]:.0%}; flies: charge 20-35% lower, '
-             "spikes 27% lower")
+    new = runs[1]["pairings"]
+    title = ("Learning's specificity in the rebuilt model (Kenyon cell-to-MBON synapses undepressed): pairing 3-octanol cuts "
+             f'4-methylcyclohexanol\'s spikes by {new["3-octanol"]["spikes"]["4-methylcyclohexanol"]["drop"]:.0%} (flies 27%), and pairing '
+             f'4-methylcyclohexanol cuts 3-octanol\'s by {new["4-methylcyclohexanol"]["spikes"]["3-octanol"]["drop"]:.0%} (flies 38%)')
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")
