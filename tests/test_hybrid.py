@@ -227,6 +227,26 @@ def test_presynaptic_components_sum_so_a_negative_one_can_give_the_inhibition_a_
         assert run(wait, True) / run(wait, False) == pytest.approx(1.0 / (1.0 + height), rel=1e-4)
 
 
+def test_presynaptic_traces_can_start_at_a_resting_rate():
+    """With start given, a run begins inhibited: a flagged spike just after reset, with no inhibitor spikes yet, is
+    divided by 1 + k start (the trace decayed by the steps before it), and reset puts the traces back."""
+    tau, k, a0 = 0.5, 0.01, 200.0
+    def run(start):
+        brain = small([(0, 1, 1.0)], 4, w_poi=100.0)
+        pre = np.repeat(np.arange(brain.n), np.diff(brain.ptr))
+        brain.set_presynaptic(fast=pre == 0, inhibitors=[3], tau=tau, k=k, start=start)
+        brain.reset(0)
+        brain.advance(1, drive=[([0], 1 / DT)])
+        assert brain.advance(1)[0, 0] == 1              # neuron 0 fires on step 1, the trace decayed once
+        brain.advance(20)
+        return float(brain.x[0, 1]), brain
+    plain, _ = run(())
+    started, brain = run(a0)
+    assert started / plain == pytest.approx(1.0 / (1.0 + k * a0 * np.exp(-DT / tau)), rel=1e-5)
+    brain.reset(1)
+    assert np.allclose(brain.presynaptic_state, a0)
+
+
 def test_slow_full_exempts_slow_synapses_from_depression():
     """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
     neuron without depression would, and an unflagged slow target depressed."""

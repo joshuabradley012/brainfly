@@ -564,12 +564,14 @@ class HybridBrain:
                 for e in range(self.sptr[i], self.sptr[i + 1]):
                     self.slow_graded_input[:, self.sidx[e]] += self.slow_weights[e] * self.release[:, q]
 
-    def set_presynaptic(self, fast=None, slow=None, inhibitors=(), tau=(), k=()) -> None:
+    def set_presynaptic(self, fast=None, slow=None, inhibitors=(), tau=(), k=(), start=()) -> None:
         """Presynaptic inhibition: the flagged synapses (fast: one flag per synapse in brain.weights' order; slow: in
         brain.slow_weights' order) carry their strength divided by 1 + sum_j k[j] A_j, where A_j is the inhibitors'
         summed spike rate (Hz) low-passed with time constant tau[j], s (each spike adds 1 / tau[j], and A_j decays by
-        exp(-dt / tau[j]) a step). The gain each step comes from the traces before that step's spikes. Called with no
-        tau, it turns the inhibition off. Spiking inhibitors only; set_slow clears the slow flags."""
+        exp(-dt / tau[j]) a step). The gain each step comes from the traces before that step's spikes. start gives the
+        traces' values after reset (spikes/s, one per trace; zero if not given), e.g. the inhibitors' resting rate, so
+        that a run doesn't begin uninhibited. Called with no tau, it turns the inhibition off. Spiking inhibitors only;
+        set_slow clears the slow flags."""
         tau, k = np.atleast_1d(np.asarray(tau, np.float64)), np.atleast_1d(np.asarray(k, np.float64))
         if len(tau) != len(k):
             raise ValueError("give one k per time constant")
@@ -582,9 +584,11 @@ class HybridBrain:
             raise ValueError("fast and slow need one flag per fast or slow synapse")
         inh = np.zeros(self.n, np.bool_)
         inh[np.asarray(inhibitors, np.int64)] = True
+        start = np.atleast_1d(np.asarray(start, np.float64))
+        start = np.zeros(len(k)) if not len(start) else np.broadcast_to(start, k.shape).copy()
         self._presynaptic = {"fast": fast, "slow": slow, "inhibitors": inh, "decay": np.exp(-self.dt / tau),
-                             "inc": 1.0 / tau, "k": k}
-        self.presynaptic_state = np.zeros((self.trials, len(k)))
+                             "inc": 1.0 / tau, "k": k, "start": start}
+        self.presynaptic_state = np.tile(start, (self.trials, 1))
 
     def set_type(self, key: str, **params) -> None:
         """Change a type's (or a named set's, or a superclass's) parameters after construction, as types={key: params}
@@ -690,7 +694,8 @@ class HybridBrain:
         self.rng = np.random.SeedSequence(seed).generate_state(self.trials, dtype=np.uint64)
         self.driven = np.zeros(self.n, np.bool_)
         self._depression_state(fresh=True)
-        self.presynaptic_state = np.zeros((self.trials, 0 if self._presynaptic is None else len(self._presynaptic["k"])))
+        self.presynaptic_state = (np.zeros((self.trials, 0)) if self._presynaptic is None
+                                  else np.tile(self._presynaptic["start"], (self.trials, 1)))
         self.t = 0
 
     def _depression_state(self, fresh: bool = False) -> None:
@@ -755,7 +760,7 @@ class HybridBrain:
             e = np.zeros(0, np.bool_)
             return e, e, np.zeros(self.n, np.bool_), np.zeros(0), np.zeros(0), np.zeros(0), np.zeros((self.trials, 0))
         if self.presynaptic_state.shape != (self.trials, len(p["k"])):
-            self.presynaptic_state = np.zeros((self.trials, len(p["k"])))
+            self.presynaptic_state = np.tile(p["start"], (self.trials, 1))
         return p["fast"], p["slow"], p["inhibitors"], p["decay"], p["inc"], p["k"], self.presynaptic_state
 
     def _kernel_tables(self) -> dict:
