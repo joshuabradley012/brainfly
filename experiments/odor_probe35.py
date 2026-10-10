@@ -1,57 +1,27 @@
-"""Exploratory, not pre-registered: with the Kenyon cell-to-MBON synapses depressing as Yamada et al. 2024 measured, does
-MBON11's odor response take flies' shape?
+"""Exploratory, not pre-registered: with MBON11 keeping its synaptic current through its spikes, as neurons do, does
+it turn its Kenyon cell input into spikes as flies' MBON11 does, and how do its responses compare with Hige et al.'s?
 
-odor_probe7.py made every Kenyon cell-to-MBON synapse undepressed: "The two undepressed choices have no fly measurement
-behind them and were made after seeing the depressed versions fall silent". There is one: at gamma Kenyon cell-to-MBON11
-synapses a second light flash 400 ms after the first evokes 0.38-0.68 of the first EPSC, less with more calcium, so the
-depression is presynaptic and release likely (Yamada et al. 2024; high release probability at these synapses, Woitkuhn
-et al. 2020 via Piao & Sigrist 2021), and rung 4's Kenyon cell depression was set from it (each spike leaves 0.5 of the
-strength, recovering over 1.5 s: 0.62 at 400 ms; research_notes/Rung 4 resting state data/short_term_plasticity.md). In
-flies' odor responses MBON11's EPSC falls from about 400 pA at its peak to about 170 pA within 0.5 s (Hige et al. 2015,
-Fig. 3C), depression and Kenyon cell adaptation together. odor_probe31.py: with undepressed synapses set from Yamada et
-al.'s charge and Wang et al. 2026's gain, MBON11 gains 74 spikes to 3-octanol and 28 to 4-methylcyclohexanol at the
-middle charge (flies 118 and 110), its input per cell 573 and 137 pC (flies about 250-265), 0.13-0.22 spikes per pC
-(flies about 0.45).
-Model: odor_probe30.py's brain (odor_probe31.build on its seeds; brain_cache.py keeps it) with the Kenyon cell classes'
-distances below threshold from Inada et al. 2017's offsets (odor_probe33.py, which moved the classes toward flies':
-alpha'/beta' 5.5 mV nearer threshold than alpha/beta, gamma 2.5 mV farther, the mean at 21.5 mV), and the Kenyon
-cell-to-MBON11 synapses at odor_probe31.py's middle charge (q = 0.030 pC per synapse, for a rested synapse). Conditions:
-  undepressed   every Kenyon cell-to-MBON synapse at full strength (the current model)
-  depressing    every Kenyon cell-to-MBON synapse depressing with its Kenyon cell, as rung 4 set it (0.5, 1.5 s)
-Measured for each, over the six odors (4 seeds of 8 flies; Hige et al.'s window, 0-1.4 s from onset, less 1.4 times the
-second before): MBON11's and MBON-alpha2sc's evoked spikes, and the charge MBON11's Kenyon cell input delivers per cell
-(each Kenyon cell spike x its synapses onto that cell x q x the strength its depression has left, read from the brain at
-the start of each 10 ms piece), above its rest; and, in 50 ms bins over 2 s, MBON11's rate and its Kenyon cell input as
-a current (pA), for 3-octanol and 4-methylcyclohexanol, against Hige et al.'s PSTH (from about 6 Hz, rising 0.15 s
-after the valve opens to 135-140 Hz at about 0.3 s and 95-100 Hz at 0.6-1.05 s) and EPSC (about 380-430 pA at its peak,
-about 170 pA from 0.6 to 1.0 s). Seeds 290000 + 1000 x condition + 10 x odor + seed (+ 900 + round for the Kenyon cells'
-rest).
+odor_probe32.py found MBON11 making half the spikes from its Kenyon cell input that the same mean drive gives as a
+steady bias, and odor_kc_timing.py then found that input neither coincident across Kenyon cells nor bursty within them.
+The loss is the model's spike rule, Shiu et al.'s: at each spike the fast synaptic current is set to zero and input
+arriving during the 2.2 ms refractory period is dropped, so synaptic drive that holds a neuron at a high rate loses much
+of its charge where a bias loses only the refractory time (HybridBrain's keep_current test: 40 mV of synaptic drive gives
+95 spikes/s, the same as a bias 167, and 163 when the current is kept). In flies, MBON11's synaptic charge and injected
+current are about equally effective: 118 spikes from about 250 pC of odor EPSC (0.47 per pC; Hige et al. 2015) against
+0.41 spikes/s per pA of current (Wang et al. 2026).
+Model: odor_probe30.py's brain (brain_cache.py) with Inada et al.'s Kenyon cell class offsets (odor_probe33.py), the
+Kenyon cell-to-MBON11 synapses at odor_probe31.py's middle charge (q = 0.030 pC per synapse), and MBON11 keeping its
+fast current through spikes (HybridBrain keep_current; only its voltage held at reset while refractory). Conditions, as
+odor_probe34.py's: Kenyon cell-to-MBON synapses undepressed (the current model), or depressing as Yamada et al. 2024
+measured (0.5 of the strength left per spike, recovering over 1.5 s).
+Measured for each, as odor_probe34.py measures (six odors, 4 seeds of 8 flies, Hige et al.'s window; MBON11's charge
+per cell counting each spike's remaining strength; 50 ms courses for 3-octanol and 4-methylcyclohexanol), and also, for
+3-octanol and 4-methylcyclohexanol, MBON11's evoked spikes held at about 6 Hz as Hige et al. held their cells (its bias
+lowered by the step at which its rate crosses 6 Hz, from its rate at 0, -4, -8 and -12 mV, interpolated). MBON11's gain
+near rest (bias steps, unaffected by keep_current) and its resting rate are reported. Seeds 320000 + 1000 x condition +
+10 x odor + seed (+ 400 + ... held; + 900 + round for the Kenyon cells' rest; + 950 + step for the hold).
 
-Ran: the measured depression gives MBON11's input flies' early peak but not their sustained plateau, so with the model's
-Kenyon cell firing it leaves MBON11 far short of flies'; the depression is held out of the model carried forward until
-the Kenyon cells fire as sparsely in time as flies' (MBON11's gain here 3.70 spikes/s per mV; the Kenyon cell depression
-leaves 0.617 at 400 ms). Undepressed, MBON11 gains 64.5 spikes to 3-octanol from 442 pC per cell and 22.1 to
-4-methylcyclohexanol from 101 pC (20-67 to the other odors; 0.15-0.24 spikes per pC); its input to 3-octanol peaks at
-701 pA at 0.3-0.35 s and is still 254 pA at 0.95 s, and MBON11 peaks at 122 spikes/s and holds 83 at 0.95 s. Depressing,
-that input peaks earlier and lower, 302 pA at 0.2-0.25 s, and falls to 89 pA by 0.5 s and 21 pA by 0.95 s (flies' EPSC:
-about 400 pA at its peak soon after onset, about 200 pA at 0.35 s and 170 pA from 0.6 to 1.0 s); MBON11 peaks at 91
-spikes/s at 0.2-0.25 s and is back near its 34 Hz rest by 1 s (40 spikes/s) where flies' holds 95-100. It gains 25.6
-spikes to 3-octanol from 114 pC and 7.5 to 4-methylcyclohexanol from 25 pC (6.7-24 to the others; MBON-alpha2sc
-0.1-1.9), now 0.22-0.31 spikes per pC: the depressed spikes were partly the wasted ones. Flies' synapses depress too,
-yet their EPSC stays at about 40% of its peak through the odor and their MBON11 keeps firing; with each spike leaving
-0.5 of the strength and 1.5 s to recover, that needs Kenyon cells whose spikes come singly and spread out over the odor,
-so that most find their synapses largely recovered, where the model's responding Kenyon cells fire 4-6 spikes, mostly
-early (odor_probe33.py; flies' alpha/beta 2.2).
-
-Checked afterwards (2026-10-10): two readings above need correcting. The rise in spikes per pC under depression comes
-from the model's spike rule (Shiu et al.'s reset sets the synaptic current to zero at each spike, so the lower MBON11's
-rate the less input it loses), not from wasted bursts. And the model's responding Kenyon cells fire spread out, not in
-bursts (odor_kc_timing.py: about 11 spikes over 1.4 s at about 8 Hz, no intervals under 10 ms): with each spike leaving
-0.5 of the strength and 1.5 s to recover, steady firing at 8 Hz holds a cell's synapses at about 0.15 of full strength.
-Flies' sustained EPSC under the same depression needs Kenyon cells that fire few spikes per response (flies' alpha/beta
-2.2), not, as said above, spikes that come singly and spread out, which the model's already do.
-
-    python experiments/odor_probe34.py         (writes experiments/odor_probe34.json)
+    python experiments/odor_probe35.py         (writes experiments/odor_probe35.json)
 """
 from __future__ import annotations
 
@@ -71,7 +41,9 @@ import odor_probe7 as p7
 import odor_probe8 as p8
 
 OUT = Path(__file__).with_suffix(".json")
-SEED = 290000
+SEED = 320000
+HELD_HZ = 6.0
+HOLD_STEPS_MV = (-12.0, -8.0, -4.0, 0.0)
 CHARGE_PC = 0.030
 SEEDS = 4
 BIN = 0.05
@@ -144,11 +116,41 @@ def condition(o, rec, depressing: bool, base: int, kc, mb, syn, f: float, recove
     return out
 
 
+def held(o, rec, depressing: bool, base: int, kc, mb, syn, f: float, recover_s: float) -> dict:
+    """MBON11 held near 6 Hz as Hige et al. held their cells: its bias lowered by the interpolated step at which its
+    resting rate crosses 6 Hz; then 3-octanol's and 4-methylcyclohexanol's evoked spikes (4 seeds)."""
+    b = o.brain
+    bias0 = o.own_bias()
+    rates = []
+    for k, d in enumerate(HOLD_STEPS_MV):
+        bias = bias0.copy()
+        bias[mb] += d
+        b.set_bias(bias)
+        rates.append(float(p10.resting(o, rec, base + 950 + k)["hz"][mb].mean()))
+    k = next((i for i, r in enumerate(rates) if r >= HELD_HZ), 0)
+    step = HOLD_STEPS_MV[k] if k == 0 else float(np.interp(HELD_HZ, rates[k - 1:k + 1], HOLD_STEPS_MV[k - 1:k + 1]))
+    bias = bias0.copy()
+    bias[mb] += step
+    b.set_bias(bias)
+    try:
+        out = {"steps_mv": list(HOLD_STEPS_MV), "rest_hz_by_step": [round(r, 2) for r in rates], "bias_step_mv": round(step, 2),
+               "rest_hz": round(float(p10.resting(o, rec, base + 949)["hz"][mb].mean()), 2)}
+        for j, odor in enumerate(COURSE_ODORS):
+            runs = [trial(o, rec, odor, base + 400 + 10 * j + s, kc, mb, syn, f, recover_s, depressing) for s in range(SEEDS)]
+            out[odor] = round(float(np.mean([(r["window"] - 1.4 * r["rest"])[:, mb].mean() for r in runs])), 1)
+    finally:
+        b.set_bias(bias0)
+    return out
+
+
 def main() -> None:
     t0 = time.perf_counter()
     o, rec, built = brain_cache.probe30()
     b, types, m = o.brain, o.types, o.m
     kc_rest = p33.set_rest(o, rec, p8.class_gaps(o, p8.OFFSETS["Inada"]), SEED + 900)
+    b.set_type("MBON11", keep_current=1.0)
+    kept = [bool(b.params[c]["keep_current"]) for c in b.cls[np.flatnonzero(types == "MBON11")]]
+    assert all(kept) and sum(bool(p["keep_current"]) for p in b.params) == len(set(b.cls[np.flatnonzero(types == "MBON11")])), kept
     kc, mb = np.flatnonzero(m["kc"]), np.flatnonzero(types == "MBON11")
     gain = p31.mbon_gain(o, rec, mb)
     w_syn = p31.GAIN_HZ_PER_PA * CHARGE_PC / (gain["slope_hz_per_mv"] * p21.TAU)
@@ -163,6 +165,7 @@ def main() -> None:
     f, recover_s = float(p["depression"]), float(p["recovery"])
     full0 = b.full_strength.copy()
     out = {"question": __doc__, "mbon11_gain": gain, "weight_per_synapse_mv": round(w_syn, 4),
+           "mbon11_rest_hz": round(float(p10.resting(o, rec, SEED + 990)["hz"][mb].mean()), 2),
            "kc_depression": {"left_per_spike": f, "recovery_s": recover_s, "ppr_400ms": round(1 - (1 - f) * np.exp(-0.4 / recover_s), 3)},
            "kc_mbon_full_strength_before": round(float(full0[o.kc_mbon].mean()), 3), "kc_rest_inada": kc_rest, "conditions": {}}
     print(json.dumps({k: out[k] for k in ("mbon11_gain", "kc_depression", "kc_mbon_full_strength_before")}), flush=True)
@@ -172,6 +175,8 @@ def main() -> None:
         b.full_strength = full
         print(name, flush=True)
         out["conditions"][name] = condition(o, rec, name == "depressing", SEED + 1000 * c, kc, mb, syn, f, recover_s)
+        out["conditions"][name]["held"] = held(o, rec, name == "depressing", SEED + 1000 * c, kc, mb, syn, f, recover_s)
+        print(name, "held", json.dumps(out["conditions"][name]["held"]), flush=True)
         OUT.write_text(json.dumps(out, indent=1))
     b.full_strength = full0
     out["seconds"] = round(time.perf_counter() - t0)

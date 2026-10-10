@@ -16,6 +16,16 @@ odor's first 1.4 s, and:
      spike.
 Seeds 300000 + 10 x odor + seed (+ 900 + round for the Kenyon cells' rest).
 
+Ran: neither. The Kenyon cell input to MBON11 is not coincident across Kenyon cells (the variance of its 1 ms bins is
+0.98-1.01 times what independent Poisson cells give, median 0.93-0.99 over 639-644 windows) and not bursty within them
+(no intervals under 10 ms, 0.2-0.6% under 20 ms; 0-0.5% of the synapse-weighted input within 20 ms of the same cell's
+previous spike). Responding Kenyon cells (at least 2 spikes in a fly: 332 per fly to 3-octanol, 71 to
+4-methylcyclohexanol) fire 10.8-11.1 spikes over the odor's first 1.4 s, spread out (spike times' SD 209-240 ms, first
+spikes at a median 173-201 ms): steady firing at about 8 Hz, where flies' alpha/beta cells fire 2.2 +- 1.2 spikes per
+response. So odor_probe32.py's explanation (coincident volleys or bursts) is wrong. What loses MBON11's input is the
+model's spike rule, Shiu et al.'s: at each spike the fast synaptic current is set to zero and input arriving while the
+neuron is refractory is dropped (HybridBrain's keep_current; odor_probe35.py).
+
     python experiments/odor_kc_timing.py       (writes experiments/odor_kc_timing.json)
 """
 from __future__ import annotations

@@ -47,6 +47,14 @@ volleys or each cell's burst of 4-6 spikes arriving faster than MBON11 can follo
 110): in Hige et al.'s condition 3-octanol's response comes within a quarter of flies' and 4-methylcyclohexanol's stays
 at a third.
 
+Checked afterwards (2026-10-10): the explanation above is wrong. odor_kc_timing.py found the Kenyon cell input neither
+coincident across cells nor bursty within them (responding cells fire about 11 spikes over 1.4 s at about 8 Hz, spread
+out). The loss is the model's spike rule, Shiu et al.'s: at each spike the fast synaptic current is set to zero and
+input arriving during the 2.2 ms refractory period is dropped, so synaptic drive that holds a neuron at a high rate
+loses much of its charge, where a bias loses only the refractory time (20 inputs giving 40 mV of drive: 95 spikes/s,
+against 167 for the same bias and 163 with the current kept through spikes; HybridBrain keep_current,
+tests/test_hybrid.py). odor_probe35.py measures MBON11 with its current kept.
+
     python experiments/odor_probe32.py         (writes experiments/odor_probe32.json)
 """
 from __future__ import annotations

@@ -1,0 +1,60 @@
+{
+ "question": "Exploratory check, not pre-registered: what in the Kenyon cell input's timing wastes MBON11's input? Coincident volleys\nacross Kenyon cells, or each Kenyon cell's own burst?\n\nodor_probe32.py: the same mean drive given as a steady current adds about twice the spikes the odor's Kenyon cell input\ndoes (163 against 72 to 3-octanol, 50 against 27 to 4-methylcyclohexanol), and MBON11's other inputs don't matter.\nModel: odor_probe30.py's brain (brain_cache.py) with Inada et al.'s Kenyon cell class offsets (odor_probe33.py) and\nodor_probe31.py's Kenyon cell-to-MBON11 synapses (0.030 pC per synapse). For 3-octanol and 4-methylcyclohexanol (2 seeds of 8 flies), the Kenyon cells' spikes in 1 ms bins over the\nodor's first 1.4 s, and:\n  1. each responding Kenyon cell's spikes (cells with at least 2 spikes in a fly): how many, the share of its\n     intervals under 10 and under 20 ms, its first spike's time, and the spread of its spike times;\n  2. coincidence: within each 50 ms window, the variance of MBON11's Kenyon cell input across its 1 ms bins (summed over\n     Kenyon cells, each weighted by its synapses onto the cell) against what independent Poisson cells with the same\n     window counts would give; a ratio near 1 means independent, above 1 coincident (mean over the odor's windows with\n     input, over flies and both MBON11s);\n  3. bursts: the share of the input's synapse-weighted spikes that come within 20 ms of the same Kenyon cell's previous\n     spike.\nSeeds 300000 + 10 x odor + seed (+ 900 + round for the Kenyon cells' rest).\n\n    python experiments/odor_kc_timing.py       (writes experiments/odor_kc_timing.json)\n",
+ "flies": {
+  "spikes_per_response": {
+   "alpha/beta": "2.2 +- 1.2",
+   "alpha'/beta'": "4.9 +- 3.0"
+  }
+ },
+ "kc_rest_inada": {
+  "gap_mv": {
+   "KC": 21.32,
+   "KCa'b'-ap1": 15.97,
+   "KCa'b'-ap2": 15.98,
+   "KCa'b'-m": 15.98,
+   "KCab-c": 21.44,
+   "KCab-m": 21.45,
+   "KCab-p": 21.43,
+   "KCab-s": 21.49,
+   "KCg": 23.79,
+   "KCg-d": 24.02,
+   "KCg-m": 23.98,
+   "KCg-s1": 23.75,
+   "KCg-s2": 24.06,
+   "KCg-s3": 23.98,
+   "KCg-s4": 23.8
+  },
+  "rest_hz_by_class": {
+   "alpha/beta": 0.0015,
+   "alpha'/beta'": 0.0,
+   "gamma": 0.0
+  }
+ },
+ "odors": {
+  "3-octanol": {
+   "responding_cells_per_fly": 332.1,
+   "spikes_per_responding_cell": 10.78,
+   "share_of_intervals_under_10ms": 0.0,
+   "share_of_intervals_under_20ms": 0.006,
+   "first_spike_ms_median": 200.5,
+   "spike_time_spread_ms_median": 208.8,
+   "coincidence_ratio_mean": 1.01,
+   "coincidence_ratio_median": 0.99,
+   "windows": 644,
+   "input_share_from_bursts": 0.005
+  },
+  "4-methylcyclohexanol": {
+   "responding_cells_per_fly": 70.9,
+   "spikes_per_responding_cell": 11.1,
+   "share_of_intervals_under_10ms": 0.0,
+   "share_of_intervals_under_20ms": 0.002,
+   "first_spike_ms_median": 173.0,
+   "spike_time_spread_ms_median": 239.8,
+   "coincidence_ratio_mean": 0.98,
+   "coincidence_ratio_median": 0.93,
+   "windows": 639,
+   "input_share_from_bursts": 0.0
+  }
+ },
+ "seconds": 603
+}
