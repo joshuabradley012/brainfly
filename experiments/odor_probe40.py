@@ -20,6 +20,27 @@ odor_probe36.py measures (PN, LN and receptor time courses, the transform, the o
 the responding Kenyon cells' spikes). Seeds 240000 for the builds (odor_probe30.py's); 380000 + 1000 x condition for the
 measures (odor_probe36.py's offsets; + 300 + 10 x odor + seed for the LN rates, + 990 for the LNs' rest).
 
+Ran: the rebuilt LNs come closer to flies' at the lower scale, but the projection neurons are as they were. At 0.25 the
+GABAergic LNs fire 32, 26, 18 and 12 spikes/s per cell in Nagel et al.'s bins (root mean square log ratio 0.66; the
+sweep on the model as built gave 0.36 there), at 0.17 24, 20, 14 and 10 (0.43): flies' onset, and 1.5-1.7 times their
+later firing (3-octanol alike, a little weaker). They rest at 4.5 and 4.3 spikes/s. The inhibition's strengths, refitted
+to Olsen & Wilson's EPSCs as well as before (control 0.32-0.33 of baseline, GABA-B blocked 0.54-0.75), grow as the LNs'
+rates fall: k_A 0.00095 and k_B 0.0051 per spike/s above rest at 0.25, 0.0013 and 0.0075 at 0.17 (0.00046 and 0.0023
+as built). So the inhibition still takes hold within 50-100 ms of onset (the synapses at 0.26-0.27 of their strength),
+and 3-octanol's PNs fire 68-73 spikes/s at 50-100 ms, peak at 94-96 at 0.25-0.3 s and hold 0.88-0.90 of that at 0.5 s
+and 0.65 at 0.95 s (odor_probe36.py's current model: 71, a peak of 105 at 0.3-0.35 s, 0.97 and 0.78); its strongly
+driven PNs (glomeruli driven over 0.2) climb from 127-131 at 50-100 ms to 167-169 at 0.25-0.3 s. The transform is as
+before (Rmax 176-351, sigma 36-48). The Kenyon cells respond a little more sparsely (1.6-7.1% of cells at 0.25, 1.7-7.1%
+at 0.17, against 2.1-10.1%; mean Jaccard 0.14 against 0.17), the responding alpha/beta cells firing as many spikes
+(4.2-6.3 per response; 8.8 over 1.4 s to 3-octanol, against 10.8), and MBON11's input to 3-octanol halves (223 pC per
+cell and 66-67 spikes at rest, against 429 and 112). With the inhibition refitted, how hard the LNs fire matters little
+to the PNs; what shapes them is the inhibition's time course and the receptor synapse's slow component.
+
+Checked afterwards (10 Oct 2026, odor_offset_check.py): these builds measure the inhibition's offset before their second
+polishes, so the inhibition acts at rest (at 0.17: the inhibitors resting at 361 spikes/s summed against an offset of
+266, the receptor-to-PN synapses at 0.54 of their strength, the PNs at 1.1 spikes/s). odor_probe42.py rebuilds with the
+inhibition fitted after the polishes.
+
     python experiments/odor_probe40.py         (writes experiments/odor_probe40.json)
 """
 from __future__ import annotations

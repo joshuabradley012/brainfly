@@ -46,6 +46,11 @@ Strong global normalization of the PNs decorrelates odors, as Olsen et al. 2010 
 makes the Kenyon cells odor-specific; what it costs here, the PNs' onset and breadth, comes from the inhibition peaking
 with the LNs' onset burst, where flies' takes about 100 ms to build (Nagel et al. 2015).
 
+Checked afterwards (10 Oct 2026, odor_offset_check.py): this build measures the inhibitors' resting rate for the offset
+before its second polishes, which bring the LNs back up to their targets, so the inhibition acts at rest after all. In
+odor_probe30.py's model, built the same way, the inhibitors rest at 200 spikes/s summed against an offset of 48.6 and the
+receptor-to-PN synapses at 0.67 of their strength. odor_probe42.py fits the inhibition after the polishes.
+
     python experiments/odor_probe27.py         (writes experiments/odor_probe27.json)
 """
 from __future__ import annotations

@@ -1,0 +1,463 @@
+{
+ "question": "Exploratory check, not pre-registered: does the built antennal lobe's presynaptic inhibition act at rest?\n\nodor_probe27.py made the presynaptic inhibition act only on the GABAergic LNs' summed rate above their resting rate (the\ntrace's offset), because flies have little tonic presynaptic inhibition, and odor_probe28.py's alpha-shaped traces keep\nthat offset. The build (odor_probe31.build, odor_probe30.py's sequence) measures that rate when it fits the inhibition,\nafter the first resting polish and the PN polish, and then polishes the rest again. In odor_probe36.py's odor runs on\nodor_probe30.py's model the inhibitors' summed resting rate was 282 spikes/s, against an offset of 48.6 (odor_probe40.py\nat s = 0.17: about 385 against 266), which would leave the receptor-to-PN synapses at about 0.6 (0.5) of their\ncalibrated strength at rest; the slow GABA-B trace (1 s) also starts each run at the offset and climbs through it.\nModel: odor_probe30.py's (brain_cache.py's copy), and odor_probe40.py's at s = 0.17 (its cache).\nMeasured for each: over 1 s of rest after 4 s to settle (2 seeds of 8 flies), the inhibitors' summed rate, the acting\ntraces' means (GABA-A's and GABA-B's second stages) and the inhibited synapses' mean strength, 1 / (1 + sum k max(A -\noffset, 0)), at the end of each 10 ms piece, with the offset as built; then the same with the offset (and the traces'\nstart) raised to the GABA-A trace's resting mean, k unchanged; and with each offset, 3-octanol's PN course\n(odor_probe30.course) and the transform (odor_probe24.transform) on the same seeds. Seeds 400000 + 1000 x model (+ seed\nfor the rest, + 700 for the course).\n\n    python experiments/odor_offset_check.py      (writes experiments/odor_offset_check.json)\n",
+ "settle_s": 4.0,
+ "models": {
+  "odor_probe30": {
+   "k": [
+    0.0,
+    0.000461,
+    0.0,
+    0.002328
+   ],
+   "as built": {
+    "rest": {
+     "offset_hz": 48.6,
+     "inhibitors_summed_hz": 199.8,
+     "gaba_a_trace_hz": 203.0,
+     "gaba_b_trace_hz": 232.7,
+     "synapse_strength_at_rest": 0.674,
+     "upn_rest_hz": 2.02
+    },
+    "course_3_octanol": {
+     "rest_pn_hz": 1.02,
+     "rest_inhibitors_hz": 251.5,
+     "pn_hz": [
+      16.2,
+      68.2,
+      84.5,
+      93.4,
+      98.9,
+      103.2,
+      104.7,
+      104.0,
+      104.1,
+      101.1,
+      99.6,
+      97.4,
+      95.6,
+      93.8,
+      91.2,
+      89.6,
+      88.0,
+      85.3,
+      84.7,
+      82.7
+     ],
+     "gain": [
+      0.5053,
+      0.2773,
+      0.2564,
+      0.27,
+      0.2805,
+      0.2908,
+      0.2957,
+      0.3008,
+      0.3016,
+      0.3028,
+      0.3048,
+      0.307,
+      0.309,
+      0.3107,
+      0.3109,
+      0.3138,
+      0.3147,
+      0.3183,
+      0.3166,
+      0.3184
+     ]
+    },
+    "transform": {
+     "DM4": {
+      "rmax": 188.9,
+      "sigma": 36.5
+     },
+     "DL5": {
+      "rmax": 316.8,
+      "sigma": 31.8
+     },
+     "VM7d": {
+      "rmax": 338.7,
+      "sigma": 35.4
+     },
+     "DM1": {
+      "rmax": 307.5,
+      "sigma": 29.8
+     }
+    },
+    "transform_alone": {
+     "DM4": {
+      "5": 17.41,
+      "10": 28.88,
+      "20": 58.97,
+      "40": 97.34,
+      "80": 135.94,
+      "160": 177.25
+     },
+     "DL5": {
+      "5": 24.31,
+      "10": 59.44,
+      "20": 108.38,
+      "40": 177.12,
+      "80": 246.5,
+      "160": 298.75
+     },
+     "VM7d": {
+      "5": 16.93,
+      "10": 45.54,
+      "20": 114.77,
+      "40": 177.84,
+      "80": 249.68,
+      "160": 316.54
+     },
+     "DM1": {
+      "5": 36.0,
+      "10": 58.0,
+      "20": 119.62,
+      "40": 171.94,
+      "80": 238.31,
+      "160": 298.75
+     }
+    }
+   },
+   "offset at rest": {
+    "rest": {
+     "offset_hz": 203.0,
+     "inhibitors_summed_hz": 310.4,
+     "gaba_a_trace_hz": 304.5,
+     "gaba_b_trace_hz": 341.6,
+     "synapse_strength_at_rest": 0.728,
+     "upn_rest_hz": 3.06
+    },
+    "course_3_octanol": {
+     "rest_pn_hz": 1.76,
+     "rest_inhibitors_hz": 415.1,
+     "pn_hz": [
+      17.5,
+      73.8,
+      91.9,
+      101.2,
+      107.8,
+      111.5,
+      113.7,
+      114.7,
+      114.1,
+      113.4,
+      111.6,
+      109.3,
+      107.4,
+      106.4,
+      104.5,
+      102.4,
+      100.5,
+      98.8,
+      97.9,
+      96.2
+     ],
+     "gain": [
+      0.5539,
+      0.3065,
+      0.2832,
+      0.296,
+      0.3124,
+      0.3244,
+      0.3323,
+      0.3381,
+      0.3416,
+      0.3454,
+      0.347,
+      0.3496,
+      0.355,
+      0.3592,
+      0.3584,
+      0.3636,
+      0.3654,
+      0.3727,
+      0.3708,
+      0.3749
+     ]
+    },
+    "transform": {
+     "DM4": {
+      "rmax": 194.4,
+      "sigma": 37.8
+     },
+     "DL5": {
+      "rmax": 318.2,
+      "sigma": 28.7
+     },
+     "VM7d": {
+      "rmax": 344.4,
+      "sigma": 32.5
+     },
+     "DM1": {
+      "rmax": 310.3,
+      "sigma": 27.1
+     }
+    },
+    "transform_alone": {
+     "DM4": {
+      "5": 17.62,
+      "10": 32.34,
+      "20": 59.66,
+      "40": 95.06,
+      "80": 138.22,
+      "160": 181.84
+     },
+     "DL5": {
+      "5": 28.31,
+      "10": 66.25,
+      "20": 125.12,
+      "40": 184.5,
+      "80": 249.94,
+      "160": 309.44
+     },
+     "VM7d": {
+      "5": 19.43,
+      "10": 52.32,
+      "20": 122.71,
+      "40": 193.57,
+      "80": 260.34,
+      "160": 326.02
+     },
+     "DM1": {
+      "5": 40.06,
+      "10": 71.75,
+      "20": 124.69,
+      "40": 180.5,
+      "80": 252.62,
+      "160": 302.75
+     }
+    }
+   }
+  },
+  "odor_probe40_s0.17": {
+   "k": [
+    0.0,
+    0.001329,
+    0.0,
+    0.0075
+   ],
+   "as built": {
+    "rest": {
+     "offset_hz": 266.2,
+     "inhibitors_summed_hz": 360.1,
+     "gaba_a_trace_hz": 361.1,
+     "gaba_b_trace_hz": 364.7,
+     "synapse_strength_at_rest": 0.538,
+     "upn_rest_hz": 1.11
+    },
+    "course_3_octanol": {
+     "rest_pn_hz": 0.35,
+     "rest_inhibitors_hz": 379.6,
+     "pn_hz": [
+      14.2,
+      72.9,
+      85.1,
+      91.8,
+      93.9,
+      93.7,
+      93.3,
+      91.2,
+      90.0,
+      86.8,
+      84.4,
+      81.4,
+      78.8,
+      75.6,
+      73.2,
+      71.1,
+      68.1,
+      66.1,
+      63.2,
+      61.8
+     ],
+     "gain": [
+      0.4668,
+      0.2632,
+      0.2319,
+      0.2336,
+      0.2351,
+      0.2365,
+      0.2402,
+      0.2386,
+      0.2429,
+      0.2439,
+      0.2405,
+      0.2406,
+      0.2377,
+      0.24,
+      0.2367,
+      0.2371,
+      0.2348,
+      0.2347,
+      0.2349,
+      0.234
+     ]
+    },
+    "transform": {
+     "DM4": {
+      "rmax": 179.4,
+      "sigma": 39.7
+     },
+     "DL5": {
+      "rmax": 313.1,
+      "sigma": 37.9
+     },
+     "VM7d": {
+      "rmax": 348.4,
+      "sigma": 48.0
+     },
+     "DM1": {
+      "rmax": 303.3,
+      "sigma": 36.9
+     }
+    },
+    "transform_alone": {
+     "DM4": {
+      "5": 17.97,
+      "10": 29.84,
+      "20": 53.44,
+      "40": 84.03,
+      "80": 123.53,
+      "160": 167.44
+     },
+     "DL5": {
+      "5": 12.62,
+      "10": 46.5,
+      "20": 96.5,
+      "40": 154.75,
+      "80": 227.5,
+      "160": 288.25
+     },
+     "VM7d": {
+      "5": 3.61,
+      "10": 23.0,
+      "20": 76.57,
+      "40": 155.43,
+      "80": 232.5,
+      "160": 301.07
+     },
+     "DM1": {
+      "5": 19.62,
+      "10": 48.5,
+      "20": 93.25,
+      "40": 154.56,
+      "80": 219.56,
+      "160": 282.5
+     }
+    }
+   },
+   "offset at rest": {
+    "rest": {
+     "offset_hz": 361.1,
+     "inhibitors_summed_hz": 401.4,
+     "gaba_a_trace_hz": 403.0,
+     "gaba_b_trace_hz": 407.0,
+     "synapse_strength_at_rest": 0.712,
+     "upn_rest_hz": 4.65
+    },
+    "course_3_octanol": {
+     "rest_pn_hz": 2.23,
+     "rest_inhibitors_hz": 414.5,
+     "pn_hz": [
+      21.0,
+      85.4,
+      100.4,
+      107.8,
+      111.5,
+      112.5,
+      112.8,
+      111.5,
+      110.6,
+      108.3,
+      105.9,
+      103.9,
+      102.2,
+      99.7,
+      96.9,
+      95.0,
+      92.2,
+      89.2,
+      87.6,
+      85.8
+     ],
+     "gain": [
+      0.5939,
+      0.32,
+      0.2875,
+      0.2925,
+      0.2919,
+      0.2987,
+      0.3067,
+      0.3058,
+      0.3135,
+      0.3174,
+      0.3157,
+      0.3191,
+      0.3144,
+      0.3178,
+      0.3135,
+      0.3171,
+      0.3113,
+      0.3164,
+      0.3208,
+      0.3197
+     ]
+    },
+    "transform": {
+     "DM4": {
+      "rmax": 187.4,
+      "sigma": 33.0
+     },
+     "DL5": {
+      "rmax": 321.9,
+      "sigma": 28.9
+     },
+     "VM7d": {
+      "rmax": 346.2,
+      "sigma": 33.6
+     },
+     "DM1": {
+      "rmax": 308.7,
+      "sigma": 27.3
+     }
+    },
+    "transform_alone": {
+     "DM4": {
+      "5": 24.97,
+      "10": 38.16,
+      "20": 64.25,
+      "40": 97.94,
+      "80": 138.47,
+      "160": 181.28
+     },
+     "DL5": {
+      "5": 26.62,
+      "10": 69.81,
+      "20": 122.75,
+      "40": 186.19,
+      "80": 256.06,
+      "160": 310.19
+     },
+     "VM7d": {
+      "5": 18.79,
+      "10": 51.54,
+      "20": 112.91,
+      "40": 194.12,
+      "80": 263.36,
+      "160": 322.16
+     },
+     "DM1": {
+      "5": 40.5,
+      "10": 73.44,
+      "20": 121.38,
+      "40": 181.88,
+      "80": 244.94,
+      "160": 304.56
+     }
+    }
+   }
+  }
+ },
+ "seconds": 935
+}

@@ -30,6 +30,12 @@ MBON-alpha2sc 1.9-21 (flies 110-118 and about 71-85; odor_probe31.py sets their 
 transform keeps odor_probe29.py's step and is unchanged (Rmax 185, 305, 345 and 298; sigma 36, 29, 35 and 28). PNs rest
 at 1.55 Hz, the brain at 1.10 Hz.
 
+Checked afterwards (10 Oct 2026, odor_offset_check.py): the inhibition this model was built with acts at rest, against
+odor_probe27.py's intent. Its offset (48.6 spikes/s summed) was measured before the second polishes brought the LNs back
+up to their targets; they rest at 200 (252 in the window where runs start), so the receptor-to-PN synapses rest at 0.67
+of their strength. Raising the offset alone frees the PNs, which drive the LNs harder (the synapses at 0.73). The build
+has to fit the inhibition after the polishes (odor_probe42.py).
+
     python experiments/odor_probe30.py         (writes experiments/odor_probe30.json)
 """
 from __future__ import annotations
