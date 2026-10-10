@@ -1,0 +1,292 @@
+{
+ "question": "Exploratory, not pre-registered: with the receptor neurons firing spontaneously, as flies' do, so that their synapses\nsit partly depressed at rest, does the antennal lobe transform receptor input as flies' does?\n\nodor_probe21.py to odor_probe23.py: with measured presynaptic inhibition the PNs' transform has flies' shape and lateral\ndivision, but its gain is two to three times flies' at every input rate (DL5 at 5 Hz: about 100 spikes/s, Olsen et\nal. 2010's fit about 36; at 160 Hz about 330, against about 160), and capping the PNs' rate at Kazama & Wilson's\n164 spikes/s only clips the top (odor_probe23.py). In the model the receptor neurons are silent at rest, so every odor\nmeets fully rested synapses. In flies they fire spontaneously (DM4 3.4 spikes/s per neuron, most types 6-19; research_\nnotes/Rung 9 learning data/orn_dynamics.md), and Nagel et al. 2015's slow synaptic component, which recovers over 33 s,\nintegrates that firing: with presynaptic inhibition lowering release, their model holds both components at about 0.68\nof full strength at rest (0.33 without inhibition). Kazama & Wilson's 6.19 mV unitary EPSP was measured rested, by\nminimal stimulation of the antennal nerve once every 30 s.\nModel: odor_probe22.py's antennal lobe (presynaptic inhibition, GABA-B rising over 40 ms, k_A and k_B fitted to Olsen &\nWilson 2008's EPSCs; PNs' 2.2 ms refractory period as before) with:\n  - spontaneous receptor firing at the median rate of each glomerulus's sensillum class (antennal basiconic 6, palp 8,\n    coeloconic 19, otherwise 6 spikes/s; odor_probe10.py's Receptors), independent Poisson trains, odors adding DoOR's\n    response x 200 Hz on top as before (no time course);\n  - presynaptic inhibition lowering the receptor neurons' depletion with their release (HybridBrain.set_presynaptic's\n    depleting): a spike under gain g uses (1 - f) g of what is left, as Nagel et al.'s model divides the receptor rate\n    that drives depression by its inhibition;\n  - the receptor synapses' weights left at the rested, uninhibited strength they were calibrated to, not multiplied by\n    the resting divisor as in odor_probe21.py to odor_probe23.py: Kazama & Wilson stimulated the cut antennal nerve,\n    whose fibres were silent and whose local neurons had lost most of their drive, so at rest in vivo the synapses\n    carry 1 / (resting divisor) of it, times their resting depression;\n  - the resting state recalibrated with the spontaneous input (odor_probe10.recalibrate_rest: each neuron's bias lowered\n    by its mean spontaneous receptor input, rung 4's rate calibration polishing every group but the Kenyon cells and the\n    ring, the Kenyon cells' rest set again), with the inhibition on, and k_A and k_B fitted again with the spontaneous\n    firing running (the LNs' resting rate, and so the resting divisor, change with it).\nMeasured as odor_probe21.py measures, with the spontaneous firing running throughout and the transform's and lateral\ninput's rates added to it (Olsen et al. subtracted baselines on both axes). Seeds 180000 (otherwise as odor_probe21.py's,\nwith its offsets; + 600-622 and + 630-652 for the resting recalibration and its second polish).\n\n    python experiments/odor_probe24.py         (writes experiments/odor_probe24.json)\n",
+ "flies": {
+  "kc_share": "6 +- 5%",
+  "spikes_per_response": {
+   "alpha/beta": "2.2 +- 1.2",
+   "alpha'/beta'": "4.9 +- 3.0"
+  },
+  "MBON11_evoked_spikes": {
+   "3-octanol": "118 +- 8.3",
+   "4-methylcyclohexanol": "110 +- 11"
+  }
+ },
+ "build": {
+  "kc_rest_calibration": {
+   "KC": 21.61,
+   "KCa'b'-ap1": 21.53,
+   "KCa'b'-ap2": 21.52,
+   "KCa'b'-m": 21.53,
+   "KCab-c": 21.51,
+   "KCab-m": 21.51,
+   "KCab-p": 21.46,
+   "KCab-s": 21.5,
+   "KCg": 21.67,
+   "KCg-d": 21.5,
+   "KCg-m": 21.52,
+   "KCg-s1": 21.51,
+   "KCg-s2": 21.38,
+   "KCg-s3": 21.65,
+   "KCg-s4": 21.58
+  },
+  "removed": {
+   "edges": 10750,
+   "rest_windows": 4,
+   "lost_mean_input_mv": {
+    "upn_mean": 0.746,
+    "upn_max": 2.604
+   }
+  },
+  "slow": {
+   "edges": 16265,
+   "receptor_factor": 7.281,
+   "slow_edges": 16265,
+   "pn_tau_slow_s": 0.08,
+   "slow_over_fast_charge": 0.774
+  },
+  "unitary": {
+   "combined_over_fast_peak": 1.1104,
+   "pn_tau_m_s": 0.02,
+   "fast_edges": 16265,
+   "slow_edges": 16265
+  },
+  "kc_rest_recalibration": {
+   "KC": 20.25,
+   "KCa'b'-ap1": 21.48,
+   "KCa'b'-ap2": 21.48,
+   "KCa'b'-m": 21.5,
+   "KCab-c": 21.48,
+   "KCab-m": 21.5,
+   "KCab-p": 21.52,
+   "KCab-s": 21.49,
+   "KCg": 21.39,
+   "KCg-d": 21.44,
+   "KCg-m": 21.45,
+   "KCg-s1": 21.44,
+   "KCg-s2": 21.37,
+   "KCg-s3": 21.34,
+   "KCg-s4": 21.43
+  }
+ },
+ "spontaneous_hz": {
+  "D": 6.0,
+  "DA1": 6.0,
+  "DA2": 6.0,
+  "DA3": 6.0,
+  "DA4l": 6.0,
+  "DA4m": 6.0,
+  "DC1": 6.0,
+  "DC2": 6.0,
+  "DC3": 6.0,
+  "DC4": 6.0,
+  "DL1": 6.0,
+  "DL2d": 19.0,
+  "DL2v": 19.0,
+  "DL3": 6.0,
+  "DL4": 6.0,
+  "DL5": 6.0,
+  "DM1": 6.0,
+  "DM2": 6.0,
+  "DM3": 6.0,
+  "DM4": 6.0,
+  "DM5": 6.0,
+  "DM6": 6.0,
+  "DP1l": 19.0,
+  "DP1m": 6.0,
+  "V": 6.0,
+  "VA1d": 6.0,
+  "VA1v": 6.0,
+  "VA2": 6.0,
+  "VA3": 6.0,
+  "VA4": 8.0,
+  "VA5": 6.0,
+  "VA6": 6.0,
+  "VA7l": 8.0,
+  "VA7m": 6.0,
+  "VC1": 8.0,
+  "VC2": 8.0,
+  "VC3": 19.0,
+  "VC4": 6.0,
+  "VC5": 19.0,
+  "VL1": 19.0,
+  "VL2a": 19.0,
+  "VL2p": 19.0,
+  "VM1": 19.0,
+  "VM2": 6.0,
+  "VM3": 6.0,
+  "VM4": 19.0,
+  "VM5d": 6.0,
+  "VM5v": 6.0,
+  "VM6l": 6.0,
+  "VM6m": 6.0,
+  "VM6v": 6.0,
+  "VM7d": 8.0,
+  "VM7v": 8.0
+ },
+ "resting_recalibration": {
+  "mean_input_mv": {
+   "uPN": 23.81,
+   "uPN_slow": 9.9,
+   "max": 79.76,
+   "neurons_over_1mv": 685
+  },
+  "resting_strength": {
+   "fast": 0.662,
+   "slow": 0.617
+  },
+  "polish": [
+   {
+    "round": 1,
+    "upn_hz": 8.02,
+    "orn_hz": 8.46,
+    "groups_within_2x": 0.9913
+   },
+   {
+    "round": 2,
+    "upn_hz": 8.99,
+    "orn_hz": 8.46,
+    "groups_within_2x": 0.9918
+   },
+   {
+    "round": 3,
+    "upn_hz": 9.47,
+    "orn_hz": 8.47,
+    "groups_within_2x": 0.9923
+   },
+   {
+    "round": 4,
+    "upn_hz": 11.23,
+    "orn_hz": 8.43,
+    "groups_within_2x": 0.9901
+   },
+   {
+    "round": 5,
+    "upn_hz": 11.67,
+    "orn_hz": 8.42,
+    "groups_within_2x": 0.9907
+   },
+   {
+    "round": 6,
+    "upn_hz": 12.61,
+    "orn_hz": 8.47,
+    "groups_within_2x": 0.9885
+   },
+   {
+    "round": 7,
+    "upn_hz": 12.38,
+    "orn_hz": 8.45,
+    "groups_within_2x": 0.9902
+   },
+   {
+    "round": 8,
+    "upn_hz": 14.31,
+    "orn_hz": 8.42,
+    "groups_within_2x": 0.9883
+   },
+   {
+    "round": 9,
+    "upn_hz": 11.33,
+    "orn_hz": 8.47,
+    "groups_within_2x": 0.9908
+   },
+   {
+    "round": 10,
+    "upn_hz": 10.15,
+    "orn_hz": 8.45,
+    "groups_within_2x": 0.9926
+   },
+   {
+    "round": 11,
+    "upn_hz": 12.28,
+    "orn_hz": 8.45,
+    "groups_within_2x": 0.9918
+   },
+   {
+    "round": 12,
+    "upn_hz": 11.09,
+    "orn_hz": 8.44,
+    "groups_within_2x": 0.9925
+   }
+  ],
+  "kc_gap_mv": {
+   "KC": 21.77,
+   "KCa'b'-ap1": 21.54,
+   "KCa'b'-ap2": 21.62,
+   "KCa'b'-m": 21.6,
+   "KCab-c": 21.67,
+   "KCab-m": 21.67,
+   "KCab-p": 21.48,
+   "KCab-s": 21.67,
+   "KCg": 21.4,
+   "KCg-d": 21.52,
+   "KCg-m": 21.69,
+   "KCg-s1": 21.45,
+   "KCg-s2": 21.44,
+   "KCg-s3": 21.52,
+   "KCg-s4": 21.66
+  }
+ },
+ "condition": {
+  "presynaptic": {
+   "failed": "the fit reached its bound",
+   "inhibitors_rest_hz": 177.7,
+   "calibration": [
+    {
+     "k_a": 0.014409,
+     "k_b": 0.999996,
+     "cgp_fraction": [
+      0.468,
+      0.869,
+      0.894,
+      0.859
+     ],
+     "control_fraction": [
+      0.35,
+      0.396,
+      0.449,
+      0.5
+     ],
+     "gaba_b_only_fraction": [
+      0.349,
+      0.393,
+      0.446,
+      0.497
+     ],
+     "trace_a_over_rest": [
+      2.58,
+      1.21,
+      1.17,
+      1.23
+     ],
+     "trace_b_over_rest": [
+      2.87,
+      2.55,
+      2.25,
+      2.02
+     ]
+    }
+   ],
+   "flies": {
+    "times_s": [
+     0.32,
+     0.57,
+     0.82,
+     1.07
+    ],
+    "control_fraction": [
+     0.27,
+     0.32,
+     0.33,
+     0.37
+    ],
+    "cgp_fraction": [
+     0.52,
+     0.68,
+     0.77,
+     0.81
+    ]
+   }
+  }
+ },
+ "seconds": 395
+}
