@@ -20,6 +20,23 @@ Cached as odor_probe51; measured with mb_calibration.py's mushroom body.
 Measured: as odor_probe49.py, on its seeds (550000 for odor_probe36.measure and odor_probe40.ln_measure, 560000 for the
 equalization), and the transform as odor_olsen_protocol_check.py measures it (Olsen et al.'s protocol, its seeds 570000).
 
+Ran: the two pools give flies' kind of lasting response but not flies' size, and the weaker onset reaches fewer Kenyon
+cells. The receptor synapses rest at 0.34 of their strength (one pool: 0.41), the PNs' resting receptor input falling
+from 28.1 to 24.1 mV; the inhibition's fit gives k_A 0.0017 and k_B 0.0103 (0.0015, 0.0089); the PNs rest at 2.66
+spikes/s, the GABAergic ALLNs at 3.67; the LNs answer 2-heptanone with 17.0, 8.9, 7.2 and 6.1 spikes/s (19.2, 10.3, 7.8,
+6.3; flies 22, 13, 8, 6). 3-octanol's PNs peak at 78 spikes/s (94) and keep 0.34 of it at 0.40-0.45 s (0.20; flies 0.48)
+and 0.22 at 0.95 s (0.09); the strongly driven ones peak at 141 (167) and keep 0.35 (0.22). Measured as Olsen et al.
+measured flies (cholinergic PNs), strong responses now keep 0.31-0.52 of their peak at 500 ms (0.17-0.38; flies 0.44),
+peak over mean 2.0-2.4 (2.2-2.7; flies 1.9), but peak lower (DL5 at 160 spikes/s of input: 259 against 300; flies'
+VM7 296 at 48), the 500 ms means barely change (Rmax 121, 126, 83 and 118 for DL5, VM7d, DM4 and DM1; 117, 118, 81, 116;
+flies 167, 163, 170, 144) and weak ones are smaller, so sigma rises (19.5, 24.3, 23.5, 17.3; 15.6, 19.9, 20.3, 13.4;
+flies 11.8, 12.4, 16.3, 44.8; the step: 23.0, 29.7, 24.3, 20.2 over all PNs, Rmax 141, 145, 63, 137). 1.6-8.6% of Kenyon
+cells respond (2.5-12.8%; flies 6 +- 5%), alpha/beta 1.5-2.3 spikes per response, Jaccard 0.15; MBON11 gains 11.8 and 3.7
+spikes (17.1 and 6.1; flies 118 and 110); 4-methylcyclohexanol stays at 0.54 of 3-octanol at the PNs and falls to 0.23 at
+the Kenyon cells (0.28). With either synapse the PNs' responses come out at half to two thirds of flies' with flies'
+steepness; the two pools give them flies' time course as well and fit the synapse's own measurements better, so the
+model keeps them (the base model from here on), and what remains is the PNs' size.
+
     python experiments/odor_probe51.py         (writes experiments/odor_probe51.json)
 """
 from __future__ import annotations
