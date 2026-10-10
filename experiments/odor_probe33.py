@@ -26,6 +26,24 @@ spikes above rest x their synapses onto it x q, mean of the two MBON11s) against
 with MBON11's evoked spikes in the same runs. Seeds 280000 + 1000 x condition (+ odor_probe24's offsets for the odor
 measures; + 900 + round for the Kenyon cells' rest; + 200 + odor for MBON11's input).
 
+Ran: Inada et al.'s offsets put the classes in flies' order and bring alpha'/beta' cells into flies' range without
+changing anything else; Groschner and Chen's larger ones overshoot, as in odor_probe8.py. With every class at 21.5 mV
+(odor_probe30.py's model, on this probe's seeds), alpha/beta cells respond to the six odors at 2.7-17.1%, alpha'/beta'
+at 0.4-3.7% and gamma at 2.6-9.3% (flies about 3-8, 9-14 and 2%), firing 4.3-6.7, 2.2-4.5 and 3.0-4.7 spikes per
+response (flies' alpha/beta 2.2 +- 1.2, alpha'/beta' 4.9 +- 3.0); 2.4-10.6% respond in all, with a mean Jaccard of
+0.163, and MBON11 gains 76.8 spikes to 3-octanol from 586 pC per cell and 28.1 to 4-methylcyclohexanol from 135 pC. With
+Inada's offsets (alpha'/beta' 16.0 mV below threshold, alpha/beta 21.4, gamma 24.0), alpha'/beta' cells respond at
+2.9-13.8% with 3.0-4.8 spikes and gamma at 1.2-5.3% with 2.0-4.7, while alpha/beta stay at 2.8-17.5% with 4.6-6.5
+spikes. The cells alpha'/beta' gain about equal those gamma lose (the offsets keep the mean distance below threshold:
+695 alpha'/beta' cells moved 5.5 mV nearer, 1,557 gamma cells 2.5 mV farther), so the density (2.4-10.7%) and the
+overlaps (mean Jaccard 0.168; 52% of 4-methylcyclohexanol's responders also answer 3-octanol, against 56%) hardly move.
+With fewer gamma responders MBON11's input falls by about a quarter (3-octanol 448 pC per cell and 65.8 spikes,
+4-methylcyclohexanol 101 pC and 22.4 spikes). Kenyon cells stay nearly silent at rest (alpha'/beta' 0.0004 Hz; flies
+about 0.3). With Groschner and Chen's offsets (alpha'/beta' 6.5 mV, alpha/beta 19.5, gamma 30.5), alpha'/beta' cells
+respond at 34-66% with up to 7.8 spikes and gamma at 0-1.2%, 7.8-21.5% respond in all, the mean Jaccard doubles to 0.35
+and 78% of 4-methylcyclohexanol's responders also answer 3-octanol, though alpha'/beta' cells rest at 0.15 Hz, nearer
+flies'. Inada's offsets are carried forward (odor_probe34.py on).
+
     python experiments/odor_probe33.py         (writes experiments/odor_probe33.json)
 """
 from __future__ import annotations
