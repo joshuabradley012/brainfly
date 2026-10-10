@@ -9,7 +9,9 @@ lowers sigma about 1.3-fold and Rmax about 0.88-fold (research_notes/Rung 9 lear
 predicts sigma about 18 for DL5, 24 for VM7d and 22 for DM4 in the model).
 Model: odor_probe49.py's (its cache), with its settled starts.
 Measured: for Olsen et al.'s four glomeruli and receptor rates x of 5-160 spikes/s (odor_probe16.RATES), the PNs' mean
-rate over the 500 ms from the valve's opening less the 500 ms before, and their PSTH (25 ms bins, -0.5 to 1 s), with the
+rate over the 500 ms from the valve's opening less the 500 ms before, and their PSTH (25 ms bins, -0.5 to 1 s), over the
+glomerulus's cholinergic uniglomerular PNs, the ones flies' recordings are of (orn_pn_glomeruli_check.py: DM4's two
+GABAergic vPNs get almost no receptor input), and over all its uniglomerular PNs as before; with the
 glomerulus's receptor neurons following Olsen et al.'s time course (weak_input_gain.md's: 100 ms latency, then a
 first-order rise over 40 ms for x under 20 spikes/s, or over 25 ms with adaptation toward 0.65 of the peak over 0.25 s
 for x of 20 and more; from 520 ms a decay over 60 ms), scaled so that its mean over the 500 ms is x; and as a step for
@@ -36,6 +38,7 @@ import odor_probe24 as p24
 import odor_probe44 as p44
 import odor_probe49 as p49
 import warm
+from brainfly.hybrid import consensus_transmitters
 
 OUT = Path(__file__).with_suffix(".json")
 SEED, SEEDS = 570000, 2
@@ -55,8 +58,8 @@ def olsen_shape(t: np.ndarray, x: float) -> np.ndarray:
     return np.where(t < LATENCY_S, 0.0, np.where(t < OFFSET_S, on, at_off * np.exp(-(t - OFFSET_S) / OFF_TAU_S)))
 
 
-def run(o, rec, g: str, x: float, pns: np.ndarray, seed: int, protocol: str) -> np.ndarray:
-    """The PNs' mean rate in BIN_S bins from -PRE_S to POST_S around the valve's opening."""
+def run(o, rec, g: str, x: float, sets: dict, seed: int, protocol: str) -> dict:
+    """Each set of PNs' mean rate in BIN_S bins from -PRE_S to POST_S around the valve's opening."""
     b = o.brain
     base = p24.spontaneous(rec)
     grid = np.arange(0, POST_S, p10.PIECE) + p10.PIECE / 2
@@ -70,12 +73,18 @@ def run(o, rec, g: str, x: float, pns: np.ndarray, seed: int, protocol: str) -> 
     b.set_release(o.s.ol.neurons, o.s.silent)
     b.advance(int(round(0.5 / b.dt)), drive=base)
     piece = int(round(p10.PIECE / b.dt))
-    counts = [float(b.advance(piece, drive=base)[:, pns].mean()) for _ in range(int(round(PRE_S / p10.PIECE)))]
+    counts = {k: [] for k in sets}
+    for k in range(int(round(PRE_S / p10.PIECE))):
+        c = b.advance(piece, drive=base)
+        for name, pns in sets.items():
+            counts[name].append(float(c[:, pns].mean()))
     for e in extra:
         drive = [(rec.cells[h], rec.spont[h] + (e if h == g else 0.0)) for h in rec.glomeruli if len(rec.cells[h])]
-        counts.append(float(b.advance(piece, drive=drive)[:, pns].mean()))
+        c = b.advance(piece, drive=drive)
+        for name, pns in sets.items():
+            counts[name].append(float(c[:, pns].mean()))
     per = int(round(BIN_S / p10.PIECE))
-    return np.array(counts).reshape(-1, per).mean(1) / p10.PIECE
+    return {name: np.array(v).reshape(-1, per).mean(1) / p10.PIECE for name, v in counts.items()}
 
 
 def summarize(psth: np.ndarray) -> dict:
@@ -105,24 +114,31 @@ def main() -> None:
     t0 = time.perf_counter()
     o, rec, built = brain_cache.load("odor_probe49", p49.build, p44.prepare)
     types, m = o.types, o.m
+    cholinergic = np.asarray(consensus_transmitters()) == "acetylcholine"
     out = {"question": __doc__, "rates": list(p16.RATES), "settling": getattr(o, "settling", None), "protocols": {}}
     with warm.tracking(o, rec):
         for p, protocol in enumerate(("olsen", "step")):
             rows = {}
             for gi, g in enumerate(p16.GLOMERULI):
                 pns = np.flatnonzero(m["upn"] & np.char.startswith(types, f"{g}_"))
-                pts = {}
+                sets = {"cholinergic": pns[cholinergic[pns]], "all": pns}
+                pts = {name: {} for name in sets}
                 for k, x in enumerate(p16.RATES):
-                    psth = np.mean([run(o, rec, g, x, pns, SEED + 1000 * p + 100 * gi + 10 * k + s, protocol)
-                                    for s in range(SEEDS)], 0)
-                    pts[f"{x:g}"] = dict(summarize(psth), psth=psth.round(1).tolist())
-                rows[g] = {"points": pts, "fit": fit(p16.RATES, [pts[f"{x:g}"]["window_mean"] for x in p16.RATES]),
+                    rs = [run(o, rec, g, x, sets, SEED + 1000 * p + 100 * gi + 10 * k + s, protocol) for s in range(SEEDS)]
+                    for name in sets:
+                        psth = np.mean([r[name] for r in rs], 0)
+                        pts[name][f"{x:g}"] = dict(summarize(psth), psth=psth.round(1).tolist())
+                rows[g] = {"pns": {name: int(len(v)) for name, v in sets.items()},
                            "olsen": {"rmax": p16.OLSEN[g][0], "sigma": p16.OLSEN[g][1]}}
+                for name in sets:
+                    rows[g][name] = {"points": pts[name],
+                                     "fit": fit(p16.RATES, [pts[name][f"{x:g}"]["window_mean"] for x in p16.RATES])}
             out["protocols"][protocol] = rows
-            print(protocol, json.dumps({g: rows[g]["fit"] for g in rows}),
-                  json.dumps({g: [rows[g]["points"][f"{x:g}"]["window_mean"] for x in p16.RATES] for g in rows}), flush=True)
+            for name in ("cholinergic", "all"):
+                print(protocol, name, json.dumps({g: rows[g][name]["fit"] for g in rows}),
+                      json.dumps({g: [rows[g][name]["points"][f"{x:g}"]["window_mean"] for x in p16.RATES] for g in rows}), flush=True)
             for g in rows:
-                print(" ", g, json.dumps({x: {k: v for k, v in rows[g]["points"][x].items() if k != "psth"}
+                print(" ", g, json.dumps({x: {k: v for k, v in rows[g]["cholinergic"]["points"][x].items() if k != "psth"}
                                           for x in ("5", "10", "20", "40")}), flush=True)
             OUT.write_text(json.dumps(out, indent=1))
     out["seconds"] = round(time.perf_counter() - t0)
