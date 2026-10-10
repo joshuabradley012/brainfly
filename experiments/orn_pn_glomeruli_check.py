@@ -27,6 +27,16 @@ drive, which accounts for its low Rmax (81 spikes/s; flies 170; DL5 166-187). Th
 DM4 32, DL5 43, DM1 74, VM7d 36 over both antennae (Grabe et al. per antenna, female/male: 23/15.5, 24/21, 38.5/32,
 11.5/15).
 
+Checked afterwards: the incomplete convergence was the GABAergic ventral PNs. 43 of the 307 uniglomerular PNs, in 22
+glomeruli (DM4, DM3, DA1, VL2p, ...), are GABAergic vPNs that get few receptor synapses (DM4's two: 1 and 64, against its
+two adPNs' 2,156 and 2,625); flies' PN recordings (Kazama & Wilson, Olsen et al.) are of the cholinergic PNs. Over the
+cholinergic uniglomerular PNs only (the check now reports both): DM4's 32 receptor neurons reach 97% of their pairs with
+its 2 adPNs, at 5.1 mV per connection (flies 6.9), summing to 157 mV on each (DL5 291), half of DL5's drive rather than
+a third; DM3 91%; across glomeruli the share connected is 0.71 or more in 95% of them, and the unitary EPSPs spread as
+before (3.3-16.4 mV, 5th-95th percentile, r = -0.64 with the receptor neuron count). Every measure averaging a
+glomerulus's uniglomerular PNs (odor_probe16.py's transform among them) has averaged its vPNs in too, which halves
+DM4's: its Rmax of 81 is over two PNs that answer and two that barely do.
+
     python experiments/orn_pn_glomeruli_check.py      (writes experiments/orn_pn_glomeruli_check.json)
 """
 from __future__ import annotations
@@ -39,6 +49,7 @@ import numpy as np
 import odor_probe10 as p10
 import odor_probe3 as p3
 import odor_probe7 as p7
+from brainfly.hybrid import consensus_transmitters
 
 OUT = Path(__file__).with_suffix(".json")
 KW08_UEPSP_MV = {"DM6": 5.5, "VM2": 5.4, "DL5": 7.0, "DM4": 6.9}
@@ -58,39 +69,46 @@ def main() -> None:
     counts = b._counts.astype(float)
     mean_all = float(o.w0[same].mean())
     uepsp = p3.UNITARY_MV * o.w0 / mean_all                  # rested unitary EPSP per edge, mV (6.19 on average)
+    cholinergic = np.asarray(consensus_transmitters()) == "acetylcholine"
     rows = {}
     for g in rec.glomeruli:
         orns = np.flatnonzero(types == f"ORN_{g}")
         pns = np.flatnonzero(m["upn"] & np.char.startswith(types, f"{g}_"))
         if not len(orns) or not len(pns):
             continue
-        sel = same[np.isin(pre[same], orns) & np.isin(b.idx[same], pns)]
-        per_pn = np.bincount(b.idx[sel], weights=uepsp[sel], minlength=b.n)[pns]
-        rows[g] = {"orns": int(len(orns)), "upns": int(len(pns)),
-                   "connected_share": round(len(sel) / (len(orns) * len(pns)), 3),
-                   "synapses_per_connection": round(float(counts[sel].mean()), 1) if len(sel) else 0.0,
-                   "uepsp_mv": round(float(uepsp[sel].mean()), 2) if len(sel) else 0.0,
-                   "summed_uepsp_per_pn_mv": round(float(per_pn.mean()), 1),
-                   "spontaneous_hz": rec.spont[g]}
+        row = {"orns": int(len(orns)), "upns": int(len(pns)), "spontaneous_hz": rec.spont[g]}
+        for name, cells in (("", pns), ("cholinergic_", pns[cholinergic[pns]])):
+            if not len(cells):
+                continue
+            sel = same[np.isin(pre[same], orns) & np.isin(b.idx[same], cells)]
+            per_pn = np.bincount(b.idx[sel], weights=uepsp[sel], minlength=b.n)[cells]
+            row.update({f"{name}pns": int(len(cells)),
+                        f"{name}connected_share": round(len(sel) / (len(orns) * len(cells)), 3),
+                        f"{name}synapses_per_connection": round(float(counts[sel].mean()), 1) if len(sel) else 0.0,
+                        f"{name}uepsp_mv": round(float(uepsp[sel].mean()), 2) if len(sel) else 0.0,
+                        f"{name}summed_uepsp_per_pn_mv": round(float(per_pn.mean()), 1)})
         if g in GRABE_PER_ANTENNA:
-            rows[g]["grabe_per_antenna_female_male"] = GRABE_PER_ANTENNA[g]
+            row["grabe_per_antenna_female_male"] = GRABE_PER_ANTENNA[g]
         if g in KW08_UEPSP_MV:
-            rows[g]["kw08_uepsp_mv"] = KW08_UEPSP_MV[g]
-    u = np.array([r["uepsp_mv"] for r in rows.values()])
-    s = np.array([r["summed_uepsp_per_pn_mv"] for r in rows.values()])
+            row["kw08_uepsp_mv"] = KW08_UEPSP_MV[g]
+        rows[g] = row
+    out = {"question": __doc__, "glomeruli": len(rows), "glomeruli_by_name": dict(sorted(rows.items()))}
     n = np.array([r["orns"] for r in rows.values()])
-    out = {"question": __doc__, "glomeruli": len(rows),
-           "uepsp_mv_quantiles_5_25_50_75_95": np.percentile(u, [5, 25, 50, 75, 95]).round(2).tolist(),
-           "summed_uepsp_mv_quantiles_5_25_50_75_95": np.percentile(s, [5, 25, 50, 75, 95]).round(1).tolist(),
-           "orns_quantiles_5_25_50_75_95": np.percentile(n, [5, 25, 50, 75, 95]).round(1).tolist(),
-           "corr_orns_vs_uepsp": round(float(np.corrcoef(n, u)[0, 1]), 3),
-           "glomeruli_by_name": dict(sorted(rows.items()))}
+    for name in ("", "cholinergic_"):
+        has = [r for r in rows.values() if f"{name}uepsp_mv" in r]
+        u = np.array([r[f"{name}uepsp_mv"] for r in has])
+        sm = np.array([r[f"{name}summed_uepsp_per_pn_mv"] for r in has])
+        out[f"{name}uepsp_mv_quantiles_5_25_50_75_95"] = np.percentile(u, [5, 25, 50, 75, 95]).round(2).tolist()
+        out[f"{name}summed_uepsp_mv_quantiles_5_25_50_75_95"] = np.percentile(sm, [5, 25, 50, 75, 95]).round(1).tolist()
+        out[f"{name}corr_orns_vs_uepsp"] = round(float(np.corrcoef([r["orns"] for r in has], u)[0, 1]), 3)
+        out[f"{name}connected_share_quantiles_5_25_50"] = np.percentile([r[f"{name}connected_share"] for r in has], [5, 25, 50]).round(3).tolist()
+    out["orns_quantiles_5_25_50_75_95"] = np.percentile(n, [5, 25, 50, 75, 95]).round(1).tolist()
     for g in ("DM4", "DL5", "VM7d", "DM1", "VM2", "DM6", "DA1", "VA2", "DM2", "DM3"):
         if g in rows:
             print(g, json.dumps(rows[g]), flush=True)
-    for k in ("uepsp_mv_quantiles_5_25_50_75_95", "summed_uepsp_mv_quantiles_5_25_50_75_95", "orns_quantiles_5_25_50_75_95",
-              "corr_orns_vs_uepsp"):
-        print(k, out[k], flush=True)
+    for k in out:
+        if k.endswith(("quantiles_5_25_50_75_95", "quantiles_5_25_50", "vs_uepsp")):
+            print(k, out[k], flush=True)
     OUT.write_text(json.dumps(out, indent=1))
 
 
