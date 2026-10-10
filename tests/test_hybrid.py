@@ -286,6 +286,28 @@ def test_a_presynaptic_trace_can_act_as_a_power_of_the_rate():
     assert first_spike(2.0) / first_spike(()) == pytest.approx((1.0 + k * a0) / (1.0 + k * a0 ** 2), rel=1e-4)
 
 
+def test_a_presynaptic_trace_can_act_only_above_a_baseline():
+    """With the trace held near its start A0: an offset at A0 leaves a flagged spike undivided, an offset of A0 / 3
+    divides it by 1 + k (A0 - A0 / 3)."""
+    k, a0 = 0.01, 150.0
+    def first_spike(offset):
+        brain = small([(0, 1, 1.0)], 4, w_poi=100.0)
+        pre = np.repeat(np.arange(brain.n), np.diff(brain.ptr))
+        brain.set_presynaptic(fast=pre == 0, inhibitors=[3], tau=1e6, k=k, start=a0, offset=offset)
+        brain.reset(0)
+        brain.advance(1, drive=[([0], 1 / DT)])
+        assert brain.advance(1)[0, 0] == 1
+        brain.advance(20)
+        return float(brain.x[0, 1])
+    brain = small([(0, 1, 1.0)], 4, w_poi=100.0)
+    brain.reset(0)
+    brain.advance(1, drive=[([0], 1 / DT)])
+    brain.advance(21)
+    plain = float(brain.x[0, 1])
+    assert first_spike(a0 * 1.0000001) == pytest.approx(plain, rel=1e-6)
+    assert first_spike(a0 / 3) / plain == pytest.approx(1.0 / (1.0 + k * (a0 * np.exp(-DT / 1e6) - a0 / 3)), rel=1e-4)
+
+
 def test_slow_full_exempts_slow_synapses_from_depression():
     """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
     neuron without depression would, and an unflagged slow target depressed."""
