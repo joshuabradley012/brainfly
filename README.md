@@ -67,6 +67,15 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     responders. α/β cells still respond too densely to strong odors (up to 17.5%; flies 3–8%) and fire too many spikes
     (4.6–6.5; flies 2.2). Groschner's and Chen's larger offsets overshoot, as on the old antennal lobe: α′/β′ 34–66%,
     and the overlap between odors doubles. Inada's offsets are carried forward.
+  - **The measured depression at MBON11's synapses needs Kenyon cells that fire sparsely in time**
+    ([`odor_probe34.py`](experiments/odor_probe34.py)). The odor_probe7 model made Kenyon cell-to-MBON synapses
+    undepressed without fly data. At MBON11's synapses a second flash 400 ms after the first evokes 0.38–0.68 of the
+    first EPSC (Yamada et al. 2024), as rung 4's Kenyon cell depression has it. With that depression MBON11's input to
+    3-octanol peaks early, as flies' EPSC does (302 pA at 0.2 s; flies about 400 pA), but falls to 21 pA by 1 s, where
+    flies' holds about 170 pA. So MBON11 falls back to rest during the odor (26 spikes to 3-octanol, 8 to
+    4-methylcyclohexanol). Flies' synapses depress too, yet their MBON11 keeps firing through the odor. That needs
+    Kenyon cells whose spikes come singly and spread out, so that most find their synapses recovered. The model's
+    responding Kenyon cells fire 4–6 spikes, mostly early. The depression stays out of the model until they don't.
   - **Learning is more specific to the paired odor** ([`learning_pilot2.py`](experiments/learning_pilot2.py)). The
     learning pilot again, on this model: at each dopamine pulse every Kenyon cell's synapses onto MBON11 weaken by its
     recent spikes, the rate set so the paired odor's input falls 90%. Pairing 3-octanol now cuts
@@ -89,6 +98,13 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 </picture>
 
 `python assets/mbon11.py` redraws it.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/mbon11_depression-dark.svg">
+  <img src="assets/mbon11_depression-light.svg" width="100%" alt="Four panels, 3-octanol left and 4-methylcyclohexanol right, from -0.5 to 1.5 s. Top: MBON11's rate; bottom: its Kenyon cell input as a current per cell. Undepressed synapses (solid red): the input to 3-octanol peaks near 700 pA at 0.3 s and is still 250 pA at 1 s, MBON11 peaks near 120 spikes/s. Depressing synapses (dashed red): the input peaks at 300 pA at 0.2 s and falls to about 20 pA by 1 s, MBON11 peaks near 90 and falls back to its 34 Hz rest. Flies (rings): EPSC peak about 400 pA, then 170-200 pA through the odor; PSTH peak near 165 spikes/s on the model's baseline and about 125 through the odor.">
+</picture>
+
+`python assets/mbon11_depression.py` redraws it.
 
 * **Measured presynaptic inhibition gives the antennal lobe flies' lateral division, and two readings of one
   measurement bracket its gain (rung 9's groundwork).** In flies the local neurons inhibit the receptor neurons'
@@ -1094,6 +1110,7 @@ a sign that the approach is broken."
 | `experiments/odor_probe31.py` | Exploratory, not pre-registered: Kenyon cell-to-MBON11 synapses set from Yamada et al. 2024's EPSC charge (0.019-0.042 pC per synapse) and Wang et al. 2026's MBON11 gain (0.41 Hz/pA), on odor_probe30's model | MBON11 gains 60-91 spikes to 3-octanol and 21-35 to 4-methylcyclohexanol (flies 118, 110); input per cell 1.5-3.3x flies' for 3-octanol, 0.3-0.7x for 4-methylcyclohexanol (γ cells over-recruited); 0.11-0.27 spikes per pC (flies ~0.45) |
 | `experiments/odor_probe32.py` | Exploratory, not pre-registered: why MBON11 turns its Kenyon cell input into few spikes: its F-I curve, its input over time, the same input given evenly, its other inputs cut, held at 6 Hz as Hige et al. held their cells | Other inputs don't matter (75 vs 76 spikes); half the input is lost in its fine timing (even drive 163/50 vs 72/27 spikes); the F-I bend costs a quarter more at 3-octanol's size; held at 6 Hz it gains 91 and 36 (flies 118, 110) |
 | `experiments/odor_probe33.py` | Exploratory, not pre-registered: the Kenyon cell classes' measured threshold offsets (Inada; Groschner/Chen) on odor_probe30's antennal lobe, MBON11 from its measurements | Inada's: α′/β′ 2.9-13.8% (flies 9-14%), γ 1.2-5.3% (~2%), density and overlap unchanged, MBON11's input a quarter lower; Groschner/Chen's overshoot (α′/β′ 34-66%, mean Jaccard 0.35). Inada's carried forward |
+| `experiments/odor_probe34.py` | Exploratory, not pre-registered: Kenyon cell-to-MBON synapses depressing as Yamada et al. 2024 measured (0.5 left per spike, 1.5 s recovery) against undepressed, on the Inada model | Depressing, MBON11's input peaks early like flies' EPSC (302 pA at 0.2 s) but falls to 21 pA by 1 s (flies ~170), so MBON11 returns to rest (26/8 spikes; flies 118/110); flies' sustained response needs temporally sparse Kenyon cells. Held out of the model for now |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension fall inside the pre-set windows (flies: about 7 and 3.3 ms), the only 2 of 6 checks that pass, and the timing only with the coxa braced; the launch is steep and slightly backward (79°), head-down, 1.7 times too hard upward and 2.7 times too weak horizontally. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.6). |
