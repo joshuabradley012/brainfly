@@ -22,6 +22,20 @@ in the rule's eligibility trace as spikes (responders, for the overlap, by their
 odor + seed (pre and post), 310200 + 10 x pairing + seed (forward), 310300 + ... (backward); + 900 + round for the Kenyon
 cells' rest; + 950 + step for the hold.
 
+Ran: with 3-octanol paired the model now matches flies on every measure; the other way round it doesn't, because
+4-methylcyclohexanol reaches too few Kenyon cells. Held near 6 Hz (5.9 Hz, its bias 7.3 mV lower; gain 3.51 spikes/s per
+mV), MBON11 gains 132.2 +- 1.1 spikes to 3-octanol and 41.4 +- 0.5 to 4-methylcyclohexanol before pairing (32 flies;
+flies 118 +- 8.3 and 110 +- 11), and 36-138 to the other four odors; 438 Kenyon cells gain more than half a spike to
+3-octanol and 100 to 4-methylcyclohexanol, 57% of the latter also answering 3-octanol (Jaccard 0.12) and carrying 42% of
+its charge. Pairing 3-octanol cuts its spikes from 132.2 to 19.5 (85%; flies 80%), 4-methylcyclohexanol's from 41.4 to
+29.2 (29.5%; flies 27%) and 4-methylcyclohexanol's charge by 33% (flies 20% and 35% in two experiments); the other
+odors' charge by 9-65%. Pairing 4-methylcyclohexanol cuts its spikes from 41.4 to 4.3 (90%; flies 76%) but 3-octanol's
+only from 132.2 to 124.8 (5.6%; flies 38%) and its charge by 9% (no fly measurement). Backward pairing leaves both
+unchanged (flies within 7%), and tau_e makes no difference (0.2-1 s within a percentage point). Against the bands
+hige2015_specificity.md suggests for a pre-registered test, everything with 3-octanol paired falls inside (unpaired
+spikes and charge 10-45%, paired at least 65% and 30 points beyond the unpaired), while the reciprocal pairing fails
+(3-octanol's spikes 5.6% where 15-50% would be fly-like), as does 4-methylcyclohexanol's response itself.
+
     python experiments/learning_pilot3.py        (writes experiments/learning_pilot3.json)
 """
 from __future__ import annotations
