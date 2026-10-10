@@ -79,7 +79,7 @@ def rings(c, x0, box, points, title) -> list[str]:
 
 def figure(theme: str, d: dict) -> str:
     c = THEMES[theme]
-    out = [text(24, 30, "MBON11 in the model: its input is too big for one odor and too small for the other, and half of it is lost in its timing", "lab"),
+    out = [text(24, 30, "MBON11 in the model: its input is too big for one odor and too small for the other, and its spike rule loses half of it", "lab"),
            text(24, 50, "Red: the model (odor_probe32.py, 0.030 pC per synapse). Dashed red: the rate MBON11's own gain near rest predicts from its "
                 "input.", "note"),
            text(24, 68, "Rings: flies (Hige et al. 2015, read off the figures; the PSTH's held 6 Hz baseline raised to the model's resting rate).", "note")]
