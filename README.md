@@ -52,10 +52,19 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     that activity rises over rest. With the receptor neurons firing spontaneously, as flies' do, the synapses rest at
     about two thirds of full strength, as Nagel et al.'s model has them. But an odor then raises the local neurons only
     2-3 times above their resting rate, as in flies (6-8 spikes/s against about 4), while flies' EPSCs fall threefold, so
-    the fit fails ([`odor_probe24.py`](experiments/odor_probe24.py)). Flies' presynaptic inhibition must grow faster than
-    linearly with the local neurons' activity, as GABA-B inhibition is known to with presynaptic spike number. Flies'
-    glomeruli also differ about 25-fold in their sensitivity to it (Hong & Wilson 2015), which one global strength
-    can't give.
+    the fit fails ([`odor_probe24.py`](experiments/odor_probe24.py)). Raising the slow component to a power doesn't
+    rescue it: the fit again buys the late suppression with tonic inhibition, which then silences the local neurons
+    ([`odor_probe26.py`](experiments/odor_probe26.py)). Flies' glomeruli also differ about 25-fold in their sensitivity
+    to it (Hong & Wilson 2015), which one global strength can't give.
+  - **Inhibition evoked above rest makes the Kenyon cells odor-specific** ([`odor_probe27.py`](experiments/odor_probe27.py)).
+    Flies have little tonic presynaptic inhibition, at least in VM7 (GABA antagonists don't change its gain). With the
+    inhibition acting only on the local neurons' activity above rest, the spontaneous firing setting the synapses'
+    resting depression, and the strengths fitted again to Olsen & Wilson's EPSCs, different odors' projection neuron
+    patterns correlate only 0.22 (about 0.5 before). The Kenyon cells then respond as flies' do: 1.0–4.5% per odor, a
+    mean Jaccard of 0.15 (flies' dissimilar odors about 0.22), and 45% of 4-methylcyclohexanol's responders shared with
+    3-octanol (78–94% before). But the inhibition peaks with the local neurons' onset burst, where flies' takes about
+    100 ms to build, so the projection neurons are suppressed at onset (32–73 Hz in the first 100 ms; flies 100–200)
+    and too narrowly tuned (16–26% respond; flies 59 ± 14%), and lateral input abolishes their response.
   - **Ruled out on the way.** A slower rise in GABA-B's onset changes nothing
     ([`odor_probe22.py`](experiments/odor_probe22.py)). Measured receptor kinetics don't make the projection neurons
     accommodate ([`odor_receptor_course.py`](experiments/odor_receptor_course.py)). Capping projection neurons at the
@@ -1004,6 +1013,8 @@ a sign that the approach is broken."
 | `experiments/odor_probe23.py` | Exploratory, not pre-registered: PNs capped at Kazama & Wilson's 164 spikes/s (a 6.1 ms refractory period) | Bends the transform (Rmax 88-133, σ 5-8) but the Kenyon cells come into flies' range (0.9-7.5%, mean Jaccard 0.24) with PNs at ~110 Hz; α′/β′ cells nearly silent, MBONs ~0 |
 | `experiments/odor_probe24.py` | Exploratory, not pre-registered: spontaneous receptor firing (6-19 spikes/s by sensillum class), presynaptic inhibition lowering depletion, the weights at their uninhibited strength, the rest recalibrated | The synapses rest at 0.66 and 0.62 of full strength (Nagel's model ~0.68); PNs rest at 11 Hz after the polish. The presynaptic fit fails at its bound: the LNs' odor rate is only 2-3 times their resting rate, so linear inhibition can't reach flies' threefold suppression. Stopped there by design |
 | `experiments/odor_probe25.py` | Exploratory, not pre-registered: odor_probe24's control, weights at their uninhibited strength without spontaneous firing | Fit k_B 0.063, resting divisor 14.5: Rmax 157-177 in DL5, VM7d, DM1 (flies 144-167), DM1's σ 43 (flies 45), but the others' σ 37-49 (flies 12-16); in odors PNs only 67-85 Hz and 0.1-0.4% of Kenyon cells respond |
+| `experiments/odor_probe26.py` | Exploratory, not pre-registered: odor_probe24's model with the slow (GABA-B) trace raised to a fitted power | Fails: round 1 fits flies' EPSCs only with a tonic GABA-B divisor of 48 (n 1.4), which silences the LNs' odor responses; round 2 degenerates. Stopped there by design |
+| `experiments/odor_probe27.py` | Exploratory, not pre-registered: inhibition acting only on the LNs' activity above rest (no tonic part), spontaneous receptor firing, the weights as calibrated (the strength at rest), PNs polished one by one to 1-5 Hz | Fit works (EPSCs 0.23-0.42); Kenyon cells as sparse and specific as flies' (1.0-4.5%, mean Jaccard 0.15, PN patterns correlating 0.22, 45% of MCH's responders in OCT's), but PNs suppressed at onset (32-73 Hz) and too narrow (16-26% by Turner's criterion); transform too steep (σ 30-40), lateral input abolishes responses; α′/β′ 0-1.3%, MBONs far short |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension fall inside the pre-set windows (flies: about 7 and 3.3 ms), the only 2 of 6 checks that pass, and the timing only with the coxa braced; the launch is steep and slightly backward (79°), head-down, 1.7 times too hard upward and 2.7 times too weak horizontally. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
 | `experiments/optomotor_null.py` | Does the optomotor signal need the connectome's wiring? | Yes. On three random rewirings (every neuron keeping its total input, 0.6% of the original pairs still connected), the HS signal falls from 37.6 Hz to -0.1 to +0.2 Hz and DNa02's from 5.3 Hz to 0.6-1.2 Hz (t up to 5 in one rewiring, still under its 2 Hz bar); 8-13 descending neuron types keep a direction signal, against 65. HS cells stay active but stop responding to the grating. The rewired brains rest quieter (0.8 Hz against 8.6). |
