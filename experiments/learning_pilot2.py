@@ -39,6 +39,16 @@ unchanged in both directions, as in flies. The asymmetry follows the imbalance b
 3-octanol drives about four times as many Kenyon cells, and gamma cells at 9.4% against flies' about 2%), which flies'
 MBON11 doesn't show (118 and 110 spikes): 4-methylcyclohexanol's few responders lie half inside 3-octanol's many.
 
+Checked afterwards (2026-10-10): flies' unpaired odor does lose input; "didn't change significantly" holds only for Hige
+et al.'s Fig. 3. Hige et al. 2015 read in full (research_notes/Rung 9 learning data/hige2015_specificity.md): with
+3-octanol paired, 4-methylcyclohexanol's charge fell 20% in Fig. 3 (n = 5, not significant, the figure cited above) and
+35% in Fig. 4 (n = 6, every cell), and its spikes 27% (Fig. 1F, itself significant) and 38% (Fig. 4E); with
+4-methylcyclohexanol paired (Fig. S3D, n = 6), its spikes fell 76% and 3-octanol's 38%; no charge was measured that way
+round. So with 3-octanol paired the model's numbers fall within flies' (charge 38%, spikes 30%), while with
+4-methylcyclohexanol paired the model's 3-octanol loses too little (spikes 5.5%, charge 11%; flies' spikes 38%): flies'
+depression is about as specific in both directions, the model's isn't, because 3-octanol drives about four times as many
+Kenyon cells as 4-methylcyclohexanol.
+
     python experiments/learning_pilot2.py        (writes experiments/learning_pilot2.json)
 """
 from __future__ import annotations

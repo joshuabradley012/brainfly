@@ -43,6 +43,13 @@ cells gain more than half a spike to OCT and 284 to MCH; 3,623 of them reach MBO
 (41,460 synapses). The responses are small and noisy enough that the spike drops carry about 10-20 percentage points
 of uncertainty (SEMs of 0.3 spikes on responses of 2-4).
 
+Checked afterwards (2026-10-10): "didn't change significantly" holds only for Hige et al.'s Fig. 3. Hige et al. 2015
+read in full (research_notes/Rung 9 learning data/hige2015_specificity.md): with 3-octanol paired,
+4-methylcyclohexanol's charge fell 20% in Fig. 3 (n = 5, not significant, the figure cited above) and 35% in Fig. 4 (n =
+6, every cell), and its spikes 27% (Fig. 1F, itself significant) and 38% (Fig. 4E); with 4-methylcyclohexanol paired
+(Fig. S3D, n = 6), its spikes fell 76% and 3-octanol's 38%; no charge was measured that way round. On this model the
+unpaired odor's charge still fell more than flies' (51-79%) and its spikes too (73%).
+
     python experiments/learning_pilot.py         (writes experiments/learning_pilot.json)
 """
 from __future__ import annotations

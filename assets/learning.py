@@ -7,9 +7,10 @@ cell-to-MBON11 synapses, its rate set so that the paired odor's charge (the curr
 Left two panels: for each odor, how far its charge falls with the same rate (tau_e 0.5 s), on odor_probe7.py's model
 (learning_pilot) and on odor_probe30.py's antennal lobe with MBON11's synapses from its own measurements
 (learning_pilot2). Right: MBON11's evoked spikes after pairing, as a drop from before, for the paired and the unpaired
-odor. Flies (Hige et al. 2015, one pairing direction): the paired odor's spikes fell 80% (118 to 24) and its charge 90%;
-the unpaired odor's spikes fell about 25% (110 to 83) and its charge didn't change significantly (n = 5); the other four
-odors weren't tested.
+odor. Flies (Hige et al. 2015, read off the figures in research_notes/Rung 9 learning data/hige2015_specificity.md): with
+3-octanol paired, its spikes fell 80% and 4-methylcyclohexanol's 27% (Fig. 1F, n = 7), and 4-methylcyclohexanol's charge
+fell 20% (Fig. 3, n = 5, not significant) and 35% (Fig. 4, n = 6, every cell); with 4-methylcyclohexanol paired, its
+spikes fell 76% and 3-octanol's 38% (Fig. S3D, n = 6; no charge measured); the other four odors weren't tested.
 """
 from __future__ import annotations
 
@@ -27,7 +28,9 @@ W, H = 1120, 412
 ODORS = ("3-octanol", "4-methylcyclohexanol", "ethyl acetate", "isopentyl acetate", "benzaldehyde", "2-heptanone")
 RUNS = [("learning_pilot", "odor_probe7's model (learning pilot 1)", "faint"),
         ("learning_pilot2", "probe 30's antennal lobe, MBON11 from its measurements (pilot 2)", "red")]
-FLIES_SPIKES = {"paired": 0.80, "unpaired": 0.25}
+FLIES_SPIKES = {("3-octanol", "paired"): 0.80, ("3-octanol", "unpaired"): 0.27,               # Fig. 1F
+                ("4-methylcyclohexanol", "paired"): 0.76, ("4-methylcyclohexanol", "unpaired"): 0.38}  # Fig. S3D
+FLIES_CHARGE = {"3-octanol": [(0.20, "Fig. 3, n = 5, not significant"), (0.35, "Fig. 4, n = 6")]}   # the unpaired odor's
 X0, PW, GAP = 176, 250, 70                       # first panel's left edge, charge panels' width, gap
 SX0, SPW = 884, 196                              # spike panel's left edge and width
 Y0, ROW = 170, 34                                # first row's centre, row spacing
@@ -77,7 +80,8 @@ def charge_panel(c, runs, paired, x0) -> list[str]:
         drops = [r["pairings"][paired]["drop"][odor] for r in runs]
         out.append(f'<line x1="{sx(min(drops)):.1f}" y1="{y}" x2="{sx(max(drops)):.1f}" y2="{y}" stroke="{c["rule"]}" stroke-width="2"/>')
         if odor == unpaired:
-            out.append(dot(c, sx(0), y, c["ink"], "flies: no significant change (Hige et al. 2015, n = 5)", ring=True))
+            for v, src in FLIES_CHARGE.get(paired, []):
+                out.append(dot(c, sx(v), y, c["ink"], f"flies: {odor}'s charge {v:.0%} lower (Hige et al. 2015, {src})", ring=True))
         for r, v in zip(runs, drops):
             out.append(dot(c, sx(v), y, c[r["colour"]], f'{r["label"]}: {odor}{role}, charge {v:.0%} lower'))
     return out
@@ -93,8 +97,8 @@ def spike_panel(c, runs) -> list[str]:
         odor = paired if role == "paired" else runs[0]["pairings"][paired]["unpaired"]
         short = {"3-octanol": "OCT", "4-methylcyclohexanol": "MCH"}
         out.append(text(SX0 - 10, y + 4, f"{short[odor]}, {role}", "tick", "end"))
-        f = FLIES_SPIKES[role]
-        out.append(dot(c, sx(f), y, c["ink"], f"flies: spikes {f:.0%} lower (Hige et al. 2015, one pairing direction)", ring=True))
+        f = FLIES_SPIKES[(paired, role)]
+        out.append(dot(c, sx(f), y, c["ink"], f"flies: spikes {f:.0%} lower (Hige et al. 2015)", ring=True))
         for r in runs:
             s = r["pairings"][paired]["spikes"][odor]
             v = s["drop"]
@@ -107,11 +111,11 @@ def spike_panel(c, runs) -> list[str]:
 
 def figure(theme: str, runs: list[dict]) -> str:
     c = THEMES[theme]
-    out = [text(24, 32, "Learning is now more specific to the paired odor, but not yet as specific as flies'", "lab"),
+    out = [text(24, 32, "With 3-octanol paired the model's learning is as specific as flies'; the other way round, too specific", "lab"),
            text(24, 52, "Dopamine-gated depression at Kenyon cell-to-MBON11 synapses, its rate set to cut the paired odor's input by 90%. "
                 "Left: how far each odor's input falls.", "note"),
-           text(24, 70, "Right: MBON11's odor-evoked spikes afterwards. Rings: flies (Hige et al. 2015; at 0%: the unpaired odor's input "
-                "didn't change significantly).", "note")]
+           text(24, 70, "Right: MBON11's odor-evoked spikes afterwards. Rings: flies (Hige et al. 2015; no charge was measured with "
+                "4-methylcyclohexanol paired).", "note")]
     lx = 24
     items = [(label, c[colour], False) for _, label, colour in RUNS] + [("flies", c["ink"], True)]
     for label, col, ring in items:                 # legend, one row above the panels
@@ -135,8 +139,8 @@ def figure(theme: str, runs: list[dict]) -> str:
     new, old = runs[-1]["pairings"], runs[0]["pairings"]
     title = ("Learning's specificity in the model: pairing 3-octanol cuts 4-methylcyclohexanol's Kenyon cell input to MBON11 by "
              f'{new["3-octanol"]["drop"]["4-methylcyclohexanol"]:.0%} (first pilot {old["3-octanol"]["drop"]["4-methylcyclohexanol"]:.0%}) '
-             f'and its spikes by {new["3-octanol"]["spikes"]["4-methylcyclohexanol"]["drop"]:.0%}; flies: charge not significantly changed, '
-             "spikes about 25% lower")
+             f'and its spikes by {new["3-octanol"]["spikes"]["4-methylcyclohexanol"]["drop"]:.0%}; flies: charge 20-35% lower, '
+             "spikes 27% lower")
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")
