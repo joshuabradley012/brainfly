@@ -78,6 +78,7 @@ flies (about 50 per type for both antennae against about 40 per antenna), which 
 from __future__ import annotations
 
 import csv
+import functools
 import json
 import time
 from pathlib import Path
@@ -105,11 +106,17 @@ CONDITIONS = {"current": {}, "kinetics": {"kinetics": "fast"},
               "slow kinetics + spontaneous": {"kinetics": "slow", "spont": True}}
 
 
+@functools.lru_cache(maxsize=None)
+def _peak(tau_r: float) -> float:
+    """The unnormalized time course's peak (computed once per tau_r; the receptor drive asks for it every 10 ms)."""
+    grid = np.arange(0, 2.0, 1e-4)
+    return ((1 - np.exp(-grid / tau_r)) * (PLATEAU + (1 - PLATEAU) * np.exp(-grid / TAU_ADAPT))).max()
+
+
 def course(t, tau_r: float) -> np.ndarray:
     """The time course from the response's start, peaking at 1 (0 before the start)."""
     t = np.asarray(t, float)
-    grid = np.arange(0, 2.0, 1e-4)
-    peak = ((1 - np.exp(-grid / tau_r)) * (PLATEAU + (1 - PLATEAU) * np.exp(-grid / TAU_ADAPT))).max()
+    peak = _peak(tau_r)
     c = np.clip(t, 0, None)
     k = (1 - np.exp(-c / tau_r)) * (PLATEAU + (1 - PLATEAU) * np.exp(-c / TAU_ADAPT))
     return np.where(t >= 0, k / peak, 0.0)
