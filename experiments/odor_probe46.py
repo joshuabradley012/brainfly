@@ -17,6 +17,18 @@ odor_probe45.py measures it) is nearest 2.5.
 Measured at the chosen s: everything odor_probe36.py measures, and the Kenyon cells' mean membrane potential over the
 odor with APL working against silenced. Seeds 490000 (odor_probe45.py's offsets).
 
+Ran: with both set from measurements the Kenyon cells come back into flies' range and MBON11 most of the way. At the
+PNs' resting depression (their synapses at 0.735 of full strength at 3 spikes/s) the model's unitary claw EPSP was 0.70
+mV, so the PN-to-Kenyon cell synapses are doubled (x 1.995). The block ratio then is 2.05 with s = 5, 2.27 with 10 and
+2.48 with 20, the one chosen; APL releases 19-24 Hz over an odor's first 100 ms and 8-12 Hz over it, and the Kenyon cells
+sit 2.5-2.7 mV lower over the odor than with it silenced. 3.6-15.7% of Kenyon cells respond (flies 6 +- 5%: 3-octanol
+12.6%, 4-methylcyclohexanol 3.6%), the alpha/beta cells firing 1.9-3.8 spikes per response (flies 2.2 +- 1.2) and 5.1
+over 1.4 s to 3-octanol; mean Jaccard 0.19 (flies' dissimilar odors about 0.22). MBON11 gains 36 spikes to 3-octanol from
+176 pC per cell (flies 118 from about 250) and 13 to 4-methylcyclohexanol from 46 pC (flies 110 from about 265). The
+classes respond in the wrong order: to 3-octanol alpha/beta 17.2%, gamma 9.8%, alpha'/beta' 6.8%, where flies'
+alpha'/beta' respond most (9-14%), alpha/beta 3-8% and gamma about 2%; the alpha'/beta' cells fire 1.5-2.6 spikes per
+response (flies 4.9). And 4-methylcyclohexanol still reaches 0.29 as many Kenyon cells as 3-octanol (flies 0.73-0.92).
+
     python experiments/odor_probe46.py         (writes experiments/odor_probe46.json)
 """
 from __future__ import annotations
