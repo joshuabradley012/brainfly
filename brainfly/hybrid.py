@@ -531,6 +531,18 @@ class HybridBrain:
                 for e in range(self.sptr[i], self.sptr[i + 1]):
                     self.slow_graded_input[:, self.sidx[e]] += self.slow_weights[e] * self.release[:, q]
 
+    def set_type(self, key: str, **params) -> None:
+        """Change a type's (or a named set's, or a superclass's) parameters after construction, as types={key: params}
+        would have set them at the start; not scale or unit. The neurons' state, and any synapse scales set since,
+        are kept."""
+        if {"scale", "unit"} & set(params):
+            raise ValueError("set_type can't change scale or unit")
+        self.types = {**self.types, key: {**self.types.get(key, {}), **params}}
+        scale = self.scale.copy()
+        self._tables()
+        self.scale = scale
+        self._tables_cache = None
+
     def cells(self, types: list[str], side: str | None = None) -> np.ndarray:
         """Neurons whose cell type (FlyWire's or MaleCNS's own) or superclass is in `types`,
         optionally on one side."""

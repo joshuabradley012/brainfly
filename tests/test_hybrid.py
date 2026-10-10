@@ -140,6 +140,24 @@ def test_a_type_can_give_its_slow_current_its_own_time_constant():
     assert brain.s[0, 2] == pytest.approx(5.0 * np.exp(-100 * DT / 0.08), rel=1e-5)
 
 
+def test_set_type_after_construction_is_the_same_as_building_with_it():
+    """Giving a type its own slow time constant and threshold later gives the same spikes as building with them."""
+    def run(later):
+        types = {"c1": {"threshold": 5.0}} if later else {"c1": {"threshold": 5.0, "tau_slow": 0.08}, "c2": {"threshold": 6.0}}
+        brain = small([(0, 1, 4.0), (1, 2, 4.0)], 3, slow_edges=[(0, 1, 2.0), (0, 2, 2.0)], tau_slow=0.5, types=types,
+                      w_poi=100.0)
+        if later:
+            brain.set_type("c1", tau_slow=0.08)
+            brain.set_type("c2", threshold=6.0)
+        brain.reset(3)
+        out = [brain.advance(50, drive=[([0], 200.0)]) for _ in range(4)]
+        return np.concatenate(out), brain.s.copy()
+    (a, sa), (b, sb) = run(False), run(True)
+    assert np.array_equal(a, b) and np.array_equal(sa, sb)
+    with pytest.raises(ValueError):
+        small([(0, 1, 1.0)], 2).set_type("c1", scale=2.0)
+
+
 def test_slow_full_exempts_slow_synapses_from_depression():
     """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
     neuron without depression would, and an unflagged slow target depressed."""
