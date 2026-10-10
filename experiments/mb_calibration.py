@@ -6,8 +6,11 @@ al. 2008's 1.4 mV on average at the PNs' resting depression; each class's APL sy
 so that APL saturates every class alike (Inada et al. 2017); APL releasing from 3.5 mV above rest (the middle of
 non-spiking insect interneurons' 2-5 mV), saturating where the Kenyon cells sit 11 mV down, its Kenyon cell synapses times
 10 (fitted: silencing APL then raises the Kenyon cells' evoked spikes 2.44-fold, flies' 2-3, Lin et al. 2014 and Bergmann
-et al. 2026). None of it changes the resting state (the Kenyon cells are silent at rest), so the antennal lobe's build
-stands; odor_probe36.measure sets the Kenyon cells' rest again.
+et al. 2026). And the classes' resting distances below threshold (odor_probe48.py): alpha/beta 21.5 mV (Turner et al.
+2008; Inada et al.), alpha'/beta' 16 (Inada), gamma 32.5 (alpha/beta's plus Chen et al. 2026's 11 mV; chosen from the
+measured 2.5-11 as the one whose gamma cells answer 3-octanol nearest flies' 3.5%), installed as odor_probe8.class_gaps,
+which odor_probe36.measure uses to set the Kenyon cells' rest. None of it changes the antennal lobe's resting state (the
+Kenyon cells are silent at rest), so its build stands.
 
     o, rec, built = brain_cache.load("odor_probe44", odor_probe44.build, odor_probe44.prepare)
     mb_calibration.apply(o)
@@ -17,10 +20,20 @@ from __future__ import annotations
 import numpy as np
 
 import odor_probe21 as p21
+import odor_probe8 as p8
 
 EPSP_MV, PN_REST_HZ = 1.4, 3.0                     # Turner et al. 2008; the PNs' resting target
 APL_RELEASE_AT_MV, KC_SATURATION_MV, KC_APL_SCALE = 3.5, -11.0, 10.0
 CLASSES = {"alpha/beta": "KCab", "alpha'/beta'": "KCa'b'", "gamma": "KCg"}
+GAPS_MV = {"KCab": 21.5, "KCa'b'": 16.0, "KCg": 21.5 + 11.0}          # other Kenyon cells: alpha/beta's
+
+
+def class_gaps(o, offsets=None) -> dict:
+    """Each Kenyon cell type's resting distance below threshold (odor_probe8.class_gaps's signature; offsets unused)."""
+    out = {}
+    for t in np.unique(o.types[o.m["kc"]]):
+        out[t] = next((g for prefix, g in GAPS_MV.items() if t.startswith(prefix)), GAPS_MV["KCab"])
+    return out
 
 
 def classes(o) -> dict:
@@ -60,5 +73,7 @@ def apply(o) -> dict:
     b.weights, b._external_matrix = w, None
     max_hz = KC_SATURATION_MV / (target_apl * p21.TAU)
     b.set_type("APL", release_at=APL_RELEASE_AT_MV, max_release=max_hz)
-    out.update({"kc_apl_scale": KC_APL_SCALE, "apl_release_at_mv": APL_RELEASE_AT_MV, "apl_max_hz": round(max_hz, 2)})
+    p8.class_gaps = class_gaps                    # odor_probe36.measure sets the Kenyon cells' rest with these
+    out.update({"kc_apl_scale": KC_APL_SCALE, "apl_release_at_mv": APL_RELEASE_AT_MV, "apl_max_hz": round(max_hz, 2),
+                "kc_gaps_mv": GAPS_MV})
     return out
