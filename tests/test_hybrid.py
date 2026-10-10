@@ -127,6 +127,35 @@ def test_full_strength_exempts_single_synapses_from_depression():
     assert depressed < plain_1 - 0.1
 
 
+def test_a_type_can_give_its_slow_current_its_own_time_constant():
+    """Two targets of one slow synapse each, one of a type with its own tau_slow: each slow current decays with its
+    own time constant, and the type without one keeps the brain's."""
+    brain = small([(1, 1, 0.0), (2, 2, 0.0)], 3, slow_edges=[(0, 1, 5.0), (0, 2, 5.0)], tau_slow=0.5,
+                  types={"c2": {"tau_slow": 0.08}}, w_poi=100.0)
+    brain.advance(1, drive=[([0], 1 / DT)])             # step 0: a kick past threshold
+    assert brain.advance(1)[0, 0] == 1                  # step 1: neuron 0 fires
+    brain.advance(18)                                   # its slow input lands at step 19
+    brain.advance(100)
+    assert brain.s[0, 1] == pytest.approx(5.0 * np.exp(-100 * DT / 0.5), rel=1e-5)
+    assert brain.s[0, 2] == pytest.approx(5.0 * np.exp(-100 * DT / 0.08), rel=1e-5)
+
+
+def test_slow_full_exempts_slow_synapses_from_depression():
+    """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
+    neuron without depression would, and an unflagged slow target depressed."""
+    def two_spikes(depression, exempt):
+        brain = small([(1, 1, 0.0)], 2, slow_edges=[(0, 1, 1.0)], tau_slow=10.0,
+                      types={"c0": {"depression": depression, "recovery": 1.0}}, w_poi=100.0)
+        brain.slow_full[:] = exempt
+        for _ in range(2):                              # two spikes 2 ms apart
+            brain.advance(1, drive=[([0], 1 / DT)])
+            brain.advance(19)
+        brain.advance(20)                               # both have arrived
+        return brain.s[0, 1]
+    assert two_spikes(0.5, True) == pytest.approx(two_spikes(1.0, False), rel=1e-6)
+    assert two_spikes(0.5, False) < two_spikes(1.0, False) - 0.1
+
+
 def test_slow_current_decays_with_its_own_time_constant_and_survives_spikes():
     brain = small([(1, 1, 0.0)], 2, slow_edges=[(0, 1, 5.0)], tau_slow=0.08, w_poi=100.0)
     brain.advance(1, drive=[([0], 1 / DT)])             # step 0: a kick past threshold

@@ -36,11 +36,14 @@ brainfly.shiu, and lets each cell type differ:
     adaptation, adaptation_tau    spike-frequency adaptation: each spike adds a hyperpolarising
                   current that holds the neuron about `adaptation` mV lower and decays with time
                   constant adaptation_tau, s (default 0: none, as in Shiu's model; 0.2 s)
+    tau_slow      the time constant of the type's slow current, s (default 0: the brain's tau_slow)
 
 A spike adds w_syn x (signed synapse count) to a fast current in each target (tau 5 ms, as in
-Shiu), or to a slow current (tau_slow) along the edges given as slow, t_dly later. A slow edge's
-spike adds the same increment as a fast one's, so it carries tau_slow / 5 ms times the charge (20
-times at tau_slow 0.1 s); scale slow counts down to match a fast synapse's charge. Graded and
+Shiu), or to a slow current (tau_slow, the target type's) along the edges given as slow, t_dly
+later. A slow edge's spike adds the same increment as a fast one's, so it carries tau_slow / 5 ms
+times the charge (20 times at tau_slow 0.1 s); scale slow counts down to match a fast synapse's
+charge. Slow edges depress with their neuron's fast ones unless brain.slow_full (one flag per slow
+edge, in brain.slow_weights' order) exempts them. Graded and
 external release reach their targets in the same step, without the spikes' t_dly delay. As in
 Brian2, input that reaches a refractory neuron is lost, and a spike resets the fast current but
 not the slow one. Neurons can also take their output from outside: set_release gives each a
@@ -68,7 +71,7 @@ UNIT = {"spiking": False, "graded": True}
 DEFAULTS = {"unit": "spiking", "tau_m": T_MBR, "threshold": V_TH - V0, "reset": V_RST - V0, "refractory": T_RFC,
             "bias": 0.0, "scale": 1.0, "gain": 6.0, "release_at": V_TH - V0, "max_release": np.inf,
             "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0, "adaptation": 0.0,
-            "adaptation_tau": 0.2}
+            "adaptation_tau": 0.2, "tau_slow": 0.0}
 MONOAMINES = ("dopamine", "octopamine", "serotonin")
 
 
@@ -149,7 +152,7 @@ def _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_a
         xb[i] = a_xx * xb[i]
         if slow and slow_in[i]:
             ui += a_vs[c] * sb[i]
-            sb[i] = a_ss * sb[i]
+            sb[i] = a_ss[c] * sb[i]
         ub[i] = ui
         if ui > theta[c] and not graded[c] and not external[i]:
             fired[m] = i
@@ -174,7 +177,7 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
         xb[i] = a_xx * xb[i]
         if slow and slow_in[i]:
             ui += a_vs[c] * sb[i]
-            sb[i] = a_ss * sb[i]
+            sb[i] = a_ss[c] * sb[i]
         ub[i] = ui
         if ui > theta[c] and not graded[c]:
             fired[m] = i
@@ -183,7 +186,7 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
 
 
 @numba.njit(parallel=True, cache=True)
-def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
+def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, graded, depress, recover, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last,
@@ -365,7 +368,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, stargets, 
                     nt[slot] = count
                     if slow:
                         for e in range(sptr[i], sptr[i + 1]):
-                            srow[sidx[e]] += sw[e] * strength
+                            srow[sidx[e]] += sw[e] if sfull[e] else sw[e] * strength
                     for e in range(gptr[i], gptr[i + 1]):       # electrical synapses: at once, undepressed
                         ub[gidx[e]] += gw[e]
                     for e in range(fptr[i], fptr[i + 1]):       # fast synapses: fdelay steps from now, depressing
@@ -479,6 +482,7 @@ class HybridBrain:
         self.fdelay = max(1, int(round(fast_delay / self.dt)))
         S = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if slow is None else slow.tocsc()
         self.sptr, self.sidx, self._slow_counts = S.indptr, S.indices, S.data.astype(np.float32)
+        self.slow_full = np.zeros(len(self._slow_counts), np.bool_)    # slow synapses exempt from their neuron's depression
         self.stargets = np.unique(S.indices).astype(np.int64)            # the slow synapses' targets
         self.slow_in = np.zeros(self.n, np.bool_)
         self.slow_in[self.stargets] = True
@@ -509,13 +513,15 @@ class HybridBrain:
     def set_slow(self, slow: sparse.spmatrix | None) -> None:
         """Replace the slow edges (signed counts, rows postsynaptic; None for none), weighted like the others by
         w_syn and the target's scale. The slow currents start again from zero; graded neurons keep releasing, so their
-        slow input is rebuilt from their present release along the new edges."""
+        slow input is rebuilt from their present release along the new edges. Every new slow edge depresses with its
+        neuron (brain.slow_full is reset)."""
         S = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if slow is None else sparse.csc_matrix(slow, dtype=np.float32)
         self.sptr, self.sidx, self._slow_counts = S.indptr, S.indices, S.data.astype(np.float32)
         self.stargets = np.unique(S.indices).astype(np.int64)
         self.slow_in = np.zeros(self.n, np.bool_)
         self.slow_in[self.stargets] = True
         self.slow_weights = (self._slow_counts * np.float32(self._w_syn) * self.scale[self.sidx]).astype(np.float32)
+        self.slow_full = np.zeros(len(self._slow_counts), np.bool_)
         self._tables_cache = None                        # whether the network is uniform depends on it
         self.s = np.zeros((self.trials, self.n), np.float32)
         self.pending_slow = np.zeros((self.trials, self.delay, self.n if len(self.slow_weights) else 0), np.float32)
@@ -566,7 +572,8 @@ class HybridBrain:
         return dict(
             a_vv=f32(lambda p: np.exp(-dt / p["tau_m"])),
             a_vx=f32(lambda p: _approach(TAU, p["tau_m"], dt)),
-            a_vs=f32(lambda p: _approach(self.tau_slow, p["tau_m"], dt)),
+            a_vs=f32(lambda p: _approach(p["tau_slow"] or self.tau_slow, p["tau_m"], dt)),
+            a_ss=f32(lambda p: np.exp(-dt / (p["tau_slow"] or self.tau_slow))),
             a_bias=f32(lambda p: (1 - np.exp(-dt / p["tau_m"])) * p["bias"]),
             a_va=f32(lambda p: _approach(p["adaptation_tau"], p["tau_m"], dt)),
             a_aa=f32(lambda p: np.exp(-dt / p["adaptation_tau"])), adapt=f32(lambda p: p["adaptation"]),
@@ -646,7 +653,7 @@ class HybridBrain:
             rec_pos[record] = np.arange(len(record))
         external_on = bool(self.external_input.any())      # else only graded neurons' targets can get release
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights, self.full_strength,
-                 self.sptr, self.sidx, self.slow_weights, self.stargets, self.slow_in, self.gptr, self.gidx, self.gap_mv,
+                 self.sptr, self.sidx, self.slow_weights, self.slow_full, self.stargets, self.slow_in, self.gptr, self.gidx, self.gap_mv,
                  self.fptr, self.fcomp, self.fast_mv, self.ftargets, self.fpending, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
                  k["a_xx"], k["a_ss"], k["theta"],
                  k["reset"], k["rfc"], k["graded"], k["depress"], k["recover"], k["uniform"],
@@ -669,7 +676,7 @@ class HybridBrain:
             g = [self.params[c] for c in self.cls[self.graded]]
             k.update(g_list=self.graded.astype(np.int64), g_gain=np.array([p["gain"] for p in g], np.float32),
                      g_at=np.array([p["release_at"] for p in g], np.float32), g_max=np.array([p["max_release"] for p in g], np.float32),
-                     uniform=self._uniform(), a_xx=np.float32(np.exp(-self.dt / TAU)), a_ss=np.float32(np.exp(-self.dt / self.tau_slow)))
+                     uniform=self._uniform(), a_xx=np.float32(np.exp(-self.dt / TAU)))
             self._tables_cache = k
         return self._tables_cache
 
