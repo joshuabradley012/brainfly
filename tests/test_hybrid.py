@@ -202,6 +202,31 @@ def test_presynaptic_inhibition_divides_flagged_synapses_by_the_inhibitors_low_p
     assert run(False, True)[0] == pytest.approx(plain[0], rel=1e-6)
 
 
+def test_presynaptic_components_sum_so_a_negative_one_can_give_the_inhibition_a_rising_phase():
+    """Two traces, the faster with a negative k of the same size per spike, make the inhibition's kernel a difference
+    of exponentials, starting from zero: a flagged spike right after the inhibitor's is barely divided, one at the
+    kernel's peak is divided by 1 + its height."""
+    tau_d, tau_r, k_d = 0.040, 0.015, 0.02
+    k_r = -k_d * tau_r / tau_d
+    def run(wait, components):
+        brain = small([(0, 1, 1.0)], 4, w_poi=100.0)
+        pre = np.repeat(np.arange(brain.n), np.diff(brain.ptr))
+        if components:
+            brain.set_presynaptic(fast=pre == 0, inhibitors=[3], tau=(tau_d, tau_r), k=(k_d, k_r))
+        brain.reset(0)
+        brain.advance(1, drive=[([3], 1 / DT)])
+        assert brain.advance(1)[0, 3] == 1
+        brain.advance(wait - 1)
+        brain.advance(1, drive=[([0], 1 / DT)])
+        assert brain.advance(1)[0, 0] == 1              # neuron 0 fires with the traces decayed `wait` steps
+        brain.advance(20)
+        return float(brain.x[0, 1])
+    for wait in (1, 235):                               # 0.1 ms, and about the kernel's peak (23.5 ms)
+        t = wait * DT
+        height = k_d / tau_d * np.exp(-t / tau_d) + k_r / tau_r * np.exp(-t / tau_r)
+        assert run(wait, True) / run(wait, False) == pytest.approx(1.0 / (1.0 + height), rel=1e-4)
+
+
 def test_slow_full_exempts_slow_synapses_from_depression():
     """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
     neuron without depression would, and an unflagged slow target depressed."""
