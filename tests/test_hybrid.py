@@ -247,6 +247,30 @@ def test_presynaptic_traces_can_start_at_a_resting_rate():
     assert np.allclose(brain.presynaptic_state, a0)
 
 
+def test_presynaptic_inhibition_can_lower_the_depletion_too():
+    """Under a constant presynaptic gain g, a depleting neuron's spike uses (1 - f) g of what is left rather than
+    (1 - f): its next spike, 50 ms later, carries 1 - (1 - left) exp(-0.05 / recovery) of full strength (times g), with
+    left = 1 - (1 - f) g; without `depleting`, left = f."""
+    f, recovery, k, a0 = 0.5, 0.2, 0.01, 100.0       # g = 1 / (1 + k a0) = 0.5, held by a trace that barely decays
+    g = 1.0 / (1.0 + k * a0)
+    def second_spike(depleting):
+        brain = small([(0, 1, 1.0)], 4, types={"c0": {"depression": f, "recovery": recovery}}, w_poi=100.0)
+        pre = np.repeat(np.arange(brain.n), np.diff(brain.ptr))
+        brain.set_presynaptic(fast=pre == 0, inhibitors=[3], tau=1e6, k=k, start=a0, depleting=[0] if depleting else [])
+        brain.reset(0)
+        brain.advance(1, drive=[([0], 1 / DT)])
+        assert brain.advance(1)[0, 0] == 1             # the first spike, at step 1
+        brain.advance(498)                              # its input has come and gone (5 ms current)
+        brain.advance(1, drive=[([0], 1 / DT)])
+        assert brain.advance(1)[0, 0] == 1             # the second, 500 steps (50 ms) after the first
+        brain.advance(20)
+        return float(brain.x[0, 1])
+    decay = np.exp(-0.05 / recovery)
+    with_dep, without = second_spike(True), second_spike(False)
+    expected = (1 - (1 - (1 - (1 - f) * g)) * decay) / (1 - (1 - f) * decay)
+    assert with_dep / without == pytest.approx(expected, rel=1e-4)
+
+
 def test_slow_full_exempts_slow_synapses_from_depression():
     """A depressing neuron's second spike reaches a slow target flagged in slow_full at full strength, exactly as a
     neuron without depression would, and an unflagged slow target depressed."""
