@@ -1,0 +1,200 @@
+{
+ "question": "Analysis of a saved recording, not a simulation: do the model's projection neurons accommodate during an odor as\nflies' do, or does their decline explain the Kenyon cells'?\n\nmbon11_burst_check.py: as in the learning test, the Kenyon cells fire from 0.5 to 1 s at 0.18 (alpha/beta), 0.25\n(alpha'/beta') and 0.05 (gamma) of their rate in the first 0.3 s, and silencing APL barely changes that (0.24, 0.35 and\n0.09), so most of the decline isn't APL's; with the slow Kenyon cell current (learning_pilot12.py) it is what still holds\nMBON11's plateau at 51 spikes/s against flies' 95-100. Flies' projection neurons accommodate too: averaged over 843\nresponses they peak at about 88 spikes/s 140-150 ms after the valve and keep 0.48 of the peak at 500 ms, strong responses\n0.43-0.48 (Bhandawat et al. 2007, Fig. 1b; research_notes/Rung 9 learning data/pn_ln_dynamics.md).\nInput: olfaction_movie.py's recording (the current model's antennal lobe, one trial of 8 flies per odor, the projection\nneurons' rate per glomerulus in 10 ms bins), in Bhandawat et al.'s 50 ms bins.\nMeasured, for each odor's responding glomeruli (more than 20 spikes/s above rest at their peak in the first 0.4 s): the\nrate at 0.5 s over the peak, glomerulus by glomerulus and for their mean, and when they peak.\n\n    python experiments/pn_accommodation_check.py      (writes experiments/pn_accommodation_check.json; seconds)\n",
+ "flies": {
+  "peak_hz": 88,
+  "peak_s": [
+   0.14,
+   0.15
+  ],
+  "at_500ms_over_peak": 0.48,
+  "strong_at_500ms_over_peak": [
+   0.43,
+   0.48
+  ]
+ },
+ "odors": {
+  "3-octanol": {
+   "responding": 16,
+   "at_500ms_over_peak": {
+    "median": 0.471,
+    "range": [
+     0.3,
+     0.6
+    ]
+   },
+   "peak_s_median": 0.075,
+   "mean_of_responding": {
+    "peak_hz": 133.0,
+    "at_500ms_hz": 65.8,
+    "at_900ms_hz": 55.1,
+    "at_500ms_over_peak": 0.495
+   },
+   "glomeruli": {
+    "D": {
+     "rest": 5.1,
+     "peak": 209.6,
+     "at_500ms": 92.5
+    },
+    "DA4m": {
+     "rest": 3.9,
+     "peak": 97.5,
+     "at_500ms": 47.5
+    },
+    "DC1": {
+     "rest": 3.9,
+     "peak": 81.2,
+     "at_500ms": 48.8
+    },
+    "DC2": {
+     "rest": 5.1,
+     "peak": 213.7,
+     "at_500ms": 83.7
+    },
+    "DL4": {
+     "rest": 5.2,
+     "peak": 47.5,
+     "at_500ms": 23.7
+    },
+    "DM2": {
+     "rest": 3.2,
+     "peak": 156.9,
+     "at_500ms": 75.6
+    },
+    "DM3": {
+     "rest": 5.3,
+     "peak": 78.8,
+     "at_500ms": 40.0
+    },
+    "DM6": {
+     "rest": 6.3,
+     "peak": 211.4,
+     "at_500ms": 111.8
+    },
+    "VA4": {
+     "rest": 5.4,
+     "peak": 123.8,
+     "at_500ms": 47.5
+    },
+    "VC1": {
+     "rest": 3.3,
+     "peak": 52.5,
+     "at_500ms": 28.8
+    },
+    "VC3": {
+     "rest": 3.9,
+     "peak": 103.6,
+     "at_500ms": 31.1
+    },
+    "VM2": {
+     "rest": 3.6,
+     "peak": 222.5,
+     "at_500ms": 100.8
+    },
+    "VM3": {
+     "rest": 5.5,
+     "peak": 31.9,
+     "at_500ms": 14.4
+    },
+    "VM5d": {
+     "rest": 2.7,
+     "peak": 285.2,
+     "at_500ms": 150.4
+    },
+    "VM5v": {
+     "rest": 6.3,
+     "peak": 255.0,
+     "at_500ms": 117.0
+    },
+    "VM7v": {
+     "rest": 4.0,
+     "peak": 95.8,
+     "at_500ms": 40.0
+    }
+   }
+  },
+  "4-methylcyclohexanol": {
+   "responding": 13,
+   "at_500ms_over_peak": {
+    "median": 0.54,
+    "range": [
+     0.244,
+     0.816
+    ]
+   },
+   "peak_s_median": 0.175,
+   "mean_of_responding": {
+    "peak_hz": 63.7,
+    "at_500ms_hz": 36.6,
+    "at_900ms_hz": 23.7,
+    "at_500ms_over_peak": 0.575
+   },
+   "glomeruli": {
+    "D": {
+     "rest": 3.5,
+     "peak": 172.1,
+     "at_500ms": 70.0
+    },
+    "DA4l": {
+     "rest": 4.6,
+     "peak": 71.3,
+     "at_500ms": 33.7
+    },
+    "DA4m": {
+     "rest": 3.7,
+     "peak": 71.3,
+     "at_500ms": 30.0
+    },
+    "DL1": {
+     "rest": 3.4,
+     "peak": 26.3,
+     "at_500ms": 20.6
+    },
+    "DL4": {
+     "rest": 4.8,
+     "peak": 62.5,
+     "at_500ms": 33.7
+    },
+    "DM2": {
+     "rest": 3.0,
+     "peak": 73.1,
+     "at_500ms": 43.8
+    },
+    "DM6": {
+     "rest": 4.4,
+     "peak": 41.8,
+     "at_500ms": 26.4
+    },
+    "VA3": {
+     "rest": 6.1,
+     "peak": 210.6,
+     "at_500ms": 69.4
+    },
+    "VC1": {
+     "rest": 4.4,
+     "peak": 63.8,
+     "at_500ms": 33.8
+    },
+    "VC2": {
+     "rest": 5.4,
+     "peak": 62.5,
+     "at_500ms": 46.2
+    },
+    "VC3": {
+     "rest": 4.1,
+     "peak": 29.3,
+     "at_500ms": 7.1
+    },
+    "VM2": {
+     "rest": 5.4,
+     "peak": 50.0,
+     "at_500ms": 40.8
+    },
+    "VM5d": {
+     "rest": 2.7,
+     "peak": 35.8,
+     "at_500ms": 20.4
+    }
+   }
+  }
+ }
+}
