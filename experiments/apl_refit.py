@@ -34,6 +34,22 @@ odor_apl_conductance2_check.py's protocol, its seeds and its input (DoOR's, with
 here gives 305 and 91 cells, where kc_epsp_check.py (the learning pilots' seeds, receptor_fills.RECOMMENDED) gave 299
 and 41.
 
+Correction (2026-10-11, after a review):
+- This ran odor_apl_conductance2_check.py's protocol on DoOR's input, as that check did. Rung 9's learning test runs on
+  receptor_fills.RECOMMENDED, where the corrected input moved APL's ratio toward flies' (0.28 to 0.31), not away (DoOR:
+  0.53 to 0.36). There, silencing APL at drive 1 already raised 4-methylcyclohexanol's spikes only 2.01-fold, so drive
+  0.5 likely falls under the rule's 2. apl_refit2.py makes the choice on RECOMMENDED.
+- Drive 0.5 is the grid's lowest, so it is the grid's best point, not a located optimum. apl_refit2.py adds 0.25.
+- "Runs odor_apl_conductance2_check.py's protocol, its seeds and its input": kc_epsp_check.py ran the same protocol
+  (odor_apl_conductance_check.trial and condition, 2 seeds of 8 flies). The seeds and the input differ, and the input
+  also explains APL's ratio there (0.31 against 0.36 here).
+- The first run crashed before measuring anything: mb_calibration6.correct set the Kenyon cells' membrane on a type
+  set ("kenyon_cells") that only mb_calibration3.install had defined. correct() now defines it (commit 1acaf7b), and
+  this is the second run.
+- The account of what was decided when: kc_epsp_check.py's rule, written before its run, kept APL, since its silencing
+  effect stayed within 2-3. This refit, and gamma_gap_refit.py, were decided after learning_pilot16.py's result, when a
+  review listed the fits made with the strong input.
+
     python experiments/apl_refit.py      (writes experiments/apl_refit.json)
 """
 from __future__ import annotations

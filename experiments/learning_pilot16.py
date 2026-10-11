@@ -37,8 +37,9 @@ Correction (2026-10-11, after a review):
   drops in 3-octanol's charge that the fitted rule gives when 4-methylcyclohexanol is paired, not the shares of
   3-octanol's charge its cells carry (rung9_learning.py keeps the two apart).
 - "Too little Kenyon cell drive overall" rests on fits made with the input a third too strong: the gamma cells' +11
-  mV gap (gamma_gap_refit.py has since kept it on the corrected input), the Kenyon cell-to-APL x 10, and APL's
-  conductance design. The last two haven't been refitted.
+  mV gap (gamma_gap_refit.py has since kept it on the corrected input), the Kenyon cells' drive onto APL (MaleCNS's
+  weight; mb_calibration.py's x 10 is replaced by mb_calibration4.py), and APL's conductance design. apl_refit.py and
+  apl_refit2.py have since fitted APL's drive again.
 
     python experiments/learning_pilot16.py      (writes experiments/learning_pilot16.json)
 """

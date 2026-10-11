@@ -29,7 +29,7 @@ def apply(o) -> dict:
     out["correction"] = mb_calibration6.correct(o)
     rev = mb_calibration4.install(o, KC_APL_DRIVE, mb_calibration4.APL_KC_EFFECT, mb_calibration4.REVERSAL_MV,
                                   o.brain.weights.copy(), mb_calibration4.TAU_S)
-    out.update({"kc_apl_drive": KC_APL_DRIVE, "apl_kc_effect": mb_calibration4.APL_KC_EFFECT,
+    out.update({"kc_apl_scale": KC_APL_DRIVE, "kc_apl_drive": KC_APL_DRIVE, "apl_kc_effect": mb_calibration4.APL_KC_EFFECT,
                 "apl_kc_reversal_mv_from_rest": mb_calibration4.REVERSAL_MV, "apl_kc_reversal_mv_by_type": rev,
                 "apl_kc_tau_s": mb_calibration4.TAU_S, "graded_apl": "mb_calibration7.py"})
     return out

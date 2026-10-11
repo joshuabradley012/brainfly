@@ -56,6 +56,13 @@ synapse come from the same flash. kc_flash_check.py's 5% of the gamma cells, one
   cell types (mbon11_kc_activity.md section 2.2). At 3% the charge per spike would be 0.09 pC, about 220 pC onto MBON11_R;
   at 2.5%, about 265 pC (flies 245-250).
 
+Correction (2026-10-11, after a review): the densities quoted at the top are gamma_gap_refit.py's, measured with APL at
+mb_calibration6.py's drive, before apl_refit.py halved it. Flies' values for them are mbon11_kc_activity.md's derived
+estimates for Hige et al.'s stimulus (alpha/beta 4-8%, alpha'/beta' 11-30%, gamma 2-6%; together about 7.4%, below
+imaging's 12%), not single-cell measurements. On this check's own model (mb_calibration7.py), by the same criterion,
+the classes that reach MBON11 respond more: alpha/beta s, m and c 9.5%, above the derived 4-8%, alpha'/beta' 19.6%
+and gamma-main and gamma-s 3.5%.
+
     python experiments/mbon11_budget_check.py      (writes experiments/mbon11_budget_check.json)
 """
 from __future__ import annotations

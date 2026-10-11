@@ -30,6 +30,17 @@ So halving APL's drive raises 3-octanol's Kenyon cells and MBON11's response by 
 refitted around it, rung 9 fails where it always has: pairing 4-methylcyclohexanol takes 5% of 3-octanol's charge, as
 the rule fits it (flies' response falls 38%).
 
+Correction (2026-10-11, after a review):
+- What was decided when: kc_epsp_check.py's rule had kept APL, since its silencing effect stayed within 2-3. After
+  learning_pilot16.py failed, a review listed the fits made with the strong input, and the gamma gap and APL were
+  fitted again by their original rules. apl_refit.py's rule ran on DoOR's input, not on the receptor_fills.RECOMMENDED
+  input this test runs on (apl_refit2.py makes the choice on it).
+- The JSON's mb_calibration record gives "kc_apl_scale": 10.0, from mb_calibration.apply; the drive in force is
+  mb_calibration7.py's 0.5 ("kc_apl_drive").
+- "Fails where it always has" overstates. Learning pilots 9 and 10 passed all four marks, narrowly, on APLs later found
+  unlike flies', and learning pilot 15 (set C Kenyon cells) passed the reciprocal while failing the unpaired. It fails
+  where it has since learning pilot 12: 3-octanol's spikes fall 4.7% (its charge 5.1%; flies' spikes 38%).
+
     python experiments/learning_pilot17.py      (writes experiments/learning_pilot17.json)
 """
 from __future__ import annotations

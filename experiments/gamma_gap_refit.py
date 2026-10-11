@@ -26,6 +26,22 @@ corrected input gives the classes flies' densities:
 So the corrected model's Kenyon cells answer 3-octanol as densely as flies' do, class by class, and the gaps that remain
 are 4-methylcyclohexanol's few cells and MBON11's small charge.
 
+Correction (2026-10-11, after a review):
+- "Only the input has changed" is too narrow. This model differs from odor_probe48.py's in its antennal lobe
+  (odor_probe60.py's, not odor_probe44.py's), APL (mb_calibration4.py's conductance, not a current), odor input
+  (receptor_fills.RECOMMENDED, not DoOR's), rest fit (kc_rest.fit) and input size. For today's antennal lobe at 1.90 mV
+  with the old APL, odor_probe60.json gives alpha/beta 11.9%, alpha'/beta' 21.0% and gamma 8.8% to 3-octanol (DoOR),
+  a better comparison than odor_probe48.py's 9.1 and 6.2%. The seeds follow odor_probe48.py's formula but not its seed
+  for each gap. None of this changes the rule's choice (+11 mV, 1.0 point from 3.5% against 2.4 and 6.3).
+- At +2.5 and +6.5 mV APL's reversal stayed where mb_calibration4.py put it for the 32.5 mV gap, 28.5 and 24.5 mV below
+  the gamma cells' rest instead of 20. So those conditions inhibited the gamma cells 1.43 and 1.23 times as much as
+  designed, and their 9.8 and 5.9% are low. Moving the reversal would raise them, which only strengthens +11.
+- "Flies' densities": the 6, 20 and 3.5% are mbon11_kc_activity.md's derived estimates for Hige et al.'s stimulus
+  (ranges 4-8, 11-30 and 2-6%; no class-resolved single-cell data exist for it). Together they give about 7.4%, which
+  the model matches, below imaging's 12% (Hige et al.'s union of trials). At Turner et al.'s own stimulus flies give
+  alpha/beta 4.1%, alpha'/beta' 10.7% and gamma 2.3%. These densities were measured before apl_refit.py changed
+  APL.
+
     python experiments/gamma_gap_refit.py      (writes experiments/gamma_gap_refit.json)
 """
 from __future__ import annotations
