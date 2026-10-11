@@ -7,7 +7,9 @@ Left: experiments/kc_flash_check.py, the gamma Kenyon cells at the model's 20 ms
 flashed cell per flash: the current into MBON11 through the model's 5 ms synapses and through the slow current (rising
 with 40 ms, decaying with 280 ms), each as a share of its first peak, against Yamada et al. 2024's flash EPSC as
 research_notes/Rung 9 learning data/mbon11_kc_activity.md 2.1 measures it (peak 102-118 ms after the flash, 0.32-0.39 of
-it left at 400 ms, the second flash 0.38-0.68 of the first). Middle: when the flashed cells fire, the share of the first
+it left at 400 ms, the second flash's own EPSC 0.38-0.68 of the first, measured as Yamada et al. measured it, with the
+first EPSC subtracted: above what is left of the first, its 280 ms decay continued, for the slow current, and from zero
+for the fast one, which leaves nothing at 400 ms). Middle: when the flashed cells fire, the share of the first
 flash's spikes by each time after it, at four membrane time constants (three spikes per cell). Right:
 experiments/mbon11_slow_epsc.py, 3-octanol as in the learning test: the current the Kenyon cells deliver to MBON11 through
 each, against flies' odor EPSC (Hige et al. 2015, Fig. 3; mbon11_input.md 2.5: about 380-430 pA at its peak, about 170 pA
@@ -77,7 +79,7 @@ def figure(theme: str, flash: dict, epsc: dict) -> str:
            text(24, 50, "Flashed, the model's Kenyon cells fire within about 50 ms whatever their membrane time constant, so its 5 ms "
                 "synapses deliver a flash's charge in about 10 ms,", "note"),
            text(24, 68, f"peaking at {one['current_fast']['peak']:,.0f} pA where flies' EPSC reaches 80-117 pA over about 250 ms. Through "
-                "a slow current the same input gives flies' flash EPSC, and from the model's", "note"),
+                "a slow current the same input gives an EPSC close to flies', and from the model's", "note"),
            text(24, 86, f"Kenyon cells and depression as they are, their odor EPSC's peak ({oct_['slow']['peak_pa']:.0f} pA; flies about "
                 f"400) and about half its plateau ({oct_['slow']['pa_0.6_to_1s']:.0f} pA; flies about 170).", "note")]
     y0, ph = 150, 280
@@ -97,11 +99,16 @@ def figure(theme: str, flash: dict, epsc: dict) -> str:
     out += bar(c, 0.11, 0.97, 1.0, tx, ty, "flies: peak 102-118 ms after the flash")
     out.append(f'<line x1="{tx(0.102):.1f}" y1="{ty(1.0):.1f}" x2="{tx(0.118):.1f}" y2="{ty(1.0):.1f}" stroke="{c["ink"]}" stroke-width="3"/>')
     out += bar(c, 0.395, 0.32, 0.39, tx, ty, "flies: 0.32-0.39 of the peak left at 400 ms")
-    tail = s["left_at_400ms"]
-    out += bar(c, 0.51, tail + 0.38, tail + 0.68, tx, ty, "flies: the second flash 0.38-0.68 of the first (above the current left)")
+    x2 = 0.4 + s["t_peak_s"]                            # the slow current's second peak; the first's decay continued to it
+    left = s["left_at_400ms"] * np.exp(-(x2 - 0.395) / 0.280)
+    out += bar(c, x2 + 0.01, left + 0.38, left + 0.68, tx, ty,
+               "flies: the second flash's own EPSC 0.38-0.68 of the first, here above what is left of the slow current's first")
+    fast_bar = bar(c, 0.425, 0.38, 0.68, tx, ty, "flies: the second flash's own EPSC 0.38-0.68 of the first, from zero for the fast current")
+    out += [b_.replace(c["ink"], c["red"]) for b_ in fast_bar]
     out.append(text(80, y0 + ph + 52, "One spike per flashed cell, 20 ms membranes. Bars: flies'", "tiny"))
-    out.append(text(80, y0 + ph + 66, "peak (102-118 ms), share left at 400 ms (0.32-0.39), second flash", "tiny"))
-    out.append(text(80, y0 + ph + 80, f"(0.38-0.68). First peaks: {one['current_fast']['peak']:,.0f} pA (the model), {s['peak']:.0f} pA (slow; flies 80-117).", "tiny"))
+    out.append(text(80, y0 + ph + 66, "peak (102-118 ms), share left at 400 ms (0.32-0.39), the second flash's", "tiny"))
+    out.append(text(80, y0 + ph + 80, "own EPSC (0.38-0.68; red for the fast current, read from zero).", "tiny"))
+    out.append(text(80, y0 + ph + 94, f"First peaks: {one['current_fast']['peak']:,.0f} pA (the model), {s['peak']:.0f} pA (slow; flies 80-117).", "tiny"))
     # middle: when the flashed cells fire
     o, tx, ty = axes(c, 470, y0, 260, ph, (0.0, 0.15, (0, 0.05, 0.1, 0.15)), (0.0, 1.0, (0, 0.5, 1.0)),
                      "time from the flash (s)", "", "When the flashed cells fire: share of their spikes")
@@ -158,7 +165,7 @@ def figure(theme: str, flash: dict, epsc: dict) -> str:
     .tick {{ font-size: 11px; fill: {c["muted"]}; }}
     .tiny {{ font-size: 10px; fill: {c["muted"]}; }}
     """
-    title = "In the model a flash of Kenyon cells gives MBON11 a current 30 times faster than flies'; a slow current gives flies' flash and odor EPSCs"
+    title = "In the model a flash of Kenyon cells gives MBON11 a current 30 times faster than flies'; a slow current gives an EPSC close to flies' flash EPSC, and their odor EPSC's peak"
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")

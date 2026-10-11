@@ -54,6 +54,7 @@ Correction (2026-10-11, after an independent review):
   therefore come from the rest, not the integration. kc_setc_check2.py runs these conditions again with the rest held.
 - "Twice flies' sustained drive" holds at 50 ms (about 9.2 mV per connection at 115 spikes/s, 2.1 times flies' 4.4).
   At 100 ms it is about 16.7 mV, 3.8 times.
+- Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors.
 
     python experiments/kc_membrane_check.py      (writes experiments/kc_membrane_check.json)
 """

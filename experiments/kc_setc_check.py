@@ -59,6 +59,8 @@ Correction (2026-10-11, after an independent review):
 - "1,162 against 2,766" are the Kenyon cells' total spikes per fly (odor_apl_conductance_check.condition's kc_spikes).
   Per answering cell they are 2.7 against 4.4.
 - Set D's shares are 71.5 and 76.5% of the Kenyon cells, not 71 and 76%.
+- "About twice the sustained drive" (from kc_membrane_check.py) holds at 50 ms. At 100 ms it is nearly four times.
+- Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors.
 
     python experiments/kc_setc_check.py      (writes experiments/kc_setc_check.json)
 """

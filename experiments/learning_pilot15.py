@@ -12,6 +12,27 @@ rung 9's standing rule allows a second attempt (the input the evidence supports,
 measurements before any learning result, fresh seeds); if not, set C stays a candidate. Either way pilot 13's result
 is corrected by this one in the README.
 
+Ran (2026-10-11, 15 minutes): with the rest held, set C passes three marks of four and fails the unpaired. The cells
+rest within 0.45 mV of their targets, the alpha'/beta' cells firing 0.010 spikes/s at rest (pilot 13 0.12).
+Before pairing:
+- 265 Kenyon cells answer 3-octanol and 57 4-methylcyclohexanol, 0.22 as many (pilot 13 479 and 129).
+- MBON11 gains 28.1 and 4.4 spikes (pilot 13 45.8 and 9.5; learning pilot 12 70.8 and 11.4; flies 118 and 110). It
+  peaks at 55 spikes/s to 3-octanol and fires 23 from 0.5 to 1 s.
+- Its slow current peaks at 126 pA and carries 64 pC (flies about 400 and 245-250).
+  PAIRED      passes: 3-octanol's spikes fall 93.9%, 35.6 points more than 4-methylcyclohexanol's.
+  UNPAIRED    fails: 4-methylcyclohexanol's spikes fall 58.3% and its charge 55.4% (band 10-45%; flies 27%).
+  RECIPROCAL  passes: 4-methylcyclohexanol paired cuts its own 97.0% and 3-octanol's 25.1% (band 15-50%; flies 38%).
+  BACKWARD    passes: the paired odor's charge changes 0.4% and 6.5%.
+So pilot 13's "one mark of four" came from its cells resting nearer threshold. Held, set C fails only the unpaired,
+the mark the crux predicts. 4-methylcyclohexanol's cells sit mostly inside 3-octanol's (0.61 of them answer
+3-octanol in kc_setc_check2.py; flies 0.33), so pairing 3-octanol takes 55% of 4-methylcyclohexanol's charge, twice
+flies' 27%. Pairing 4-methylcyclohexanol now takes 25% of 3-octanol's (learning pilot 12 about 10%), enough for the
+reciprocal. The unpaired drop rests on a small response (4.4 spikes before pairing, 1.8 after), but the charge, which
+has no such noise, fails too.
+Set C also leaves MBON11 answering weakly: a quarter of flies' spikes to 3-octanol and a twenty-fifth to
+4-methylcyclohexanol, its gamma Kenyon cells answering a sixth as much as now. By the rule above there is no second
+attempt. Set C stays a candidate, and the unpaired mark waits on 4-methylcyclohexanol's input.
+
     python experiments/learning_pilot15.py      (writes experiments/learning_pilot15.json)
 """
 from __future__ import annotations
