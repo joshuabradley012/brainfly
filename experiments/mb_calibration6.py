@@ -37,6 +37,8 @@ def correct(o) -> dict:
     at full strength, on a model mb_calibration4.apply has set; returns what was set."""
     out = {}
     b, m = o.brain, o.m
+    if "kenyon_cells" not in b.sets:                    # mb_calibration3.install names the set; correct may come first
+        b.sets = {**b.sets, "kenyon_cells": np.flatnonzero(m["kc"])}
     b.set_type("kenyon_cells", tau_m=KC_TAU_M)
     pre = np.repeat(np.arange(b.n), np.diff(b.ptr))
     w = b.weights.copy()
