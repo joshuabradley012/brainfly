@@ -14,6 +14,24 @@ Rung 9's marks reported as rung9_learning.py states them. If all four pass with 
 allows a second attempt (the input the evidence supports, its size fixed from measurements before any learning result,
 fresh seeds). If not, the failing marks say where the corrected model stands.
 
+Ran (2026-10-11, 15 minutes): the marks come out as learning pilot 12's did, the reciprocal further off, and MBON11
+answers more weakly. The cells' rest held (within 0.3 mV in each class).
+Before pairing:
+- 259 Kenyon cells answer 3-octanol and 38 4-methylcyclohexanol, 0.15 as many (learning pilot 12: 567 and 85).
+- MBON11 gains 27.0 and 3.3 spikes (learning pilot 12 70.8 and 11.4; flies 118 and 110). It peaks at 57 spikes/s to
+  3-octanol and fires 21.5 from 0.5 to 1 s.
+- Its slow current peaks at 131 pA and carries 63 pC (flies about 400 and 245-250).
+  PAIRED      passes: 3-octanol's spikes fall 93.7%, 56 points more than 4-methylcyclohexanol's.
+  UNPAIRED    passes: 4-methylcyclohexanol's spikes fall 37.7% and its charge 31.6% (band 10-45%; flies 27%).
+  RECIPROCAL  fails: 4-methylcyclohexanol paired removes its own response (104%, to just below rest) but cuts
+              3-octanol's only 4.2% (band 15-50%; flies 38%).
+  BACKWARD    passes: the paired odor's charge changes 0.0% and 0.4%.
+4-methylcyclohexanol's 38 cells carry 5% of 3-octanol's charge (learning pilot 12: 11.5%), so pairing it barely
+touches 3-octanol. By the rule there is no second attempt. With its input at the measured size, the model's
+4-methylcyclohexanol is weaker still. Its MBON11 answers 3-octanol at a quarter of flies' strength and
+4-methylcyclohexanol at a thirtieth. Rung 9's crux, 4-methylcyclohexanol's small Kenyon cell set, stands, and the
+corrected input adds a second gap: too little Kenyon cell drive overall.
+
     python experiments/learning_pilot16.py      (writes experiments/learning_pilot16.json)
 """
 from __future__ import annotations
