@@ -41,7 +41,12 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   drives most of its glomeruli at once and 657 of the fly's 4,064 Kenyon cells. 4-methylcyclohexanol, with the receptor
   input the evidence supports, drives two glomeruli strongly and a few weakly, and reaches 109 Kenyon cells, 50 of them
   shared. That gap is why rung 9's learning test keeps failing one way round: pairing 4-methylcyclohexanol reaches only
-  the few Kenyon cells the two odors share, so it can barely change MBON11's response to 3-octanol.
+  the few Kenyon cells the two odors share, so it can barely change MBON11's response to 3-octanol. Every other odor
+  reaches 8–17% of the model's Kenyon cells, near flies' 12%; this one, 2–3%. Even tripling its receptor input, past
+  what flies' receptor imaging allows, reaches only 7%, while adding the glomeruli that only flies' projection neuron
+  imaging shows reaches 5.7% with a fly-like overlap
+  ([`odor_mch_input_sensitivity.py`](experiments/odor_mch_input_sensitivity.py)). So the odor is probably broader in
+  flies' projection neurons than its receptor evidence says: the next question is where that breadth comes from.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/olfaction_movie-dark.svg">
@@ -1694,6 +1699,7 @@ a sign that the approach is broken."
 | `experiments/learning_pilot11.py` | Exploratory, not pre-registered: learning on the corrected, slow APL conductance (mb_calibration4.py) | Weighed input: the reciprocal fails (3-octanol 10.2%, band 15-50); with 3-octanol paired 4-methylcyclohexanol 38.5%; 87 against 562 Kenyon cells. DoOR: unpaired 56%. By the rule set before it ran, rung 9's second attempt isn't registered |
 | `experiments/orn_pn_recovery_fit.py` | Exploratory analysis: does a receptor synapse whose recovery speeds up with residual calcium fit flies' trains better than two fixed pools, and rest deeper while transmitting more in a burst? | No: refitted pools 0.0126, calcium-dependent recovery 0.0121 (brainfly's pools 0.0192); the latter fits the slow recovery after 7 Hz a little better, but every model transmits about 2.5 times as much in a 100 Hz burst as at rest, since flies' trains depress almost to nothing at 50 Hz |
 | `experiments/pn_toy2.py` | Exploratory analysis: the fitted synapses in pn_toy.py's PN | Deeper resting depression costs the response in every model: a DL5-like cell's drive falls from 21 to 15-17 mV but Rmax from 128 to 97-111 and the sustained share from 0.35 to 0.17-0.26 (flies 5-10 mV, 167, 0.44); DL5 at its measured rate stays weak (Rmax 69-95). Flies' odor drive must come partly from elsewhere |
+| `experiments/odor_mch_input_sensitivity.py` | Exploratory check, not a change to the model: how much stronger or broader would 4-methylcyclohexanol's receptor input have to be for flies' Kenyon cell density (about 12%)? | Strength alone can't: tripling the weighed input (summed drive 0.92 of 3-octanol's, twice flies' receptor-level 0.41-0.51) reaches 7.0% of Kenyon cells (3-octanol 14.7%), half of them shared with 3-octanol (flies 0.33). Adding the glomeruli inferred from flies' PN imaging reaches 5.7% with a fly-like overlap (0.28): flies' representation is probably broader at the PNs than the receptor evidence |
 | `experiments/odor_pn_reset_check.py` | Exploratory check: the PNs' reset after a spike raised from rung 4's 5 mV below rest to rest and 3-6 mV above (threshold 10) | Reset at rest (Jeanne & Wilson's fitted PN) raises Rmax to 145-155 in DL5, VM7d and DM1 (flies 144-167); higher resets overshoot; sigma, the weakest input and 4-methylcyclohexanol barely move |
 | `experiments/odor_probe52.py` | Exploratory, not pre-registered: odor_probe51.py rebuilt with the PNs resetting to rest | Strong input answered as flies' (step Rmax 172-182, Olsen protocol 145-156) with the two pools' time course; Kenyon cells 2.4-13.8%, MBON11 24 spikes to 3-octanol; 4-methylcyclohexanol 0.52 at the PNs, 0.26 at the Kenyon cells. The base model from here on |
 | `experiments/odor_probe53.py` | Exploratory, not pre-registered: 4-methylcyclohexanol's untested receptors given the input Badel et al.'s PN responses imply (labelled stand-in) | Flies' breadth (15 glomeruli over 10 spikes/s, 3-octanol 17) but its PNs sum 0.58 of 3-octanol's and its Kenyon cells 0.26 (flies 0.85-0.98, 0.73-0.92) |

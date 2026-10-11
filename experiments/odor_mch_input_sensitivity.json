@@ -1,0 +1,142 @@
+{
+ "question": "Exploratory check, not pre-registered and not a change to the model: how much stronger or broader would\n4-methylcyclohexanol's receptor input have to be for its Kenyon cells to answer as densely as flies' do?\n\nEvery other odor of the learning pilots reaches 8-17% of the model's Kenyon cells (learning_pilot9.py, learning_pilot11.py;\nflies about 12% for 3-octanol and 4-methylcyclohexanol alike, Hige et al. 2015), but 4-methylcyclohexanol with the\nreceptor input the evidence supports (receptor_fills.RECOMMENDED: VA3 0.70, D 0.21, the rest 0.10 or less; summed 0.38 of\n3-octanol's) reaches only 2-3%, and that is what keeps rung 9's reciprocal failing. The Kenyon cell stage matches flies'\ndensity for five odors, so the input is worth asking about; this check sizes the question and doesn't answer it.\nModel: odor_probe60.py's (its cache) with mb_calibration4.py's mushroom body, the Kenyon cells' rest as the learning\npilots set it. 3-octanol with RECOMMENDED; 4-methylcyclohexanol with RECOMMENDED scaled 1, 1.5, 2 and 3 (each glomerulus\ncapped at DoOR's maximum, 1), with RECOMMENDED plus receptor_fills.PN_INFERRED (the glomeruli inferred only from flies'\nPN imaging, some of which whole-cell recordings find silent), and with DoOR's own values. odor_apl_check.trial's protocol\n(a 1 s odor after 1.5 s, 2 seeds of 8 flies, APL working).\nMeasured: the Kenyon cells answering (more than half a spike over the odor's first second, on average) and the share of\n4-methylcyclohexanol's that answer 3-octanol and of 3-octanol's that answer 4-methylcyclohexanol (flies 0.33 and 0.30),\n4-methylcyclohexanol's summed receptor drive against 3-octanol's (flies' receptor imaging 0.41-0.51).\n\n    python experiments/odor_mch_input_sensitivity.py      (writes experiments/odor_mch_input_sensitivity.json)\n",
+ "mb_calibration": {
+  "classes": {
+   "alpha/beta": {
+    "pn_scale": 1.657,
+    "apl_scale": 1.125,
+    "cells": 1810
+   },
+   "alpha'/beta'": {
+    "pn_scale": 2.523,
+    "apl_scale": 0.831,
+    "cells": 695
+   },
+   "gamma": {
+    "pn_scale": 2.291,
+    "apl_scale": 0.963,
+    "cells": 1557
+   },
+   "other": {
+    "pn_scale": 0.297,
+    "apl_scale": 0.741,
+    "cells": 2
+   }
+  },
+  "kc_apl_scale": 1.0,
+  "apl_release_at_mv": 3.5,
+  "apl_max_hz": 38.29,
+  "kc_gaps_mv": {
+   "KCab": 21.5,
+   "KCa'b'": 16.0,
+   "KCg": 32.5
+  },
+  "apl_kc_effect": 2.2222222222222223,
+  "apl_kc_reversal_mv_from_rest": -20.0,
+  "apl_kc_reversal_mv_by_type": {
+   "KC": -25.5,
+   "KCa'b'-ap1": -20.0,
+   "KCa'b'-ap2": -20.0,
+   "KCa'b'-m": -20.0,
+   "KCab-c": -25.5,
+   "KCab-m": -25.5,
+   "KCab-p": -25.5,
+   "KCab-s": -25.5,
+   "KCg": -36.5,
+   "KCg-d": -36.5,
+   "KCg-m": -36.5,
+   "KCg-s1": -36.5,
+   "KCg-s2": -36.5,
+   "KCg-s3": -36.5,
+   "KCg-s4": -36.5
+  },
+  "apl_kc_tau_s": 0.3,
+  "ceiling_mv": -11.0,
+  "graded_apl": "mb_calibration4.py"
+ },
+ "conditions": {
+  "RECOMMENDED x1": {
+   "kcs_answering": 109,
+   "share_of_kcs": 0.0268,
+   "summed_drive_over_3_octanol": 0.374,
+   "share_answering_both": {
+    "4-methylcyclohexanol": 0.505,
+    "3-octanol": 0.092
+   }
+  },
+  "RECOMMENDED x1.5": {
+   "kcs_answering": 156,
+   "share_of_kcs": 0.0384,
+   "summed_drive_over_3_octanol": 0.552,
+   "share_answering_both": {
+    "4-methylcyclohexanol": 0.506,
+    "3-octanol": 0.132
+   }
+  },
+  "RECOMMENDED x2": {
+   "kcs_answering": 202,
+   "share_of_kcs": 0.0497,
+   "summed_drive_over_3_octanol": 0.673,
+   "share_answering_both": {
+    "4-methylcyclohexanol": 0.485,
+    "3-octanol": 0.164
+   }
+  },
+  "RECOMMENDED x3": {
+   "kcs_answering": 285,
+   "share_of_kcs": 0.0701,
+   "summed_drive_over_3_octanol": 0.915,
+   "share_answering_both": {
+    "4-methylcyclohexanol": 0.491,
+    "3-octanol": 0.235
+   }
+  },
+  "RECOMMENDED plus PN-inferred": {
+   "kcs_answering": 233,
+   "share_of_kcs": 0.0573,
+   "summed_drive_over_3_octanol": 0.682,
+   "share_answering_both": {
+    "4-methylcyclohexanol": 0.279,
+    "3-octanol": 0.109
+   }
+  },
+  "DoOR": {
+   "kcs_answering": 269,
+   "share_of_kcs": 0.0662,
+   "summed_drive_over_3_octanol": 0.536,
+   "share_answering_both": {
+    "4-methylcyclohexanol": 0.465,
+    "3-octanol": 0.209
+   }
+  }
+ },
+ "kc_rest": {
+  "gap_mv": {
+   "KC": 21.33,
+   "KCa'b'-ap1": 16.01,
+   "KCa'b'-ap2": 16.02,
+   "KCa'b'-m": 16.06,
+   "KCab-c": 21.48,
+   "KCab-m": 21.51,
+   "KCab-p": 21.49,
+   "KCab-s": 21.55,
+   "KCg": 32.22,
+   "KCg-d": 32.46,
+   "KCg-m": 32.38,
+   "KCg-s1": 32.43,
+   "KCg-s2": 32.64,
+   "KCg-s3": 32.33,
+   "KCg-s4": 32.34
+  },
+  "rest_hz_by_class": {
+   "alpha/beta": 0.002,
+   "alpha'/beta'": 0.0036,
+   "gamma": 0.0
+  }
+ },
+ "3-octanol": {
+  "kcs_answering": 597,
+  "summed_drive": 5.32
+ },
+ "seconds": 169
+}
