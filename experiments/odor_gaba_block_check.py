@@ -15,7 +15,9 @@ targets: every GABAergic synapse (fast and slow) onto the antennal lobe's PNs an
 inhibition off; the same with the glutamatergic synapses onto them removed too (picrotoxin also blocks the
 glutamate-gated chloride channels the glutamatergic LNs act through; Liu & Wilson 2013); and every receptor neuron
 silenced (as odor_resting_drive_check.py, for the resting drive by glomerulus with inhibition intact; flies about 7-10 mV
-for most glomeruli by the note's section 1.6, Gouwens & Wilson's 5-10 mV over all).
+for most glomeruli by the note's section 1.6, Gouwens & Wilson's 5-10 mV over all); and (added 2026-10-11) the GABA block
+split into its parts: the GABAergic synapses removed with the presynaptic inhibition kept, and the presynaptic inhibition
+off alone.
 Measured: the cholinergic uniglomerular PNs' mean membrane potential and rate, over all and by glomerulus (DM6, VM2 and
 VM7, Nagel et al.'s, and others), and the GABAergic and glutamatergic LNs' rates; and (added 2026-10-11) the PNs' free
 membrane potential, where the membrane would sit without its own spikes: (a_bias + tonic + a_vx x + a_vs s) / (1 - a_vv)
@@ -43,6 +45,15 @@ spikes), blocking GABA raises the PNs 5.2 mV in DM6, VM2 and VM7 (4.3-6.1 each),
 LNs' synapses (DM4 2.5, DL5 3.3, DM1 3.6; 4.3 over all). So this model disinhibits at rest as flies' do without any tonic
 presynaptic inhibition (odor_probe57.py: adding a divisor of 2 makes it 13.2). By the free potential, silencing every
 receptor neuron drops the PNs 28.4 mV in those glomeruli and 26.1 over all.
+
+Checked afterwards (2), 2026-10-11, with the block split into its parts (same seeds): "all of it from the LNs' synapses"
+and "without any tonic presynaptic inhibition" are wrong. Turning off the presynaptic inhibition alone raises the PNs'
+free potential 2.9 mV in DM6, VM2 and VM7; removing the GABAergic synapses alone lowers it 2.3 mV (the LNs, freed from each
+other's inhibition, fire more and drive the presynaptic inhibition harder); both together give the 5.2. The model does
+have presynaptic inhibition at rest: its offset sits at the LNs' mean resting rate, so their fluctuations above it divide
+the receptor synapses by about 1.18 on average (their resting strength 0.85; odor_probe42.rest_check), and half the
+disinhibition comes from removing that. With that division gone (odor_probe59.py's steeper inhibition, resting strength
+0.99) the block raises the PNs only 0.9 mV.
 
     python experiments/odor_gaba_block_check.py      (writes experiments/odor_gaba_block_check.json)
 """
@@ -73,8 +84,9 @@ FLY_EFFICACY = {"DM4": 0.26, "DM6": (0.41, 0.56)}
 
 
 @contextlib.contextmanager
-def blocked(b, sources: np.ndarray, targets: np.ndarray):
-    """Synapses from `sources` onto `targets` (fast and slow) removed and the presynaptic inhibition off; put back after."""
+def blocked(b, sources: np.ndarray, targets: np.ndarray, presynaptic_off: bool = True):
+    """Synapses from `sources` onto `targets` (fast and slow) removed and (unless presynaptic_off is False) the
+    presynaptic inhibition off; put back after."""
     weights, slow, pre = b.weights, b.slow_weights, b._presynaptic
     src, tgt = np.zeros(b.n, bool), np.zeros(b.n, bool)
     src[sources], tgt[targets] = True, True
@@ -82,7 +94,8 @@ def blocked(b, sources: np.ndarray, targets: np.ndarray):
     scol = np.repeat(np.arange(b.n), np.diff(b.sptr))
     b.weights = np.where(src[col] & tgt[b.idx], np.float32(0), weights).astype(np.float32)
     b.slow_weights = np.where(src[scol] & tgt[b.sidx], np.float32(0), slow).astype(np.float32)
-    b._presynaptic = None
+    if presynaptic_off:
+        b._presynaptic = None
     try:
         yield int((src[col] & tgt[b.idx]).sum() + (src[scol] & tgt[b.sidx]).sum())
     finally:
@@ -128,12 +141,17 @@ def measure(o, rec, seed: int = SEED) -> dict:
            "resting_efficacy": {g: round(resting_efficacy(o, rec.spont[g]), 3) for g in SHOWN if g in rec.spont},
            "spontaneous_hz": {g: rec.spont[g] for g in SHOWN if g in rec.spont}, "fly_efficacy": FLY_EFFICACY, "conditions": {}}
     conditions = (("intact", None), ("GABA receptors blocked", gaba),
-                  ("GABA and glutamate-gated chloride blocked", np.concatenate([gaba, glu])), ("receptor neurons silenced", "orn"))
+                  ("GABA and glutamate-gated chloride blocked", np.concatenate([gaba, glu])), ("receptor neurons silenced", "orn"),
+                  ("postsynaptic GABA only", ("post", gaba)), ("presynaptic inhibition only", ("pre", None)))
     for c, (name, sources) in enumerate(conditions):
         if sources is None:
             block = contextlib.nullcontext(0)
         elif isinstance(sources, str):
             block = ec.silenced(rec, gloms)
+        elif isinstance(sources, tuple) and sources[0] == "post":
+            block = blocked(b, sources[1], targets, presynaptic_off=False)
+        elif isinstance(sources, tuple):
+            block = blocked(b, np.zeros(0, np.int64), targets)
         else:
             block = blocked(b, sources, targets)
         with block as removed, warm.settled(o, rec):

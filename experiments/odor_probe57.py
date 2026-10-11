@@ -51,6 +51,9 @@ checked afterwards), already inside flies' range. So flies' resting disinhibitio
 alone, and a tonic divisor overshoots it; the excess resting drive (by the free potential 28.4 mV in those glomeruli in
 odor_probe56.py, 20.2 here) has to come down another way: measured spontaneous rates (odor_probe58.py), or deeper
 depression at low rates.
+Correction (2026-10-11, odor_gaba_block_check.py's parts): odor_probe56.py's 5.2 mV is not postsynaptic alone; half of it
+comes from presynaptic inhibition already acting at rest (a divisor of about 1.18 from the LNs' fluctuations above the
+offset). So the model needs a resting divisor near 1.2, not none; this probe's 1.94 (on top of that) is what overshoots.
 
     python experiments/odor_probe57.py      (writes experiments/odor_probe57.json)
 """

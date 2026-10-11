@@ -7,7 +7,9 @@ spikes) falls when every receptor neuron is silenced, by glomerulus, in odor_pro
 experiments/odor_gaba_block_check.py) and odor_probe57.py's, which adds tonic presynaptic inhibition (red), against flies'
 estimates (rings; research_notes/Rung 9 learning data/orn_pn_resting_state.md, section
 1.6: Kazama & Wilson 2009's depression with measured rates and counts, no tonic inhibition; derived, not measured) and
-Gouwens & Wilson 2009's 5-10 mV over unstated glomeruli (shaded). Right: how far it rises when the antennal lobe's GABA
+Gouwens & Wilson 2009's 5-10 mV over unstated glomeruli (shaded). (odor_probe56.py's model already divides the receptor
+synapses by about 1.18 at rest, from its LNs' fluctuations above the inhibition's offset; odor_gaba_block_check.py.) Right:
+how far it rises when the antennal lobe's GABA
 receptors are blocked, in DM6, VM2 and VM7, the glomeruli Nagel, Hong & Wilson 2015 recorded, against their 5-8 mV
 (shaded).
 """
@@ -39,11 +41,11 @@ def text(x, y, s, cls, anchor="start"):
 
 def figure(theme: str, before: dict, after: dict, divisor: float) -> str:
     c = THEMES[theme]
-    out = [text(24, 30, "The antennal lobe at rest: the model's postsynaptic GABA already disinhibits like flies'", "lab"),
-           text(24, 50, "Grey: blocking GABA raises the PNs 5 mV (flies 5-8) with no tonic presynaptic inhibition. Red: dividing "
-                f"the receptor synapses by {divisor:g} at rest (Nagel et al.'s form)", "note"),
-           text(24, 68, "shrinks the resting drive, still twice flies', but makes the disinhibition overshoot. Membrane "
-                "potentials as they would sit without the PNs' own spikes.", "note")]
+    out = [text(24, 30, "The antennal lobe at rest: the model already disinhibits like flies'", "lab"),
+           text(24, 50, "Grey: blocking GABA raises the PNs 5 mV (flies 5-8), half of it from a small resting presynaptic division "
+                f"(about 1.18). Red: dividing the receptor synapses by {divisor:g} at rest", "note"),
+           text(24, 68, "(Nagel et al.'s form) shrinks the resting drive, still twice flies', but the disinhibition overshoots. "
+                "Membrane potentials as they would sit without the PNs' own spikes.", "note")]
     # left: the drop by glomerulus
     x0, pw = 80, 560
     ymax = 40.0
