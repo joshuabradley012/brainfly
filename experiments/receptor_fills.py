@@ -23,6 +23,13 @@ converted at 0.0028 DoOR units per % PN ΔF/F (the median of 10 glomerulus-odor 
 oct_mch_input.md, "For the model" 5a). It applies only with applied(pn_inferred=True), after the receptor fills, and only
 where neither DoOR nor the receptor fills give a value. With both tiers 4-methylcyclohexanol's summed drive is 0.61 of
 3-octanol's.
+
+RECOMMENDED replaces DoOR (and both tiers) for the two odors altogether, with research_notes/Rung 9 learning
+data/oct_mch_concentration.md's receptor-level input at Hige et al.'s 2% of saturated vapour ("For the model"): each
+glomerulus from its strongest receptor-level evidence (native single-sensillum recordings, then the empty neuron, imaging,
+larval neurons, close analogs), scaled for each study's concentration, with DoOR's import errors corrected (D's
+unsubtracted solvent response, DA2's floor) and no drive where flies' PN responses are lateral (DA1, DL3). Summed drive:
+3-octanol 5.32 (13 glomeruli above 0.1), 4-methylcyclohexanol 1.99 (2 above 0.1); 0.37. applied(recommended=True).
 """
 from __future__ import annotations
 
@@ -34,6 +41,16 @@ from brainfly import odors
 
 FILLS = {"4-methylcyclohexanol": {"VC1": 0.175, "VC3": 0.125, "VM2": 0.12, "VA7l": 0.12},
          "3-octanol": {"VM2": 0.69}}
+RECOMMENDED = {
+    "3-octanol": {"DC2": 0.75, "VM5d": 0.65, "VM5v": 0.50, "VM2": 0.45, "D": 0.38, "VC3": 0.38, "DM6": 0.34, "DM2": 0.31,
+                  "VA4": 0.30, "DM3": 0.28, "VM7v": 0.20, "DC1": 0.17, "VC1": 0.12, "DL4": 0.08, "DA4m": 0.06, "VA3": 0.06,
+                  "VM3": 0.06, "DC3": 0.03, "DM5": 0.03, "VM7d": 0.03, "DA3": 0.02, "DM1": 0.02, "VA5": 0.02, "VA6": 0.02,
+                  "VC4": 0.02, "DA2": 0.01, "DL1": 0.01, "DL5": 0.01, "VC2": 0.01},
+    "4-methylcyclohexanol": {"VA3": 0.70, "D": 0.21, "DA4l": 0.10, "VC3": 0.10, "VC1": 0.09, "VC2": 0.09, "DL4": 0.08,
+                             "DM2": 0.08, "VM2": 0.06, "DM6": 0.04, "VM7d": 0.04, "DC1": 0.03, "DC3": 0.03, "DL1": 0.03,
+                             "VA7l": 0.03, "VM5d": 0.03, "DA2": 0.02, "DA3": 0.02, "DA4m": 0.02, "DC2": 0.02, "DM5": 0.02,
+                             "VA4": 0.02, "VA5": 0.02, "VC4": 0.02, "VM5v": 0.02, "VM7v": 0.02, "DM3": 0.01, "DM4": 0.01,
+                             "VA1v": 0.01, "VA6": 0.01, "VM3": 0.01}}
 PN_INFERRED = {"4-methylcyclohexanol": {"VM7v": 0.34, "DA3": 0.32, "DL4": 0.27, "DA4l": 0.27, "DL3": 0.25, "DA1": 0.22,
                                         "VM3": 0.20},
                "3-octanol": {"DL3": 0.47, "VM3": 0.34, "DA1": 0.33, "DA3": 0.32}}
@@ -46,10 +63,12 @@ def measured(name: str) -> set:
     return {g for r, v in zip(receptors, row) if not np.isnan(v) for g in glom.get(r, ())}
 
 
-def filling(plain, pn_inferred: bool = False):
+def filling(plain, pn_inferred: bool = False, recommended: bool = False):
     """odors.glomeruli with the fills added where DoOR has no measurement (and, with pn_inferred, the PN-inferred tier
-    where neither gives one)."""
+    where neither gives one); with recommended, RECOMMENDED's patterns in place of all of it for its two odors."""
     def glomeruli(name: str, floor: float = 0.0, inhibition: bool = False) -> dict:
+        if recommended and name.lower() in RECOMMENDED:
+            return {g: v for g, v in RECOMMENDED[name.lower()].items() if v > floor}
         out = plain(name, floor, inhibition)
         tiers = [FILLS.get(name.lower(), {})] + ([PN_INFERRED.get(name.lower(), {})] if pn_inferred else [])
         if any(tiers):
@@ -63,10 +82,11 @@ def filling(plain, pn_inferred: bool = False):
 
 
 @contextlib.contextmanager
-def applied(pn_inferred: bool = False):
+def applied(pn_inferred: bool = False, recommended: bool = False):
     plain = odors.glomeruli
-    odors.glomeruli = filling(plain, pn_inferred)
+    odors.glomeruli = filling(plain, pn_inferred, recommended)
     try:
-        yield {"receptor": FILLS, **({"pn_inferred": PN_INFERRED} if pn_inferred else {})}
+        yield ({"recommended": RECOMMENDED} if recommended else
+               {"receptor": FILLS, **({"pn_inferred": PN_INFERRED} if pn_inferred else {})})
     finally:
         odors.glomeruli = plain

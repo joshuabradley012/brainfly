@@ -38,6 +38,10 @@ import warm
 
 OUT = Path(__file__).with_suffix(".json")
 SEED = 540000
+# Badel et al. 2016's 37 glomeruli (NP225-GAL4), which leave out several of 3-octanol's strongest (VM5d, VM5v, VC3, DC1)
+BADEL = ("DM6", "DM3", "VM2", "DL3", "D", "DA2", "VM3", "DA1", "DA3", "VM7v", "DM2", "DC3", "DC2", "DM5", "VM4", "DL5",
+         "VM1", "VC1", "VA2", "DL1", "DL4", "VM7d", "VA6", "VA7m", "VA4", "VA5", "VA3", "DA4l", "DM4", "VC2", "VA7l",
+         "DP1m", "DM1", "VA1d", "VL2a", "VL2p", "VA1v")
 ODORS = ("3-octanol", "4-methylcyclohexanol")
 SEEDS = 4
 
@@ -87,9 +91,13 @@ def measure(o, rec, seed: int = SEED, seeds: int = SEEDS) -> dict:
         r = out["odors"][odor]
         print(odor, json.dumps({k: r[k] for k in ("orn_summed_evoked_hz", "upn_summed_evoked_hz", "glomeruli_over_10hz", "glomeruli_over_30hz")}), flush=True)
     a, b2 = out["odors"]["4-methylcyclohexanol"], out["odors"]["3-octanol"]
+    badel = lambda r: sum(max(v, 0.0) for g, v in r["pn_evoked_hz_by_glomerulus_first_0.5s"].items() if g in BADEL)
+    whole = lambda r: sum(max(v, 0.0) for v in r["pn_evoked_hz_by_glomerulus_first_0.5s"].values())
     out["mch_over_oct"] = {"orn_first": round(a["orn_summed_evoked_hz"]["first_0.5s"] / b2["orn_summed_evoked_hz"]["first_0.5s"], 3),
                            "upn_first": round(a["upn_summed_evoked_hz"]["first_0.5s"] / b2["upn_summed_evoked_hz"]["first_0.5s"], 3),
-                           "upn_1s": round(a["upn_summed_evoked_hz"]["1s"] / b2["upn_summed_evoked_hz"]["1s"], 3)}
+                           "upn_1s": round(a["upn_summed_evoked_hz"]["1s"] / b2["upn_summed_evoked_hz"]["1s"], 3),
+                           "glomeruli_first": round(whole(a) / whole(b2), 3),           # per glomerulus, as imaging sums
+                           "badel_glomeruli_first": round(badel(a) / badel(b2), 3)}
     print("MCH/OCT", json.dumps(out["mch_over_oct"]), flush=True)
     return out
 
