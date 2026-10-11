@@ -9,7 +9,7 @@ receptor synapses, grey; odor_probe51.py's measures, two pools, red), against fl
 VM7d's projection neurons over time for weak and intermediate receptor input (two pools; 50 ms running means less rest),
 against flies' VM7 PSTHs (Olsen et al. Fig. 8, samples every 25 ms; 2-butanone 10^-6 and 10^-5, receptor input about 12
 and 48 spikes/s). Bottom right: the share of VM7d's response alone that survives pentyl acetate's lateral input
-(experiments/odor_normalization_check.py), for responses at 0.47 and 0.81 of the model's Rmax, against flies' VM7 at 0.47
+(experiments/odor_pentyl_suppression_check.py), for responses at 0.47 and 0.81 of the model's Rmax, against flies' VM7 at 0.47
 and 0.83 of theirs (Olsen et al. Fig. 2C; lateral input as summed receptor rates derived from their field potentials).
 """
 from __future__ import annotations
@@ -170,7 +170,7 @@ def main() -> None:
     e = ROOT / "experiments"
     p49 = json.loads((e / "odor_olsen_protocol_check.json").read_text())
     p51 = json.loads((e / "odor_probe51.json").read_text())
-    norm = json.loads((e / "odor_normalization_check_probe51.json").read_text())
+    norm = json.loads((e / "odor_pentyl_suppression_check_probe51.json").read_text())
     for theme in THEMES:
         path_ = OUT / f"al_olsen-{theme}.svg"
         path_.write_text(figure(theme, p49, p51, norm))

@@ -25,6 +25,9 @@ odors relative to strong ones than flies' does, which is one reason 4-methylcycl
 (odor_probe59.py tests a steeper one).
 
     python experiments/odor_normalization_check.py      (writes experiments/odor_normalization_check.json)
+
+Note (2026-10-11): this file's name first held a different check, Olsen et al.'s pentyl acetate suppression (commit
+b654576), which writing this one overwrote; that check is restored unchanged as odor_pentyl_suppression_check.py.
 """
 from __future__ import annotations
 

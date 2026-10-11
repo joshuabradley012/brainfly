@@ -1,0 +1,199 @@
+{
+ "question": "Exploratory check, not pre-registered: how far does the model's APL hold the Kenyon cells down during an odor, with\nmb_calibration.py's APL and with mb_calibration2.py's, against what flies' APL can do?\n\nodor_apl_two_knob_check.py's graded APL (mb_calibration2.py) meets flies' odor-graded APL (4-methylcyclohexanol 0.47 of\n3-octanol's peak, flies 0.49) and silencing ratio (2.05-2.45, flies 2-3) with APL's synapses onto the Kenyon cells 2.5\ntimes mb_calibration.py's, so that APL's ceiling holds them 27.5 mV down. In flies, driving APL optogenetically\nhyperpolarizes every Kenyon cell tested, saturating at about 10-12 mV (Inada et al. 2017, ex vivo); driving about 160\nalpha/beta-c Kenyon cells inhibits others through APL by 5.5-7.5 mV on average and up to 15 (Vrontou et al. 2021, in\nvivo; research_notes/Rung 9 learning data/kc_classes_and_apl.md). Neither is an odor response; together they bound\nwhat APL can do.\nModel: odor_probe60.py's (its cache) with mb_calibration.py's mushroom body, the Kenyon cells' rest as the learning\npilots set it (as odor_apl_two_knob_check.py), then APL as calibrated (Kenyon cell-to-APL synapses at 10 times MaleCNS's,\nits synapses onto the Kenyon cells as calibrated) and as mb_calibration2.py sets it (1.5 times; 2.5 times).\nodor_apl_check.trial's protocol (DoOR's input, a 1 s odor after 1.5 s, 2 seeds of 8 flies), APL working and silenced.\nMeasured, for 3-octanol and 4-methylcyclohexanol: the Kenyon cells' free membrane potential (where the membrane would sit\nwithout its own spikes, odor_gaba_block_check.free_potential) with APL working minus with it silenced, over the odor's\nfirst second, for all Kenyon cells and for those firing no spike in either condition; its largest value over the odor\n(50 ms running means of the population mean); APL's release; and the same at rest before the odor.\nAlso the two odors' answering Kenyon cells (more than half a spike over the odor's first second, on average over the\nflies) and the share of each odor's that answer both, with APL working and silenced; in flies 30% of 3-octanol's and 33%\nof 4-methylcyclohexanol's answer both (Hige et al. 2015; research_notes/Rung 9 learning data/hige2015_specificity.md).\nComparison: the inhibition during 3-octanol against flies' 5.5-7.5 mV mean and 15 mV most (Vrontou), and APL's ceiling\nagainst the 10-12 mV at which flies' saturates (Inada).\n\n    python experiments/odor_apl_inhibition_check.py      (writes experiments/odor_apl_inhibition_check.json)\n",
+ "flies": {
+  "inada_2017_saturating_mv": [
+   -12.0,
+   -10.0
+  ],
+  "vrontou_2021_mean_mv": [
+   -7.5,
+   -5.5
+  ],
+  "vrontou_2021_most_mv": -15.0,
+  "hige_2015_share_answering_both": {
+   "3-octanol": 0.3,
+   "4-methylcyclohexanol": 0.33
+  }
+ },
+ "mb_calibration": {
+  "classes": {
+   "alpha/beta": {
+    "pn_scale": 1.657,
+    "apl_scale": 1.125,
+    "cells": 1810
+   },
+   "alpha'/beta'": {
+    "pn_scale": 2.523,
+    "apl_scale": 0.831,
+    "cells": 695
+   },
+   "gamma": {
+    "pn_scale": 2.291,
+    "apl_scale": 0.963,
+    "cells": 1557
+   },
+   "other": {
+    "pn_scale": 0.297,
+    "apl_scale": 0.741,
+    "cells": 2
+   }
+  },
+  "kc_apl_scale": 10.0,
+  "apl_release_at_mv": 3.5,
+  "apl_max_hz": 38.29,
+  "kc_gaps_mv": {
+   "KCab": 21.5,
+   "KCa'b'": 16.0,
+   "KCg": 32.5
+  }
+ },
+ "calibrations": {
+  "mb_calibration.py": {
+   "kc_apl_scale": 10.0,
+   "apl_kc_effect": 1.0,
+   "ceiling_inhibition_mv": -11.0,
+   "3-octanol": {
+    "inhibition_mv_all": -3.62,
+    "inhibition_mv_silent_cells": -3.74,
+    "silent_cells_share": 0.7568,
+    "silent_cells_inhibition_mv_percentiles_5_50_95": [
+     -5.2,
+     -3.69,
+     -2.45
+    ],
+    "largest_inhibition_mv_50ms": -10.85,
+    "at_s": 0.11,
+    "inhibition_mv_at_rest": -0.968,
+    "apl_release_peak_hz": 38.29,
+    "apl_release_mean_hz": 13.14
+   },
+   "4-methylcyclohexanol": {
+    "inhibition_mv_all": -3.14,
+    "inhibition_mv_silent_cells": -3.16,
+    "silent_cells_share": 0.8904,
+    "silent_cells_inhibition_mv_percentiles_5_50_95": [
+     -4.61,
+     -3.11,
+     -1.89
+    ],
+    "largest_inhibition_mv_50ms": -10.24,
+    "at_s": 0.09,
+    "inhibition_mv_at_rest": -0.937,
+    "apl_release_peak_hz": 37.68,
+    "apl_release_mean_hz": 11.17
+   },
+   "overlap": {
+    "APL working": {
+     "answering": {
+      "3-octanol": 450,
+      "4-methylcyclohexanol": 170
+     },
+     "answering_both": 101,
+     "share_answering_both": {
+      "3-octanol": 0.224,
+      "4-methylcyclohexanol": 0.594
+     },
+     "jaccard": 0.195
+    },
+    "APL silenced": {
+     "answering": {
+      "3-octanol": 984,
+      "4-methylcyclohexanol": 436
+     },
+     "answering_both": 305,
+     "share_answering_both": {
+      "3-octanol": 0.31,
+      "4-methylcyclohexanol": 0.7
+     },
+     "jaccard": 0.274
+    }
+   }
+  },
+  "mb_calibration2.py": {
+   "kc_apl_scale": 1.5,
+   "apl_kc_effect": 2.5,
+   "ceiling_inhibition_mv": -27.5,
+   "3-octanol": {
+    "inhibition_mv_all": -4.33,
+    "inhibition_mv_silent_cells": -4.47,
+    "silent_cells_share": 0.7585,
+    "silent_cells_inhibition_mv_percentiles_5_50_95": [
+     -6.45,
+     -4.4,
+     -2.73
+    ],
+    "largest_inhibition_mv_50ms": -20.02,
+    "at_s": 0.08,
+    "inhibition_mv_at_rest": -2.31,
+    "apl_release_peak_hz": 32.02,
+    "apl_release_mean_hz": 6.31
+   },
+   "4-methylcyclohexanol": {
+    "inhibition_mv_all": -3.42,
+    "inhibition_mv_silent_cells": -3.44,
+    "silent_cells_share": 0.8913,
+    "silent_cells_inhibition_mv_percentiles_5_50_95": [
+     -5.1,
+     -3.42,
+     -1.82
+    ],
+    "largest_inhibition_mv_50ms": -9.33,
+    "at_s": 0.08,
+    "inhibition_mv_at_rest": -2.32,
+    "apl_release_peak_hz": 14.29,
+    "apl_release_mean_hz": 4.85
+   },
+   "overlap": {
+    "APL working": {
+     "answering": {
+      "3-octanol": 387,
+      "4-methylcyclohexanol": 234
+     },
+     "answering_both": 108,
+     "share_answering_both": {
+      "3-octanol": 0.279,
+      "4-methylcyclohexanol": 0.462
+     },
+     "jaccard": 0.211
+    },
+    "APL silenced": {
+     "answering": {
+      "3-octanol": 975,
+      "4-methylcyclohexanol": 427
+     },
+     "answering_both": 299,
+     "share_answering_both": {
+      "3-octanol": 0.307,
+      "4-methylcyclohexanol": 0.7
+     },
+     "jaccard": 0.271
+    }
+   }
+  }
+ },
+ "kc_rest": {
+  "gap_mv": {
+   "KC": 21.71,
+   "KCa'b'-ap1": 16.04,
+   "KCa'b'-ap2": 16.09,
+   "KCa'b'-m": 16.12,
+   "KCab-c": 21.6,
+   "KCab-m": 21.63,
+   "KCab-p": 21.5,
+   "KCab-s": 21.54,
+   "KCg": 32.44,
+   "KCg-d": 32.49,
+   "KCg-m": 32.66,
+   "KCg-s1": 32.43,
+   "KCg-s2": 32.36,
+   "KCg-s3": 32.47,
+   "KCg-s4": 32.7
+  },
+  "rest_hz_by_class": {
+   "alpha/beta": 0.0015,
+   "alpha'/beta'": 0.0032,
+   "gamma": 0.0
+  }
+ },
+ "seconds": 148
+}
