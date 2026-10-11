@@ -25,6 +25,25 @@ Read as (written before the run): a time constant is worth recalibrating the mus
 to threshold held, 4-methylcyclohexanol's answering cells come nearer 3-octanol's than now (flies about as many), and the
 cells keep more of their early firing.
 
+Ran (2026-10-11, 7 minutes): by the reading, worth it, but the check left out what keeps flies' Kenyon cells from firing
+so much. Longer integration makes them far more excitable. At 20, 50 and 100 ms (the synapses x 1, 2.03 and 3.69) 624, 1,495
+and 2,065 Kenyon cells answer 3-octanol (15, 37 and 51%; flies about 12%) and 111, 545 and 1,020 answer
+4-methylcyclohexanol, 0.18, 0.37 and 0.49 as many (flies about as many). They hold their firing: from 0.5 to 1 s the
+alpha/beta, alpha'/beta' and gamma cells fire at 0.20, 0.29 and 0.05 of their first 0.3 s's rate to 3-octanol at 20 ms,
+0.49, 0.56 and 0.35 at 50 and 0.60, 0.64 and 0.50 at 100. Through mb_calibration5.py's slow current their input to MBON11
+would peak at 416, 1,237 and 1,834 pA with 0.21, 0.33 and 0.40 of the peak held from 0.6 to 1 s (flies about 400 pA and
+0.43), carrying 202, 749 and 1,190 pC (flies 245-275). Silencing APL raises the spikes 2.7, 2.0 and 1.6-fold (3-octanol;
+flies 2-3); APL's 4-methylcyclohexanol/3-octanol peak ratio is 0.28, 0.67 and 0.84 (flies 0.49); the share of
+4-methylcyclohexanol's answering cells that answer 3-octanol rises from 0.53 to 0.71 and 0.81 (flies 0.33), and of
+3-octanol's that answer 4-methylcyclohexanol from 0.10 to 0.26 and 0.40 (flies 0.30).
+What's missing: flies' Kenyon cells keep a plateau of about 4.4 mV per connection at 115 spikes/s with unitary EPSPs of
+1.2-1.5 mV (Gruntman & Turner 2013; kc_integration.md), which a 20 ms membrane meets undepressed (4.5) and a longer one
+only with the projection neuron-to-Kenyon cell synapses depressing (kc_integration.md's set C: 50 ms, 0.85 of the
+strength left per spike, recovering over 0.1 s, 3.9 mV); here at 50 ms undepressed it is about 9. So these cells take in
+twice flies' sustained drive, and the densities above overstate what a longer time constant does. The test that keeps
+flies' plateau is set C, which needs those synapses to depress on their own (the model's projection neurons depress all
+their outputs alike, 0.85 and 0.8 s, and exempt their Kenyon cell synapses).
+
     python experiments/kc_membrane_check.py      (writes experiments/kc_membrane_check.json)
 """
 from __future__ import annotations
