@@ -57,6 +57,12 @@ Correction (2026-10-11, after an independent review):
   At 100 ms it is about 16.7 mV, 3.8 times.
 - Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors.
 
+Correction (2026-10-11, kc_input_audit.py): the EPSP held across the time constants is the model's own, 1.90 mV per
+connection at every spike, not "the measured 1.25-1.4 mV unitary EPSPs" (mb_calibration.py scaled the synapses to 1.4
+mV at the PNs' resting depression although they don't depress). So the steady drive per connection at 115 spikes/s
+is about 7.0 mV at 20 ms, 14 at 50 ms and 26 at 100 ms (flies about 4.4), not "about 9" at 50 ms. Even at 20 ms the
+cells take in 1.6 times flies' sustained drive.
+
     python experiments/kc_membrane_check.py      (writes experiments/kc_membrane_check.json)
 """
 from __future__ import annotations

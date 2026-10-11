@@ -12,6 +12,12 @@ measured 2.5-11 as the one whose gamma cells answer 3-octanol nearest flies' 3.5
 which odor_probe36.measure uses to set the Kenyon cells' rest. None of it changes the antennal lobe's resting state (the
 Kenyon cells are silent at rest), so its build stands.
 
+Correction (2026-10-11, kc_input_audit.py): the projection neuron-to-Kenyon cell synapses are exempt from
+depression (odor_probe7.py's "+ undepressed outputs", the build's condition, sets full_strength on them), so the
+PNs' resting depression never applies to them. Dividing by the 0.735 of their strength a depressing synapse keeps
+at 3 spikes/s made one spike's EPSP 1.4 / 0.735 = 1.90 mV at every spike, not Turner et al.'s 1.4 mV.
+Read for synapses that don't depress, Turner's 1.4 mV would be 1.4 mV at full strength. kc_epsp_check.py tests it.
+
     o, rec, built = brain_cache.load("odor_probe44", odor_probe44.build, odor_probe44.prepare)
     mb_calibration.apply(o)
 """

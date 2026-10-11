@@ -26,6 +26,17 @@ Kenyon cell class:
 Against flies: Turner et al. 2008, 1.4 mV and an 11.5 ms decay in vivo; Gruntman & Turner 2013, unitary EPSPs of
 1.24-1.48 mV and about 4.4 mV per connection at 115 spikes/s (kc_integration.md section 1).
 
+Ran (2026-10-11, 1 minute): the model's Kenyon cell input is a third stronger than meant.
+- Every class has a 20 ms membrane, and 99.1-99.9% of its projection neuron synapses are exempt from depression.
+- One spike through the mean synapse gives a 1.90 mV EPSP, peaking 9.2 ms after it and 26.5 ms wide at half its peak
+  (Turner et al. 2008: 1.4 mV; Gruntman & Turner 2013: 1.24-1.48 mV).
+- The steady drive per connection is 2.42 mV at 40 spikes/s and 6.95 mV at 115 (flies about 4.4 at 115).
+- set_kc_tau sets the cells' 11.5 ms; a set_type that changes nothing puts back 20 ms. In every experiment the model
+  gets one anyway: mb_calibration.apply's set_type("APL", ...).
+So since odor_probe46.py the projection neuron input has been 1.36 times what mb_calibration.py meant and 1.3-1.5 times
+flies' unitary EPSPs, at the default 20 ms membrane. kc_integration.md's "current model" (6.11 mV weights at 11.5 ms,
+3.5 mV per connection at 115 spikes/s) never ran. kc_epsp_check.py runs the cells at the measured size.
+
     python experiments/kc_input_audit.py      (writes experiments/kc_input_audit.json)
 """
 from __future__ import annotations

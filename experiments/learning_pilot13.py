@@ -51,6 +51,10 @@ Correction (2026-10-11, after an independent review):
   4-methylcyclohexanol's is 230-273 (Hige's Figs. 4H and 3D; amended after a second review).
 - "Moves the reciprocal into flies' band": the band, 15-50%, is rung 9's, set around flies' 38%.
 
+Correction (2026-10-11, kc_input_audit.py): set C's synapses were scaled from the model's own EPSP, 1.90 mV per
+connection (kc_setc_check.py's correction), so they carried about 5.5 mV per connection at 115 spikes/s, not
+kc_integration.md's 3.9 (flies about 4.4).
+
     python experiments/learning_pilot13.py      (writes experiments/learning_pilot13.json)
 """
 from __future__ import annotations

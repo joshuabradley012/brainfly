@@ -29,6 +29,12 @@ classes respond in the wrong order: to 3-octanol alpha/beta 17.2%, gamma 9.8%, a
 alpha'/beta' respond most (9-14%), alpha/beta 3-8% and gamma about 2%; the alpha'/beta' cells fire 1.5-2.6 spikes per
 response (flies 4.9). And 4-methylcyclohexanol still reaches 0.29 as many Kenyon cells as 3-octanol (flies 0.73-0.92).
 
+Correction (2026-10-11, kc_input_audit.py): the projection neuron-to-Kenyon cell synapses are exempt from
+depression (odor_probe7.py's "+ undepressed outputs", the build's condition, sets full_strength on them), so the
+PNs' resting depression never applies to them. Dividing by the 0.735 of their strength a depressing synapse keeps
+at 3 spikes/s made one spike's EPSP 1.4 / 0.735 = 1.90 mV at every spike, not Turner et al.'s 1.4 mV.
+Before the doubling the model's unitary EPSP was 0.96 mV (as the introduction's "mean 0.96" says), not 0.70.
+
     python experiments/odor_probe46.py         (writes experiments/odor_probe46.json)
 """
 from __future__ import annotations

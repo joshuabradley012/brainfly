@@ -21,6 +21,25 @@ Read as (written before the run):
   pre-registered step).
 The 1.24 mV condition only shows how sensitive the cells are; it decides nothing.
 
+Ran (2026-10-11, 7 minutes): adopted by the rule, narrowly. The overly strong input had been holding up the cells'
+responses. Every condition's rest held (within 0.3 mV in each class).
+- As now (1.90 mV): kc_setc_check2.py's set A again: 623 and 109 cells answer 3-octanol and 4-methylcyclohexanol (15.3%
+  for 3-octanol; 0.175 as many), silencing APL raises the spikes 2.72 and 2.16-fold, and MBON11's input would carry 202
+  pC.
+- At 1.4 mV (the synapses x 0.735):
+  - 299 and 41 cells answer: 7.4% for 3-octanol (flies about 12%) and 0.14 as many for 4-methylcyclohexanol.
+  - Silencing APL raises the spikes 2.77 and 2.01-fold, the second at the edge of flies' 2-3.
+  - 0.42 of 4-methylcyclohexanol's answering cells answer 3-octanol (as now 0.52; flies 0.33), and 0.06 of
+    3-octanol's answer 4-methylcyclohexanol (as now 0.09; flies 0.30).
+  - The cells keep less of their early firing (alpha/beta, alpha'/beta', gamma 0.12, 0.15 and 0.004 of their first
+    0.3 s's rate, against 0.19, 0.29 and 0.05).
+  - Through the slow current MBON11's input would peak at 158 pA, 76 pC (flies about 400 and 245-250).
+- At 1.24 mV: 227 and 31 cells (5.6%, under the rule's 6%), 2.84 and 2.02-fold, 51 pC.
+So at the measured input the model's Kenyon cells answer at the low end of flies' density, 4-methylcyclohexanol
+reaches a seventh as many cells as 3-octanol (flies about as many), and MBON11 would get under a third of flies'
+odor charge. Those gaps are real and stay to be found; the input no longer hides them. mb_calibration6.py carries the
+corrected input, and learning_pilot16.py runs rung 9's test on it.
+
     python experiments/kc_epsp_check.py      (writes experiments/kc_epsp_check.json)
 """
 from __future__ import annotations

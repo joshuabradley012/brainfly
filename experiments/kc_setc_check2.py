@@ -74,6 +74,10 @@ Correction (2026-10-11, after a second independent review):
   undepressed (214 of the 298 cells added, and 572 of 699, answer 3-octanol). In sets C and D its set shrinks (77 and
   103 cells against A's 109), while the share inside 3-octanol's set rises.
 
+Correction (2026-10-11, kc_input_audit.py): the synapses were scaled from the model's own EPSP, 1.90 mV per connection
+at every spike (kc_setc_check.py's correction), so set A takes in about 7.0 mV per connection at 115 spikes/s, set C
+about 5.5 and set D about 5.7 (flies about 4.4; kc_integration.md's sets 4.5, 3.9 and 3.2).
+
     python experiments/kc_setc_check2.py      (writes experiments/kc_setc_check2.json)
 """
 from __future__ import annotations

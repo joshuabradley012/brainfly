@@ -38,6 +38,10 @@ charge, twice flies' 27%" compares the model's charge drop with flies' spike dro
 35% (rung9_learning.py, from Hige et al.'s Figs. 3D and 4H), so the model's is 1.6-2.8 times flies'. Its spike drop,
 58.3% against 27%, is 2.2 times.
 
+Correction (2026-10-11, kc_input_audit.py): set C's synapses were scaled from the model's own EPSP, 1.90 mV per
+connection (kc_setc_check.py's correction), so they carried about 5.5 mV per connection at 115 spikes/s, not
+kc_integration.md's 3.9 (flies about 4.4).
+
     python experiments/learning_pilot15.py      (writes experiments/learning_pilot15.json)
 """
 from __future__ import annotations

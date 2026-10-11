@@ -33,6 +33,11 @@ about 265); 4-methylcyclohexanol reaches 0.30 as many Kenyon cells as 3-octanol 
 offset (+2.5 mV) is the low end of the measured range: Chen et al. 2026 found gamma cells' threshold 11 mV above alpha/beta
 cells', Turner's gamma cells almost never spiked to odors (1 of 15), and Inada's fired least above threshold.
 
+Correction (2026-10-11, kc_input_audit.py): the projection neuron-to-Kenyon cell synapses are exempt from
+depression (odor_probe7.py's "+ undepressed outputs", the build's condition, sets full_strength on them), so the
+PNs' resting depression never applies to them. Dividing by the 0.735 of their strength a depressing synapse keeps
+at 3 spikes/s made one spike's EPSP 1.4 / 0.735 = 1.90 mV at every spike, not Turner et al.'s 1.4 mV.
+
     python experiments/odor_probe47.py         (writes experiments/odor_probe47.json)
 """
 from __future__ import annotations

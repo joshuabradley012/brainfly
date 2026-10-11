@@ -63,6 +63,12 @@ Correction (2026-10-11, after an independent review):
 - "About twice the sustained drive" (from kc_membrane_check.py) holds at 50 ms. At 100 ms it is nearly four times.
 - Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors.
 
+Correction (2026-10-11, kc_input_audit.py): "as now" is the model's 1.90 mV per connection at every spike
+(mb_calibration.py's 1.4 mV at the PNs' resting depression, on synapses that don't depress), not kc_integration.md's
+1.24-1.4 mV. So set A (the model) takes in about 7.0 mV per connection at 115 spikes/s, not 4.5. Set C as tested took
+about 5.5, not 3.9, and set D about 5.7, not 3.2 (flies about 4.4). None of the sets kept Gruntman & Turner's
+plateau as run.
+
     python experiments/kc_setc_check.py      (writes experiments/kc_setc_check.json)
 """
 from __future__ import annotations
