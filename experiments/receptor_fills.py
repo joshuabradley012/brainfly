@@ -30,6 +30,13 @@ glomerulus from its strongest receptor-level evidence (native single-sensillum r
 larval neurons, close analogs), scaled for each study's concentration, with DoOR's import errors corrected (D's
 unsubtracted solvent response, DA2's floor) and no drive where flies' PN responses are lateral (DA1, DL3). Summed drive:
 3-octanol 5.32 (13 glomeruli above 0.1), 4-methylcyclohexanol 1.99 (2 above 0.1); 0.37. applied(recommended=True).
+
+Checked afterwards (2026-10-11; research_notes/Rung 9 learning data/lateral_pn_responses.md): whole-cell recordings find
+DA1, DL3 and DA2 PNs silent to general odors, including those that give Badel et al.'s largest responses there, and
+several of Badel et al.'s glomeruli copy a neighbour's signal (DA3 tracks D, DM3 DM6, VM7v VM7d, VM3 VM2). So
+PN_INFERRED's DA1, DL3, DA3, VM7v and VM3 entries turn imaging artifacts into receptor drive and make PNs fire where flies'
+don't; the tier is kept for reproducing the runs that used it, not for new ones. RECOMMENDED gives DA1 and DL3 no drive,
+as the recordings say.
 """
 from __future__ import annotations
 

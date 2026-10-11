@@ -487,6 +487,11 @@ Data: ORN-level MCH/OCT ≈0.41-0.51 and PN-level 0.85-0.98 (Barth 2014; Badel 2
     spikes/s each at σ = 12 and lifts the ratio to 0.80. At σ = 25 they give ≈14 each and the ratio is 0.73 (derived).
   - Imaging ΔF/F saturation compresses both measured ratios, so the fly targets are approximate.
 
+**Correction (2026-10-11).** [lateral_pn_responses.md](lateral_pn_responses.md) finds DA1, DL3 and DA2 PNs silent
+to general odors in whole-cell recordings, and DA3, VM7v and VM3 in Badel's imaging copying neighbours. MCH receptor
+input in "VM7v, DA3, DL4, DA4l, DL3, DA1, VM3" (the proposal above) would make PNs fire where flies' don't in DA1 and DL3;
+of that list only DL4 and DA4l keep support (analogs; PN responses in more than one dataset).
+
 ## 9. Toy PN with brainfly's settings (derived; my simulation)
 
 **Setup.**

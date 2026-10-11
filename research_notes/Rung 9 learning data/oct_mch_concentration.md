@@ -353,6 +353,13 @@ Barth's PNs give OCT 256% (fig., approx., earlier reading); Badel's give 9%. DM1
 ORN imaging, Münch's imaging (−0.47% ΔF/F) or Churgin's ORN imaging (Fig. 1G, fig., approx.: OCT and MCH cells at the air
 level).
 
+**Correction (2026-10-11).** [lateral_pn_responses.md](lateral_pn_responses.md) finds whole-cell recordings of DA1,
+DL3 and DA2 PNs silent to general odors (including ethyl butyrate, 2,3-butanedione and 1-octen-3-ol, which give
+107-362% ΔF/F in Badel's imaging), and several Badel glomeruli copying a neighbour (DA3 ~ D, DM3 ~ DM6, VM7v ~ VM7d, VM3
+~ VM2). So Badel's DA1 and DL3 responses are not "lateral input to PNs" that fires them, and the 5-32 spikes/s of
+lateral firing (Olsen 2007, VM2 and DL1 with silent receptors) doesn't apply there. The verdicts below (no ORN drive at
+DA1, DL3) stand; the reasons change.
+
 ### 2.2 DoOR import artifacts
 
 **D (Or69a): a solvent offset of about 0.22 in both odors.**
@@ -417,6 +424,11 @@ from §2.1-2.2 and the tables in "For the model"):
 - These are the responses GCaMP6f (Badel) can see and GCaMP3 (Barth) cannot: Barth's PNs are flat in DA1, DA3, DL3 and
   DL5 (§2.1). Lateral excitation of 5-32 spikes/s (Olsen et al. 2007, `lateral_excitation.md`) is the likely source; a
   stronger GCaMP sees modest spiking that a weaker one misses (an inference, not tested in either paper).
+
+**Correction (2026-10-11).** The last bullet's reading (lateral excitation as "the likely source" of Badel's
+unsupported glomeruli) is revised by [lateral_pn_responses.md](lateral_pn_responses.md): in DA1, DL3 and DA2 the PNs
+don't fire, and DA3, DM3, VM7v and VM3 look like neighbours' signals; lateral firing is real elsewhere (VA6, VA1d, DL5).
+Without DA1, DL3, DA2 and DA3, flies' summed MCH/OCT is 0.99 (0.98 with them).
 
 ### 2.4 Verdicts
 

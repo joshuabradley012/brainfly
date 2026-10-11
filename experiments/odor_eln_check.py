@@ -75,6 +75,12 @@ alike, which takes input or excitability the model's lack. Which MaleCNS cells t
 (lateral_excitation.md section 7: the acetylcholine label on lLN1_bc, the largest group here, rests on morphology, and
 the LN1 and LN2 lines it's named for are about 95% GABAergic by staining). Lateral excitation waits on that.
 
+Checked afterwards (2026-10-11; research_notes/Rung 9 learning data/lateral_pn_responses.md): flies' DA1, DL3 and DA2
+PNs don't fire to general odors (lateral input reaches DA1 only as 5.7-6.2 mV of subthreshold depolarization when the
+antennae are removed), and LNs largely skip that anterolateral cluster, as the connectome's sparse contacts there say;
+so a connectome-based coupling that leaves them near rest matches flies. Lateral firing without receptor input is real
+in VA6, VA1d, DL5 and DM3, which give an eLN model better held-out tests (that note's T20-T24).
+
     python experiments/odor_eln_check.py      (writes experiments/odor_eln_check.json)
 """
 from __future__ import annotations

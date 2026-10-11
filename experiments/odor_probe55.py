@@ -32,6 +32,14 @@ antennal lobe lacks what produces flies' PN responses beyond the receptor input,
 receptor input only 6-32 spikes/s (lateral_excitation.md), and the two labs' PN imaging disagree widely in several of
 these glomeruli (DA2: Badel 236, Barth 44), so how much of it is real input, lateral excitation or imaging remains open.
 
+Checked afterwards (2026-10-11; research_notes/Rung 9 learning data/lateral_pn_responses.md): the responses flies' PNs
+show without receptor input are partly not firing. Whole-cell recordings find DA1, DL3 and DA2 PNs silent to general
+odors (DA1 at most about 4 spikes/s to 18 odors, Schlief & Wilson 2007; DA1, DL3 and DA2 to 16 more, Seki et al. 2017),
+including the odors that give Badel et al.'s largest responses there; Badel et al.'s glomeruli are fixed template masks,
+and several copy a neighbour's signal (DA3 tracks D, DM3 DM6, VM7v VM7d, VM3 VM2). So the model's PNs at rest in DA1,
+DL3 and DA2 are right. Without those seven glomeruli flies' summed ratio is 1.11 (0.98 over all 37) and the model's 0.58
+(0.51), so the gap stands; odor_weak_glomeruli_check.py traces it to the PNs' weak-input gain.
+
     python experiments/odor_probe55.py         (writes experiments/odor_probe55.json)
 """
 from __future__ import annotations
