@@ -63,8 +63,9 @@ Correction (2026-10-11, after an independent review):
   - Measured their way, the slow current's PPR is the ratio of the two flashes' charges, the same as the fast
     current's: 0.61-0.64 at one spike per flash, 0.43-0.44 at two, 0.33-0.34 at three and 0.26 at five (20-100 ms).
   - These were rebuilt from the saved currents. The drive was recovered from the fast current, split at 400 ms and
-    passed through the slow kernel, which reproduces the saved slow current exactly. At 150 ms the rebuild fails, as
-    the slow reading did.
+    passed through the slow kernel, which reproduces the saved slow current exactly. At 150 ms the cells' spontaneous
+    firing swamps the split, as it did the slow reading (the rebuild itself is exact there too; amended after a second
+    review).
   - So through either current their 0.38-0.68 reads as one or two spikes per flash, not "only at one spike per
     flash". The reading the depression rule assumed still fits.
 - "Gives their time course" means within the reading's ranges, which were widened by a quarter. The slow current is

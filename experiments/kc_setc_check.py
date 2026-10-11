@@ -42,8 +42,9 @@ learning_pilot13.py's question.
 
 Correction (2026-10-11, after an independent review):
 - In sets C and D the cells' rest wasn't set back to the same distances below threshold, though the model above says it
-  was. odor_probe33.set_rest's first pass measured the cells with the old 20 ms time constant's share of the bias, and
-  its second pass didn't undo the overshoot (kc_rest.py). The JSON records the realized distances. Set A's are within
+  was. odor_probe33.set_rest's first pass measured the cells with the previous condition's time constant's share of the
+  bias (20 ms before set C, set C's 50 ms before set D; amended after a second review), and its second pass didn't undo
+  the overshoot (kc_rest.py). The JSON records the realized distances. Set A's are within
   0.3 mV of the targets (alpha/beta 21.5, alpha'/beta' 16, gamma 32.5 mV). Set C's cells rest 1.5-4.9 mV nearer
   threshold. Set D's rest 6.3-22.8 mV nearer and fire 0.9-2.2 spikes/s at rest. So set C's numbers above were
   measured with the cells nearer threshold than meant. Set D's answering shares mostly reflect cells resting near

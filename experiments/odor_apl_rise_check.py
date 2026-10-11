@@ -27,7 +27,7 @@ Correction (2026-10-11, after an independent review):
   gives at 67 ms (about 70 ms in its summary).
 - The Kenyon cell types here had slow_rise with slow_keep 0. In that combination, while a cell was refractory the
   rising stage went on taking input and draining into the slow current, and what drained was overwritten by the held
-  value. So input arriving then wasn't lost, as HybridBrain's docstring says, and the rising stage lost
+  value. So, contrary to HybridBrain's docstring, input arriving then wasn't lost, and the rising stage lost
   1 - exp(-t_ref / slow_rise) of its charge per spike. The measures come from quiet cells' free potential, which don't
   fire, so the numbers above are unaffected. HybridBrain now holds the rising stage too (tests/test_hybrid.py).
 

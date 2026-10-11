@@ -27,6 +27,10 @@ the alpha/beta cells carrying about half of the drive (mbon11_burst_check.py), f
 times, inside what Yamada et al.'s alpha/beta flashes allow if those cells fire more than once per flash. Not taken
 further: choosing the factor from flies' odor EPSC would fit the measure the slow current was tested on.
 
+Correction (2026-10-11, after an independent review): flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248
+and 244); 245-275 pools both odors. With it, flies' charge would come at about 1.6-1.7 times the alpha/beta charge
+(learning pilot 12's 187 pC x (0.5 + 0.5 k) = 245-250 pC gives k = 1.62-1.67), not 1.6-1.9.
+
     python experiments/learning_pilot14.py      (writes experiments/learning_pilot14.json)
 """
 from __future__ import annotations

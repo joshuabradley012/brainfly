@@ -33,6 +33,11 @@ Set C also leaves MBON11 answering weakly: a quarter of flies' spikes to 3-octan
 4-methylcyclohexanol, its gamma Kenyon cells answering a sixth as much as now. By the rule above there is no second
 attempt. Set C stays a candidate, and the unpaired mark waits on 4-methylcyclohexanol's input.
 
+Correction (2026-10-11, after a second independent review): "pairing 3-octanol takes 55% of 4-methylcyclohexanol's
+charge, twice flies' 27%" compares the model's charge drop with flies' spike drop. Flies' charge drops are 20% and
+35% (rung9_learning.py, from Hige et al.'s Figs. 3D and 4H), so the model's is 1.6-2.8 times flies'. Its spike drop,
+58.3% against 27%, is 2.2 times.
+
     python experiments/learning_pilot15.py      (writes experiments/learning_pilot15.json)
 """
 from __future__ import annotations

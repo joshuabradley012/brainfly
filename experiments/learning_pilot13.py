@@ -48,7 +48,8 @@ Correction (2026-10-11, after an independent review):
   As tested, 13 glomeruli answer 4-methylcyclohexanol and 16 answer 3-octanol (more than 20 spikes/s above rest;
   pn_accommodation_check.py). The bigger difference is strength: the answering glomeruli peak at 64 spikes/s against 133.
 - Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors;
-  4-methylcyclohexanol's is 265-273.
+  4-methylcyclohexanol's is 230-273 (Hige's Figs. 4H and 3D; amended after a second review).
+- "Moves the reciprocal into flies' band": the band, 15-50%, is rung 9's, set around flies' 38%.
 
     python experiments/learning_pilot13.py      (writes experiments/learning_pilot13.json)
 """

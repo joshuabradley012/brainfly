@@ -31,7 +31,8 @@ plateau's shortfall is the Kenyon cells' own decline (mbon11_burst_check.py: to 
 times compare loosely: flies' EPSC starts about 0.18 s after their odor valve, the model's at once.
 
 Correction (2026-10-11, after an independent review): flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and
-244; mbon11_kc_activity.md section 4). The 245-275 above pools both odors; 4-methylcyclohexanol's is 265-273. No reading
+244; mbon11_kc_activity.md section 4). The 245-275 above pools both odors; 4-methylcyclohexanol's is 230-273 (Hige's Figs. 4H and 3D;
+amended after a second review). No reading
 changes.
 
     python experiments/mbon11_slow_epsc.py      (writes experiments/mbon11_slow_epsc.json; seconds)

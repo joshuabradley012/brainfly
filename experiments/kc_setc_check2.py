@@ -59,6 +59,21 @@ cells. In every condition 0.52-0.78 of 4-methylcyclohexanol's answering cells an
 integration enlarges its set mostly by recruiting 3-octanol's cells. Whether pilot 13's reciprocal pass survives the
 held rest is learning_pilot15.py's question.
 
+Correction (2026-10-11, after a second independent review):
+- The verdict on set C applied "the cells keep more of their early firing" class by class, to 3-octanol only, where
+  only the gamma cells keep less (0.024 against 0.052, on a few dozen spikes). The reading names neither a class nor
+  an odor. For the cells as a whole (the classes' rates weighted by their cells), set C keeps more: 0.236 of the early
+  rate against A's 0.202 for 3-octanol, and 0.226 against 0.129 for 4-methylcyclohexanol, where every class keeps
+  more. So set C meets the reading, and by it is worth recalibrating the mushroom body around. Against that, on
+  measures it wasn't chosen from: its odor input to MBON11 through the slow current is 76 pC (A 202; flies about
+  245-250), and in learning_pilot15.py MBON11 answers at a quarter of flies' strength or less. Set D fails the reading
+  on density.
+- "At flies' density": set C's 7.7% is inside the reading's band (6-25%), about two thirds of flies' 12%.
+- A nearly repeats kc_setc_check.py's (623 and 109 cells against 624 and 111), its rest fitted afresh.
+- Longer integration enlarges 4-methylcyclohexanol's set mostly by recruiting 3-octanol's cells at 50 and 100 ms
+  undepressed (214 of the 298 cells added, and 572 of 699, answer 3-octanol). In sets C and D its set shrinks (77 and
+  103 cells against A's 109), while the share inside 3-octanol's set rises.
+
     python experiments/kc_setc_check2.py      (writes experiments/kc_setc_check2.json)
 """
 from __future__ import annotations

@@ -46,8 +46,9 @@ their outputs alike, 0.85 and 0.8 s, and exempt their Kenyon cell synapses).
 
 Correction (2026-10-11, after an independent review):
 - At 50 and 100 ms the cells' rest wasn't set back to the same distances below threshold, though the reading needs it
-  and the model above says it was. odor_probe33.set_rest's first pass measured the cells with the old 20 ms time
-  constant's share of the bias, and its second pass didn't undo the overshoot (kc_rest.py). The JSON records the
+  and the model above says it was. odor_probe33.set_rest's first pass measured the cells with the previous
+  condition's time constant's share of the bias (20 ms before 50, 50 ms before 100; amended after a second review), and
+  its second pass didn't undo the overshoot (kc_rest.py). The JSON records the
   realized distances. At 20 ms they are within 0.3 mV of the targets (alpha/beta 21.5, alpha'/beta' 16, gamma 32.5
   mV). At 50 ms the cells rest 1.5-5.1 mV nearer threshold, and at 100 ms 1.0-4.3 mV nearer, where the alpha'/beta'
   cells fire 0.25 spikes/s at rest. Part of the densities and of 4-methylcyclohexanol's rise to 0.37 and 0.49 may
