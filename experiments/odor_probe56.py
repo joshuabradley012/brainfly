@@ -16,6 +16,21 @@ Measured as odor_probe54.py measures (the LNs' responses, Olsen et al.'s protoco
 with DoOR's input), on its seeds, and as odor_probe55.py measures with receptor_fills.RECOMMENDED's input (the
 equalization and odor_probe36.measure), on its seeds; the PNs' settled resting rate.
 
+Ran: with the PNs resting at about flies' rate, weak input reaches them nearly as in flies and their responses grow
+toward flies' at every level, but 4-methylcyclohexanol gains little. Settled, the PNs rest at 5.64 spikes/s (median
+5.62; the last polish's rounds read 3.8-4.3, flies 4.6 +- 4.2), the GABAergic LNs at 3.88 (target 4.0), and the LNs
+answer 2-heptanone with 16.7, 9.1, 7.3 and 6.1 spikes/s in Nagel et al.'s bins (odor_probe54.py 17.7, 9.1, 7.3, 6.0;
+flies 22, 13, 8, 6). Over the cholinergic PNs, Olsen et al.'s protocol: sigma 12.6, 15.4, 13.5 and 11.2 for DL5, VM7d,
+DM4 and DM1 (odor_probe54.py 13.9, 16.8, 15.9, 11.9; flies 11.8, 12.4, 16.3, 44.8), Rmax 136, 141, 90 and 132 (127, 130,
+84, 126; flies 167, 163, 170, 144); DL5 rises 28 and 59 spikes/s at 5 and 10 spikes/s of input (20 and 51; flies 44 at
+5.1, 85 at 13.4), and strong responses keep 0.41-0.44 of their peak at 500 ms (0.28-0.40; flies 0.44). 3-octanol's
+driven PNs peak at 183 spikes/s at 50-100 ms and keep 0.37 of it at 0.45-0.5 s (0.29; flies 0.48). With DoOR's input
+10.7% of Kenyon cells answer 3-octanol and 3.0% 4-methylcyclohexanol (9.7 and 2.4; flies 6 +- 5%), 0.28 of it (0.25),
+and MBON11 gains 42.0 and 13.7 spikes (25.3 and 8.2; flies 118 and 110); the PNs' MCH/OCT is 0.85 over Badel et al.'s
+glomeruli (0.86). With the weighed input it is 0.56 (0.51) over all 37 and 0.64 (0.58; flies 1.11) over the 30 whose
+imaging whole-cell recordings support (lateral_pn_responses.md), the Kenyon cells 0.16 (0.15), and MBON11 gains 55.1 and
+7.6 spikes (31.5 and 4.4). The base model from here on.
+
     python experiments/odor_probe56.py         (writes experiments/odor_probe56.json)
 """
 from __future__ import annotations
