@@ -15,6 +15,24 @@ mb_calibration.py's mushroom body.
 Measured: as odor_probe52.py on its seeds, and odor_equalization_check.py's measures again with receptor_fills.py's
 receptor and PN-inferred tiers (seed 570500).
 
+Ran: the transform now has flies' steepness and saturation at about three quarters of their size, and
+4-methylcyclohexanol is no closer. Built with it, the slow component rests at 0.70 of its strength (0.36 before; the
+PNs' resting slow input 4.2 mV against 2.0), the inhibition's fit gives k_A 0.0016 and k_B 0.0098, the PNs rest at 2.73
+spikes/s, the GABAergic ALLNs at 3.59; the LNs answer 2-heptanone with 17.7, 9.1, 7.3 and 6.0 spikes/s (flies 22, 13, 8,
+6). Measured as Olsen et al. measured flies (cholinergic PNs): sigma 13.9, 16.8, 15.9 and 11.9 in DL5, VM7d, DM4 and DM1
+(odor_probe52.py 19.8, 24.4, 24.7, 16.3; flies 11.8, 12.4, 16.3, 44.8), Rmax 127, 130, 84 and 126 (150, 156, 105, 145;
+flies 167, 163, 170, 144); DL5 rises 20, 51, 79, 106, 120 and 123 spikes/s at 5-160 spikes/s of input (flies 44 at 5.1,
+85 at 13.4, 149 at 41.5, 158 at 98.7), 1.16 times as much at 160 as at 40 (1.43; flies 1.06); strong responses peak at
+304-311 spikes/s and keep 0.35 of it at 500 ms (0.56; flies 0.44), peak over mean 2.1-2.5 (flies 1.9). The step over all
+PNs: Rmax 148, 150, 148 and 66, sigma 17, 21, 15 and 18. 3-octanol's PNs peak at 92 spikes/s and keep 0.34 of it at
+0.40-0.45 s (flies 0.48). 2.4-13.9% of Kenyon cells respond, alpha/beta 1.6-3.5 spikes per response, Jaccard 0.17; MBON11
+gains 25 and 8.2 spikes (flies 118 and 110). 4-methylcyclohexanol: 0.39 of 3-octanol's summed receptor response, 0.52 at
+the PNs and 0.25 at the Kenyon cells; with both fill tiers 0.56 at the receptors and 0.59 at the PNs (odor_probe53.py on
+the unsaturated model: 0.56 and 0.58), its PNs answering in 15 glomeruli over 10 spikes/s against 3-octanol's 17. With the
+responses saturating, an odor's summed PN response counts mostly its glomeruli above about a tenth of DoOR's scale, and
+even filled 3-octanol drives more of them (22 against 16), where flies' PNs answer 4-methylcyclohexanol in more
+glomeruli than 3-octanol (18 against 13; Badel et al. 2016).
+
     python experiments/odor_probe54.py         (writes experiments/odor_probe54.json)
 """
 from __future__ import annotations
