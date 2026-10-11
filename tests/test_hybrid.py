@@ -127,6 +127,25 @@ def test_full_strength_exempts_single_synapses_from_depression():
     assert depressed < plain_1 - 0.1
 
 
+def test_a_slow_reversal_potential_makes_the_slow_current_a_conductance():
+    """With slow_reversal set, a target's slow current acts through its driving force: a graded target settles at about
+    (I + G) / (1 + G / E), where I is where the rest of its input holds it and G is the shift the slow current gives as a
+    current, so inhibition divides as well as subtracts and can't take the membrane past E (to within the first-order
+    integration's error, about dt / tau_m of the shift; the step is stable while G / E is well below tau_m / dt, 200 here,
+    which any real synapse is); infinite, it's a current, to the bit."""
+    def settled(weight, **target):
+        brain = small([], 2, slow_edges=[(0, 1, weight)], tau_slow=0.05,
+                      types={"c0": {"unit": "graded", "bias": 20.0, "gain": 5.0}, "c1": {"unit": "graded", "bias": 6.0, **target}})
+        brain.advance(20000)                            # 2 s, 40 slow time constants
+        return float(brain.u[0, 1])
+    for weight, e in ((-1.5, -12.0), (-15.0, -12.0), (1.0, 60.0)):
+        current = settled(weight)
+        g = current - 6.0                               # the shift as a current
+        assert settled(weight, slow_reversal=np.inf) == current
+        assert settled(weight, slow_reversal=e) == pytest.approx((6.0 + g) / (1.0 + g / e), rel=1.5e-2)
+    assert -12.0 < settled(-150.0, slow_reversal=-12.0) < -11.0    # strong inhibition (G about -490 mV): near E, not past it
+
+
 def test_a_type_can_give_its_slow_current_its_own_time_constant():
     """Two targets of one slow synapse each, one of a type with its own tau_slow: each slow current decays with its
     own time constant, and the type without one keeps the brain's."""
@@ -467,7 +486,8 @@ def test_delivery_is_the_same_whether_or_not_the_target_lists_overflow():
 
 def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
     """A random network of n neurons with every feature that reaches the membrane integration: graded and external
-    neurons, a per-neuron bias, types of their own (with biases of their own), slow synapses (some onto external neurons), adaptation (if
+    neurons, a per-neuron bias, types of their own (with biases of their own), slow synapses (some onto external neurons,
+    some acting as conductances), adaptation (if
     adapting), depression with a second pool, keep_current, electrical and fast synapses, presynaptic inhibition and
     background kicks."""
     rng = np.random.default_rng(seed)
@@ -477,10 +497,12 @@ def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
     edges = [(int(i), int(j), float(w)) for i, j, w in zip(rng.integers(0, n, 12 * n), rng.integers(0, n, 12 * n),
                                                             rng.normal(2.0, 7.0, 12 * n))]
     slow = [(int(i), int(j), float(w)) for i, j, w in zip(rng.integers(0, n, n), rng.integers(0, n, n), rng.normal(-2.0, 2.0, n))]
-    sets = {"graded": pick(6), "quick": pick(n // 5), "depressing": pick(n // 4), "kept": pick(n // 10), "noisy": pick(n // 3)}
+    sets = {"graded": pick(6), "quick": pick(n // 5), "depressing": pick(n // 4), "kept": pick(n // 10), "noisy": pick(n // 3),
+            "reversing": pick(n // 4)}
     types = {"graded": {"unit": "graded", "gain": 3.0}, "quick": {"tau_m": 0.008, "threshold": 9.0, "refractory": 0.003, "bias": 2.0},
              "depressing": {"depression": 0.7, "recovery": 0.08, "share2": 0.4, "depression2": 0.6, "recovery2": 1.5},
-             "kept": {"keep_current": 1.0, "bias": -1.5}, "noisy": {"noise_rate": 30.0, "noise_kick": 3.0}}
+             "kept": {"keep_current": 1.0, "bias": -1.5}, "noisy": {"noise_rate": 30.0, "noise_kick": 3.0},
+             "reversing": {"slow_reversal": -15.0}}
     if adapting:
         sets["adapting"] = pick(n // 3)
         types["adapting"] = {"adaptation": 2.0, "adaptation_tau": 0.1}

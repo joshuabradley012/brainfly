@@ -42,6 +42,11 @@ brainfly.shiu, and lets each cell type differ:
                   current that holds the neuron about `adaptation` mV lower and decays with time
                   constant adaptation_tau, s (default 0: none, as in Shiu's model; 0.2 s)
     tau_slow      the time constant of the type's slow current, s (default 0: the brain's tau_slow)
+    slow_reversal the reversal potential of the type's slow synapses, mV above rest (default inf: a current, as every
+                  other synapse is): finite, the slow current becomes a conductance, its effect on the membrane scaled
+                  by (slow_reversal - v) / slow_reversal, so that it acts at rest as a current would, more strongly
+                  the farther v is from the reversal potential, and not at all there, which inhibition can approach
+                  but not pass (Kenyon cells, held by APL no more than 10-12 mV below rest: Inada et al. 2017)
     slow_depression, slow_recovery    depression of the type's outgoing slow synapses, on their own (default 0: with
                   the fast ones; Nagel, Hong & Wilson 2015's slow receptor component: 0.9927 and 33.2 s)
     keep_current  1 to keep the fast synaptic current through a spike: Shiu's model (the default, 0) sets it to zero
@@ -83,7 +88,7 @@ DEFAULTS = {"unit": "spiking", "tau_m": T_MBR, "threshold": V_TH - V0, "reset": 
             "bias": 0.0, "scale": 1.0, "gain": 6.0, "release_at": V_TH - V0, "max_release": np.inf,
             "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0, "adaptation": 0.0,
             "adaptation_tau": 0.2, "tau_slow": 0.0, "slow_depression": 0.0, "slow_recovery": 0.0, "keep_current": 0.0,
-            "depression2": 1.0, "recovery2": 1.0, "share2": 0.0}
+            "depression2": 1.0, "recovery2": 1.0, "share2": 0.0, "slow_reversal": np.inf}
 MONOAMINES = ("dopamine", "octopamine", "serotonin")
 
 
@@ -148,10 +153,11 @@ def _integrate_uniform(n, ub, xb, adb, tonic, A, B, C, TH, VA, AA, a_xx, externa
 
 @numba.njit(cache=True)
 def _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs, a_xx, a_ss, theta, graded,
-                   external, tonic_on, adapt_on, slow, slow_in, fired):
+                   external, tonic_on, adapt_on, slow, slow_in, r_inv, fired):
     """One step of every neuron's membrane (the non-uniform case), listing in fired the ones over
     threshold; returns how many. In its own function so the compiler optimises its loop alone. Only neurons
-    with slow input (slow_in) carry a slow current; every other neuron's is always 0."""
+    with slow input (slow_in) carry a slow current; every other neuron's is always 0. A class with a slow reversal
+    potential (r_inv, its inverse, not 0) takes its slow current times its driving force."""
     m = 0
     for i in range(n):
         c = cls[i]
@@ -163,7 +169,10 @@ def _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_a
             adb[i] = a_aa[c] * adb[i]
         xb[i] = a_xx * xb[i]
         if slow and slow_in[i]:
-            ui += a_vs[c] * sb[i]
+            if r_inv[c] != 0.0:
+                ui += a_vs[c] * sb[i] * (np.float32(1.0) - ui * r_inv[c])
+            else:
+                ui += a_vs[c] * sb[i]
             sb[i] = a_ss[c] * sb[i]
         ub[i] = ui
         if ui > theta[c] and not graded[c] and not external[i]:
@@ -174,7 +183,7 @@ def _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_a
 
 @numba.njit(cache=True)
 def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs, a_xx, a_ss, theta,
-                      graded, tonic_on, adapt_on, slow, slow_in, fired):
+                      graded, tonic_on, adapt_on, slow, slow_in, r_inv, fired):
     """_integrate_all for only the neurons listed (none of them external)."""
     m = 0
     for q in range(len(listed)):
@@ -188,7 +197,10 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
             adb[i] = a_aa[c] * adb[i]
         xb[i] = a_xx * xb[i]
         if slow and slow_in[i]:
-            ui += a_vs[c] * sb[i]
+            if r_inv[c] != 0.0:
+                ui += a_vs[c] * sb[i] * (np.float32(1.0) - ui * r_inv[c])
+            else:
+                ui += a_vs[c] * sb[i]
             sb[i] = a_ss[c] * sb[i]
         ub[i] = ui
         if ui > theta[c] and not graded[c]:
@@ -201,12 +213,12 @@ BLOCK = 1024                                # neurons per block of the blocked i
 
 
 @numba.njit(cache=True)
-def _integrate_blocked(n, ub, xb, sb, adb, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, tonic_on,
-                       adapt_on, fired):
+def _integrate_blocked(n, ub, xb, sb, adb, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, slow_ri,
+                       tonic_on, adapt_on, fired):
     """_integrate_all (or _integrate_listed, when some neurons are external) block by block, in loops the compiler can
     vectorize: each neuron's coefficients are its own (HybridBrain._blocked_tables), an external neuron's leaving its
     membrane and current as they are and its threshold, like a graded neuron's, infinite; the slow targets (slow_list,
-    sorted, with their slow_vs and slow_ss) add their slow current afterwards; then the neurons over threshold are listed
+    sorted, with their slow_vs, slow_ss and slow_ri) add their slow current afterwards; then the neurons over threshold are listed
     in index order. The same float32 operations in the same order, so the same spikes and state to the bit. The slices
     give the loops indices the compiler knows aren't negative, without which it doesn't vectorize them."""
     m = 0
@@ -233,7 +245,10 @@ def _integrate_blocked(n, ub, xb, sb, adb, ka, kb, kc, kt, kd, kva, kaa, kth, sl
             x_[i] = d_[i] * x_[i]
         while sp < ns and slow_list[sp] < end:
             i = slow_list[sp]
-            ub[i] = ub[i] + slow_vs[sp] * sb[i]
+            if slow_ri[sp] != 0.0:
+                ub[i] = ub[i] + slow_vs[sp] * sb[i] * (np.float32(1.0) - ub[i] * slow_ri[sp])
+            else:
+                ub[i] = ub[i] + slow_vs[sp] * sb[i]
             sb[i] = slow_ss[sp] * sb[i]
             sp += 1
         th_ = kth[start:end]
@@ -250,14 +265,14 @@ def _integrate_blocked(n, ub, xb, sb, adb, ka, kb, kc, kt, kd, kva, kaa, kth, sl
 
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
-             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, keep, graded, depress, recover, depress_s, recover_s,
+             cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, r_inv, theta, reset, rfc, keep, graded, depress, recover, depress_s, recover_s,
              depress2, recover2, share2, uniform, graded_in,
              g_list, g_gain, g_at, g_max, g_targets,
              u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last, left_s, last_s, left2, last2,
              pfast, pslow, pinh, pdep, pdecay, pinc, pk, ppow, poff, psrc, preA,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out,
-             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss):
+             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, slow_ri):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
@@ -337,13 +352,13 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                 m = _integrate_uniform(n, ub, xb, adb, tonic, A, B, C, TH, VA, AA, a_xx, external, tonic_on, adapt_on, fired)
             elif blocked:
                 m = _integrate_blocked(n, ub, xb, sb, adb, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss,
-                                       tonic_on, adapt_on, fired)
+                                       slow_ri, tonic_on, adapt_on, fired)
             elif skip_external:                # external neurons never fire and nothing reads their state: skipped
                 m = _integrate_listed(internal, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs,
-                                      a_xx, a_ss, theta, graded, tonic_on, adapt_on, slow, slow_in, fired)
+                                      a_xx, a_ss, theta, graded, tonic_on, adapt_on, slow, slow_in, r_inv, fired)
             else:
                 m = _integrate_all(n, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs,
-                                   a_xx, a_ss, theta, graded, external, tonic_on, adapt_on, slow, slow_in, fired)
+                                   a_xx, a_ss, theta, graded, external, tonic_on, adapt_on, slow, slow_in, r_inv, fired)
             for q in range(ng):
                 i = g_list[q]
                 r = 0.0 if silenced[i] or external[i] else min(max(g_gain[q] * (ub[i] - g_at[q]), 0.0), g_max[q])
@@ -767,6 +782,7 @@ class HybridBrain:
             recover_s=np.array([(p["slow_recovery"] or p["recovery"]) / dt for p in table]),
             depress2=f32(lambda p: p["depression2"]), recover2=np.array([p["recovery2"] / dt for p in table]),
             share2=f32(lambda p: p["share2"]),
+            r_inv=f32(lambda p: 0.0 if not np.isfinite(p.get("slow_reversal", np.inf)) else 1.0 / p["slow_reversal"]),
             noise_lambda=np.array([p["noise_rate"] * dt for p in table]) * np.bincount(self.cls, minlength=len(table)),
             noise_kick=f32(lambda p: p["noise_kick"]))
 
@@ -854,7 +870,7 @@ class HybridBrain:
         _advance(self.t, int(steps), self.delay, np.float32(self.dt), self.ptr, self.idx, self.weights, self.full_strength,
                  self.sptr, self.sidx, self.slow_weights, self.slow_full, self.stargets, self.slow_in, self.gptr, self.gidx, self.gap_mv,
                  self.fptr, self.fcomp, self.fast_mv, self.ftargets, self.fpending, self.cls, k["a_vv"], k["a_vx"], k["a_vs"], k["a_bias"], self._tonic, k["a_va"], k["a_aa"], k["adapt"],
-                 k["a_xx"], k["a_ss"], k["theta"],
+                 k["a_xx"], k["a_ss"], k["r_inv"], k["theta"],
                  k["reset"], k["rfc"], k["keep"], k["graded"], k["depress"], k["recover"], k["depress_s"], k["recover_s"],
                  k["depress2"], k["recover2"], k["share2"], k["uniform"],
                  bool(len(self.graded) or external_on), k["g_list"], k["g_gain"], k["g_at"], k["g_max"],
@@ -886,7 +902,8 @@ class HybridBrain:
         tables = (f32(np.where(ext, 1, k["a_vv"][c])), f32(np.where(ext, 0, k["a_vx"][c])), f32(np.where(ext, 0, k["a_bias"][c])),
                   f32(np.where(ext, 0, self._tonic)) if len(self._tonic) else np.zeros(0, np.float32),
                   f32(np.where(ext, 1, k["a_xx"])), f32(np.where(ext, 0, k["a_va"][c])), f32(np.where(ext, 1, k["a_aa"][c])),
-                  f32(np.where(ext | k["graded"][c], np.inf, k["theta"][c])), slow, f32(k["a_vs"][c[slow]]), f32(k["a_ss"][c[slow]]))
+                  f32(np.where(ext | k["graded"][c], np.inf, k["theta"][c])), slow, f32(k["a_vs"][c[slow]]), f32(k["a_ss"][c[slow]]),
+                  f32(k["r_inv"][c[slow]]))
         self._blocked = (key, tables)
         return tables
 
