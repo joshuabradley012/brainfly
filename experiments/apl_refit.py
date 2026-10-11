@@ -20,6 +20,20 @@ Read as (written before the run): odor_apl_conductance2_check.py's rule (odor_ap
 the choice isn't mb_calibration4.py's (strength 1, reversal -20, drive 1), mb_calibration7.py takes its constants with
 the corrected input, and learning_pilot17.py runs rung 9's test on it.
 
+Ran (2026-10-11, 27 minutes): the rule chooses a weaker drive. On the corrected input, only strength 1 at -20 mV with
+drive 0.5 or 1 raises both odors' spikes 2-3-fold.
+- Drive 0.5: 2.37 and 2.36-fold, APL's ratio 0.43, 330 and 97 cells answer. Chosen (flies 2-3 and 0.49).
+- Drive 1 (mb_calibration4.py's): 2.77 and 2.57-fold, ratio 0.36, 305 and 91 cells.
+- Drive 1.5 raises 3-octanol's spikes 3.03-fold and drive 2.5 3.28-fold (ratio 0.47). At -15 mV silencing raises them
+  4.5-6.2-fold. Strength 2 (the pipette's chloride) raises them only 1.3-1.6-fold at every drive, as before.
+So mb_calibration7.py takes drive 0.5 with the corrected input. With half the drive APL holds the Kenyon cells back less,
+and more answer both odors. 4-methylcyclohexanol's share of answering cells stays 0.29-0.30 of 3-octanol's (flies about
+0.92). APL's conductance is unchanged, and Inada et al.'s Fig. 5B test gives what it gave before: 8.1 mV at the
+plateau, 10, 50 and 90% of it at 0.02, 0.14 and 0.42 s, half gone 0.37 s after the drive. This check runs
+odor_apl_conductance2_check.py's protocol, its seeds and its input (DoOR's, without receptor_fills). That is why drive 1
+here gives 305 and 91 cells, where kc_epsp_check.py (the learning pilots' seeds, receptor_fills.RECOMMENDED) gave 299
+and 41.
+
     python experiments/apl_refit.py      (writes experiments/apl_refit.json)
 """
 from __future__ import annotations
