@@ -16,6 +16,17 @@ Model: learning pilot 12's, with the alpha/beta Kenyon cells' synapses onto MBON
 end of the range above) before they move into the slow current. Protocol, rule, fit, seeds and measures as learning pilot
 12, without the flash.
 
+Ran (2026-10-11, 15 minutes): MBON11 now answers more strongly than flies', and the marks come out as before. To
+3-octanol it gains 152 evoked spikes (learning pilot 12 70.8; flies 118), peaks at 211 spikes/s (122; flies 135-140) and
+fires 114 from 0.5 to 1 s (51; flies 95-100); its slow current peaks at 841 pA and holds 266, 504 pC over 0-1.4 s (flies
+about 400, 170 and 245-275). To 4-methylcyclohexanol 25.3 spikes (11.4; flies 110). Learning: PAIRED passes (87.5%, 45
+points more than 4-methylcyclohexanol's), UNPAIRED passes (42.1%; charge 43.4%), RECIPROCAL fails (3-octanol's spikes fall
+8.0%; band 15-50%), BACKWARD passes (0.0% and 0.3%). So the alpha/beta synapses' strength sets MBON11's amplitude and not
+the learning marks, which follow the Kenyon cell sets. At 4 times the charge MBON11's input is about twice flies'; with
+the alpha/beta cells carrying about half of the drive (mbon11_burst_check.py), flies' 245-275 pC would come at about 1.6-1.9
+times, inside what Yamada et al.'s alpha/beta flashes allow if those cells fire more than once per flash. Not taken
+further: choosing the factor from flies' odor EPSC would fit the measure the slow current was tested on.
+
     python experiments/learning_pilot14.py      (writes experiments/learning_pilot14.json)
 """
 from __future__ import annotations
