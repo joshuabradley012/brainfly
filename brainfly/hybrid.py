@@ -290,7 +290,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
 
     For speed, every neuron is integrated and input goes to every target, and the few refractory
     neurons, kept in a list, are then put back to the state they are frozen in (the reset voltage, no
-    fast current, and the slow current they fired with). That is exactly equivalent, and saves reading
+    fast current, and the slow current they fired with, its rising stage too; keep_current and slow_keep
+    keep the currents instead). That is exactly equivalent, and saves reading
     a refractory counter for every neuron on every step. Input waiting in pend[b, slot] is delivered
     through the list of targets that received some, touched[b, slot, :n_touched[b, slot]], unless
     that list overflowed (n_touched > its capacity), when the whole row is scanned. uniform: every
@@ -756,8 +757,11 @@ class HybridBrain:
 
     def set_type(self, key: str, **params) -> None:
         """Change a type's (or a named set's, or a superclass's) parameters after construction, as types={key: params}
-        would have set them at the start; not scale or unit. The neurons' state, and any synapse scales set since,
-        are kept."""
+        would have set them at the start; not scale or unit. The neurons' state and any synapse scales set since are
+        kept. set_bias bakes tau_m into the share of the bias added each step, so when params sets tau_m the share is
+        baked again and each neuron's bias in mV holds. A tau_m changed any other way needs set_bias: a named set that
+        gained members since the last table, or a direct edit of params, which this rebuilt table undoes
+        (odor_probe4.set_kc_tau's)."""
         if {"scale", "unit"} & set(params):
             raise ValueError("set_type can't change scale or unit")
         self.types = {**self.types, key: {**self.types.get(key, {}), **params}}
@@ -765,6 +769,9 @@ class HybridBrain:
         self._tables()
         self.scale = scale
         self._tables_cache = None
+        if self.bias is not None and "tau_m" in params:
+            HybridBrain.set_bias(self, self.bias)       # HybridBrain's own: self.bias already holds any offsets a
+                                                        # wrapper of set_bias added
 
     def cells(self, types: list[str], side: str | None = None) -> np.ndarray:
         """Neurons whose cell type (FlyWire's or MaleCNS's own) or superclass is in `types`,

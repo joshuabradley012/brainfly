@@ -3,18 +3,24 @@ constant and input: odor_probe33.set_rest made to converge.
 
 odor_probe33.set_rest moves each Kenyon cell type's bias by its mean resting potential's distance from the target, in
 two passes, and then measures the result. After a change to the cells' membrane time constant and the projection neuron
-synapses' strength it left them resting 1.5-23 mV closer to threshold than the targets (kc_membrane_check.py's 50 and
-100 ms, kc_setc_check.py's sets C and D, learning_pilot13.py; found by review, 2026-10-11), for two reasons:
-- HybridBrain.set_bias bakes each type's time constant into the share of the bias added each step, and set_type doesn't
-  update it, so the first pass measured the cells with the old 20 ms share. At 50 ms that share holds the cells at about
-  2.5 times their bias, and at 189 ms about 9.5 times. The pass's correction then overshot, and one more pass was left
-  to undo it.
-- Cells pushed into firing hold their mean potential near threshold whatever their bias, so the step creeps (set D:
-  still 8 spikes/s and 15 mV off after seven more passes).
+synapses' strength it left them resting 0.4-23 mV closer to threshold than the targets, depending on the type and run
+(kc_membrane_check.py's 50 and 100 ms, kc_setc_check.py's sets C and D, learning_pilot13.py; found by review,
+2026-10-11). Three things kept it from converging:
+- HybridBrain.set_bias bakes each type's time constant into the share of the bias added each step, and set_type didn't
+  update it, so the first pass measured the cells with the previous condition's share. After 20 ms that share holds the
+  cells at 2.5 times their bias at 50 ms (kc_membrane_check's 50 ms, kc_setc_check's set C, learning pilot 13); after
+  50 ms, 2.0 times at 100 ms (kc_membrane_check's 100 ms) and 3.8 times at 189 ms (kc_setc_check's set D, which ran
+  after set C). The pass's correction then overshot, and one more pass was left to undo it. (HybridBrain.set_type now
+  bakes the share again when it sets tau_m.)
+- Cells pushed into firing hold their mean potential near threshold whatever their bias, so the step creeps (seen in a
+  scratch run of set D started from a 20 ms share).
+- Even without firing, a resting potential moves about 0.9 mV per mV of bias, because APL's inhibition is a
+  conductance (its reversal 20 mV below rest, with about 1.5 mV of inhibition at rest), so two passes leave a tenth of
+  the first pass's error.
 Here the share follows the current time constant before the first pass. The passes then set the cells' free membrane
-potential (their threshold out of reach), which moves one for one with the bias, until each class's mean is within
-TOL_MV of its target (at most PASSES passes). The rest is then measured with the cells firing, as odor_probe33.set_rest
-measures it, and returned in its format with the passes' log added.
+potential (their threshold out of reach), until each class's mean is within TOL_MV of its target (at most PASSES
+passes; "converged" says whether a pass found every class within TOL_MV). The rest is then measured with the cells
+firing, as odor_probe33.set_rest measures it, and returned in its format with the passes' log added.
 """
 from __future__ import annotations
 

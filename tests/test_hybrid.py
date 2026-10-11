@@ -203,13 +203,19 @@ def test_slow_keep_keeps_the_slow_current_through_spikes():
 
 def test_a_refractory_target_holds_its_rising_stage_too():
     """By default (slow_keep 0) a target that fires holds its slow current and its rising stage where they were while it
-    is refractory, and slow input arriving then is lost: no charge drains out of the rising stage under the hold."""
-    def run(second):
+    is refractory, and slow input arriving then is lost: no charge drains out of the rising stage under the hold. The
+    same holds when the target fires and is held within one call."""
+    END = 419                                           # the global step every run ends at
+
+    def run(second, one_call=False):
         brain = small([(0, 1, 100.0)], 2, slow_edges=[(0, 1, 5.0)], tau_slow=0.08, w_poi=100.0,
                       types={"c1": {"threshold": 7.0, "refractory": 0.02, "slow_rise": 0.03}})
         brain.advance(1, drive=[([0], 1 / DT)])         # step 0: a kick past threshold
         assert brain.advance(1)[0, 0] == 1              # step 1: neuron 0 fires; its input lands at step 19
         brain.advance(17)
+        if one_call:                                    # neuron 1 fires, is held and is released inside this call
+            assert brain.advance(END - brain.t)[0, 1] == 1
+            return brain.s[0, 1].copy(), brain.sr[0, 1].copy()
         for _ in range(100):                            # the fast input takes neuron 1 past threshold
             if brain.advance(1)[0, 1]:
                 break
@@ -224,10 +230,11 @@ def test_a_refractory_target_holds_its_rising_stage_too():
             drive, steps = (), steps + 1
             assert (float(brain.s[0, 1]), float(brain.sr[0, 1])) == held     # both held, to the bit
         assert steps > 150
-        brain.advance(50)
+        brain.advance(END - brain.t)
         return brain.s[0, 1].copy(), brain.sr[0, 1].copy()
-    (s1, r1), (s2, r2) = run(False), run(True)
+    (s1, r1), (s2, r2), (s3, r3) = run(False), run(True), run(False, one_call=True)
     assert s1 == s2 and r1 == r2                        # the input that landed during the hold is lost
+    assert s1 == s3 and r1 == r3                        # held within one call as step by step
 
 
 def test_flagged_fast_synapses_depress_as_the_slow_ones_do():
@@ -268,13 +275,25 @@ def test_rising_and_flagged_synapses_run_the_same_in_pieces():
                  "c8": {"depression": 0.6, "recovery": 0.3, "slow_depression": 0.8, "slow_recovery": 0.1}}
         brain = small(edges, n, slow, types=types, w_poi=25.0, seed=2)
         brain.own_depression = np.random.default_rng(1).random(len(brain.weights)) < 0.4
-        counts = sum(brain.advance(k, drive=[(np.arange(0, n, 3), 300.0)]) for k in pieces)
+        driven = [i for i in range(0, n, 3) if i != 6]  # not c6, so that it's refractory after its spikes (driven
+        counts = sum(brain.advance(k, drive=[(driven, 300.0)]) for k in pieces)     # neurons never are)
         return counts, brain
     (a, ba), (b, bb) = run([3000]), run([1, 7, 300, 1692, 1000])
-    assert a.sum() > 100
+    assert a.sum() > 100 and a[0, 6] > 0               # c6 fired, and so was held
     np.testing.assert_array_equal(a, b)
     for name in ("u", "x", "s", "sr", "until", "left", "last", "left_s", "last_s"):
         np.testing.assert_array_equal(getattr(ba, name), getattr(bb, name), err_msg=name)
+
+
+def test_set_type_keeps_a_bias_in_mv_when_tau_m_changes():
+    """A bias holds a neuron the same distance above rest whatever its tau_m: set_type bakes a new tau_m into the share
+    of the bias added each step, as set_bias does (with the old share, 5 mV would hold it 12.5 mV up at 50 ms)."""
+    brain = small([], 1, types={"c0": {"threshold": 1e9}}, bias=np.array([5.0]))
+    brain.advance(5000)                                 # 25 time constants of 20 ms
+    assert brain.u[0, 0] == pytest.approx(5.0, rel=1e-4)
+    brain.set_type("c0", tau_m=0.05)
+    brain.advance(10000)                                # 20 time constants of 50 ms
+    assert brain.u[0, 0] == pytest.approx(5.0, rel=1e-4)
 
 
 def test_set_type_after_construction_is_the_same_as_building_with_it():
