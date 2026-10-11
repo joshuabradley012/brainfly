@@ -135,11 +135,14 @@ def settled(o, rec, seed: int = SEED, seconds: float | None = None, rested: bool
 
 def fingerprint(b: HybridBrain) -> tuple:
     """What a settled state depends on: the biases (hashed), the weight arrays (by identity; they're replaced, not edited,
-    when changed), the types' parameters and the presynaptic inhibition's settings."""
+    when changed), the synapses' depression flags (hashed: full_strength, slow_full and own_depression, which are
+    sometimes edited in place), the types' parameters and the presynaptic inhibition's settings."""
     bias = hashlib.md5(np.ascontiguousarray(b.bias).tobytes()).hexdigest() if b.bias is not None else None
+    flags = hashlib.md5(b"".join(np.packbits(np.asarray(f, np.bool_)).tobytes() + np.int64(f.size).tobytes()
+                                 for f in (b.full_strength, b.slow_full, b.own_depression))).hexdigest()
     pres = None if b._presynaptic is None else repr({k: np.asarray(v).tolist() for k, v in b._presynaptic.items()
                                                     if k in ("k", "offset", "decay", "start", "power", "source")})
-    return bias, id(b.weights), id(b.slow_weights), id(b.gap_mv), repr(b.types), pres
+    return bias, id(b.weights), id(b.slow_weights), id(b.gap_mv), repr(b.types), pres, flags
 
 
 @contextlib.contextmanager

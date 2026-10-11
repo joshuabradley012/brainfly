@@ -22,6 +22,15 @@ course reads as a delay of about 0.12 s, a quick approach (an exponential of abo
 may be the optogenetic drive's, not APL's synapses'. Not taken further: APL's conductance stays as mb_calibration4.py
 set it.
 
+Correction (2026-10-11, after an independent review):
+- "A delay of about 0.12 s" fits flies' 10, 50 and 90% landmarks but not their measured onset, which apl_kinetics.md
+  gives at 67 ms (about 70 ms in its summary).
+- The Kenyon cell types here had slow_rise with slow_keep 0. In that combination, while a cell was refractory the
+  rising stage went on taking input and draining into the slow current, and what drained was overwritten by the held
+  value. So input arriving then wasn't lost, as HybridBrain's docstring says, and the rising stage lost
+  1 - exp(-t_ref / slow_rise) of its charge per spike. The measures come from quiet cells' free potential, which don't
+  fire, so the numbers above are unaffected. HybridBrain now holds the rising stage too (tests/test_hybrid.py).
+
     python experiments/odor_apl_rise_check.py      (writes experiments/odor_apl_rise_check.json)
 """
 from __future__ import annotations

@@ -61,7 +61,8 @@ brainfly.shiu, and lets each cell type differ:
                   one input rises and falls as a difference of exponentials (slow_rise, tau_slow) carrying the same
                   charge (Kenyon cells onto MBON11: Yamada et al. 2024's flash EPSC peaks about 100 ms after the flash)
     slow_keep     1 to keep the slow current through a spike as keep_current keeps the fast one: by default (0) it is
-                  held where it was while the neuron is refractory and input arriving then is lost
+                  held where it was while the neuron is refractory, its rising stage too, and input arriving then is
+                  lost
 
 A spike adds w_syn x (signed synapse count) to a fast current in each target (tau 5 ms, as in
 Shiu), or to a slow current (tau_slow, the target type's) along the edges given as slow, t_dly
@@ -342,12 +343,15 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
         tl, nt = touched[b], n_touched[b]
         rlist = np.empty(n, np.int64)          # the refractory neurons, and the slow current each is frozen with
         rs = np.empty(n if slow else 0, np.float32)
+        rsr = np.empty(n if slow and rise_on else 0, np.float32)    # and its rising stage
         rn = 0
         for i in range(n):
             if untilb[i] > t0:
                 rlist[rn] = i
                 if slow:
                     rs[rn] = sb[i]
+                    if rise_on:
+                        rsr[rn] = srb[i]
                 rn += 1
         A, B, C, TH = a_vv[0], a_vx[0], a_bias[0], theta[0]
         skip_external = len(internal) < n
@@ -361,6 +365,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                     rlist[kept] = j
                     if slow:
                         rs[kept] = rs[q]
+                        if rise_on:
+                            rsr[kept] = rsr[q]
                     kept += 1
             rn = kept
             m = 0
@@ -446,6 +452,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                     xb[j] = 0.0
                 if slow and not skeep[cls[j]]:
                     sb[j] = rs[q]
+                    if rise_on:
+                        srb[j] = rsr[q]
             spikes = 0
             gp = np.float32(1.0)                # presynaptic inhibition: the flagged synapses' gain this step
             ninh = 0
@@ -472,6 +480,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                     rlist[rn] = i
                     if slow:
                         rs[rn] = sb[i]
+                        if rise_on:
+                            rsr[rn] = srb[i]
                     rn += 1
                 counts[b, i] += 1
                 if npre and pinh[i]:

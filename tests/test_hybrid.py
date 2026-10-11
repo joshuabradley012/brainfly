@@ -162,7 +162,8 @@ def test_a_type_can_give_its_slow_current_its_own_time_constant():
 def test_a_slow_rise_delays_the_slow_current_and_keeps_its_charge():
     """With slow_rise, one input's slow current rises and falls as a difference of exponentials (here 20 and 80 ms:
     peaking 37 ms after the input lands at 0.472 x 4/3 of the input) and carries the same charge as without, to within
-    the discrete steps' error; without, it steps up at once, to the bit as before."""
+    the discrete steps' error; without, it steps up at once, and slow_rise 0 is the same, to the bit, as none given.
+    (That the kernel is unchanged with no rise anywhere was checked by rebuilding odor_probe60's cache through it.)"""
     def trace(**target):
         brain = small([(1, 1, 0.0)], 2, slow_edges=[(0, 1, 5.0)], tau_slow=0.08, w_poi=100.0,
                       types={"c1": {"threshold": 1e9, **target}})
@@ -200,15 +201,45 @@ def test_slow_keep_keeps_the_slow_current_through_spikes():
     assert held != slow_current(False)[0]
 
 
+def test_a_refractory_target_holds_its_rising_stage_too():
+    """By default (slow_keep 0) a target that fires holds its slow current and its rising stage where they were while it
+    is refractory, and slow input arriving then is lost: no charge drains out of the rising stage under the hold."""
+    def run(second):
+        brain = small([(0, 1, 100.0)], 2, slow_edges=[(0, 1, 5.0)], tau_slow=0.08, w_poi=100.0,
+                      types={"c1": {"threshold": 7.0, "refractory": 0.02, "slow_rise": 0.03}})
+        brain.advance(1, drive=[([0], 1 / DT)])         # step 0: a kick past threshold
+        assert brain.advance(1)[0, 0] == 1              # step 1: neuron 0 fires; its input lands at step 19
+        brain.advance(17)
+        for _ in range(100):                            # the fast input takes neuron 1 past threshold
+            if brain.advance(1)[0, 1]:
+                break
+        else:
+            raise AssertionError("neuron 1 never fired")
+        held = (float(brain.s[0, 1]), float(brain.sr[0, 1]))
+        assert held[0] > 0 and held[1] > 0              # charge in both stages at the spike
+        drive = [([0], 1 / DT)] if second else ()       # neuron 0 again: its input lands while neuron 1 is refractory
+        steps = 0
+        while brain.until[0, 1] > brain.t:
+            brain.advance(1, drive=drive)
+            drive, steps = (), steps + 1
+            assert (float(brain.s[0, 1]), float(brain.sr[0, 1])) == held     # both held, to the bit
+        assert steps > 150
+        brain.advance(50)
+        return brain.s[0, 1].copy(), brain.sr[0, 1].copy()
+    (s1, r1), (s2, r2) = run(False), run(True)
+    assert s1 == s2 and r1 == r2                        # the input that landed during the hold is lost
+
+
 def test_flagged_fast_synapses_depress_as_the_slow_ones_do():
     """A fast synapse flagged in own_depression carries the strength its neuron's slow synapses would (slow_depression,
-    slow_recovery), its unflagged siblings the fast one's; with nothing flagged, nothing changes, to the bit."""
-    def second_jump(flag):
-        brain = small([(0, 1, 1.0), (0, 2, 1.0)], 3, slow_edges=[(0, 2, 0.0)], tau_slow=0.08, w_poi=100.0,
-                      types={"c0": {"depression": 0.5, "recovery": 1.0, "slow_depression": 0.9, "slow_recovery": 1.0},
+    slow_recovery), its unflagged siblings the fast one's, with or without slow synapses in the network; with nothing
+    flagged, nothing changes, to the bit."""
+    def second_jump(flags, slow_edges):
+        brain = small([(0, 1, 1.0), (0, 2, 1.0)], 3, slow_edges=slow_edges, tau_slow=0.08, w_poi=100.0,
+                      types={"c0": {"depression": 0.5, "recovery": 1.0, "slow_depression": 0.9, "slow_recovery": 0.05},
                              "c1": {"threshold": 1e9}, "c2": {"threshold": 1e9}})
-        if flag:
-            brain.own_depression = np.array([e == 1 for e in range(len(brain.weights))])
+        if flags is not None:
+            brain.own_depression = np.array([e in flags for e in range(len(brain.weights))])
         brain.advance(1, drive=[([0], 1 / DT)])         # step 0: a kick past threshold
         assert brain.advance(1)[0, 0] == 1              # step 1: neuron 0 fires
         brain.advance(18)                               # its input lands at step 19
@@ -217,13 +248,33 @@ def test_flagged_fast_synapses_depress_as_the_slow_ones_do():
         brain.advance(1, drive=[([0], 1 / DT)])         # step 220: kicked again
         assert brain.advance(1)[0, 0] == 1              # step 221: it fires, 220 steps after the first spike
         brain.advance(18)                               # it lands 220 steps after the first did
-        return brain.x[0, 1:] - first * np.float32(np.exp(-220 * DT / TAU)), first
-    plain, first = second_jump(False)
-    flagged, _ = second_jump(True)
-    assert first == pytest.approx([1.0, 1.0], rel=1e-5)
-    recovered = lambda f: 1.0 - (1.0 - f) * np.exp(-220 * DT / 1.0)
-    assert plain == pytest.approx([recovered(0.5)] * 2, rel=1e-3)
-    assert flagged == pytest.approx([recovered(0.5), recovered(0.9)], rel=1e-3)
+        return brain.x[0, 1:] - first * np.float32(np.exp(-220 * DT / TAU)), first, brain.x.copy()
+    recovered = lambda f, tau: 1.0 - (1.0 - f) * np.exp(-220 * DT / tau)
+    for slow_edges in ([(0, 2, 0.5)], []):
+        plain, first, x_plain = second_jump(None, slow_edges)
+        flagged, _, _ = second_jump({1}, slow_edges)
+        assert first == pytest.approx([1.0, 1.0], rel=1e-5)
+        assert plain == pytest.approx([recovered(0.5, 1.0)] * 2, rel=1e-3)
+        assert flagged == pytest.approx([recovered(0.5, 1.0), recovered(0.9, 0.05)], rel=1e-3)
+        np.testing.assert_array_equal(second_jump(set(), slow_edges)[2], x_plain)
+
+
+def test_rising_and_flagged_synapses_run_the_same_in_pieces():
+    """With rising slow currents (held and kept through spikes) and flagged fast synapses, a network gives the same
+    spikes and state advanced in one go as in pieces."""
+    def run(pieces):
+        edges, slow, types, n = random_circuit()
+        types = {**types, "c6": {"slow_rise": 0.03}, "c7": {"slow_rise": 0.05, "slow_keep": 1.0},
+                 "c8": {"depression": 0.6, "recovery": 0.3, "slow_depression": 0.8, "slow_recovery": 0.1}}
+        brain = small(edges, n, slow, types=types, w_poi=25.0, seed=2)
+        brain.own_depression = np.random.default_rng(1).random(len(brain.weights)) < 0.4
+        counts = sum(brain.advance(k, drive=[(np.arange(0, n, 3), 300.0)]) for k in pieces)
+        return counts, brain
+    (a, ba), (b, bb) = run([3000]), run([1, 7, 300, 1692, 1000])
+    assert a.sum() > 100
+    np.testing.assert_array_equal(a, b)
+    for name in ("u", "x", "s", "sr", "until", "left", "last", "left_s", "last_s"):
+        np.testing.assert_array_equal(getattr(ba, name), getattr(bb, name), err_msg=name)
 
 
 def test_set_type_after_construction_is_the_same_as_building_with_it():
