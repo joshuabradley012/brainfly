@@ -6,7 +6,9 @@ Left and middle: each glomerulus's projection neurons for 3-octanol and for 4-me
 2016, mean dF/F over the 37 glomeruli their NP225 imaging covers; research_notes/Rung 9 learning data/oct_mch_input.md
 section 8) against the model's (experiments/odor_probe55.py: evoked spikes/s over the odor's first 0.5 s, with the
 receptor input the receptor-level evidence supports at Hige et al.'s concentration, receptor_fills.RECOMMENDED). Filled:
-glomeruli that input drives at 0.05 or more (10 spikes/s); rings: less or none. Right: the APL sweep
+glomeruli that input drives at 0.05 or more (10 spikes/s); rings: less or none; faint dashed rings: glomeruli whose
+imaged responses whole-cell recordings contradict (DA1, DL3, DA2 PNs silent to general odors) or that copy a
+neighbour's signal (research_notes/Rung 9 learning data/lateral_pn_responses.md). Right: the APL sweep
 (experiments/odor_apl_range_check.py): for each APL gain and Kenyon cell synapse scale, how much silencing APL raises
 the Kenyon cells' spikes (the block effect, mean of the two odors) against how much APL raises 4-methylcyclohexanol's
 share of answering Kenyon cells (the ratio with APL working over silenced); flies: block effect 2-3 and 0.95 over 0.76
@@ -40,6 +42,7 @@ BADEL = {  # Badel et al. 2016 Table S2, mean dF/F (%), as oct_mch_input.md sect
                              69, 16, 21, 110, 108, 96, 23, 40, 26, 15, 14, 50, -1, -3, 17),
 }
 DRIVEN = 0.05
+UNRELIABLE = {"DA1", "DL3", "DA2", "DA3", "DM3", "VM7v", "VM3", "VA6"}   # lateral_pn_responses.md: silent PNs, or a neighbour's signal
 LABEL_HZ, LABEL_FLY, GAP, LABEL_AT_HZ = 35.0, 85.0, 30.0, 50.0
 FLY_BLOCK, FLY_EQUAL = (2.0, 3.0), 0.95 / 0.76
 
@@ -73,6 +76,9 @@ def scatter_panel(c, x0, pw, odor: str, model: dict) -> list[str]:
             dots.append(f'<circle cx="{sx(fly):.1f}" cy="{sy(m):.1f}" r="5" fill="{c["red"]}" stroke="{c["paper"]}" stroke-width="2">{tip}</circle>')
             if m >= LABEL_HZ:
                 out.append(text(sx(fly), sy(m) - 9, g, "tick", "middle"))
+        elif g in UNRELIABLE:
+            rings.append(f'<circle cx="{sx(fly):.1f}" cy="{sy(m):.1f}" r="4.5" fill="none" stroke="{c["faint"]}" stroke-width="1.4" '
+                         f'stroke-dasharray="2 2">{tip}</circle>')
         else:
             rings.append(f'<circle cx="{sx(fly):.1f}" cy="{sy(m):.1f}" r="4.5" fill="none" stroke="{c["ink"]}" stroke-width="1.6">{tip}</circle>')
             if fly >= LABEL_FLY and m < LABEL_HZ:
@@ -129,15 +135,16 @@ def apl_panel(c, x0, pw, apl: dict) -> list[str]:
 
 def figure(theme: str, models: dict, apl: dict) -> str:
     c = THEMES[theme]
-    out = [text(24, 30, "Flies' projection neurons answer where no receptor input reaches; the model's don't, and its APL can't make up for it", "lab"),
-           text(24, 50, "Left, middle: with the receptor input the evidence supports, the model answers in the glomeruli that input drives (red) "
-                "and nowhere else (rings), where flies'", "note"),
-           text(24, 68, "answer strongly in many more. Right: an APL strong enough for flies' block effect saturates and stops favouring "
-                "4-methylcyclohexanol; a weak one favours it as flies' does.", "note")]
+    out = [text(24, 30, "The model's projection neurons answer only where receptor input reaches; flies' imaged ones answer more widely", "lab"),
+           text(24, 50, "Left, middle: the model answers in the glomeruli the receptor input drives (red) and nowhere else (rings); flies' imaged PNs "
+                "answer in more, but in the faint ones", "note"),
+           text(24, 68, "recordings find no firing or the imaging copies a neighbour. Right: an APL strong enough for flies' block effect saturates "
+                "and stops favouring 4-methylcyclohexanol.", "note")]
     out += scatter_panel(c, 80, 290, "3-octanol", models["3-octanol"])
     out += scatter_panel(c, 450, 290, "4-methylcyclohexanol", models["4-methylcyclohexanol"])
     out += apl_panel(c, 840, 250, apl)
-    out.append(text(80, Y1 + 56, "red: receptor input of at least 10 spikes/s at Hige et al.'s concentration; rings: less or none", "tick"))
+    out.append(text(80, Y1 + 56, "red: receptor input of at least 10 spikes/s at Hige et al.'s concentration; rings: less or none; faint dashed: "
+                    "silent in whole-cell recordings (DA1, DL3, DA2) or a neighbour's signal (DA3, DM3, VM7v, VM3, VA6)", "tick"))
     style = f"""
     text {{ font-family: {FONT}; }}
     .lab {{ font-size: 16px; font-weight: 600; fill: {c["ink"]}; }}

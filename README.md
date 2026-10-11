@@ -43,8 +43,9 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   supports, 4-methylcyclohexanol drives two glomeruli strongly and many weakly. Flies' projection neurons turn weak input
   into strong responses. The model's give about half as much, and the odor's inhibition then silences the weakest. Flies'
   transform alone would nearly equalize the two odors on the glomeruli flies' imaging covers (0.90, against flies' 0.98
-  and the model's 0.51), with no lateral excitation. Flies' projection neurons also answer in many glomeruli no
-  receptor input reaches, and the model's excitatory local neurons and its APL don't behave like flies' either.
+  and the model's 0.51), with no lateral excitation. Flies' imaged projection neurons also answer in glomeruli no
+  receptor input reaches, but whole-cell recordings find several of those silent
+  ([notes](research_notes/Rung%209%20learning%20data/lateral_pn_responses.md)). The model's excitatory local neurons and its APL don't behave like flies' either.
   - **The receptor input, weighed at Hige et al.'s concentration**
     ([notes](research_notes/Rung%209%20learning%20data/oct_mch_concentration.md),
     [`receptor_fills.py`](experiments/receptor_fills.py)). DoOR's values come from different methods at different
@@ -57,8 +58,12 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     [`odor_probe55.py`](experiments/odor_probe55.py)). Flies' projection neuron ratios (0.98 and 0.85) are sums over the
     glomeruli imaged, which leave out 3-octanol's strongest. Over Badel et al.'s 37 the model gave 0.86 with DoOR's
     input. With the weighed input it gives 0.51, and its Kenyon cells 0.15 of 3-octanol's (flies 0.73–0.92). Flies'
-    projection neurons answer both odors in many glomeruli no receptor input reaches: DA2 at 236% ΔF/F for
-    4-methylcyclohexanol, and DA3, DL3, DA1, VA5, VM7v and DC3 at 78–166%. The model's sit at rest there.
+    imaged projection neurons answer both odors in many glomeruli no receptor input reaches (DA2 at 236% ΔF/F for
+    4-methylcyclohexanol; DA3, DL3, DA1, VA5, VM7v and DC3 at 78–166%), where the model's sit at rest. But whole-cell
+    recordings find DA1, DL3 and DA2 projection neurons silent to general odors, including those that give Badel et
+    al.'s largest responses there, and several of Badel et al.'s glomeruli copy a neighbour's signal (DA3 tracks D, DM3
+    tracks DM6, VM7v tracks VM7d; [notes](research_notes/Rung%209%20learning%20data/lateral_pn_responses.md)). Without those seven glomeruli flies' ratio is 1.11 and the model's
+    0.58, so the gap stands.
   - **The weak end is half of flies'** ([`odor_weak_glomeruli_check.py`](experiments/odor_weak_glomeruli_check.py)).
     Driven alone, 4-methylcyclohexanol's glomeruli with 12–20 spikes/s of receptor input answer at 46–53 spikes/s, 0.43
     of what Olsen et al.'s transform gives flies'. In the whole odor the model divides them about as flies'
@@ -73,7 +78,8 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     local neurons electrically coupled to them (Olsen et al. 2007;
     [notes](research_notes/Rung%209%20learning%20data/lateral_excitation.md)). The model has no such coupling. MaleCNS's
     contacts between cholinergic local neurons and projection neurons rank glomeruli as flies' lateral excitation does
-    (Spearman 0.87 over 12 glomeruli), but they're sparsest in DA1, DL3, DA2 and DA3. And the model's cholinergic local
+    (Spearman 0.87 over 12 glomeruli). They're sparsest in DA1, DL3, DA2 and DA3, whose projection neurons flies' don't
+    fire to general odors either; lateral firing is real in VA6, VA1d and DL5. But the model's cholinergic local
     neurons don't behave like flies' excitatory ones. Their receptor synapses were never calibrated: they get 0.014 of a
     projection neuron's summed receptor input, where flies' take about 4 times its current. Scaled up 10- to 300-fold,
     they still barely answer palp odors with the antennae removed (a 0.2–0.5 spikes/s rise, flies 2–7.5), they answer
@@ -98,7 +104,7 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/al_inputs-dark.svg">
-  <img src="assets/al_inputs-light.svg" width="100%" alt="Three panels. Left: 3-octanol's projection neuron responses by glomerulus, flies' (dF/F, 0-300%) against the model's (spikes/s). Most glomeruli with receptor input (red) answer in the model at 30-110 spikes/s; those without (rings) sit at 0, including DC3, DA3, DA1, DA2 and DL3, where flies' answer at 86-166%. Middle: for 4-methylcyclohexanol the model answers in VA3 and D at 76-86 spikes/s and weakly in a few others; flies' answer at 87-121% in DM3, DM6, DL3, DC3, VA5, DA3 and VM7v and at 236% in DA2, all at 0 in the model. Right: the APL sweep: as APL's block effect rises from 1.3 to 3, its favouring of 4-methylcyclohexanol falls from 1.28 to 0.70; flies' box (block effect 2-3, about 1.25) is empty.">
+  <img src="assets/al_inputs-light.svg" width="100%" alt="Three panels. Left: 3-octanol's projection neuron responses by glomerulus, flies' (dF/F, 0-300%) against the model's (spikes/s). Most glomeruli with receptor input (red) answer in the model at 30-110 spikes/s; those without (rings) sit at 0, including DC3, DA3, DA1, DA2 and DL3, where flies' answer at 86-166%. Middle: for 4-methylcyclohexanol the model answers in VA3 and D at 76-86 spikes/s and weakly in a few others; flies' answer at 87-121% in DM3, DM6, DL3, DC3, VA5, DA3 and VM7v and at 236% in DA2, all at 0 in the model; DA1, DL3, DA2, DA3, DM3, VM7v, VM3 and VA6 are drawn faint, since whole-cell recordings find their PNs silent or their imaging copies a neighbour, leaving DC3 (3-octanol) and DM6, DC3 and VA5 (4-methylcyclohexanol) unexplained. Right: the APL sweep: as APL's block effect rises from 1.3 to 3, its favouring of 4-methylcyclohexanol falls from 1.28 to 0.70; flies' box (block effect 2-3, about 1.25) is empty.">
 </picture>
 
 * **The projection neurons now saturate as flies' do, and 4-methylcyclohexanol still trails 3-octanol (rung 9's
