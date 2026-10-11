@@ -1,0 +1,269 @@
+{
+ "question": "Exploratory check, not pre-registered and not a rung 5 attempt: between the drive at which rung 5's third attempt\nfound DNg100 rhythmic (400) and the one at which the network ran away (800), where is the front legs' rhythm, and at\nwhat rates does DNg100 fire there?\n\nrung5_vnc3.py drove DNg100 at 50, 100, 200, 400 and 800 only: at 400 (DNg100 at about 16 spikes/s) the right one was\nrhythmic in 32 of 32 replicates and the left in 23; at 800 about half the network was active. research_notes/Embodied fly\nconnectome simulation/descending_neuron_rates.md: walking descending neurons recorded whole-cell fire about 20-60\nspikes/s, which would put DNg100 at drives of about 460-800 (no one has recorded DNg100 itself). vnc_codrive_check.py: the\nmodel's rhythm speeds up only a little with DNg97 and falls apart as more of the network joins.\nModel and measures: vnc_codrive_check.py's, DNg100 alone at 300, 400, 450, 500, 550, 600 and 700, 16 replicates per side\n(seeds 18100 + side, the same parameters at every drive).\n\n    python experiments/vnc_drive_sweep.py      (writes experiments/vnc_drive_sweep.json)\n",
+ "conditions": {
+  "L": {
+   "DNg100 300": {
+    "rhythmic": 1,
+    "of": 16,
+    "freq_hz_median": 6.5,
+    "freq_hz": [
+     6.5
+    ],
+    "active_motor_neurons_median": 0,
+    "active_median": 14,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 10.4,
+    "dng97_hz": 0.0
+   },
+   "DNg100 400": {
+    "rhythmic": 14,
+    "of": 16,
+    "freq_hz_median": 13.0,
+    "freq_hz": [
+     12.2,
+     14.7,
+     11.9,
+     11.9,
+     13.0,
+     13.0,
+     14.7,
+     13.2,
+     14.1,
+     16.9,
+     13.9,
+     12.7,
+     9.6,
+     10.8
+    ],
+    "active_motor_neurons_median": 4,
+    "active_median": 83,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 16.6,
+    "dng97_hz": 0.0
+   },
+   "DNg100 450": {
+    "rhythmic": 7,
+    "of": 16,
+    "freq_hz_median": 13.7,
+    "freq_hz": [
+     13.9,
+     13.7,
+     13.7,
+     14.7,
+     17.2,
+     11.9,
+     12.3
+    ],
+    "active_motor_neurons_median": 6,
+    "active_median": 131,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 19.3,
+    "dng97_hz": 0.0
+   },
+   "DNg100 500": {
+    "rhythmic": 3,
+    "of": 16,
+    "freq_hz_median": 1.4,
+    "freq_hz": [
+     1.4,
+     1.3,
+     13.3
+    ],
+    "active_motor_neurons_median": 53,
+    "active_median": 320,
+    "over_100hz_median": 9,
+    "rule_keeps": 10,
+    "dng100_hz": 13.6,
+    "dng97_hz": 0.0
+   },
+   "DNg100 550": {
+    "rhythmic": 1,
+    "of": 16,
+    "freq_hz_median": 2.0,
+    "freq_hz": [
+     2.0
+    ],
+    "active_motor_neurons_median": 70,
+    "active_median": 2120,
+    "over_100hz_median": 853,
+    "rule_keeps": 4,
+    "dng100_hz": 7.4,
+    "dng97_hz": 0.0
+   },
+   "DNg100 600": {
+    "rhythmic": 0,
+    "of": 16,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "active_motor_neurons_median": 71,
+    "active_median": 2154,
+    "over_100hz_median": 862,
+    "rule_keeps": 0,
+    "dng100_hz": 0.9,
+    "dng97_hz": 0.0
+   },
+   "DNg100 700": {
+    "rhythmic": 0,
+    "of": 16,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "active_motor_neurons_median": 71,
+    "active_median": 2180,
+    "over_100hz_median": 872,
+    "rule_keeps": 0,
+    "dng100_hz": 0.0,
+    "dng97_hz": 0.0
+   }
+  },
+  "R": {
+   "DNg100 300": {
+    "rhythmic": 15,
+    "of": 16,
+    "freq_hz_median": 9.3,
+    "freq_hz": [
+     9.3,
+     10.0,
+     10.4,
+     10.8,
+     9.3,
+     9.0,
+     9.5,
+     9.3,
+     10.1,
+     9.0,
+     8.1,
+     8.7,
+     9.0,
+     9.6,
+     10.8
+    ],
+    "active_motor_neurons_median": 6,
+    "active_median": 61,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 11.0,
+    "dng97_hz": 0.0
+   },
+   "DNg100 400": {
+    "rhythmic": 16,
+    "of": 16,
+    "freq_hz_median": 11.6,
+    "freq_hz": [
+     11.2,
+     11.0,
+     12.5,
+     11.8,
+     11.0,
+     10.6,
+     11.6,
+     13.0,
+     13.2,
+     11.6,
+     11.0,
+     11.5,
+     11.6,
+     10.8,
+     11.9,
+     11.9
+    ],
+    "active_motor_neurons_median": 8,
+    "active_median": 126,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 17.5,
+    "dng97_hz": 0.0
+   },
+   "DNg100 450": {
+    "rhythmic": 14,
+    "of": 16,
+    "freq_hz_median": 11.8,
+    "freq_hz": [
+     11.4,
+     12.5,
+     11.9,
+     11.2,
+     11.6,
+     13.2,
+     13.0,
+     11.9,
+     11.2,
+     11.6,
+     11.9,
+     11.4,
+     12.0,
+     11.6
+    ],
+    "active_motor_neurons_median": 13,
+    "active_median": 167,
+    "over_100hz_median": 0,
+    "rule_keeps": 15,
+    "dng100_hz": 20.2,
+    "dng97_hz": 0.0
+   },
+   "DNg100 500": {
+    "rhythmic": 7,
+    "of": 16,
+    "freq_hz_median": 11.9,
+    "freq_hz": [
+     12.0,
+     11.9,
+     12.3,
+     11.9,
+     11.1,
+     12.0,
+     11.4
+    ],
+    "active_motor_neurons_median": 61,
+    "active_median": 1498,
+    "over_100hz_median": 294,
+    "rule_keeps": 7,
+    "dng100_hz": 11.6,
+    "dng97_hz": 0.0
+   },
+   "DNg100 550": {
+    "rhythmic": 3,
+    "of": 16,
+    "freq_hz_median": 11.5,
+    "freq_hz": [
+     11.5,
+     11.8,
+     11.2
+    ],
+    "active_motor_neurons_median": 64,
+    "active_median": 2021,
+    "over_100hz_median": 792,
+    "rule_keeps": 3,
+    "dng100_hz": 5.1,
+    "dng97_hz": 0.0
+   },
+   "DNg100 600": {
+    "rhythmic": 0,
+    "of": 16,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "active_motor_neurons_median": 66,
+    "active_median": 2043,
+    "over_100hz_median": 802,
+    "rule_keeps": 0,
+    "dng100_hz": 0.4,
+    "dng97_hz": 0.0
+   },
+   "DNg100 700": {
+    "rhythmic": 0,
+    "of": 16,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "active_motor_neurons_median": 66,
+    "active_median": 2046,
+    "over_100hz_median": 808,
+    "rule_keeps": 0,
+    "dng100_hz": 0.0,
+    "dng97_hz": 0.0
+   }
+  }
+ },
+ "seconds": 716
+}
