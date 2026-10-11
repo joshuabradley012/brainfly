@@ -649,6 +649,9 @@ of that list only DL4 and DA4l keep support (analogs; PN responses in more than 
 - **Resting ORN drive.** Flies ≈5-10 mV (Gouwens & Wilson, mostly DM1 PNs). The toy carries ≈20-30 mV offset by bias;
   brainfly reported 24 mV in odor_probe24, with the larger slow component then in use. Fly arithmetic is consistent only with low resting efficacy: DM4 0.26 at 3.4 Hz, and DM1 lower still given its
   77 ORNs at ≈9 Hz.
+  - *Correction (2026-10-11):* "mostly DM1" is probably wrong: the glomeruli of Gouwens & Wilson's intact-ORN cells aren't
+    stated, and DM1 PNs fire close to zero at rest. Tonic inhibition at rest is measured (blocking GABA depolarizes PNs
+    5-8 mV; Nagel, Hong & Wilson 2015). See [orn_pn_resting_state.md](orn_pn_resting_state.md), sections 1.1 and 2.
 - **Not measured.**
   - PN f-I in vivo, PN reset or AHP, and fly synapse recovery during ongoing spontaneous firing.
   - Olsen's valve-to-arrival delay and the sex of Olsen's flies.

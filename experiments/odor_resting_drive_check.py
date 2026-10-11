@@ -24,6 +24,13 @@ glomeruli (odor_weak_glomeruli_check.py). Where the excess comes from is open: t
 sensillum classes' medians (DM4's 6 spikes/s against flies' 3.4), and its synapses keep 0.37 of their strength at rest,
 where flies' DM4 synapses keep about 0.26 (research_notes/Rung 9 learning data/orn_pn_depression.md).
 
+Correction (2026-10-11; research_notes/Rung 9 learning data/orn_pn_resting_state.md, section 1.1): "mostly DM1 PNs" is
+probably wrong. Gouwens & Wilson fitted their passive model to DM1 PNs, but the glomeruli of the cells behind the intact
+estimate (their Fig. 7) aren't stated, and those fired 0-20 spikes/s at rest where DM1 PNs fire close to zero (Gaudry et
+al. 2013). Their 5-10 mV is a mean over unstated glomeruli and rests on an assumed 15 pA of spontaneous input. By
+glomerulus the note's estimates (Kazama & Wilson 2009's depression, measured rates and counts, no tonic inhibition) are
+about 6-8 mV for DM4, DM6, VM2, VM7d and DL5 and 13-15 mV for DM1, DL1 and DA1, against this model's 13-34 mV.
+
     python experiments/odor_resting_drive_check.py      (writes experiments/odor_resting_drive_check.json)
 """
 from __future__ import annotations

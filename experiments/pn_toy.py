@@ -56,6 +56,15 @@ deeper depression or tonic inhibition would each bring down); deeper depression 
 Wilson's pool: Rmax 82). How flies get both a small resting drive and a steep, strong transform stays open, as
 weak_input_gain.md concluded.
 
+Correction to the correction (2026-10-11; research_notes/Rung 9 learning data/orn_pn_resting_state.md): it overreached.
+Kazama & Wilson compared 3 cells with 3 (10.6 +/- 1.2 against 10.7 +/- 2.6 pA), a ratio of 0.99 +/- about 0.27, and a
+depleting synapse hides much of a release divisor: with DM4's own depression the divisor can be up to about 2.6 within
+one standard error (1.55 with brainfly's synapse, 2.9 within two). "Above about 1.2" was the point estimate alone. And
+tonic inhibition is measured directly: blocking GABA receptors depolarizes resting PNs about 5-8 mV (Nagel, Hong & Wilson
+2015, DM6, VM2 and VM7), which their presynaptic model reproduces with a resting divisor of about 4-5. So the toy's
+divisor of 2-2.5 is inside what the data allow, though no measurement yet says whether the resting inhibition acts on
+release or on the PN.
+
     python experiments/pn_toy.py      (writes experiments/pn_toy.json)
 """
 from __future__ import annotations
