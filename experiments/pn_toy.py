@@ -43,6 +43,19 @@ it includes whatever tonic presynaptic inhibition the intact antennal lobe exert
 resting divisor of about 4); brainfly's presynaptic inhibition starts above the resting rate and its receptor synapses
 are scaled so that at rest they carry the rested strength, so the model has the depression and not the division.
 
+Correction (2026-10-10, before anything was built on it): the reading of flies' 0.26 above is wrong. Kazama & Wilson
+2008 compared spontaneous EPSCs in intact flies (10.6 pA) with uEPSCs evoked by stimulating the cut antennal nerve at 4
+spikes/s (10.7 pA), both against the rested 41 pA (orn_pn_depression.md, section 1.6). The 4-spikes/s value is the
+depression a train leaves in a deafferented antennal lobe, where tonic inhibition from the LNs is less or absent, and the
+intact value matching it argues against much tonic presynaptic inhibition rather than for it (with Kazama & Wilson 2009's
+DM4-like depression, a tonic divisor above about 1.2 would make the intact value smaller than the evoked one). So the
+toy's "efficacy" with a divisor is not comparable with 0.26, and the divisor's match there is not evidence for it. What
+the measurements do say: brainfly's synapse depresses too little at low rates (0.51 at 4 spikes/s against DM4's 0.26-0.28;
+orn_pn_depression.md section 7.1's known misfit), and its resting drive is too large (Gouwens & Wilson's 5-10 mV, which
+deeper depression or tonic inhibition would each bring down); deeper depression flattens the toy's transform (Kazama &
+Wilson's pool: Rmax 82). How flies get both a small resting drive and a steep, strong transform stays open, as
+weak_input_gain.md concluded.
+
     python experiments/pn_toy.py      (writes experiments/pn_toy.json)
 """
 from __future__ import annotations
