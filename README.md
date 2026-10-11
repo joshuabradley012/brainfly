@@ -49,6 +49,11 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   ([`vnc_drive_sweep.py`](experiments/vnc_drive_sweep.py)). Walking descending neurons in flies fire about 20–60. So the
   nerve cord model is too excitable, and its rhythm isn't the network flies speed up.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/vnc_window-dark.svg">
+  <img src="assets/vnc_window-light.svg" width="100%" alt="Two panels. Left: DNg100 alone at drives from 300 to 700. Top: replicates of 16 with a front-leg rhythm: the right DNg100 15, 16 and 14 at 300-450, then 7, 3 and 0; the left 1, 14 and 7, then falling to 0; labels give the right DNg100's own rate, 11 to 20 spikes/s up to 450, then falling to 0 as the network runs away. Bottom: neurons active, log scale, from 14-126 at 300-400 to about 2,000 from 550. Shaded from 450 up: where DNg100 would fire at the 20+ spikes/s walking descending neurons reach in flies. Right: adding DNg97 at drives 0-400 with DNg100 at 400: the rhythm's frequency rises to at most 1.16 times DNg100's alone, against flies' about 1.5 (shaded), while the replicates still rhythmic fall from 16 of 16 to 2-3.">
+</picture>
+
 * **The olfactory pathway, animated (rung 9).** One trial of each odor through the current model: projection neurons by
   glomerulus, one fly's Kenyon cells, APL and MBON11 ([`olfaction_movie.py`](experiments/olfaction_movie.py)). 3-octanol
   drives most of its glomeruli at once and 657 of the fly's 4,064 Kenyon cells. 4-methylcyclohexanol, with the receptor
