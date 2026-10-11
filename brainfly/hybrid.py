@@ -197,6 +197,57 @@ def _integrate_listed(listed, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a
     return m
 
 
+BLOCK = 1024                                # neurons per block of the blocked integration
+
+
+@numba.njit(cache=True)
+def _integrate_blocked(n, ub, xb, sb, adb, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, tonic_on,
+                       adapt_on, fired):
+    """_integrate_all (or _integrate_listed, when some neurons are external) block by block, in loops the compiler can
+    vectorize: each neuron's coefficients are its own (HybridBrain._blocked_tables), an external neuron's leaving its
+    membrane and current as they are and its threshold, like a graded neuron's, infinite; the slow targets (slow_list,
+    sorted, with their slow_vs and slow_ss) add their slow current afterwards; then the neurons over threshold are listed
+    in index order. The same float32 operations in the same order, so the same spikes and state to the bit. The slices
+    give the loops indices the compiler knows aren't negative, without which it doesn't vectorize them."""
+    m = 0
+    sp = 0
+    ns = len(slow_list)
+    for start in range(0, n, BLOCK):
+        end = min(start + BLOCK, n)
+        u_, x_, a_, b_, c_ = ub[start:end], xb[start:end], ka[start:end], kb[start:end], kc[start:end]
+        if tonic_on:
+            t_ = kt[start:end]
+            for i in range(end - start):
+                u_[i] = a_[i] * u_[i] + b_[i] * x_[i] + c_[i] + t_[i]
+        else:
+            for i in range(end - start):
+                u_[i] = a_[i] * u_[i] + b_[i] * x_[i] + c_[i]
+        if adapt_on:
+            ad_, va_, aa_ = adb[start:end], kva[start:end], kaa[start:end]
+            for i in range(end - start):
+                u_[i] = u_[i] - va_[i] * ad_[i]
+            for i in range(end - start):
+                ad_[i] = aa_[i] * ad_[i]
+        d_ = kd[start:end]
+        for i in range(end - start):                # a loop of its own: one written array per loop vectorizes
+            x_[i] = d_[i] * x_[i]
+        while sp < ns and slow_list[sp] < end:
+            i = slow_list[sp]
+            ub[i] = ub[i] + slow_vs[sp] * sb[i]
+            sb[i] = slow_ss[sp] * sb[i]
+            sp += 1
+        th_ = kth[start:end]
+        over = 0
+        for i in range(end - start):
+            over += u_[i] > th_[i]
+        if over:
+            for i in range(end - start):
+                if u_[i] > th_[i]:
+                    fired[m] = start + i
+                    m += 1
+    return m
+
+
 @numba.njit(parallel=True, cache=True)
 def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, stargets, slow_in, gptr, gidx, gw, fptr, fcomp, fw, ftargets, fpend,
              cls, a_vv, a_vx, a_vs, a_bias, tonic, a_va, a_aa, adapt, a_xx, a_ss, theta, reset, rfc, keep, graded, depress, recover, depress_s, recover_s,
@@ -205,7 +256,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
              u, x, s, ad, until, pend, spend, touched, n_touched, R, RS, rel, rng, left, last, left_s, last_s, left2, last2,
              pfast, pslow, pinh, pdep, pdecay, pinc, pk, ppow, poff, psrc, preA,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
-             silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out):
+             silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out,
+             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
@@ -222,7 +274,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
     E[i], the same for every trial, is what it adds to neuron i each second, like graded input R. A
     graded neuron made external releases only that (its own state isn't integrated, so isn't read).
     internal lists the neurons that aren't external; in the non-uniform case only they are integrated,
-    which gives the same spikes (external neurons never fire, and nothing reads their state).
+    which gives the same spikes (external neurons never fire, and nothing reads their state). blocked: integrate
+    with _integrate_blocked and its per-neuron coefficients (ka ... slow_ss) instead, the same to the bit but faster.
     g_targets lists the only neurons R or E can reach: the targets of graded and external neurons.
 
     Per-neuron parameters come from a small table indexed by cls, and tonic[i], when given, adds
@@ -282,6 +335,9 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
             m = 0
             if uniform:
                 m = _integrate_uniform(n, ub, xb, adb, tonic, A, B, C, TH, VA, AA, a_xx, external, tonic_on, adapt_on, fired)
+            elif blocked:
+                m = _integrate_blocked(n, ub, xb, sb, adb, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss,
+                                       tonic_on, adapt_on, fired)
             elif skip_external:                # external neurons never fire and nothing reads their state: skipped
                 m = _integrate_listed(internal, cls, ub, xb, sb, adb, tonic, a_vv, a_vx, a_bias, a_va, a_aa, a_vs,
                                       a_xx, a_ss, theta, graded, tonic_on, adapt_on, slow, slow_in, fired)
@@ -558,6 +614,7 @@ class HybridBrain:
         self._external_release = np.zeros(self.n, np.float32)
         self._external_matrix = None                     # rows: every neuron; columns: the external ones
         self.external_input = np.zeros(self.n, np.float32)
+        self.blocked = True                              # integrate block by block (False: the reference loops it matches)
         self.reset(seed)
 
     @property
@@ -808,9 +865,30 @@ class HybridBrain:
                  drive_idx, drive_p, np.float32(self.w_poi), self.driven, self.external, self._internal_neurons(), self.external_input,
                  k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps),
-                 rec_pos, np.zeros((self.trials, 0, 0), np.int8) if spikes is None else spikes)
+                 rec_pos, np.zeros((self.trials, 0, 0), np.int8) if spikes is None else spikes,
+                 bool(getattr(self, "blocked", True)), *self._blocked_tables())
         self.t += int(steps)
         return counts
+
+    def _blocked_tables(self) -> tuple:
+        """The per-neuron coefficients the blocked integration reads (_integrate_blocked): an external neuron's leave
+        its membrane and current as they are, and an external or graded neuron's threshold is infinite; then the slow
+        targets that aren't external, with their coefficients. Made again whenever anything they come from is replaced
+        (the tables, the bias, the types, the slow synapses, the external neurons), none of which changes in place."""
+        k, internal = self._kernel_tables(), self._internal_neurons()
+        key = (k, self._tonic, self.cls, self.slow_in, self.stargets, internal, bool(len(self.slow_weights)))
+        made = getattr(self, "_blocked", None)
+        if made is not None and all(a is b for a, b in zip(made[0], key)):
+            return made[1]
+        ext, c = self.external, self.cls
+        f32 = lambda v: np.ascontiguousarray(v, np.float32)
+        slow = self.stargets[~ext[self.stargets]].astype(np.int64) if key[-1] else np.zeros(0, np.int64)
+        tables = (f32(np.where(ext, 1, k["a_vv"][c])), f32(np.where(ext, 0, k["a_vx"][c])), f32(np.where(ext, 0, k["a_bias"][c])),
+                  f32(np.where(ext, 0, self._tonic)) if len(self._tonic) else np.zeros(0, np.float32),
+                  f32(np.where(ext, 1, k["a_xx"])), f32(np.where(ext, 0, k["a_va"][c])), f32(np.where(ext, 1, k["a_aa"][c])),
+                  f32(np.where(ext | k["graded"][c], np.inf, k["theta"][c])), slow, f32(k["a_vs"][c[slow]]), f32(k["a_ss"][c[slow]]))
+        self._blocked = (key, tables)
+        return tables
 
     def _presynaptic_args(self) -> tuple:
         """set_presynaptic's arrays for the kernel (empty when it's off)."""

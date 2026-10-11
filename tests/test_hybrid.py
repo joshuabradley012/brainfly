@@ -465,6 +465,67 @@ def test_delivery_is_the_same_whether_or_not_the_target_lists_overflow():
     assert listed.advance(1000, drive).sum() > 50
 
 
+def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
+    """A random network of n neurons with every feature that reaches the membrane integration: graded and external
+    neurons, a per-neuron bias, types of their own (with biases of their own), slow synapses (some onto external neurons), adaptation (if
+    adapting), depression with a second pool, keep_current, electrical and fast synapses, presynaptic inhibition and
+    background kicks."""
+    rng = np.random.default_rng(seed)
+    pick = lambda k: np.sort(rng.choice(n, k, replace=False))
+    sparse_mv = lambda k, mu, sd: sparse.csr_matrix((rng.normal(mu, sd, k).astype(np.float32), tuple(rng.integers(0, n, (2, k)))),
+                                                    shape=(n, n))
+    edges = [(int(i), int(j), float(w)) for i, j, w in zip(rng.integers(0, n, 12 * n), rng.integers(0, n, 12 * n),
+                                                            rng.normal(2.0, 7.0, 12 * n))]
+    slow = [(int(i), int(j), float(w)) for i, j, w in zip(rng.integers(0, n, n), rng.integers(0, n, n), rng.normal(-2.0, 2.0, n))]
+    sets = {"graded": pick(6), "quick": pick(n // 5), "depressing": pick(n // 4), "kept": pick(n // 10), "noisy": pick(n // 3)}
+    types = {"graded": {"unit": "graded", "gain": 3.0}, "quick": {"tau_m": 0.008, "threshold": 9.0, "refractory": 0.003, "bias": 2.0},
+             "depressing": {"depression": 0.7, "recovery": 0.08, "share2": 0.4, "depression2": 0.6, "recovery2": 1.5},
+             "kept": {"keep_current": 1.0, "bias": -1.5}, "noisy": {"noise_rate": 30.0, "noise_kick": 3.0}}
+    if adapting:
+        sets["adapting"] = pick(n // 3)
+        types["adapting"] = {"adaptation": 2.0, "adaptation_tau": 0.1}
+    brain = small(edges, n, slow, types=types, sets=sets, trials=2, w_poi=25.0, gap=sparse_mv(n // 2, 1.5, 0.5),
+                  fast=sparse_mv(n // 4, 2.0, 1.0), bias=rng.normal(0.0, 2.5, n), seed=seed)
+    brain.blocked = blocked
+    brain.set_presynaptic(fast=rng.random(len(brain.weights)) < 0.3, slow=rng.random(len(brain.slow_weights)) < 0.3,
+                          inhibitors=pick(n // 20), tau=(0.02, 0.2), k=(0.01, 0.004), depleting=pick(n // 10))
+    brain.set_release(pick(n // 3), rng.normal(0.0, 10.0, n // 3))
+    return brain
+
+
+@pytest.mark.parametrize("adapting", [False, True])
+def test_the_blocked_integration_matches_the_reference_loops_to_the_bit(adapting):
+    """The membrane integration done block by block, in loops the compiler vectorizes, gives the same spikes and the
+    same state, to the bit, as the reference loops (_integrate_listed, or _integrate_all with nothing external), with
+    every feature that reaches it on, over several blocks and in pieces (external neurons included, whose membranes
+    only jumps reach: drive, kicks, electrical and fast synapses), and after each change of what its per-neuron tables
+    come from: the bias, a type, the slow synapses and the external neurons."""
+    n = 2500
+    drive = [(np.arange(0, n, 9), 80.0)]
+    a, b = featured(3, n, True, adapting), featured(3, n, False, adapting)
+    ext = a.external.copy()
+    for steps in (1, 7, 300, 1692):
+        np.testing.assert_array_equal(a.advance(steps, drive), b.advance(steps, drive))
+    for name in ("u", "x", "s", "ad", "until", "graded_input", "slow_graded_input", "release", "left", "last", "left2",
+                 "last2", "presynaptic_state", "rng"):
+        np.testing.assert_array_equal(getattr(a, name), getattr(b, name), err_msg=name)
+    spikes = a.advance(1000, drive)
+    np.testing.assert_array_equal(spikes, b.advance(1000, drive))
+    hz = spikes[:, ~ext].sum() / (~ext).sum() / 2 / (1000 * DT)
+    assert 1 < hz < 200, f"the network should be active, not silent or saturated ({hz:.1f} Hz)"
+    assert (spikes[:, ext] == 0).all()
+    rng = np.random.default_rng(4)
+    slow = sparse.csr_matrix((rng.normal(-2.0, 2.0, n).astype(np.float32), tuple(rng.integers(0, n, (2, n)))), shape=(n, n))
+    changes = (lambda br: br.set_bias(np.linspace(-3.0, 3.0, n)), lambda br: br.set_type("quick", tau_m=0.012, bias=-1.0),
+               lambda br: br.set_slow(slow), lambda br: br.set_release(np.flatnonzero(~ext)[:40], 5.0))
+    for change in changes:                                         # each replaces what the blocked tables come from
+        change(a)
+        change(b)
+        np.testing.assert_array_equal(a.advance(400, drive), b.advance(400, drive))
+        np.testing.assert_array_equal(a.u, b.u)
+        np.testing.assert_array_equal(a.s, b.s)
+
+
 def test_external_release_reaches_targets_and_the_neuron_never_fires():
     """A neuron whose release is set from outside never fires, however hard it is driven. Its
     target settles where release x weight x dt per step puts it, a negative release takes input
