@@ -54,7 +54,8 @@ Correction (2026-10-11, after an independent review):
   cells fire 0.25 spikes/s at rest. Part of the densities and of 4-methylcyclohexanol's rise to 0.37 and 0.49 may
   therefore come from the rest, not the integration. kc_setc_check2.py runs these conditions again with the rest held.
 - "Twice flies' sustained drive" holds at 50 ms (about 9.2 mV per connection at 115 spikes/s, 2.1 times flies' 4.4).
-  At 100 ms it is about 16.7 mV, 3.8 times.
+  At 100 ms it is about 16.7 mV, 3.8 times. (Superseded by the correction below: these used a 1.24 mV EPSP; with the
+  model's 1.90 mV they are about 14 and 26 mV, 3.2 and 5.8 times flies'.)
 - Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors.
 
 Correction (2026-10-11, kc_input_audit.py): the EPSP held across the time constants is the model's own, 1.90 mV per

@@ -1,7 +1,8 @@
 # Kenyon cell integration of PN input: time course, summation and short-term plasticity
 
 Read 2026-10-10. (Corrected 2026-10-11: the "current model" figures below, 11.5 ms, 1.4 mV and 6.11 mV weights, are
-what the code meant, not what ran; see the notes in §A and under table F.) Adds to `kenyon_cell_odor_responses.md` (Turner 2008 summary), `kc_classes_and_apl.md` (per-class
+what probes 7-16 ran. Since odor_probe17 the model has run at 20 ms with 1.90 mV per spike; see the notes in §A and
+under table F.) Adds to `kenyon_cell_odor_responses.md` (Turner 2008 summary), `kc_classes_and_apl.md` (per-class
 excitability, APL), `../Rung 4 resting state data/short_term_plasticity.md` §3.3 (the PN → KC rows) and
 `../Rung 4 resting state data/adaptation.md` (intrinsic rows). The question: how should brainfly model the PN → KC synapse
 (depression per spike, recovery) and Kenyon cell (KC) integration (membrane time constant)?
@@ -690,7 +691,7 @@ the decay after 1-2 ms of light (flies: 35-60 ms).
 | C | 50 ms | 0.85, 0.1 s | 1.4 | 3.9 | 0.56 / 0.93 / 0.95 ✓ | 50 ms ✓ | 37% / 14% partial | ✗ | 2.37 |
 | D | 189 ms | 0.5, 0.15 s | 1.25 | 3.2 | 0.58 / 0.91 / 1.02 ✓ | 189 ms ✗ (✓ for Groschner) | 77% / 59% ✓ | ✗ | 2.77 |
 
-- Corrected 2026-10-11: the "Now" row is the model the code meant. As run, a 20 ms membrane (the 11.5 ms that odor_probe4.set_kc_tau sets is undone by any later set_type) and w = 12.09 mV (mb_calibration scales the synapses to 1.4 mV at the PNs' resting depression, but they are exempt from depression): a 1.90 mV PSP, V_ss = 6.95 mV per connection at 115 Hz and 2.42 mV at 40 Hz, 1.6 times flies' plateau (`experiments/kc_input_audit.py`). Set A is its time constant with the measured PSP.
+- Corrected 2026-10-11: the "Now" row is the model probes 7-16 ran. Since odor_probe17, as run, a 20 ms membrane (the 11.5 ms that odor_probe4.set_kc_tau sets is undone by any later set_type) and w = 12.09 mV (mb_calibration scales the synapses to 1.4 mV at the PNs' resting depression, but they are exempt from depression): a 1.90 mV PSP, V_ss = 6.95 mV per connection at 115 Hz and 2.42 mV at 40 Hz, 1.6 times flies' plateau (`experiments/kc_input_audit.py`). Set A is its time constant with the measured PSP.
 
 - At 10 Hz, set C keeps x_ss = 0.92 and set D 0.66 (table E). Groschner's 10 Hz steps show no clear decline in one trial,
   which mildly favours C.

@@ -40,6 +40,9 @@ reaches a seventh as many cells as 3-octanol (flies about as many), and MBON11 w
 odor charge. Those gaps are real and stay to be found; the input no longer hides them. mb_calibration6.py carries the
 corrected input, and learning_pilot16.py runs rung 9's test on it.
 
+Correction (2026-10-11, after a review): "the input no longer hides them" holds for MBON11's charge (202 pC as run,
+76 corrected). 4-methylcyclohexanol's few cells were there as run too (0.175 as many as 3-octanol's).
+
     python experiments/kc_epsp_check.py      (writes experiments/kc_epsp_check.json)
 """
 from __future__ import annotations

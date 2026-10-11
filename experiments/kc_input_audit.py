@@ -37,6 +37,13 @@ So since odor_probe46.py the projection neuron input has been 1.36 times what mb
 flies' unitary EPSPs, at the default 20 ms membrane. kc_integration.md's "current model" (6.11 mV weights at 11.5 ms,
 3.5 mV per connection at 115 spikes/s) never ran. kc_epsp_check.py runs the cells at the measured size.
 
+Correction (2026-10-11, after a review):
+- kc_integration.md's "current model" did run: probes 7-16 ran Turner's 11.5 ms with 6.11 mV weights. The revert came
+  with odor_probe17.py's set_type, and every model since has run at 20 ms.
+- The size error is entirely the depression division. mb_calibration.py measured its EPSP at the 20 ms membrane, so
+  the revert changed the EPSP's time course, not its size.
+- The mean synapse includes the GABAergic projection neurons' few Kenyon cell synapses (about 1-2%).
+
     python experiments/kc_input_audit.py      (writes experiments/kc_input_audit.json)
 """
 from __future__ import annotations

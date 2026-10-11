@@ -5,8 +5,8 @@ synapses to Turner et al. 2008's 1.4 mV "at the PNs' resting depression", dividi
 depressing synapse keeps at 3 spikes/s. But the synapses are exempt from depression, so every spike gave 1.90 mV. Here,
 after mb_calibration4.apply, each class's synapses are scaled so that one spike through its mean synapse gives 1.4 mV at
 full strength, as the synapses run (kc_input_audit.response: the kernel's own step).
-The Kenyon cells' 20 ms membrane, which they have had all along (odor_probe4.set_kc_tau's 11.5 ms is undone by any
-set_type), is set in their type, so that it shows in the model's types and no later table can change it.
+The Kenyon cells' 20 ms membrane, which they have had since odor_probe17.py's build (odor_probe4.set_kc_tau's 11.5 ms
+is undone by any set_type), is set in their type, so that it shows in the model's types and no later table can change it.
 kc_epsp_check.py: the cells then answer 3-octanol at 7.4% (flies about 12%; the rule's 6-25%), and silencing APL raises
 both odors' spikes 2.8 and 2.0-fold (flies 2-3), so the rule stated before that run adopted it.
 

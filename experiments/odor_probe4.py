@@ -59,6 +59,8 @@ KC_TAU = 0.15
 
 
 def set_kc_tau(b, kc: np.ndarray, tau: float) -> None:
+    """The Kenyon cells' tau_m, by editing their parameter classes directly. Any later HybridBrain.set_type rebuilds the
+    table from the types and undoes it (kc_input_audit.py); set_type("kenyon_cells", tau_m=...) holds."""
     classes = np.unique(b.cls[kc])
     assert not np.isin(b.cls[~kc], classes).any(), "Kenyon cells share a parameter class with other neurons"
     for c in classes:

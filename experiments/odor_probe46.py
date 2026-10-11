@@ -35,6 +35,10 @@ PNs' resting depression never applies to them. Dividing by the 0.735 of their st
 at 3 spikes/s made one spike's EPSP 1.4 / 0.735 = 1.90 mV at every spike, not Turner et al.'s 1.4 mV.
 Before the doubling the model's unitary EPSP was 0.96 mV (as the introduction's "mean 0.96" says), not 0.70.
 
+Correction (2026-10-11, after a review): that 0.96 mV was odor_probe7.py's 1.4 mV, set at 11.5 ms, seen through the
+20 ms membrane that odor_probe17.py's set_type had restored (6.11 mV x 0.1575), not rung 4's size rule. So the x 1.995
+was x 1.455 for the membrane times x 1.37 for the depression division.
+
     python experiments/odor_probe46.py         (writes experiments/odor_probe46.json)
 """
 from __future__ import annotations

@@ -38,6 +38,9 @@ in a lower range, now loses spikes in proportion (in learning_pilot3.py 9% of th
 al.'s population EPSCs without their slow tail, which raises the charge per flash from about 19 pC to 26-43
 (research_notes/Rung 9 learning data/mbon11_kc_activity.md).
 
+Correction (2026-10-11, kc_input_audit.py): "Turner et al.'s 1.4 mV" was 1.4 mV at the PNs' resting depression on
+synapses that don't depress, that is 1.90 mV per spike.
+
     python experiments/learning_pilot4.py        (writes experiments/learning_pilot4.json)
 """
 from __future__ import annotations

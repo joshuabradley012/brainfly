@@ -271,7 +271,7 @@ def test_rising_and_flagged_synapses_run_the_same_in_pieces():
     spikes and state advanced in one go as in pieces."""
     def run(pieces):
         edges, slow, types, n = random_circuit()
-        types = {**types, "c6": {"slow_rise": 0.03}, "c7": {"slow_rise": 0.05, "slow_keep": 1.0},
+        types = {**types, "c6": {"slow_rise": 0.03}, "c7": {"slow_rise": 0.05, "slow_keep": 1.0, "bias": 9.0},
                  "c8": {"depression": 0.6, "recovery": 0.3, "slow_depression": 0.8, "slow_recovery": 0.1}}
         brain = small(edges, n, slow, types=types, w_poi=25.0, seed=2)
         brain.own_depression = np.random.default_rng(1).random(len(brain.weights)) < 0.4
@@ -279,7 +279,7 @@ def test_rising_and_flagged_synapses_run_the_same_in_pieces():
         counts = sum(brain.advance(k, drive=[(driven, 300.0)]) for k in pieces)     # neurons never are)
         return counts, brain
     (a, ba), (b, bb) = run([3000]), run([1, 7, 300, 1692, 1000])
-    assert a.sum() > 100 and a[0, 6] > 0               # c6 fired, and so was held
+    assert a.sum() > 100 and a[0, 6] > 0 and a[0, 7] > 0  # c6 fired, and so was held; c7 fired, and so kept its current
     np.testing.assert_array_equal(a, b)
     for name in ("u", "x", "s", "sr", "until", "left", "last", "left_s", "last_s"):
         np.testing.assert_array_equal(getattr(ba, name), getattr(bb, name), err_msg=name)

@@ -61,6 +61,7 @@ Correction (2026-10-11, after an independent review):
   Per answering cell they are 2.7 against 4.4.
 - Set D's shares are 71.5 and 76.5% of the Kenyon cells, not 71 and 76%.
 - "About twice the sustained drive" (from kc_membrane_check.py) holds at 50 ms. At 100 ms it is nearly four times.
+  (Superseded by the correction below: with the model's 1.90 mV EPSP, 3.2 and 5.8 times.)
 - Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors.
 
 Correction (2026-10-11, kc_input_audit.py): "as now" is the model's 1.90 mV per connection at every spike

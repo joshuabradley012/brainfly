@@ -32,6 +32,14 @@ touches 3-octanol. By the rule there is no second attempt. With its input at the
 4-methylcyclohexanol at a thirtieth. Rung 9's crux, 4-methylcyclohexanol's small Kenyon cell set, stands, and the
 corrected input adds a second gap: too little Kenyon cell drive overall.
 
+Correction (2026-10-11, after a review):
+- "4-methylcyclohexanol's 38 cells carry 5% of 3-octanol's charge (learning pilot 12: 11.5%)": 5% and 11.5% are the
+  drops in 3-octanol's charge that the fitted rule gives when 4-methylcyclohexanol is paired, not the shares of
+  3-octanol's charge its cells carry (rung9_learning.py keeps the two apart).
+- "Too little Kenyon cell drive overall" rests on fits made with the input a third too strong: the gamma cells' +11
+  mV gap (gamma_gap_refit.py has since kept it on the corrected input), the Kenyon cell-to-APL x 10, and APL's
+  conductance design. The last two haven't been refitted.
+
     python experiments/learning_pilot16.py      (writes experiments/learning_pilot16.json)
 """
 from __future__ import annotations
