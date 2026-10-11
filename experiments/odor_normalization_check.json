@@ -1,0 +1,90 @@
+{
+ "question": "Exploratory check, not pre-registered: does the model's presynaptic inhibition grow with an odor's total receptor input\nas flies' normalization does?\n\nOlsen, Bhandawat & Wilson 2010 describe a projection neuron's response to its receptor neurons' rate r as Rmax r^1.5 /\n(sigma^1.5 + r^1.5 + (m s)^1.5), where s is the summed receptor input to the other glomeruli: the suppression grows as\nthe 1.5 power of the odor's total input, so a weak odor is suppressed much less than a strong one (Luo, Axel & Abbott 2010\nuse m = 0.05 with s summed over 20 receptors; Olsen et al.'s own population model 10.63 / 190, about 0.056, over 24\nglomeruli). Written as a divisor of r (Rmax (r / D)^1.5 / (sigma^1.5 + (r / D)^1.5)) that is D = (1 + (m s / sigma)^1.5)^(2/3),\nwhose excess D - 1 grows with s at a log-log slope between 1 and 1.5. The model's presynaptic inhibition is fitted to\nOlsen & Wilson 2008's EPSCs during five strong odors (odor_probe28.py), so how it scales with s comes from its LNs.\nresearch_notes/Rung 9 learning data/weak_input_gain.md, section 8: through Olsen et al.'s equation the receptor input\nthe evidence supports would nearly equalize 4-methylcyclohexanol with 3-octanol, where the model doesn't.\nModel: odor_probe56.py's (its cache), or another's through measure(). Measured for sixteen odors (DoOR's input): the summed\nevoked receptor rate over the first 0.5 s after the model's odor onset (each glomerulus's rate over its spontaneous rate,\nsummed over glomeruli), and the presynaptic divisor over the same 0.5 s (2 seeds of 8 flies, from a settled start); the\nlog-log slope of D - 1 against s, the model's and the equation's (m 0.05, sigma 12; the model sums over about 50\nglomeruli, so the equation's D is high in absolute terms but its slope isn't).\n\n    python experiments/odor_normalization_check.py      (writes experiments/odor_normalization_check.json)\n",
+ "m": 0.05,
+ "sigma": 12.0,
+ "odors": {
+  "1-hexanol": {
+   "summed_evoked_hz": 1192.8,
+   "divisor": 2.572,
+   "olsen_divisor": 5.265
+  },
+  "pentyl acetate": {
+   "summed_evoked_hz": 1169.1,
+   "divisor": 2.67,
+   "olsen_divisor": 5.169
+  },
+  "propyl acetate": {
+   "summed_evoked_hz": 1065.7,
+   "divisor": 2.578,
+   "olsen_divisor": 4.751
+  },
+  "2,3-butanedione": {
+   "summed_evoked_hz": 1053.0,
+   "divisor": 2.637,
+   "olsen_divisor": 4.7
+  },
+  "e2-hexenal": {
+   "summed_evoked_hz": 1009.0,
+   "divisor": 2.618,
+   "olsen_divisor": 4.523
+  },
+  "3-octanol": {
+   "summed_evoked_hz": 1029.3,
+   "divisor": 2.579,
+   "olsen_divisor": 4.605
+  },
+  "4-methylcyclohexanol": {
+   "summed_evoked_hz": 459.6,
+   "divisor": 1.881,
+   "olsen_divisor": 2.371
+  },
+  "ethyl acetate": {
+   "summed_evoked_hz": 833.8,
+   "divisor": 2.182,
+   "olsen_divisor": 3.823
+  },
+  "isopentyl acetate": {
+   "summed_evoked_hz": 971.1,
+   "divisor": 2.632,
+   "olsen_divisor": 4.371
+  },
+  "benzaldehyde": {
+   "summed_evoked_hz": 722.4,
+   "divisor": 2.376,
+   "olsen_divisor": 3.383
+  },
+  "2-heptanone": {
+   "summed_evoked_hz": 1203.7,
+   "divisor": 2.688,
+   "olsen_divisor": 5.309
+  },
+  "methyl salicylate": {
+   "summed_evoked_hz": 401.2,
+   "divisor": 1.783,
+   "olsen_divisor": 2.154
+  },
+  "ethyl butyrate": {
+   "summed_evoked_hz": 998.1,
+   "divisor": 2.42,
+   "olsen_divisor": 4.48
+  },
+  "geranyl acetate": {
+   "summed_evoked_hz": 358.8,
+   "divisor": 1.86,
+   "olsen_divisor": 2.0
+  },
+  "1-octen-3-ol": {
+   "summed_evoked_hz": 989.3,
+   "divisor": 2.296,
+   "olsen_divisor": 4.444
+  },
+  "acetophenone": {
+   "summed_evoked_hz": 580.4,
+   "divisor": 1.988,
+   "olsen_divisor": 2.83
+  }
+ },
+ "slope_model": 0.635,
+ "slope_olsen": 1.203,
+ "seconds": 52
+}
