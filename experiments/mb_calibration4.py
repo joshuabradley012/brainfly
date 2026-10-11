@@ -11,6 +11,10 @@ each class's rest. Here each Kenyon cell type's reversal is its rest (threshold 
 mb_calibration3.py's design gave it (the conductance's current is its slow current times (E - v) / E). Then APL's ceiling
 holds a quiet Kenyon cell of any class mb_calibration3.ceiling_mv(effect, reversal) mV below its rest, as designed.
 `tau`: the conductance's decay (research_notes/Rung 9 learning data/apl_kinetics.md: about 0.3 s in flies).
+odor_apl_conductance2_check.py's choice: reversal 20 mV below rest, a conductance at APL's ceiling 1.22 times the Kenyon
+cell's leak, the Kenyon cells' drive onto APL at MaleCNS's weight, decay 0.3 s. Then APL answers 4-methylcyclohexanol with
+0.53 of its peak for 3-octanol (flies 0.49), silencing it raises the Kenyon cells' spikes 2.7-fold (flies 2-3), and its
+inhibition rises and fades about as flies' does.
 
     o, rec, built = brain_cache.load("odor_probe60", odor_probe60.build, odor_probe44.prepare)
     mb_calibration4.apply(o)
@@ -23,7 +27,9 @@ import mb_calibration
 import mb_calibration3
 import odor_probe8 as p8
 
-REVERSAL_MV, APL_KC_EFFECT, KC_APL_DRIVE, TAU_S = None, None, None, None     # odor_apl_conductance2_check.py
+REVERSAL_MV, KC_APL_DRIVE, TAU_S = -20.0, 1.0, 0.3      # odor_apl_conductance2_check.py's choice
+CONDUCTANCE = 11.0 / (abs(REVERSAL_MV) - 11.0)              # at APL's ceiling, x the leak: holds a quiet cell 11 mV down
+APL_KC_EFFECT = CONDUCTANCE * abs(REVERSAL_MV) / abs(mb_calibration.KC_SATURATION_MV)     # 2.22
 
 
 def class_reversals(o, reversal: float) -> dict:

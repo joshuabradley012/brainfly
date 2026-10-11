@@ -22,6 +22,25 @@ Chosen, as stated before running: among the conditions whose silencing raises bo
 the one whose APL peak ratio is nearest 0.49 (by |log|); if none does, the one nearest both (the summed squared log ratios
 to 2.5 and 0.49), reported as missing. mb_calibration4.py then takes its constants.
 
+Ran (24 minutes): with each class's reversal below its own rest, APL's ceiling holds every class alike (the Fig. 5B test:
+alpha/beta 6.9, alpha'/beta' 6.9, gamma 7.0 mV 0.3-0.5 s into the drive; 8.2 mV at its plateau, short of the design's 11
+because APL already releases about 7 Hz at rest). Chosen by the rule: strength 1 at -20 mV with drive 1. APL answers
+4-methylcyclohexanol with 0.53 of its peak for 3-octanol (35.3 and 18.5 Hz; flies 0.49), silencing it raises the Kenyon
+cells' spikes 2.71 and 2.73-fold (flies 2-3), and its inhibition is largest 0.175 s into the odor (5.4 mV), 3.0 mV on
+average over the odor for the cells that never fire and 1.5 at rest. Driven directly it reaches 10, 50 and 90% of its
+plateau at 0.01, 0.14 and 0.42 s (flies 0.14, 0.27, 0.56) and is half gone 0.36 s after the drive (flies 0.32), 0.08 of it
+left after 1 s (flies about 0.2). Drive 0.5 also met the silencing rule (APL's ratio 0.40; 2.34 and 2.33), drive 1.5 raised
+4-methylcyclohexanol's spikes 3.02-fold, and at -15 mV silencing raised them 4.3-6.0-fold. Strength 2, the conductance the
+recordings imply if the pipette's chloride reached the synapses (0.28 times the leak), can't hold the Kenyon cells back
+enough at any drive: silencing raises their spikes only 1.3-1.7-fold, even with APL at its ceiling for both odors. So in
+this model flies' silencing effect needs the larger conductance, the reading in which the synapses kept physiological
+chloride; with the pipette's reversal that conductance would give 22.9 mV at the ceiling, twice what Inada et al.
+recorded, so here the two readings can't both hold. What the slow inhibition costs: more Kenyon cells answer (656 and 251;
+356 and 219 in odor_apl_kinetics_check.py's 5 ms comparison, whose reversals were misplaced), APL no longer equalizes the
+odors (4-methylcyclohexanol's share of answering cells 0.38 of 3-octanol's with APL working, 0.45 silenced: 0.85-fold,
+flies 1.25), and 0.63 of 4-methylcyclohexanol's answering cells answer 3-octanol (flies 0.33): the early spikes, before
+APL's inhibition builds, decide which cells answer. mb_calibration4.py takes the chosen constants.
+
     python experiments/odor_apl_conductance2_check.py      (writes experiments/odor_apl_conductance2_check.json)
 """
 from __future__ import annotations
