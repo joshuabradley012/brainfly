@@ -24,6 +24,41 @@ Read as (written before the run), the two checks' own readings:
 And what follows: whichever way set C comes out, learning_pilot15.py runs learning pilot 13 again with the rest held,
 since pilot 13's result is in the README; the README's crux entry is corrected by what this check finds.
 
+Ran (2026-10-11, 12 minutes): with the rest held, the longer membranes still make far too many cells answer, set C
+half meets kc_setc_check.py's reading, and set D is sparse, not the set that answered everything. Every condition's
+rest came to within 0.3 mV of its targets in each class in three passes (every type within 0.9 mV, measured with the
+cells firing).
+- A (as now) repeats kc_setc_check.py's. 623 and 109 Kenyon cells answer 3-octanol and 4-methylcyclohexanol, 0.18 as
+  many and 15.3% of the cells for 3-octanol. 0.52 of 4-methylcyclohexanol's answering cells answer 3-octanol.
+- 50 and 100 ms, undepressed (kc_membrane_check.py's):
+  - 1,294 and 1,861 cells answer 3-octanol, 32 and 46% of them (with the rest unheld 37 and 51%).
+  - 407 and 808 answer 4-methylcyclohexanol, 0.315 and 0.43 as many (unheld 0.37 and 0.49).
+  - The cells keep 0.445, 0.535 and 0.29 of their early firing at 50 ms and 0.57, 0.61 and 0.47 at 100 ms
+    (alpha/beta, alpha'/beta', gamma; A 0.19, 0.29 and 0.05).
+  So kc_membrane_check.py's reading holds with the distances held, and so does its caveat: far too many cells answer.
+- C (the synapses x 2.08):
+  - 311 and 77 cells answer, 7.7% for 3-octanol (unheld 436 and 121, 10.7%), 0.25 as many (unheld 0.28).
+  - Silencing APL raises both odors' spikes 2.4-fold (flies 2-3).
+  - 0.61 of 4-methylcyclohexanol's answering cells answer 3-octanol (A 0.52; flies 0.33), and 0.15 of 3-octanol's
+    answer 4-methylcyclohexanol (A 0.09; flies 0.30).
+  - The alpha/beta and alpha'/beta' cells keep a little more of their early firing (0.22 and 0.31; A 0.19 and 0.29).
+    The gamma cells keep less (0.024; A 0.052), and their early rate falls to a sixth of A's (0.10 spikes/s per cell
+    against 0.60).
+  - Through the slow current MBON11's input would peak at 152 pA, 76 pC (A 419 and 202; flies about 400 and 245-250).
+- D (the synapses x 7.75):
+  - 187 and 103 cells answer, 4.6% for 3-octanol, under the reading's 6% (unheld 2,905 and 3,109). That is 0.55 as
+    many, the nearest of any condition.
+  - The cells keep 0.68, 0.58 and 0.39 of their early firing.
+  - 0.69 of 4-methylcyclohexanol's answering cells answer 3-octanol, and 0.38 of 3-octanol's answer
+    4-methylcyclohexanol (flies 0.30).
+  - APL's 4-methylcyclohexanol/3-octanol peak ratio is 0.99 (flies 0.49).
+  - The gamma cells barely answer (0.012 spikes/s per cell early), so MBON11's input would be 34 pA, 32 pC.
+By kc_setc_check.py's reading neither set qualifies. C brings 4-methylcyclohexanol nearer 3-octanol at flies' density,
+but its gamma cells hold less of their firing. D holds the firing and brings the odors nearest, but answers in too few
+cells. In every condition 0.52-0.78 of 4-methylcyclohexanol's answering cells answer 3-octanol (flies 0.33): longer
+integration enlarges its set mostly by recruiting 3-octanol's cells. Whether pilot 13's reciprocal pass survives the
+held rest is learning_pilot15.py's question.
+
     python experiments/kc_setc_check2.py      (writes experiments/kc_setc_check2.json)
 """
 from __future__ import annotations
