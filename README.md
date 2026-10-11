@@ -36,6 +36,63 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **The antennal lobe at rest: the model already inhibits like flies' and still rests too far above its deafferented
+  potential (rung 9's groundwork).** Flies' antennal lobe inhibits at rest: blocking its GABA receptors raises resting
+  projection neurons 5-8 mV (Nagel, Hong & Wilson 2015). The model's rise 5.2 mV, measured where the membrane would sit
+  without its own spikes, all of it from the local neurons' synapses onto them, so it needs no tonic presynaptic
+  inhibition; adding it overshoots. What stays off is the resting drive: silencing every receptor neuron drops the
+  model's projection neurons 28 mV in those glomeruli, where flies' estimates are about 7-10, and measured spontaneous
+  rates show why: the receptor synapse can't rest deeply depressed and still respond strongly.
+  - **The evidence** ([notes](research_notes/Rung%209%20learning%20data/orn_pn_resting_state.md)). Tonic inhibition at
+    rest is measured, though not where it acts (on receptor terminals or projection neurons). Kazama & Wilson 2008's
+    comparison of 3 intact cells with 3 deafferented ones, which the model's builds had read as ruling out tonic
+    presynaptic inhibition, allows a divisor up to about 2.6. Female and male receptor neuron counts agree in the EM
+    data except in DM4. DM1's projection neurons rest nearly silent in flies, though its receptor neurons fire 9-15
+    spikes/s, and DL5's steep response despite its high spontaneous rate is unexplained.
+  - **The model's resting inhibition** ([`odor_gaba_block_check.py`](experiments/odor_gaba_block_check.py)). Blocking
+    GABA raises the projection neurons 5.2 mV in DM6, VM2 and VM7. A first reading said 3.1: the model's membrane resets
+    at each spike, so its mean saturates as the rate rises (here from 5 to 12 spikes/s), while flies' somatic recordings
+    barely see the projection neurons' spikes; the check now reports the membrane's free potential.
+  - **Tonic presynaptic inhibition overshoots** ([`odor_probe57.py`](experiments/odor_probe57.py)). Dividing the
+    receptor synapses by 2 at rest, in Nagel et al.'s form, shrinks the resting drop from 28 to 20 mV but makes blocking
+    GABA raise the projection neurons 13 mV, steepens nothing (DL5's σ 12.6 to 15.5), and leaves 4-methylcyclohexanol
+    reaching 0.18 as many Kenyon cells as 3-octanol (0.16 before). Not adopted.
+  - **Measured spontaneous rates expose the synapse** ([`odor_probe58.py`](experiments/odor_probe58.py)). Giving eight
+    glomeruli their measured spontaneous rates in place of their sensillum class's median brings the low-rate ones'
+    resting drive toward flies' (DM6 from 25 to 12 mV, DM4 from 14.5 to 10.5) but makes the high-rate ones' larger and
+    flattens their responses (DL5 at 16 spikes/s: 35 mV, Rmax 101 and σ 22.5; flies 167 and 11.8). With two depleting
+    pools a high spontaneous rate costs a glomerulus both resting drive and response; flies' DL5 pays neither, which
+    needs depression deep at rest yet recovering fast during an odor (Kazama & Wilson measured recovery of about 0.4 s
+    after 50-200 spikes/s and 7.5 s after 7). Not adopted; a synapse of that kind comes next.
+  - **A faster simulation** ([`brainfly/hybrid.py`](brainfly/hybrid.py)). The membrane integration, 61% of an odor
+    trial, now runs block by block in loops the compiler vectorizes, with the same floating-point operations in the same
+    order: 1.26 times faster with identical spikes (the old loops stay as the reference, and a test holds the two equal
+    across every feature). Rebuilding odor_probe56.py's model through it reproduced every saved attribute.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/al_resting-dark.svg">
+  <img src="assets/al_resting-light.svg" width="100%" alt="Two panels. Left: for eight glomeruli, how far the projection neurons' free membrane potential falls when every receptor neuron is silenced: the model without tonic presynaptic inhibition (grey) 14.5-31 mV, with it (red) 10-22 mV, against flies' estimates of about 6-15 mV (rings) and Gouwens and Wilson's 5-10 mV (shaded). Right: how far it rises when GABA receptors are blocked in DM6, VM2, VM7d and VM7v: without tonic inhibition 4.3-6.1 mV, inside flies' 5-8 mV band; with it 11-15 mV.">
+</picture>
+
+* **Rung 7's twitch: which muscle activation?** A fly's tibia flexor relaxes fast and yet sums strongly, and MuJoCo's
+  first-order muscle activation can't do both with one time constant (`leg_deactivation_check.py`). The literature
+  points to a calcium-like active state each spike briefly saturates, driving force through a steep link (the Ding and
+  Wilson models; [notes](research_notes/Embodied%20fly%20connectome%20simulation/muscle_activation.md)). It also showed
+  that the 80 Hz of the earlier test was this project's choice: Azevedo et al. didn't report their bursts' rates, and
+  flies' times run from the spike at the soma, about 2.5 ms before the muscle.
+  - **Two models in FlyMimic's leg** ([`leg_activation_check.py`](experiments/leg_activation_check.py)). The two-state
+    model as the note gives it twitches at a fly's size and time (8.1 uN, peaking 18.5 ms after the spike) and reaches
+    the fast motor unit's 28-30 uN at 120-200 Hz, but relaxes slightly fast (half gone 10.9 ms after the peak; flies
+    12-16) and sums two spikes too strongly (1.82 times one; flies 1.4-1.6). MuJoCo's first-order activation with 10 ms
+    deactivation, timed from the soma, is a fly's in twitch and doublet (1.60) but reaches only 26.4 uN at 200 Hz. Until
+    flies' burst rates are known, the doublet, not the plateau, separates them. Their spike times are on Dryad, which now
+    needs a login to download.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/leg_activation-dark.svg">
+  <img src="assets/leg_activation-light.svg" width="100%" alt="Three panels of probe force against time from the motor neuron's spike. One spike: the two-state model (red) peaks at 8.1 uN at 18.5 ms and relaxes fast; the first-order model with 10 ms deactivation (black) peaks at 8.3 uN at 16 ms; with 40 ms (dashed) it relaxes slowly; flies' peak window and relaxation are shaded. Two spikes 12 ms apart: the two-state model reaches 14.8 uN, above flies' 1.4-1.6 times one spike; the first-order one 13.2. Seventeen spikes at 120 Hz: the two-state model rises smoothly to flies' 28-30 uN plateau; the first-order ones ripple at 21 and 27 uN.">
+</picture>
+
 * **Rung 9's learning test, first attempt: as specific as flies' one way round, not the other (pre-registered;
   failed).** In flies, pairing an odor with dopamine onto MBON11's compartment cuts MBON11's response to that odor by
   about 80% and to another odor by about 27%, and pairing the other odor works the same way round (Hige et al. 2015).
@@ -1524,6 +1581,7 @@ a sign that the approach is broken."
 | `experiments/odor_resting_drive_check.py` | Exploratory check: how far the receptor neurons' spontaneous spikes hold the PNs above their deafferented rest | 24.8 mV over all cholinergic PNs (by glomerulus 12-39), DM1 18.0 and DM4 13.0, where flies' is about 5-10 (Gouwens & Wilson 2009): 2-4 times flies', which is how the odor's presynaptic division silences weakly driven glomeruli |
 | `experiments/odor_gaba_block_check.py` | Exploratory check: how far do the PNs depolarize at rest when the antennal lobe's GABA receptors are blocked (flies 5-8 mV; Nagel, Hong & Wilson 2015), and do DM1's PNs rest nearly silent? | As far as flies' (corrected): the membrane's mean rises 3.1 mV in DM6, VM2 and VM7, but it resets at each spike; where it would sit without its own spikes it rises 5.2 mV (flies 5-8), all from the LNs' synapses, with no tonic presynaptic inhibition. Silencing every receptor neuron drops the PNs 28.4 mV there (flies about 7-10); DM1's PNs rest at 5.3 spikes/s like every other glomerulus's; the synapses keep 0.37 of their strength at rest (DM4 flies 0.26) |
 | `experiments/odor_probe57.py` | Exploratory probe: does tonic presynaptic inhibition at rest (Nagel et al.'s form, the receptor synapses divided by 2) bring the resting state toward flies' and keep the transform? | Not adopted: the resting drive falls (28.4 to 20.2 mV by the free potential) but blocking GABA then raises the PNs 13.2 mV, twice flies' 5-8 (the model's postsynaptic GABA alone gives 5.2), DL5's sigma rises 12.6 to 15.5 (its rule allowed 2), and 4-methylcyclohexanol gains little (0.177 of 3-octanol at the Kenyon cells, from 0.16) |
+| `experiments/odor_probe58.py` | Exploratory probe: the receptor neurons' spontaneous rates measured where flies' have been (DM4 3.44, DM6 2.2, VM2 7.1, DL1 17.2, VM7d 11.4, DM1 12, DL5 16.3, DA1 1.5 spikes/s) in place of their class's median | Not adopted: where the rate is low the resting drive falls toward flies' (DM6 25 to 12 mV, DM4 14.5 to 10.5, DA1 28 to 10), where it is high it grows and the transform goes (DL5 21 to 35 mV, Rmax 136 to 101, sigma 12.6 to 22.5; DL1 29 to 49 mV); 4-methylcyclohexanol 0.143 of 3-octanol at the Kenyon cells. Two depleting pools can't give a high-rate glomerulus both a small resting drive and a steep response, as flies' DL5 has |
 | `experiments/rung9_learning.py` | Rung 9, learning, attempt 1 (pre-registered): Hige et al.'s pairing on odor_probe56.py's model with the weighed input | **Fail**, on the reciprocal: PAIRED (89%, 58 points beyond), UNPAIRED (31% spikes, 30% charge) and BACKWARD (0.1-1.4%) pass; with 4-methylcyclohexanol paired 3-octanol falls 4.9% (band 15-50%; flies 38%), its 60 responders carrying 3.4% of 3-octanol's input |
 | `experiments/odor_weak_glomeruli_check.py` | Exploratory check: why 4-methylcyclohexanol's weakly driven glomeruli answer so little: each alone, the whole odor, and without the GABAergic synapses onto PNs | Alone they answer at 0.43 of Olsen et al.'s transform (12-20 Hz of input); the odor's presynaptic division keeps 0.45 of that (flies' normalization 0.56) but silences glomeruli at 8 Hz or less (0.10 against 0.42); postsynaptic inhibition plays no part. The missing breadth is the PNs' weak-input gain |
 | `experiments/odor_eln_check.py` | Exploratory check: the cholinergic LNs driven as flies' excitatory LNs are (receptor synapses x10-x300, rest held), then coupled electrically to the PNs | Stopped at the first stage: with the antennae removed their rise to palp odors stays at 0.18-0.49 Hz (flies 3.9) and their baseline falls (flies 3.7); they answer odors unequally, and from x30 they run away at rest and silence the PNs. Coupling not run |
