@@ -65,8 +65,11 @@ def rungs() -> list[dict]:
                    (bool(verdict("jump_calibration", "bilateral", "took_off")), "jumps from jump motor neuron spikes"),
                    (False, "motor neurons drive muscles")]},
         {"name": "Flight, neck and song", "status": "not started", "marks": [(False, "saccades, head pose, song pulses")]},
-        {"name": "State and learning", "status": "not started",
-         "marks": [(False, "dopamine learning in the mushroom body"), (False, "final hurdle: resting FC, once arousal sets the brain-wide state")]},
+        {"name": "State and learning", "status": "started" if verdict("rung9_learning", "verdicts") else "not started",     # attempt 1
+         "marks": [(bool(verdict("rung9_learning", "verdicts", "PAIRED", "pass")), "pairing depresses MBON11's response to the odor"),
+                   (bool(verdict("rung9_learning", "verdicts", "UNPAIRED", "pass")), "sparing the unpaired odor as flies' does"),
+                   (bool(verdict("rung9_learning", "verdicts", "RECIPROCAL", "pass")), "both ways round (attempt 1: one way)"),
+                   (False, "final hurdle: resting FC, once arousal sets the brain-wide state")]},
     ]
 
 

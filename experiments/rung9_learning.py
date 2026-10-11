@@ -40,6 +40,24 @@ Pass: all four.
 Reported: MBON11's responses before and after, their SEMs, the charges, the Kenyon cells answering each odor and their
 overlap, eta, and the charge drops at tau_e 0.2 and 1 s.
 
+
+Ran (2026-10-10, 14 minutes; the text above is the pre-registration as it ran): fail, on RECIPROCAL, as expected.
+  PAIRED      passes. Pairing 3-octanol cuts its MBON11 spikes from 31.2 to 3.5 (89%), 58 points more than
+              4-methylcyclohexanol's.
+  UNPAIRED    passes. 4-methylcyclohexanol's spikes fall from 5.8 to 4.0 (31%) and its charge 30%.
+  RECIPROCAL  fails. Pairing 4-methylcyclohexanol cuts its own spikes to nothing (99%) but 3-octanol's only from 31.2
+              to 29.6 (4.9%; flies 38%, band 15-50%), its charge 6.9%.
+  BACKWARD    passes. The paired odor's charge changes 0.1% (3-octanol) and 1.4% (4-methylcyclohexanol).
+MBON11, held at 5.3 Hz (its bias 7.7 mV lower; gain 3.49 spikes/s per mV), gains 31.2 +- 0.6 spikes to 3-octanol and 5.8 +-
+0.4 to 4-methylcyclohexanol before pairing (flies 118 +- 8.3 and 110 +- 11). 407 Kenyon cells gain more than half a spike
+to 3-octanol and 60 to 4-methylcyclohexanol (flies about as many each). 37% of 4-methylcyclohexanol's responders also
+answer 3-octanol and carry 30% of its charge, which is why pairing 3-octanol spares it as much as flies' does; but its 60
+responders carry only 3.4% of 3-octanol's charge, so pairing it can barely touch 3-octanol. tau_e changes nothing (0.2-1
+s, within a percentage point). The failure is the one learning pilots 3-8 found: with the receptor input the evidence
+supports, 4-methylcyclohexanol reaches too few Kenyon cells, because the model's PNs give its many weakly driven
+glomeruli about three quarters of flies' gain at best and its presynaptic inhibition then silences the weakest
+(odor_weak_glomeruli_check.py, odor_probe56.py).
+
     python experiments/rung9_learning.py        (writes experiments/rung9_learning.json; about half an hour)
 """
 from __future__ import annotations
