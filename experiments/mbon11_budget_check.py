@@ -19,7 +19,31 @@ pilots' seeds), with odor_probe10's runner:
 - the share of its cells responding by Turner et al.'s criterion (0.5 s odor);
 - their evoked spikes in Hige et al.'s window (1 s odor, 0-1.4 s, rest subtracted);
 - the synapse-spikes onto MBON11_R, from the responders and from every above-rest spike, and what they would carry at
-  the model's 0.054 pC per synapse with no depression.
+  the model's 0.054 pC per synapse with no depression;
+- from the same spikes at 10 ms (odor_apl_conductance_check.trial's protocol, as kc_membrane_check.timed records them),
+  the synapse-spikes MBON11_R gets at the strength each Kenyon cell's depression has left (0.5 per spike, recovering
+  over 1.5 s) and with none, 0-1.4 s, rest subtracted.
+
+Ran (2026-10-11, 3 minutes): to 3-octanol the corrected model's Kenyon cells give MBON11_R about as many synapse-spikes
+as flies' budget, and the synapses' depression halves what they carry.
+- Synapse-spikes onto MBON11_R in 0-1.4 s: 4,401 from every above-rest spike, 4,187 from the responders. Flies'
+  budget on the same synapse counts is 3,206 (1,300-7,500).
+  - gamma-main and gamma-s: 3.5% respond (flies 3.5%) with 1.65 spikes each (flies about 3.5).
+  - alpha/beta s, m and c: 9.5% with 2.9 (flies 6% with 2.5).
+  - alpha'/beta': 19.6% with 3.25 (flies 20% with 5).
+  - gamma-d and alpha/beta-p: none, as in flies.
+- At 0.054 pC per synapse with no depression that carries 238 pC (flies 245-250).
+- From the same spikes at 10 ms, the depression (0.5 per spike, recovering over 1.5 s) leaves 0.50 of them, about 133 pC
+  onto MBON11_R.
+- 4-methylcyclohexanol: 456 synapse-spikes, a seventh of flies' budget: 0.4% of the gamma cells respond with 0.8 spikes
+  each, 0.8% of alpha/beta and 3.6% of alpha'/beta'. The depression leaves 0.71 of them, 17.5 pC (flies 230-273).
+So with the corrected input the model's shortfall to 3-octanol isn't Kenyon cell activity onto MBON11, which meets flies'
+estimate. It is the depression rule, read from Yamada et al.'s paired flashes at one spike per flash (mbon11_burst_check.py),
+which their data also allow at two spikes per flash with a milder depression (kc_flash_check.py's correction). To
+4-methylcyclohexanol the activity itself is a seventh of flies'. The learning pilots report less: learning_pilot17.py's 71
+pC is the mean over both MBON11 cells (the left has 31% fewer Kenyon cell synapses, the same classes; about 0.85 of the
+right's input), through the slow current within 0-1.4 s, in the learning test's protocol. That is about 1.6 times below this
+measure's equivalent, and the two aren't reconciled here.
 
     python experiments/mbon11_budget_check.py      (writes experiments/mbon11_budget_check.json)
 """
@@ -50,6 +74,28 @@ CLASSES = {"gamma-main and gamma-s": lambda t: t.startswith("KCg") and t != "KCg
            "gamma-d": lambda t: t == "KCg-d", "alpha/beta-p": lambda t: t == "KCab-p"}
 FLIES = {"gamma-main and gamma-s": (0.035, 3.5), "alpha/beta s, m, c": (0.06, 2.5), "alpha'/beta'": (0.20, 5.0),
          "gamma-d": (0.0, 0.0), "alpha/beta-p": (0.0, 0.0)}     # mbon11_kc_activity.md 3.7: responders, spikes
+
+
+def delivered(o, rec, odor: str, seed: int, syn: np.ndarray) -> tuple:
+    """kc_membrane_check.timed's protocol: MBON11_R's synapse-spikes per 10 ms, at the strength the Kenyon cells'
+    depression has left and with none, from 0.5 s before the odor to 1.4 s after its onset."""
+    b = o.brain
+    kc = np.flatnonzero(o.m["kc"])
+    p = b.params[b.cls[kc[0]]]
+    f, recover = float(p["depression"]), float(p["recovery"]) / b.dt
+    plan = rec.plan(odor, 1.0, p10.PEAK_HZ)
+    b.reset(seed)
+    b.set_release(o.s.ol.neurons, o.s.silent)
+    piece = int(round(p10.PIECE / b.dt))
+    t, dep, raw = -1.5, [], []
+    for k in range(290):
+        left = 1.0 - (1.0 - b.left[:, kc]) * np.exp(-(b.t - b.last[:, kc]) / recover)
+        n = b.advance(piece, drive=rec.at(plan, t))[:, kc].astype(np.float64)
+        if k >= 100:
+            dep.append(float((left * (1.0 - f ** n) / (1.0 - f) * syn).sum(1).mean()))
+            raw.append(float((n * syn).sum(1).mean()))
+        t += p10.PIECE
+    return np.array(dep), np.array(raw), {"depression": f, "recovery_s": float(p["recovery"])}
 
 
 def main() -> None:
@@ -92,6 +138,14 @@ def main() -> None:
             tot_a = float((np.clip(e, 0, None) * syn).sum())
             out["odors"][odor] = {"classes": row, "synapse_spikes_responders": round(tot_r, 1), "synapse_spikes_all": round(tot_a, 1),
                                   "charge_pc_at_q_undepressed": round(tot_a * Q_PC, 1)}
+            ts = -0.5 + (np.arange(190) + 0.5) * p10.PIECE
+            runs = [delivered(o, rec, odor, SEED + 10 * j + k, syn) for k in range(SEEDS)]
+            dep, raw = np.mean([x[0] for x in runs], 0), np.mean([x[1] for x in runs], 0)
+            w = (ts > 0) & (ts < 1.4)
+            d_ev, r_ev = float((dep[w] - dep[ts < 0].mean()).sum()), float((raw[w] - raw[ts < 0].mean()).sum())
+            out["odors"][odor]["timed"] = {"synapse_spikes_depressed": round(d_ev, 1), "synapse_spikes_undepressed": round(r_ev, 1),
+                                           "share_left_by_depression": round(d_ev / max(r_ev, 1e-9), 3),
+                                           "charge_pc_depressed": round(d_ev * Q_PC, 1), "rule": runs[0][2]}
             print(odor, json.dumps(out["odors"][odor]), f"({time.perf_counter() - t0:.0f} s)", flush=True)
             OUT.write_text(json.dumps(out, default=float))
     flies_total = sum(out["classes"][c]["synapses_onto_mbon11_r"] * a * s for c, (a, s) in FLIES.items())
