@@ -29,6 +29,26 @@ to 1 s nearer flies' 95-100 than 12, and its peak (smoothed as Hige et al.'s, a 
 100-180 spikes/s (flies 135-140). Rung 9's four marks are reported either way; a second attempt still needs the weighed
 input to pass them all.
 
+Ran (2026-10-11, 15 minutes): adopted; MBON11 answers more as flies' does, and rung 9's marks come out as before. The
+synapse does what it was built to: 61,210 Kenyon cell-to-MBON synapses onto 97 MBONs moved, MBON11 resting at 5.9
+spikes/s, and Yamada et al.'s flash now gives MBON11 a current of 91 pA peaking 103 ms after the flash, 308 ms wide at half
+its peak, 0.41 of it left at 400 ms and a paired-pulse ratio of 0.52 (flies 80-117 pA, 102-118 ms, 235-260 ms, 0.32-0.39,
+0.38-0.68). To 3-octanol MBON11 gains 70.8 evoked spikes (learning pilot 11 38.6; flies 118), only 34% of them in the first
+0.3 s (79%), fires 50.8 spikes/s from 0.5 to 1 s (12.4; flies 95-100) and peaks at 122 spikes/s at 0.225 s (144 at 0.085
+s; flies 135-140 at about 0.3 s, their odor reaching the fly about 0.15 s after the valve); its slow current peaks at 360
+pA and holds 88 pA from 0.6 to 1 s, 187 pC over 0-1.4 s (flies about 400, 170 and 245-275). To the other odors 41-76
+spikes; to 4-methylcyclohexanol 11.4 (8.5; flies 110), its 85 Kenyon cells as few as before.
+Learning, the rule fitted as before (eta 1.71 and 4.31; the Kenyon cell side is unchanged, so the charge drops are pilot
+11's to within a percent or two):
+  PAIRED      passes: 3-octanol's spikes fall 90.3% (70.8 to 6.9; flies 80%), 48 points more than 4-methylcyclohexanol's.
+  UNPAIRED    passes: 4-methylcyclohexanol's spikes fall 42.1% and its charge 40.3% (band 10-45%; flies 27%).
+  RECIPROCAL  fails: 4-methylcyclohexanol paired cuts its own 95.4% but 3-octanol's 9.4% (70.8 to 64.2; band 15-50%,
+              flies 38%).
+  BACKWARD    passes: the paired odor's charge changes 0.1% and 0.7%.
+So a slow Kenyon cell current, built from Yamada et al.'s flash EPSC alone, takes MBON11 most of the way to flies' odor
+response (the rest of the plateau's shortfall is the Kenyon cells' own decline, mbon11_burst_check.py), and leaves rung 9
+where it was: the reciprocal waits on 4-methylcyclohexanol's Kenyon cells. mb_calibration5.py carries the synapse forward.
+
     python experiments/learning_pilot12.py      (writes experiments/learning_pilot12.json)
 """
 from __future__ import annotations
