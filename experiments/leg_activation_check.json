@@ -1,0 +1,401 @@
+{
+ "question": "Exploratory check, not pre-registered: does a calcium-like active state with a steep link (the Ding/Wilson two-state\nmodel) give FlyMimic's tibia flexor a fly's twitch, doublet and plateau, where one first-order activation trades the\nrelaxation against the summation? And how do the first-order runs read on flies' time base and at higher rates?\n\nleg_deactivation_check.py: with one deactivation time constant FlyMimic's flexor relaxes like a fly's (10 ms) or levels\noff at 80 Hz like a fly's (40 ms), not both. research_notes/Embodied fly connectome simulation/muscle_activation.md\n(2026-10-10): flies' times run from the somatic spike, about 2.5 ms before the muscle (0.6-1.0 ms of conduction to the\nEMG; 2.1 ms from the motor axon to force onset in the blowfly's b1); the 80 Hz of those checks isn't Azevedo et al.'s,\nwhose burst rates weren't reported (leg_twitch_data.md said so too), and a fly-shaped twitch summed linearly gives 2.0-2.1\ntimes one at 80 Hz and 3.0-3.1 at 120 Hz; the 28-30 uN plateau is one motor unit's (the fast motor neuron's), about 0.3\nof the muscle. In fast insect and vertebrate muscle each spike gives a brief, nearly saturating active state, and force\ndevelops more slowly than that lasts and relaxes as it ends. The note's model, per motor unit: c rises by 1 at each spike\n(d after the soma) and decays with tau_c; x = c^m / (c^m + k^m); dF/dt = A x - F / (tau1 + tau2 x), whose ceiling is\nA (tau1 + tau2).\nSetup: leg_twitch.leg with every muscle's maximum force scaled as leg_twitch.py found it (full activation pushes the\nprobe with 100 uN), FlyMimic's own near-instant activation (0.1 and 0.4 ms), and the flexor's control g F / F_ceiling,\nwith F from the model and g the held control that pushes the probe with 29 uN, the fast unit's ceiling. The note's\nstarting set (d 2.5 ms, tau_c 8 ms, k 0.3, m 8, tau1 10 ms, tau1 + tau2 28 ms) and its four variants, as given: nothing\nis fitted to the leg. For comparison, the first-order runs of leg_deactivation_check.py (activation 10 ms, deactivation\n10 or 40 ms, their scales, and the spike's pulse found again as leg_twitch.twitch finds it), with their spikes reaching\nthe muscle 2.5 ms after the soma.\nMeasured, from the somatic spike: the single twitch's size, half-rise, peak and half-decay after the peak; two spikes 12\nand 15 ms apart against one; the peak for 1-17 spikes at 80, 120, 150 and 200 Hz.\n\n    python experiments/leg_activation_check.py      (writes experiments/leg_activation_check.json)\n",
+ "fly": {
+  "max_uN": 100.0,
+  "spike_uN": 9.0,
+  "half_ms": [
+   7.7,
+   9.7
+  ],
+  "peak_ms": [
+   17.0,
+   23.0
+  ],
+  "half_decay_ms": [
+   12.0,
+   16.0
+  ],
+  "two_spike_ratio": [
+   1.4,
+   1.6
+  ],
+  "isi_ms": 12.0,
+  "plateau_uN": [
+   28.0,
+   30.0
+  ],
+  "two_spike_isi_ms": "about 12 (an example trace)",
+  "burst_rates": "not reported"
+ },
+ "delay_ms": 2.5,
+ "scale": 606.773,
+ "ceiling_control": 0.14074,
+ "ceiling_uN": 29.0,
+ "two_state": {
+  "note's set": {
+   "parameters": {
+    "tau_c": 0.008,
+    "k": 0.3,
+    "m": 8.0,
+    "tau1": 0.01,
+    "tau_on": 0.028
+   },
+   "single_spike": {
+    "peak_uN": 8.1,
+    "half_ms": 10.4,
+    "peak_ms": 18.5,
+    "half_decay_ms": 10.9
+   },
+   "two_spike_ratio": {
+    "12 ms": 1.823,
+    "15 ms": 1.713
+   },
+   "trains_uN": {
+    "80 Hz": {
+     "1": 8.1,
+     "2": 14.65,
+     "3": 19.24,
+     "5": 23.26,
+     "10": 25.33,
+     "17": 25.51
+    },
+    "120 Hz": {
+     "1": 8.1,
+     "2": 14.55,
+     "3": 19.09,
+     "5": 24.13,
+     "10": 27.86,
+     "17": 28.82
+    },
+    "150 Hz": {
+     "1": 8.1,
+     "2": 14.0,
+     "3": 18.0,
+     "5": 23.01,
+     "10": 27.21,
+     "17": 28.64
+    },
+    "200 Hz": {
+     "1": 8.1,
+     "2": 13.35,
+     "3": 16.84,
+     "5": 21.49,
+     "10": 26.14,
+     "17": 28.16
+    }
+   }
+  },
+  "tau1 + tau2 25 ms": {
+   "parameters": {
+    "tau_c": 0.008,
+    "k": 0.3,
+    "m": 8.0,
+    "tau1": 0.01,
+    "tau_on": 0.025
+   },
+   "single_spike": {
+    "peak_uN": 8.56,
+    "half_ms": 10.5,
+    "peak_ms": 18.7,
+    "half_decay_ms": 11.1
+   },
+   "two_spike_ratio": {
+    "12 ms": 1.809,
+    "15 ms": 1.71
+   },
+   "trains_uN": {
+    "80 Hz": {
+     "1": 8.56,
+     "2": 15.38,
+     "3": 20.07,
+     "5": 23.89,
+     "10": 25.58,
+     "17": 25.69
+    },
+    "120 Hz": {
+     "1": 8.56,
+     "2": 15.24,
+     "3": 19.91,
+     "5": 24.93,
+     "10": 28.19,
+     "17": 28.89
+    },
+    "150 Hz": {
+     "1": 8.56,
+     "2": 14.66,
+     "3": 18.79,
+     "5": 23.86,
+     "10": 27.66,
+     "17": 28.78
+    },
+    "200 Hz": {
+     "1": 8.56,
+     "2": 14.0,
+     "3": 17.6,
+     "5": 22.35,
+     "10": 26.75,
+     "17": 28.42
+    }
+   }
+  },
+  "tau1 + tau2 35 ms": {
+   "parameters": {
+    "tau_c": 0.008,
+    "k": 0.3,
+    "m": 8.0,
+    "tau1": 0.01,
+    "tau_on": 0.035
+   },
+   "single_spike": {
+    "peak_uN": 7.23,
+    "half_ms": 10.3,
+    "peak_ms": 18.2,
+    "half_decay_ms": 10.4
+   },
+   "two_spike_ratio": {
+    "12 ms": 1.846,
+    "15 ms": 1.714
+   },
+   "trains_uN": {
+    "80 Hz": {
+     "1": 7.23,
+     "2": 13.23,
+     "3": 17.55,
+     "5": 21.89,
+     "10": 24.75,
+     "17": 25.17
+    },
+    "120 Hz": {
+     "1": 7.23,
+     "2": 13.2,
+     "3": 17.42,
+     "5": 22.4,
+     "10": 26.99,
+     "17": 28.58
+    },
+    "150 Hz": {
+     "1": 7.23,
+     "2": 12.68,
+     "3": 16.4,
+     "5": 21.21,
+     "10": 26.08,
+     "17": 28.21
+    },
+    "200 Hz": {
+     "1": 7.23,
+     "2": 12.08,
+     "3": 15.32,
+     "5": 19.7,
+     "10": 24.72,
+     "17": 27.41
+    }
+   }
+  },
+  "tau_c 6 ms, k 0.2": {
+   "parameters": {
+    "tau_c": 0.006,
+    "k": 0.2,
+    "m": 8.0,
+    "tau1": 0.01,
+    "tau_on": 0.028
+   },
+   "single_spike": {
+    "peak_uN": 8.09,
+    "half_ms": 10.4,
+    "peak_ms": 18.4,
+    "half_decay_ms": 10.8
+   },
+   "two_spike_ratio": {
+    "12 ms": 1.777,
+    "15 ms": 1.671
+   },
+   "trains_uN": {
+    "80 Hz": {
+     "1": 8.09,
+     "2": 14.26,
+     "3": 18.36,
+     "5": 21.51,
+     "10": 22.92,
+     "17": 23.02
+    },
+    "120 Hz": {
+     "1": 8.09,
+     "2": 14.02,
+     "3": 18.54,
+     "5": 23.94,
+     "10": 27.83,
+     "17": 28.81
+    },
+    "150 Hz": {
+     "1": 8.09,
+     "2": 13.34,
+     "3": 17.24,
+     "5": 22.6,
+     "10": 27.13,
+     "17": 28.63
+    },
+    "200 Hz": {
+     "1": 8.09,
+     "2": 12.61,
+     "3": 15.89,
+     "5": 20.72,
+     "10": 25.94,
+     "17": 28.11
+    }
+   }
+  },
+  "tau_c 10 ms, k 0.4": {
+   "parameters": {
+    "tau_c": 0.01,
+    "k": 0.4,
+    "m": 8.0,
+    "tau1": 0.01,
+    "tau_on": 0.028
+   },
+   "single_spike": {
+    "peak_uN": 7.8,
+    "half_ms": 10.2,
+    "peak_ms": 18.3,
+    "half_decay_ms": 10.7
+   },
+   "two_spike_ratio": {
+    "12 ms": 1.886,
+    "15 ms": 1.763
+   },
+   "trains_uN": {
+    "80 Hz": {
+     "1": 7.8,
+     "2": 14.59,
+     "3": 19.46,
+     "5": 24.02,
+     "10": 26.55,
+     "17": 26.81
+    },
+    "120 Hz": {
+     "1": 7.8,
+     "2": 14.78,
+     "3": 19.4,
+     "5": 24.25,
+     "10": 27.88,
+     "17": 28.83
+    },
+    "150 Hz": {
+     "1": 7.8,
+     "2": 14.37,
+     "3": 18.53,
+     "5": 23.32,
+     "10": 27.28,
+     "17": 28.65
+    },
+    "200 Hz": {
+     "1": 7.8,
+     "2": 13.81,
+     "3": 17.53,
+     "5": 22.07,
+     "10": 26.32,
+     "17": 28.2
+    }
+   }
+  }
+ },
+ "first_order": {
+  "deactivation 10 ms": {
+   "scale": 613.899,
+   "spike_pulse_ms": 0.3,
+   "pulse_steps": 3,
+   "single_spike": {
+    "peak_uN": 8.27,
+    "half_ms": 7.5,
+    "peak_ms": 16.1,
+    "half_decay_ms": 15.5
+   },
+   "two_spike_ratio": {
+    "12 ms": 1.597,
+    "15 ms": 1.559
+   },
+   "trains_uN": {
+    "80 Hz": {
+     "1": 8.27,
+     "2": 13.2,
+     "3": 15.53,
+     "5": 16.7,
+     "10": 16.88,
+     "17": 16.88
+    },
+    "120 Hz": {
+     "1": 8.27,
+     "2": 12.98,
+     "3": 16.66,
+     "5": 19.95,
+     "10": 20.76,
+     "17": 20.78
+    },
+    "150 Hz": {
+     "1": 8.27,
+     "2": 12.77,
+     "3": 16.37,
+     "5": 21.39,
+     "10": 23.1,
+     "17": 23.15
+    },
+    "200 Hz": {
+     "1": 8.27,
+     "2": 12.53,
+     "3": 15.87,
+     "5": 21.34,
+     "10": 26.21,
+     "17": 26.42
+    }
+   }
+  },
+  "deactivation 40 ms": {
+   "scale": 613.899,
+   "spike_pulse_ms": 0.1,
+   "pulse_steps": 2,
+   "single_spike": {
+    "peak_uN": 9.02,
+    "half_ms": 8.6,
+    "peak_ms": 19.6,
+    "half_decay_ms": 58.1
+   },
+   "two_spike_ratio": {
+    "12 ms": 1.613,
+    "15 ms": 1.612
+   },
+   "trains_uN": {
+    "80 Hz": {
+     "1": 9.02,
+     "2": 14.55,
+     "3": 18.53,
+     "5": 22.87,
+     "10": 26.26,
+     "17": 26.88
+    },
+    "120 Hz": {
+     "1": 9.02,
+     "2": 12.01,
+     "3": 14.56,
+     "5": 20.11,
+     "10": 24.98,
+     "17": 26.55
+    },
+    "150 Hz": {
+     "1": 9.02,
+     "2": 11.97,
+     "3": 14.52,
+     "5": 20.4,
+     "10": 26.5,
+     "17": 28.8
+    },
+    "200 Hz": {
+     "1": 9.02,
+     "2": 14.31,
+     "3": 18.3,
+     "5": 24.4,
+     "10": 33.71,
+     "17": 37.16
+    }
+   }
+  }
+ }
+}
