@@ -24,6 +24,22 @@ Read as (written before the run): a set is worth recalibrating the mushroom body
 cells come nearer 3-octanol's than in A while the share of all Kenyon cells answering 3-octanol stays within 6-25%
 (flies about 12%; Hige et al. 2015, Honegger et al. 2011) and the cells keep more of their early firing.
 
+Ran (2026-10-11, 7 minutes): set C meets the reading, modestly; set D answers everything. Set A repeats
+kc_membrane_check.py's 20 ms condition exactly (624 and 111 Kenyon cells answering 3-octanol and 4-methylcyclohexanol, 0.18
+as many; silencing APL raises their spikes 2.73 and 2.16-fold). Set C (the synapses x 2.08, at 0.977 of their strength at
+rest): 436 and 121 answer, 0.28 as many, 10.7% of the Kenyon cells for 3-octanol (flies about 12%); silencing APL raises
+the spikes 2.77 and 2.72-fold (flies 2-3); from 0.5 to 1 s the alpha/beta, alpha'/beta' and gamma cells fire at 0.29, 0.39
+and 0.085 of their early rate to 3-octanol (A 0.20, 0.29 and 0.05); 0.17 of 3-octanol's answering cells answer
+4-methylcyclohexanol (A 0.10; flies 0.30), and 0.62 of 4-methylcyclohexanol's answer 3-octanol (A 0.53; flies 0.33).
+The ratio rises more because fewer cells answer 3-octanol, and with fewer spikes each (1,162 against 2,766), than because
+more answer 4-methylcyclohexanol: the depressing synapses compress 3-octanol's strong drive. Through the slow current
+their input to MBON11 would peak at 242 pA for 3-octanol with 0.26 of it held (A 416 and 0.21; flies about 400 and 0.43),
+126 pC (A 202; flies 245-275): MBON11 would answer more weakly. Set D (x 7.75): 2,905 and 3,109 answer, 71 and 76% of the
+Kenyon cells, equal but nothing like flies' sparseness (APL's silencing still 2.6-2.8-fold); it fails the reading.
+So of the sets that keep Gruntman & Turner's plateau, C keeps flies' density and APL's effect and moves
+4-methylcyclohexanol and the cells' sustained firing toward flies', a little; whether that moves rung 9's reciprocal is
+learning_pilot13.py's question.
+
     python experiments/kc_setc_check.py      (writes experiments/kc_setc_check.json)
 """
 from __future__ import annotations
