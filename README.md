@@ -36,6 +36,30 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **The Kenyon cells' input was a third stronger than flies'.** An audit of the model as every rung 9 experiment runs
+  it ([`kc_input_audit.py`](experiments/kc_input_audit.py)): one projection neuron spike gave a Kenyon cell a 1.90 mV
+  EPSP, where Turner et al. 2008 measured 1.4 mV and Gruntman & Turner 2013 1.24–1.48. The steady drive per connection
+  was 7.0 mV at 115 spikes/s (flies about 4.4). Two errors compounded:
+  - The calibration (odor_probe46/47, `mb_calibration.py`) scaled the synapses to 1.4 mV "at the projection neurons'
+    resting depression", dividing by the 0.735 of its strength a depressing synapse keeps at 3 spikes/s. But these
+    synapses are exempt from depression, so every spike carried 1/0.735 of it.
+  - The build's Kenyon cells were meant to have Turner's 11.5 ms EPSP decay, set by a direct edit of the parameter
+    table. The next change to any type's parameters rebuilds the table and silently undoes it, so the cells ran at the
+    default 20 ms (found with a traced build).
+
+  The model's density, APL fit and every learning result since probe 46 came with this input. The arithmetic in
+  kc_integration.md, kc_membrane_check.py and kc_setc_check.py assumed 1.24–1.4 mV, and their notes are corrected. At
+  the measured 1.4 mV, 7.4% of the Kenyon cells answer 3-octanol (flies about 12%), and silencing APL still raises
+  their spikes 2.8- and 2.0-fold (flies 2–3). By a rule written before the run, that is adopted
+  ([`kc_epsp_check.py`](experiments/kc_epsp_check.py), [`mb_calibration6.py`](experiments/mb_calibration6.py)). But
+  4-methylcyclohexanol then reaches a seventh as many cells as 3-octanol (flies about as many), and the Kenyon cells'
+  input to MBON11 falls to 76 pC (flies 245–250). The strong input had been hiding those gaps.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/kc_input-dark.svg">
+  <img src="assets/kc_input-light.svg" width="100%" alt="Three panels. Left: one projection neuron spike's EPSP in a Kenyon cell, as the model ran it (1.90 mV peak about 9 ms after the spike) and corrected (1.40 mV), against flies' unitary EPSPs of 1.24-1.48 mV, drawn as a band. Middle: the steady depolarization per connection against the projection neuron's rate, as run (7.0 mV at 115 spikes/s) and corrected (5.1), against flies' 4.4 mV at 115 spikes/s. Right: three measures as a share of flies' value, as run, at 1.4 mV (adopted) and at 1.24 mV: the Kenyon cells answering 3-octanol (1.28, 0.61, 0.47 of flies' 12%), 4-methylcyclohexanol's answering cells per 3-octanol's (0.19, 0.15, 0.15 of flies' 0.92), and MBON11's odor charge from the Kenyon cells (0.82, 0.31, 0.21 of flies' 245-250 pC).">
+</picture>
+
 * **Rung 9's crux: 4-methylcyclohexanol's Kenyon cells sit mostly inside 3-octanol's.** The Kenyon cells' firing
   falls away through an odor much more steeply than their projection neurons' does, so the model's Kenyon cells, which
   integrate over 20 ms, were the next suspect.
@@ -1852,6 +1876,8 @@ a sign that the approach is broken."
 | `experiments/learning_pilot14.py` | Exploratory, not pre-registered: learning pilot 12 with the alpha/beta Kenyon cells' synapses onto MBON11 at 4 times the charge, as Yamada et al.'s alpha/beta flashes suggest at one spike per flash | MBON11 overshoots flies': 152 evoked spikes to 3-octanol (flies 118), 114 spikes/s from 0.5 to 1 s (95-100), 504 pC (245-250). The marks are pilot 12's (reciprocal 8.0%): the synapses' strength sets MBON11's amplitude, not the learning. Flies' charge would come at about 1.6-1.7 times; not taken further |
 | `experiments/kc_setc_check2.py` | Exploratory check, not a change to the model: kc_membrane_check.py's and kc_setc_check.py's conditions again with the Kenyon cells' rest held (kc_rest.py; those runs left the longer membranes' cells 1-23 mV nearer threshold, by type) | 50 and 100 ms still make far too many cells answer (32 and 46%; 0.315 and 0.43 as many to 4-methylcyclohexanol). Set C: 7.7% answer 3-octanol (flies about 12%) and 0.25 as many 4-methylcyclohexanol (A 0.18), and the cells as a whole keep more of their early firing (0.24 against 0.20), though its gamma cells keep less: it meets kc_setc_check.py's reading (corrected after a second review), but MBON11's input falls to 0.38 of now (76 pC). Set D: sparse (4.6%, under the reading's 6%), 0.55 as many, the firing held, MBON11's input 32 pC. In every condition 52-78% of 4-methylcyclohexanol's answering cells answer 3-octanol (flies 33%) |
 | `experiments/learning_pilot15.py` | Exploratory, not pre-registered: learning pilot 13 again, with the Kenyon cells' rest held (kc_rest.py) | Three marks of four: paired 93.9% (gap 35.6 points), reciprocal 25.1% (band 15-50, flies 38%), backward 0.4-6.5%. The unpaired fails (4-methylcyclohexanol's spikes fall 58.3%, flies 27%, and its charge 55.4%, flies 20-35%; band 10-45), as its Kenyon cells sit mostly inside 3-octanol's. MBON11 answers weakly (28 and 4.4 evoked spikes; flies 118 and 110); no second attempt |
+| `experiments/kc_input_audit.py` | Audit, not a test: the projection neuron-to-Kenyon cell input as the rung 9 experiments run it | Every class at 20 ms (the build's 11.5 ms is undone by any set_type), its synapses exempt from depression, one spike 1.90 mV (Turner 1.4; Gruntman & Turner 1.24-1.48) and 7.0 mV per connection at 115 spikes/s (flies 4.4): mb_calibration's 1.4 mV "at the PNs' resting depression" on synapses that don't depress |
+| `experiments/kc_epsp_check.py` | Exploratory check, its rule stated before the run: the Kenyon cells at the measured 1.4 mV (and 1.24 mV) | Adopted (mb_calibration6.py): at 1.4 mV 7.4% answer 3-octanol (flies about 12%) and silencing APL raises the spikes 2.77 and 2.01-fold; 4-methylcyclohexanol reaches 0.14 as many cells, and MBON11's input falls to 76 pC (flies 245-250). At 1.24 mV 5.6% |
 | `experiments/odor_pn_reset_check.py` | Exploratory check: the PNs' reset after a spike raised from rung 4's 5 mV below rest to rest and 3-6 mV above (threshold 10) | Reset at rest (Jeanne & Wilson's fitted PN) raises Rmax to 145-155 in DL5, VM7d and DM1 (flies 144-167); higher resets overshoot; sigma, the weakest input and 4-methylcyclohexanol barely move |
 | `experiments/odor_probe52.py` | Exploratory, not pre-registered: odor_probe51.py rebuilt with the PNs resetting to rest | Strong input answered as flies' (step Rmax 172-182, Olsen protocol 145-156) with the two pools' time course; Kenyon cells 2.4-13.8%, MBON11 24 spikes to 3-octanol; 4-methylcyclohexanol 0.52 at the PNs, 0.26 at the Kenyon cells. The base model from here on |
 | `experiments/odor_probe53.py` | Exploratory, not pre-registered: 4-methylcyclohexanol's untested receptors given the input Badel et al.'s PN responses imply (labelled stand-in) | Flies' breadth (15 glomeruli over 10 spikes/s, 3-octanol 17) but its PNs sum 0.58 of 3-octanol's and its Kenyon cells 0.26 (flies 0.85-0.98, 0.73-0.92) |
