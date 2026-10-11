@@ -36,6 +36,50 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **The projection neurons now saturate as flies' do, and 4-methylcyclohexanol still trails 3-octanol (rung 9's
+  groundwork).** Measured as flies were, the model's projection neurons answered at two thirds of flies' strength, and
+  their responses kept rising with strong input where flies' level off. Two corrections from measurements fix most of
+  the shape. The projection neurons now reset to rest after a spike, as fly PNs do, instead of below it. And the
+  receptor synapse's slow component now depresses as Nagel et al. measured it, instead of as their model fitted it.
+  The transform now has flies' steepness and saturation at about three quarters of their size. But the model's antennal
+  lobe passes the two odors' receptor ratio to the projection neurons almost unchanged, where flies' nearly doubles
+  4-methylcyclohexanol's share. So 4-methylcyclohexanol still reaches a quarter as many Kenyon cells as 3-octanol, and
+  learning with it paired spares 3-octanol more than flies' does.
+  - **The projection neurons reset to rest** ([`odor_pn_reset_check.py`](experiments/odor_pn_reset_check.py),
+    [`odor_probe52.py`](experiments/odor_probe52.py)). Every neuron in the model reset 5 mV below rest after a spike, a
+    whole-brain choice from rung 4. Fly PNs' spikes ride on a sustained depolarization (Iniguez et al. 2013), and
+    Jeanne & Wilson's fitted PN model resets to rest. Resetting there brings Rmax to 145–156 in DL5, VM7d and DM1 measured
+    as Olsen et al. measured flies (flies 144–167), keeping the two-pool synapse's time course. The Kenyon cells come
+    back to 2.4–13.8% (flies 6 ± 5%), and MBON11 gains 24 spikes to 3-octanol (flies 118).
+  - **The slow component kept the responses rising** ([`odor_drive_check.py`](experiments/odor_drive_check.py),
+    [`odor_slow_depression_check.py`](experiments/odor_slow_depression_check.py),
+    [`odor_probe54.py`](experiments/odor_probe54.py), the base model from here on). In DL5, the projection neurons'
+    fast synaptic current stops growing above 20 spikes/s of receptor input. Their slow current keeps growing almost in
+    proportion, because it used only 0.73% of its strength per spike, the value Nagel et al.'s model fitted to odor
+    responses. Nagel et al. measured the slow component directly at 9% per spike, recovering over 0.63 s. Flies'
+    synaptic charge, slow part included, saturates by about 50 spikes/s (Kazama & Wilson 2008). With the measured value,
+    σ comes to 13.9, 16.8 and 15.9 in DL5, VM7d and DM4 (flies 11.8, 12.4 and 16.3), and DL5's response at 160 spikes/s
+    of input is 1.16 times its response at 40 (flies 1.06). Rmax falls to 127–130 (flies 163–167), and strong responses
+    keep 0.35 of their peak at 500 ms (flies 0.44).
+  - **Filling 4-methylcyclohexanol's missing receptors gives it flies' breadth but not their equality**
+    ([`odor_probe53.py`](experiments/odor_probe53.py), [`receptor_fills.py`](experiments/receptor_fills.py)). DoOR
+    has no 4-methylcyclohexanol data for 13 receptors. Barth et al.'s imaging fills four. A labelled stand-in tier fills
+    seven more from the input Badel et al.'s projection neuron responses imply. Filled, 4-methylcyclohexanol's
+    projection neurons answer in 15 glomeruli against 3-octanol's 17 (flies 18 and 13). But they sum 0.59 of
+    3-octanol's (flies 0.85–0.98), and its Kenyon cells come to 0.26 (flies 0.73–0.92). With responses saturating, an
+    odor's summed projection neuron response mostly counts its moderately driven glomeruli, and even filled, DoOR gives
+    3-octanol more of them (22 against 16).
+  - **Learning on the rebuilt model** ([`learning_pilot6.py`](experiments/learning_pilot6.py)). With 3-octanol paired,
+    MBON11's response to it falls 81–84% and to 4-methylcyclohexanol 42–47% (flies 80% and 27%). With
+    4-methylcyclohexanol paired, its own falls 93–98% and 3-octanol's 8–13% (flies 76% and 38%), with or without the
+    fills. The asymmetry follows the overlap: 4-methylcyclohexanol's responding Kenyon cells are mostly inside
+    3-octanol's, but they carry only a tenth of 3-octanol's input.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/al_saturation-dark.svg">
+  <img src="assets/al_saturation-light.svg" width="100%" alt="Three panels. Left: DL5's projection neurons' synaptic currents over the last 300 ms of the odor against receptor input from 10 to 160 spikes/s: the fast current levels off near 48 from 20 spikes/s on, while the slow current rises from 5 to 39. Middle: DL5's response measured with Olsen et al.'s protocol: with the slow component as fitted (grey) it keeps rising to 150 at 160 spikes/s; with it depressing as measured (red) it levels off near 120 to 123 above 80, shaped like flies' curve (rings and thin line), which saturates near 160 by about 50. Right: 4-methylcyclohexanol's response as a share of 3-octanol's at receptor neurons, projection neurons and Kenyon cells. Flies (bars) go from about 0.45 to 0.85-0.98 and 0.73-0.92; the model goes from 0.39 to 0.52 and 0.25 with DoOR's input (grey) and from 0.56 to 0.59 and 0.26 with the fills (red).">
+</picture>
+
 * **Measured as flies' were, the antennal lobe's inhibition matches and its projection neurons answer at half to two
   thirds of flies' strength (rung 9's groundwork).** The model's projection neurons had been compared with flies' on
   different terms. Its runs started from a state that hadn't settled, and its transform was measured with windows Olsen
@@ -1351,6 +1395,7 @@ a sign that the approach is broken."
 | `experiments/learning_pilot6.py` | Exploratory, not pre-registered: learning on odor_probe52.py's model with DoOR alone, the receptor fills, and the PN-inferred tier | 3-octanol paired: 81-84% and 4-methylcyclohexanol 42-47% (flies 80% and 27%); 4-methylcyclohexanol paired: 93-98% and 3-octanol 8-13% (flies 76% and 38%): the reciprocal falls short in every condition |
 | `experiments/odor_drive_check.py` | Exploratory check: what keeps DL5's PN response rising at strong input | The receptor synapse's slow component (0.73% used per spike) grows almost in proportion to the input while the fast current is flat from 20 spikes/s; it carries 45% of the late drive at 160 |
 | `experiments/odor_slow_depression_check.py` | Exploratory check: the slow component depressing as built (N15's fit), as N15 measured it (0.91, 0.629 s), or with the fast pools | Measured: sigma 15-17 (flies 12-16), 160-over-40 response ratio 1.18 (flies 1.06), Rmax 136-141; with the fast pools sigma 13-15 but Rmax 106; 4-methylcyclohexanol unmoved (0.51-0.53) |
+| `experiments/odor_probe54.py` | Exploratory, not pre-registered: odor_probe52.py rebuilt with the receptor synapse's slow component depressing as Nagel et al. measured it (0.91 per spike, 0.629 s) | Flies' steepness and saturation (Olsen protocol sigma 13.9/16.8/15.9 for DL5/VM7d/DM4, flies 11.8/12.4/16.3; 160-over-40 Hz 1.16, flies 1.06) at about three quarters of their size (Rmax 127-130); Kenyon cells 2.4-13.9%, MBON11 25 spikes; 4-methylcyclohexanol 0.52 at the PNs (0.59 with fills), 0.25 at the Kenyon cells. The base model from here on |
 | `experiments/odor_probe41.py` | Exploratory, not pre-registered: on odor_probe42.py's LN-calibrated antennal lobe, the receptor synapse's slow component at Kazama & Wilson's unitary size (0.086) and/or the PNs keeping their synaptic current through their spikes | The slow size decides accommodation, kept current decides onset strength. Both: 3-octanol's PNs peak at 103 spikes/s at onset (strongly driven 186), 0.35 of it 500 ms after the valve (flies 0.48); Rmax 174-198 in three glomeruli (flies 163-170), sigma 23-34; Kenyon cells 1.1-6.0%, alpha/beta 1.1-2.0 spikes per response (flies 2.2). Weak input, PN breadth (29-43%), MCH's reach and MBON11 (13 spikes) still off |
 | `experiments/jump_calibration.py` | Exploratory, not pre-registered: does one spike in each jump motor neuron launch NeuroMechFly like a fly? | Takeoff 5.8 ms after the giant fiber spike and a 4.1 ms leg extension fall inside the pre-set windows (flies: about 7 and 3.3 ms), the only 2 of 6 checks that pass, and the timing only with the coxa braced; the launch is steep and slightly backward (79°), head-down, 1.7 times too hard upward and 2.7 times too weak horizontally. One TTMn alone gives a weak, tumbling launch. |
 | `experiments/optomotor.py` | Does a rotating drum reach the HS cells and the steering neuron DNa02 with the biological signs? | Yes, confirmed on a fresh seed at the lowest gain: under a counterclockwise drum the left HS cells fire 29 Hz and the right 10 Hz, and the reverse under a clockwise drum (difference 37.6 Hz, t = 632); DNa02's left-minus-right rate is 5.3 Hz higher (t = 21). DNa01, the secondary test, carries no signal. 65 of 455 descending neuron types carry the direction. No scrambled-wiring control yet. With rung 3's eye (`rung3eye`): confirmed at gain 1 again, HS 39.6 Hz (t = 302), DNa02 3.3 Hz (t = 12), both sides alike; HS silent to a stationary drum. |
