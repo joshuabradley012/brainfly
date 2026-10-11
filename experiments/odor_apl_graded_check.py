@@ -16,6 +16,14 @@ Measured for each scale: APL's release (peak and mean over the odor) for both od
 ratio, the Kenyon cells answering and their evoked spikes for both odors, with APL working and silenced, and the ratio
 silencing gives.
 
+Ran (odor_probe60.py's model): no; weakening the drive alone leaves 3-octanol at APL's ceiling and takes APL's effect
+below flies' before its response gets graded. 3-octanol's APL release peaks at 38.1-38.3 Hz at every scale (the
+ceiling); 4-methylcyclohexanol's at 37.8, 35.8, 33.1 and 28.3 for scales 10, 6, 4 and 2.5, ratios 0.99, 0.93, 0.87 and 0.74
+(flies' calcium 0.49), the mean over the odor 0.80-0.82 throughout. The Kenyon cells answering 4-methylcyclohexanol rise
+from 0.36 to 0.47 of 3-octanol's (0.44 with APL silenced at every scale), but silencing APL raises the Kenyon cells' spikes
+only 2.44, 2.08-2.24, 1.93 and 1.70-1.76-fold (flies 2-3). So a graded APL needs both its drive weaker and its effect on
+the Kenyon cells stronger.
+
     python experiments/odor_apl_graded_check.py [cache name]      (writes experiments/odor_apl_graded_check.json)
 """
 from __future__ import annotations

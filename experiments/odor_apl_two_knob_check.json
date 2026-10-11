@@ -1,0 +1,417 @@
+{
+ "question": "Exploratory check, not pre-registered: with APL's drive from the Kenyon cells weaker and its synapses onto them stronger,\ncan APL answer 4-methylcyclohexanol with about half its response to 3-octanol (flies 0.49) and still raise the Kenyon\ncells' spikes 2-3-fold when silenced?\n\nodor_apl_graded_check.py: weakening the Kenyon cell-to-APL drive alone (from 10 to 2.5 times) leaves 3-octanol at APL's\nceiling (38 Hz) and brings 4-methylcyclohexanol's peak only to 0.74 of it, while silencing APL then raises the Kenyon cells'\nspikes only 1.7-fold (flies 2-3; Lin et al. 2014, Bergmann et al. 2026). Prisco et al. 2021: flies' APL calcium answers\n4-methylcyclohexanol with 0.49 of 3-octanol's, and the Kenyon cells' claws answering go from 0.76 of 3-octanol's with APL\nsilenced to 0.95 with it working.\nModel: odor_probe60.py's (its cache) with mb_calibration.py's mushroom body, then the Kenyon cell-to-APL synapses at s\ntimes their MaleCNS weight (calibrated: 10) and APL's synapses onto the Kenyon cells g times their calibrated weight (so\nAPL's ceiling holds the Kenyon cells g x 11 mV down), for s in 2.5, 1.5, 1 and g in 1.5, 2.5. odor_apl_check.trial's\nprotocol and measures (DoOR's input, 2 seeds of 8 flies), APL working and silenced.\nMeasured for each pair: APL's release peak and mean for both odors and their ratio, the Kenyon cells answering and their\nspikes (4-methylcyclohexanol against 3-octanol) with APL working and silenced, and the ratio silencing gives.\n\n    python experiments/odor_apl_two_knob_check.py      (writes experiments/odor_apl_two_knob_check.json)\n",
+ "flies": {
+  "apl": 0.49,
+  "claw_peak_apl_on": 0.89,
+  "claw_peak_apl_off": 0.65,
+  "claws_apl_on": 0.95,
+  "claws_apl_off": 0.76
+ },
+ "mb_calibration": {
+  "classes": {
+   "alpha/beta": {
+    "pn_scale": 1.657,
+    "apl_scale": 1.125,
+    "cells": 1810
+   },
+   "alpha'/beta'": {
+    "pn_scale": 2.523,
+    "apl_scale": 0.831,
+    "cells": 695
+   },
+   "gamma": {
+    "pn_scale": 2.291,
+    "apl_scale": 0.963,
+    "cells": 1557
+   },
+   "other": {
+    "pn_scale": 0.297,
+    "apl_scale": 0.741,
+    "cells": 2
+   }
+  },
+  "kc_apl_scale": 10.0,
+  "apl_release_at_mv": 3.5,
+  "apl_max_hz": 38.29,
+  "kc_gaps_mv": {
+   "KCab": 21.5,
+   "KCa'b'": 16.0,
+   "KCg": 32.5
+  }
+ },
+ "pairs": {
+  "s 2.5, g 1.5": {
+   "APL working": {
+    "3-octanol": {
+     "apl_release_peak_hz": 37.59,
+     "apl_release_mean_hz": 7.96,
+     "kcs_answering": 438,
+     "kc_evoked_spikes": 2040.5,
+     "kc_depolarization_mv": 3.076,
+     "answering_kc_depolarization_mv": 11.078
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 24.3,
+     "apl_release_mean_hz": 5.88,
+     "kcs_answering": 218,
+     "kc_evoked_spikes": 861.2,
+     "kc_depolarization_mv": 2.252,
+     "answering_kc_depolarization_mv": 11.487
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": 0.646,
+     "apl_release_mean_hz": 0.739,
+     "kcs_answering": 0.498,
+     "kc_evoked_spikes": 0.422,
+     "kc_depolarization_mv": 0.732,
+     "answering_kc_depolarization_mv": 1.037
+    }
+   },
+   "APL silenced": {
+    "3-octanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 999,
+     "kc_evoked_spikes": 4412.2,
+     "kc_depolarization_mv": 4.706,
+     "answering_kc_depolarization_mv": 10.059
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 421,
+     "kc_evoked_spikes": 1684.6,
+     "kc_depolarization_mv": 3.232,
+     "answering_kc_depolarization_mv": 10.72
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": null,
+     "apl_release_mean_hz": null,
+     "kcs_answering": 0.421,
+     "kc_evoked_spikes": 0.382,
+     "kc_depolarization_mv": 0.687,
+     "answering_kc_depolarization_mv": 1.066
+    }
+   },
+   "block_ratio": {
+    "3-octanol": 2.16,
+    "4-methylcyclohexanol": 1.96
+   }
+  },
+  "s 2.5, g 2.5": {
+   "APL working": {
+    "3-octanol": {
+     "apl_release_peak_hz": 34.78,
+     "apl_release_mean_hz": 7.17,
+     "kcs_answering": 314,
+     "kc_evoked_spikes": 1495.0,
+     "kc_depolarization_mv": 2.361,
+     "answering_kc_depolarization_mv": 11.289
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 19.08,
+     "apl_release_mean_hz": 5.18,
+     "kcs_answering": 176,
+     "kc_evoked_spikes": 676.7,
+     "kc_depolarization_mv": 1.936,
+     "answering_kc_depolarization_mv": 11.686
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": 0.549,
+     "apl_release_mean_hz": 0.722,
+     "kcs_answering": 0.561,
+     "kc_evoked_spikes": 0.453,
+     "kc_depolarization_mv": 0.82,
+     "answering_kc_depolarization_mv": 1.035
+    }
+   },
+   "APL silenced": {
+    "3-octanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 984,
+     "kc_evoked_spikes": 4409.0,
+     "kc_depolarization_mv": 4.708,
+     "answering_kc_depolarization_mv": 10.092
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 416,
+     "kc_evoked_spikes": 1671.0,
+     "kc_depolarization_mv": 3.224,
+     "answering_kc_depolarization_mv": 10.728
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": null,
+     "apl_release_mean_hz": null,
+     "kcs_answering": 0.423,
+     "kc_evoked_spikes": 0.379,
+     "kc_depolarization_mv": 0.685,
+     "answering_kc_depolarization_mv": 1.063
+    }
+   },
+   "block_ratio": {
+    "3-octanol": 2.95,
+    "4-methylcyclohexanol": 2.47
+   }
+  },
+  "s 1.5, g 1.5": {
+   "APL working": {
+    "3-octanol": {
+     "apl_release_peak_hz": 35.09,
+     "apl_release_mean_hz": 6.72,
+     "kcs_answering": 494,
+     "kc_evoked_spikes": 2382.8,
+     "kc_depolarization_mv": 3.611,
+     "answering_kc_depolarization_mv": 11.187
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 18.48,
+     "apl_release_mean_hz": 4.91,
+     "kcs_answering": 268,
+     "kc_evoked_spikes": 1018.1,
+     "kc_depolarization_mv": 2.647,
+     "answering_kc_depolarization_mv": 11.504
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": 0.527,
+     "apl_release_mean_hz": 0.731,
+     "kcs_answering": 0.543,
+     "kc_evoked_spikes": 0.427,
+     "kc_depolarization_mv": 0.733,
+     "answering_kc_depolarization_mv": 1.028
+    }
+   },
+   "APL silenced": {
+    "3-octanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 984,
+     "kc_evoked_spikes": 4325.9,
+     "kc_depolarization_mv": 4.664,
+     "answering_kc_depolarization_mv": 10.058
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 427,
+     "kc_evoked_spikes": 1687.7,
+     "kc_depolarization_mv": 3.237,
+     "answering_kc_depolarization_mv": 10.624
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": null,
+     "apl_release_mean_hz": null,
+     "kcs_answering": 0.434,
+     "kc_evoked_spikes": 0.39,
+     "kc_depolarization_mv": 0.694,
+     "answering_kc_depolarization_mv": 1.056
+    }
+   },
+   "block_ratio": {
+    "3-octanol": 1.82,
+    "4-methylcyclohexanol": 1.66
+   }
+  },
+  "s 1.5, g 2.5": {
+   "APL working": {
+    "3-octanol": {
+     "apl_release_peak_hz": 31.09,
+     "apl_release_mean_hz": 6.1,
+     "kcs_answering": 391,
+     "kc_evoked_spikes": 1784.8,
+     "kc_depolarization_mv": 3.037,
+     "answering_kc_depolarization_mv": 11.374
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 14.47,
+     "apl_release_mean_hz": 4.48,
+     "kcs_answering": 216,
+     "kc_evoked_spikes": 812.4,
+     "kc_depolarization_mv": 2.405,
+     "answering_kc_depolarization_mv": 11.811
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": 0.465,
+     "apl_release_mean_hz": 0.734,
+     "kcs_answering": 0.552,
+     "kc_evoked_spikes": 0.455,
+     "kc_depolarization_mv": 0.792,
+     "answering_kc_depolarization_mv": 1.038
+    }
+   },
+   "APL silenced": {
+    "3-octanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 978,
+     "kc_evoked_spikes": 4379.7,
+     "kc_depolarization_mv": 4.695,
+     "answering_kc_depolarization_mv": 10.053
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 419,
+     "kc_evoked_spikes": 1663.0,
+     "kc_depolarization_mv": 3.209,
+     "answering_kc_depolarization_mv": 10.686
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": null,
+     "apl_release_mean_hz": null,
+     "kcs_answering": 0.428,
+     "kc_evoked_spikes": 0.38,
+     "kc_depolarization_mv": 0.683,
+     "answering_kc_depolarization_mv": 1.063
+    }
+   },
+   "block_ratio": {
+    "3-octanol": 2.45,
+    "4-methylcyclohexanol": 2.05
+   }
+  },
+  "s 1, g 1.5": {
+   "APL working": {
+    "3-octanol": {
+     "apl_release_peak_hz": 31.24,
+     "apl_release_mean_hz": 5.82,
+     "kcs_answering": 550,
+     "kc_evoked_spikes": 2600.7,
+     "kc_depolarization_mv": 3.881,
+     "answering_kc_depolarization_mv": 11.018
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 14.23,
+     "apl_release_mean_hz": 4.27,
+     "kcs_answering": 293,
+     "kc_evoked_spikes": 1094.9,
+     "kc_depolarization_mv": 2.868,
+     "answering_kc_depolarization_mv": 11.527
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": 0.456,
+     "apl_release_mean_hz": 0.734,
+     "kcs_answering": 0.533,
+     "kc_evoked_spikes": 0.421,
+     "kc_depolarization_mv": 0.739,
+     "answering_kc_depolarization_mv": 1.046
+    }
+   },
+   "APL silenced": {
+    "3-octanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 991,
+     "kc_evoked_spikes": 4353.4,
+     "kc_depolarization_mv": 4.668,
+     "answering_kc_depolarization_mv": 10.025
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 425,
+     "kc_evoked_spikes": 1703.0,
+     "kc_depolarization_mv": 3.255,
+     "answering_kc_depolarization_mv": 10.653
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": null,
+     "apl_release_mean_hz": null,
+     "kcs_answering": 0.429,
+     "kc_evoked_spikes": 0.391,
+     "kc_depolarization_mv": 0.697,
+     "answering_kc_depolarization_mv": 1.063
+    }
+   },
+   "block_ratio": {
+    "3-octanol": 1.67,
+    "4-methylcyclohexanol": 1.56
+   }
+  },
+  "s 1, g 2.5": {
+   "APL working": {
+    "3-octanol": {
+     "apl_release_peak_hz": 26.94,
+     "apl_release_mean_hz": 5.4,
+     "kcs_answering": 462,
+     "kc_evoked_spikes": 2082.2,
+     "kc_depolarization_mv": 3.537,
+     "answering_kc_depolarization_mv": 11.29
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 11.89,
+     "apl_release_mean_hz": 4.04,
+     "kcs_answering": 240,
+     "kc_evoked_spikes": 911.3,
+     "kc_depolarization_mv": 2.722,
+     "answering_kc_depolarization_mv": 11.86
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": 0.441,
+     "apl_release_mean_hz": 0.748,
+     "kcs_answering": 0.519,
+     "kc_evoked_spikes": 0.438,
+     "kc_depolarization_mv": 0.77,
+     "answering_kc_depolarization_mv": 1.05
+    }
+   },
+   "APL silenced": {
+    "3-octanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 981,
+     "kc_evoked_spikes": 4375.0,
+     "kc_depolarization_mv": 4.69,
+     "answering_kc_depolarization_mv": 10.056
+    },
+    "4-methylcyclohexanol": {
+     "apl_release_peak_hz": 0.0,
+     "apl_release_mean_hz": 0.0,
+     "kcs_answering": 426,
+     "kc_evoked_spikes": 1668.7,
+     "kc_depolarization_mv": 3.218,
+     "answering_kc_depolarization_mv": 10.626
+    },
+    "mch_over_oct": {
+     "apl_release_peak_hz": null,
+     "apl_release_mean_hz": null,
+     "kcs_answering": 0.434,
+     "kc_evoked_spikes": 0.381,
+     "kc_depolarization_mv": 0.686,
+     "answering_kc_depolarization_mv": 1.057
+    }
+   },
+   "block_ratio": {
+    "3-octanol": 2.1,
+    "4-methylcyclohexanol": 1.83
+   }
+  }
+ },
+ "kc_rest": {
+  "gap_mv": {
+   "KC": 21.47,
+   "KCa'b'-ap1": 16.0,
+   "KCa'b'-ap2": 15.95,
+   "KCa'b'-m": 15.96,
+   "KCab-c": 21.46,
+   "KCab-m": 21.49,
+   "KCab-p": 21.42,
+   "KCab-s": 21.45,
+   "KCg": 32.7,
+   "KCg-d": 32.47,
+   "KCg-m": 32.42,
+   "KCg-s1": 32.46,
+   "KCg-s2": 32.18,
+   "KCg-s3": 32.89,
+   "KCg-s4": 32.46
+  },
+  "rest_hz_by_class": {
+   "alpha/beta": 0.0016,
+   "alpha'/beta'": 0.0034,
+   "gamma": 0.0
+  }
+ },
+ "seconds": 335
+}
