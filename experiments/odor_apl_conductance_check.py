@@ -57,6 +57,13 @@ about 0.9). Rechecked, mb_calibration.py's APL as calibrated: 0.995, 2.43 and 2.
 file a conductance row's ceiling_mv is the distance below rest, a current row's is signed.) mb_calibration3.py installs
 the chosen APL.
 
+Checked afterwards (2026-10-11; research_notes/Rung 9 learning data/apl_kinetics.md): "lags the Kenyon cells' excitation
+by several hundred ms" is Inada et al.'s phrase about 1 s of projection neuron drive ex vivo, not Vrontou et al.'s. With
+Kenyon cells driven for 200 ms in vivo, flies' inhibition starts 80-100 ms after the light, peaks at about 0.31 s and
+decays with tau about 0.39 s (Vrontou et al. Fig. 7C), and driving APL directly it is half up at 0.27 s and half gone
+0.32 s after the drive (Inada et al. Fig. 5B). So the model's is largest about 0.2 s early and fades about ten times too
+fast: its synapses' 5 ms decay is 50-80 times shorter than what the recordings imply.
+
     python experiments/odor_apl_conductance_check.py      (writes experiments/odor_apl_conductance_check.json)
 """
 from __future__ import annotations

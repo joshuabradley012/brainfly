@@ -33,6 +33,9 @@ Conventions:
    - αβc → APL → αβc lateral inhibition reaches −15 mV, with a mean of ≈ −5.5 to −7.5 mV for 50–2000 ms drive (Vrontou, fig., in vivo). It survives TTX.
    - GABA_A carries ≈ 40% and GABA_B ≈ 35% of it (Inada Fig. 5C, derived).
    - It lags excitation by "several hundred ms" and lasts about 1 s (fig.).
+   - Correction (2026-10-11, from `apl_kinetics.md`): "several hundred ms" is Inada et al.'s phrase about 1 s of PN drive
+     ex vivo (§3.3 below), not Vrontou et al.'s. With Kenyon cells driven for 200 ms in vivo (Vrontou Fig. 7C), the IPSP
+     starts 80-100 ms after light onset, peaks at about 0.31 s and decays with tau about 0.39 s (digitized there).
 7. **Who recruits APL.**
    - Feedback onto the spiking KC itself (Inada, fig.): α′β′ ≈ −1.0 mV/spike, αβ ≈ −0.2, γ ≈ −0.15 mV/spike.
    - APL Ca²⁺ is linear in KC Ca²⁺: "APL = k*KC" (Bergmann).
@@ -284,6 +287,8 @@ Lateral inhibition from PNs (Mz19 PNs, optogenetic):
   n = 7–8; −0.3 to −2 mV with picrotoxin.
 - It needs no spikes: "the light-induced hyperpolarizations of CsChrimson-negative αβc KCs persisted unabated when action potentials were blocked with TTX".
 - Time course (fig. 7C): peak ≈ −10 mV within ≈ 0.2 s, recovery over ≈ 1 s.
+- Correction (2026-10-11, from `apl_kinetics.md`, which digitized fig. 7C): the peak is −7.7 mV at about 0.31 s after a
+  200 ms light, decaying with tau about 0.39 s and leaving about 1.7 mV for more than 2 s.
 - Release threshold: "in GGN and other non-spiking interneurons, depolarizations of 2–5 mV suffice to trigger secretion".
 
 **Turner 2008:** subthreshold odor responses "could be depolarizing, hyperpolarizing or consist of" both. No mV values are given.
