@@ -20,6 +20,11 @@ resting drive and strong, sustained response (0.44 left at 500 ms) can't both co
 depresses, as its trains constrain it: something else must carry their odor drive, such as the slow component, lateral
 excitation or a recurrent current the toy lacks, or flies' resting drive is smaller for another reason.
 
+Correction (2026-10-11): run again on orn_pn_recovery_fit.py's corrected fits (the first results kept as
+pn_toy2_timing_bug.json). A DL5-like cell: refitted pools 15.4 mV, Rmax 94, sigma 10.7, 0.17 of the peak left at 500 ms;
+DKR 17.7 mV, Rmax 101, sigma 9.7, 0.20 (brainfly's 21.3, 128, 11.7, 0.35, unchanged). A DM4-like cell 9.1-9.4 mV, Rmax
+94-98; DL5 at 14 spikes/s 19.8-24.3 mV, Rmax 67-70. The conclusion stands.
+
     python experiments/pn_toy2.py      (writes experiments/pn_toy2.json; needs orn_pn_recovery_fit.json)
 """
 from __future__ import annotations

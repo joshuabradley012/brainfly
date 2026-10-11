@@ -24,6 +24,10 @@ ratio falls with the drive (0.65 at 2.5 and 1.5 to 0.44 at 1 and 2.5) and the si
 Kenyon cells still get less of 4-methylcyclohexanol than flies' before APL acts (0.43 against 0.76 of 3-octanol's,
 with APL silenced). mb_calibration2.py installs the pair.
 
+Correction (2026-10-11, from an independent review, checked): at 2.5 times the synapses the silencing rises span 1.83-2.95, not 2.0-3.0. And this check set
+the Kenyon cells' rest once, for every pair; with it set anew for the chosen pair (odor_apl_conductance_check.py's
+comparison row), silencing raises 4-methylcyclohexanol's spikes 1.98-fold, just under flies' 2.
+
     python experiments/odor_apl_two_knob_check.py      (writes experiments/odor_apl_two_knob_check.json)
 """
 from __future__ import annotations

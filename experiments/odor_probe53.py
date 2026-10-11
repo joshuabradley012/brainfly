@@ -30,6 +30,9 @@ input (odor_olsen_protocol_check.py), so 3-octanol's strong glomeruli and 4-meth
 answer near Rmax; the model's keeps rising, so the stronger input keeps winning. The saturation, not the breadth, looks
 like what the model lacks.
 
+Note (2026-10-11): "odor_normalization_check.py" above is the check now named odor_pentyl_suppression_check.py (its name
+was reused on 11 October for a different check).
+
     python experiments/odor_probe53.py         (writes experiments/odor_probe53.json)
 """
 from __future__ import annotations

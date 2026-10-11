@@ -50,6 +50,8 @@ comparison 356 and 219), APL no longer equalized the odors (0.82-fold; flies 1.2
 answering cells answered 3-octanol (flies 0.33), with the gamma cells nearly free of APL. Stronger drives took APL to its
 ceiling for 3-octanol (ratios 0.62-0.93); -15 mV held the Kenyon cells back 3.4-4.6-fold.
 
+Correction (2026-10-11, from an independent review, checked): at -15 mV silencing raised the spikes 3.28-4.63-fold, not 3.4-4.6.
+
     python experiments/odor_apl_kinetics_check.py      (writes experiments/odor_apl_kinetics_check.json)
 """
 from __future__ import annotations

@@ -35,6 +35,16 @@ spikes/s to what it transmits at rest at 7 (about 2.5), because flies' own train
 (0.23 left at 7 spikes/s against brainfly's 0.38; 0.33 at 4, DM4's 0.28) but transmit less in a burst (0.04 against
 0.07). pn_toy2.py shows what that costs a PN.
 
+Correction (2026-10-11, found by an independent review): the 7 Hz conditioning was taken to end two intervals after its
+last spike instead of one, so every Fig. S8D pause was 0.29 s too long and the test trains and the burst began 0.14 s
+late. Fixed and run again (the first results kept as orn_pn_recovery_fit_timing_bug.json). Mean squared errors: brainfly's
+pools 0.0199; refitted 0.0128 (w 0.39; slow pool 0.87 and 12.6 s, fast 0.72 and 1.11 s); DKR 0.0127 (f 0.76; recovery from
+7.1 s down to 1.45 s, calcium decaying over 0.16 s); M4-DKR 0.0129, its calcium dependence fitted away (it is the refitted
+pools). DKR still fits the slow recovery after 7 Hz best (RMS 0.046, against 0.083 refitted and 0.075 as brainfly has it)
+and DM4's train no better than the refitted pools (0.096 against 0.097; 0.198 as brainfly has it), and every model still
+transmits about 2.4 times as much during 0.5 s at 100 spikes/s as at rest at 7. The conclusion stands; the numbers above
+are the first run's.
+
     python experiments/orn_pn_recovery_fit.py      (writes experiments/orn_pn_recovery_fit.json)
 """
 from __future__ import annotations
@@ -110,17 +120,17 @@ def predictions(syn: Synapse) -> dict:
     """Every dataset's model counterpart."""
     p = {}
     p["kw08_7hz"] = syn.run(train(7, 8 / 7), 8 / 7)[0][1:8]
-    _, cond = syn.run(train(7, 4.0), 4.0 + 1 / 7)       # 4 s at 7 Hz, then the next interval
+    _, cond = syn.run(train(7, 4.0), 4.0)               # 4 s at 7 Hz (28 spikes), up to where the 29th would come
     for rate, data in KW08_TEST.items():
         amp, _ = syn.run(train(rate, (len(data) + 1) / rate - 1e-9, cond[3]), cond[3] + (len(data) + 1) / rate + 0.1, cond)
         p[f"kw08_test_{rate:g}"] = amp[1:len(data) + 1] / amp[0]
-    _, burst = syn.run(np.concatenate([train(7, 4.0), train(100, 0.5, 4.0 + 1 / 7)]), 4.0 + 1 / 7 + 0.5)
+    _, burst = syn.run(np.concatenate([train(7, 4.0), train(100, 0.5, 4.0)]), 4.0 + 0.5)
     probes = burst[3] + S8B_T
     amp, _ = syn.run(probes, probes[-1] + 0.1, burst)
     p["s8b"] = amp / amp[-4:].mean()
     rec = []
     for pause in S8D_T:
-        amp, _ = syn.run(np.array([cond[3] + pause]), cond[3] + pause + 0.1, cond)
+        amp, _ = syn.run(np.array([cond[3] - 1 / 7 + pause]), cond[3] - 1 / 7 + pause + 0.1, cond)   # pause after the last spike
         rec.append(amp[0])
     p["s8d"] = np.array(rec)
     p["kw09_4hz"] = syn.run(train(4, 3.25), 3.25)[0][:13]

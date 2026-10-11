@@ -41,6 +41,17 @@ odors (4-methylcyclohexanol's share of answering cells 0.38 of 3-octanol's with 
 flies 1.25), and 0.63 of 4-methylcyclohexanol's answering cells answer 3-octanol (flies 0.33): the early spikes, before
 APL's inhibition builds, decide which cells answer. mb_calibration4.py takes the chosen constants.
 
+Correction (2026-10-11, from an independent review, checked): APL releases about 3 Hz at rest in this model (2.9-3.1 Hz before the odor in
+olfaction_movie.json; the 1.5 mV resting inhibition implies about 2.5), not 7, so its tonic release explains only about
+1 mV of the shortfall from the design's 11 mV to the 8.2 measured. The rest likely comes from the slow conductance being
+about 95% settled after 1 s and from APL's synapses differing from cell to cell (the cells' mean falls below the mean
+cell's); it isn't pinned down. So in the model's copy of Inada et al.'s test, APL's ceiling holds the quiet Kenyon cells
+8.2 mV down, short of flies' 10-12. Matching that at this reversal would take a larger conductance, which would likely
+raise silencing past 3-fold, so here neither reading of the recordings' chloride meets both measurements; the larger
+conductance comes nearer. And the time course matches only in its fall: driven directly, the inhibition is half up at
+0.14 s against flies' 0.27 (10% at 0.01 against 0.14 s), since the model has no delay or rise before the conductance
+builds (apl_kinetics.md suggested about 50 ms).
+
     python experiments/odor_apl_conductance2_check.py      (writes experiments/odor_apl_conductance2_check.json)
 """
 from __future__ import annotations

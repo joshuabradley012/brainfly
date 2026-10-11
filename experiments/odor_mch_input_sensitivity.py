@@ -24,6 +24,10 @@ recruiting the cells 3-octanol recruits. With the glomeruli inferred from flies'
 values (0.54) give 269 (6.6%) and 0.47. So flies' 4-methylcyclohexanol is probably broader at the projection neurons than
 the receptor-level evidence makes it, through lateral excitation, receptor responses no dataset has, or both.
 
+Checked afterwards (2026-10-11): "breadth, not strength" is an inference from a small check. At about the same summed
+drive (0.67-0.68), the broader pattern answered in slightly more Kenyon cells (5.7 against 5.0%) and with a fly-like overlap
+(0.28 against 0.49), and neither reached flies' density.
+
     python experiments/odor_mch_input_sensitivity.py      (writes experiments/odor_mch_input_sensitivity.json)
 """
 from __future__ import annotations

@@ -37,6 +37,8 @@ cells (0.28), MBON11 18.8 and 44.2 spikes (13.7 and 42); with the weighed input 
 the free potential 28.9 mV in DM6, VM2 and VM7 with every receptor neuron silenced), the synapse's problem
 (odor_probe58.py). Next: the Kenyon cells, where APL saturates for both odors (odor_apl_check.py).
 
+Correction (2026-10-11, from an independent review, checked): the weaker odors are divided by 1.52-1.70, not 1.5-1.6.
+
     python experiments/odor_probe60.py      (writes experiments/odor_probe60.json)
 """
 from __future__ import annotations

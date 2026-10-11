@@ -46,6 +46,11 @@ decays with tau about 0.39 s (Vrontou et al. Fig. 7C), and driving APL directly 
 0.32 s after the drive (Inada et al. Fig. 5B). So the model's is largest about 0.2 s early and fades about ten times too
 fast: its synapses' 5 ms decay is 50-80 times shorter than what the recordings imply.
 
+Correction (2026-10-11, from an independent review, checked): Vrontou et al.'s lateral inhibition (their Fig. 7) drove a random half of the
+alpha/beta-c Kenyon cells, not about 160 (160 is the whole alpha/beta-c population, from their Fig. 1H). And the 15 mV
+rule compared the model's free membrane potential, unfiltered, with flies' somatic recordings, which the cells'
+membranes filter and which were made with pipettes that set chloride's reversal far below rest; it is a rough bound.
+
     python experiments/odor_apl_inhibition_check.py      (writes experiments/odor_apl_inhibition_check.json)
 """
 from __future__ import annotations

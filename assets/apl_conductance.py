@@ -49,7 +49,7 @@ def figure(theme: str, first: dict, second: dict) -> str:
     ch = second["conditions"][ch_name]
     ca, gr = first["conditions"][CALIBRATED], first["conditions"][GRADED]
     inada = second["inada_5b"][f"{ch_name} | reversal -20 mV"]
-    out = [text(24, 30, "APL as a conductance: graded like flies', within flies' limits, and as slow as flies'", "lab"),
+    out = [text(24, 30, "APL as a conductance: graded like flies', within flies' limits, and fading as flies' does", "lab"),
            text(24, 50, "APL's synapses onto the Kenyon cells reverse 20 mV below each cell's rest and fade over 0.3 s: APL answers "
                 f"4-methylcyclohexanol with {ch['apl_peak_mch_over_oct']:.2f} of its 3-octanol peak (flies 0.49),", "note"),
            text(24, 68, f"silencing it raises the Kenyon cells' spikes {ch['3-octanol']['block_ratio']:.1f}- and "

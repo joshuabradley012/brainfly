@@ -16,6 +16,11 @@ cell's leak, the Kenyon cells' drive onto APL at MaleCNS's weight, decay 0.3 s. 
 0.53 of its peak for 3-octanol (flies 0.49), silencing it raises the Kenyon cells' spikes 2.7-fold (flies 2-3), and its
 inhibition rises and fades about as flies' does.
 
+Correction (2026-10-11, from an independent review, checked): the 11 mV ceiling is the design; measured with Inada et al.'s protocol (APL driven to its
+ceiling for 1 s at rest, odor_apl_conductance2_check.py) APL holds the quiet Kenyon cells 8.2 mV down. Its inhibition
+falls about as flies' does (half gone 0.36 s after a drive; flies 0.32) but rises about twice as fast (half up at 0.14 s;
+flies 0.27).
+
     o, rec, built = brain_cache.load("odor_probe60", odor_probe60.build, odor_probe44.prepare)
     mb_calibration4.apply(o)
 """

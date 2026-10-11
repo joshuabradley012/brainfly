@@ -10,6 +10,9 @@ it raises the Kenyon cells' spikes 2.05-2.45-fold, and it equalizes the odors' K
 Both numbers were fitted (a grid of six pairs on odor_probe60.py's model); the equalization is what they predict.
 mb_calibration.py is unchanged, so the experiments that used it (rung9_learning.py among them) still run as they ran.
 
+Checked afterwards (2026-10-11, odor_apl_conductance_check.py): with the Kenyon cells' rest set after installing this APL,
+as the learning pilots do, silencing it raises their spikes 2.51 and 1.98-fold (3-octanol, 4-methylcyclohexanol).
+
     o, rec, built = brain_cache.load("odor_probe60", odor_probe60.build, odor_probe44.prepare)
     mb_calibration2.apply(o)
 """

@@ -72,6 +72,10 @@ input). APL at its ceiling held the quiet Kenyon cells 3.8 mV down on average, n
 numbers above are for that APL: "reversing 20 mV below rest" and "11 mV at its ceiling" held only for the alpha'/beta'
 cells, and every condition's reversal was 5.5 and 16.5 mV nearer the alpha/beta and gamma cells' rest than its label.
 
+Correction (2026-10-11, from an independent review, checked): "reverse below a Kenyon cell's rest (Inada et al.)" overstates the source: Inada et al.
+measured APL hyperpolarizing Kenyon cells, with pipettes that set chloride's reversal near -121 mV; no one has measured
+the Kenyon cells' GABA reversal (research_notes/Rung 9 learning data/apl_kinetics.md).
+
     python experiments/odor_apl_conductance_check.py      (writes experiments/odor_apl_conductance_check.json)
 """
 from __future__ import annotations
