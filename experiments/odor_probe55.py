@@ -17,6 +17,21 @@ Measured, with receptor_fills.RECOMMENDED's input: odor_equalization_check.py's 
 Badel et al.'s glomeruli and per glomerulus over all of them) and odor_probe36.measure's (Kenyon cells by class and
 odor, overlap, MBON11). Seeds 690000 (odor_probe36.measure) and 695000 (equalization).
 
+Ran: with the receptor input the evidence supports, the model is far from equalizing the odors even where flies' PNs
+were imaged. 4-methylcyclohexanol's summed receptor response is 0.31 of 3-octanol's over the first 0.5 s; its PNs sum
+0.51 of 3-octanol's over Badel et al.'s 37 glomeruli (flies 0.98; with DoOR's input 0.86, odor_probe54.py), 0.35 per
+glomerulus over all of them and 0.19 over every PN (0.52 with DoOR's); 1.38% of Kenyon cells answer it against 8.96% for
+3-octanol (0.15; flies 0.73-0.92), and MBON11 gains 4.4 spikes against 31.5 (flies 110 and 118). Its PNs answer in 9
+glomeruli over 10 spikes/s (3-octanol 13), at 86 (VA3) and 76 (D) spikes/s and 19-28 in seven more. Where flies' PNs
+answer 4-methylcyclohexanol without receptor input the evidence supports (Badel et al.: DA2 236, VM7v 121, DA3 116, VA5
+110, DC3 101, DL3 91, DM3 87, VM7d 84, DA1 78, DL5 77, VM3 72, VA6 69% ΔF/F), the model's sit at rest, and the same holds
+for 3-octanol's (DL3 166, DA2 140, VM3 122, DA1 118, DA3 113, DC3 86); with DoOR's broader input for
+4-methylcyclohexanol (D and DA2 inflated by import errors) the model's PNs had answered in several of them. So the model's
+antennal lobe lacks what produces flies' PN responses beyond the receptor input, about as large for
+4-methylcyclohexanol as for 3-octanol. Lateral excitation through electrically coupled excitatory LNs gives a PN with no
+receptor input only 6-32 spikes/s (lateral_excitation.md), and the two labs' PN imaging disagree widely in several of
+these glomeruli (DA2: Badel 236, Barth 44), so how much of it is real input, lateral excitation or imaging remains open.
+
     python experiments/odor_probe55.py         (writes experiments/odor_probe55.json)
 """
 from __future__ import annotations
