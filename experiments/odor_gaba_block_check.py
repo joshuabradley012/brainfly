@@ -17,7 +17,11 @@ glutamate-gated chloride channels the glutamatergic LNs act through; Liu & Wilso
 silenced (as odor_resting_drive_check.py, for the resting drive by glomerulus with inhibition intact; flies about 7-10 mV
 for most glomeruli by the note's section 1.6, Gouwens & Wilson's 5-10 mV over all).
 Measured: the cholinergic uniglomerular PNs' mean membrane potential and rate, over all and by glomerulus (DM6, VM2 and
-VM7, Nagel et al.'s, and others), and the GABAergic and glutamatergic LNs' rates; and the receptor synapses' resting
+VM7, Nagel et al.'s, and others), and the GABAergic and glutamatergic LNs' rates; and (added 2026-10-11) the PNs' free
+membrane potential, where the membrane would sit without its own spikes: (a_bias + tonic + a_vx x + a_vs s) / (1 - a_vv)
+from the mean synaptic and slow currents x and s (exact for the mean of the linear membrane, since uniglomerular PNs keep
+their currents through spikes), because the model's membrane resets to rest at each spike, so its mean saturates as the
+rate rises, while flies' somatic recordings barely see the PNs' spikes; and the receptor synapses' resting
 efficacy by glomerulus (each spike's strength as a fraction of the rested, uninhibited one: sum over the two pools of
 weight / (D + u r tau), D the resting presynaptic divisor; the note's conventions), against flies' DM4 0.26 (Kazama &
 Wilson 2008) and DM6 0.41-0.56 (Gaudry et al. 2013, an upper bound). measure() serves other models' checks too.
@@ -31,6 +35,14 @@ DM4 13.2, DL5 19.0, DM1 18.3), several times the note's 6-8 mV estimates for mos
 spikes/s like the others (the polish gives every uniglomerular PN the same target), where flies' are nearly silent. The
 receptor synapses keep 0.37 of their strength at rest (0.32 in the palps' VM7, at 8 spikes/s), from the class median
 rates: at DM4's measured 3.44 spikes/s they would keep 0.47 (flies 0.26), and at DM6's 2.2, 0.54 (flies 0.41-0.56).
+
+Checked afterwards (2026-10-11, with the free membrane potential added and the check run again, same seeds): the first
+sentence is wrong. The model's membrane resets at each spike, so its mean rose only 3.1 mV while the PNs' rate went from
+5 to 12 spikes/s; where the membrane would sit without its own spikes (flies' somatic recordings barely see the PNs'
+spikes), blocking GABA raises the PNs 5.2 mV in DM6, VM2 and VM7 (4.3-6.1 each), inside flies' 5-8, all of it from the
+LNs' synapses (DM4 2.5, DL5 3.3, DM1 3.6; 4.3 over all). So this model disinhibits at rest as flies' do without any tonic
+presynaptic inhibition (odor_probe57.py: adding a divisor of 2 makes it 13.2). By the free potential, silencing every
+receptor neuron drops the PNs 28.4 mV in those glomeruli and 26.1 over all.
 
     python experiments/odor_gaba_block_check.py      (writes experiments/odor_gaba_block_check.json)
 """
@@ -90,6 +102,15 @@ def resting_efficacy(o, rate: float) -> float:
     return float(sum(w / (d + u * rate * tau) for w, u, tau in pools if w > 0))
 
 
+def free_potential(b, x: np.ndarray, sl: np.ndarray) -> np.ndarray:
+    """Each neuron's free membrane potential from its mean synaptic current x and slow current sl: the fixed point of the
+    membrane's update u = a_vv u + a_vx x + a_bias + tonic + a_vs s (the slow term only where slow synapses arrive)."""
+    k, c = b._kernel_tables(), b.cls
+    tonic = b._tonic if len(b._tonic) else 0.0
+    slow = np.where(b.slow_in, k["a_vs"][c] * sl, 0.0) if len(b.slow_weights) else 0.0
+    return (k["a_vx"][c] * x + k["a_bias"][c] + tonic + slow) / (1.0 - k["a_vv"][c])
+
+
 def measure(o, rec, seed: int = SEED) -> dict:
     """The conditions above on the model (o, rec), each settled as it settles and measured over 1 s, SEEDS seeds."""
     b = o.brain
@@ -116,7 +137,7 @@ def measure(o, rec, seed: int = SEED) -> dict:
         else:
             block = blocked(b, sources, targets)
         with block as removed, warm.settled(o, rec):
-            u, hz = np.zeros(b.n), np.zeros(b.n)
+            u, hz, x, sl = np.zeros(b.n), np.zeros(b.n), np.zeros(b.n), np.zeros(b.n)
             for s in range(SEEDS):
                 b.reset(seed + 100 * c + s)
                 b.set_release(o.s.ol.neurons, o.s.silent)
@@ -124,11 +145,16 @@ def measure(o, rec, seed: int = SEED) -> dict:
                 for _ in range(100):
                     cnt = b.advance(piece, drive=drive)
                     u += b.u.mean(0) / (100 * SEEDS)
+                    x += b.x.mean(0) / (100 * SEEDS)
+                    sl += b.s.mean(0) / (100 * SEEDS)
                     hz += cnt.mean(0) / SEEDS
+            free = free_potential(b, x, sl)
         out["conditions"][name] = {"synapses_removed": removed or 0, "upn_u_mv": round(float(u[upn].mean()), 2),
+                                   "upn_free_mv": round(float(free[upn].mean()), 2),
                                    "upn_hz": round(float(hz[upn].mean()), 2), "gaba_ln_hz": round(float(hz[gaba_ln].mean()), 2),
                                    "glu_ln_hz": round(float(hz[glu_ln].mean()), 2),
                                    "by_glomerulus_u_mv": {g: round(float(u[v].mean()), 2) for g, v in pn_of.items()},
+                                   "by_glomerulus_free_mv": {g: round(float(free[v].mean()), 2) for g, v in pn_of.items()},
                                    "by_glomerulus_hz": {g: round(float(hz[v].mean()), 2) for g, v in pn_of.items()}}
         r = out["conditions"][name]
         print(name, json.dumps({k: v for k, v in r.items() if not k.startswith("by_")}),
@@ -136,12 +162,13 @@ def measure(o, rec, seed: int = SEED) -> dict:
     a = out["conditions"]["intact"]
     for name in list(out["conditions"])[1:]:
         d = out["conditions"][name]
-        change = {g: round(d["by_glomerulus_u_mv"][g] - a["by_glomerulus_u_mv"][g], 2) for g in pn_of}
-        vals = np.array(list(change.values()))
-        d["change_mv"] = {"all": round(d["upn_u_mv"] - a["upn_u_mv"], 2), "nagel_glomeruli": round(float(np.mean(
-            [change[g] for g in ("DM6", "VM2", "VM7d", "VM7v") if g in change])), 2),
-            **{g: change.get(g) for g in SHOWN}, "quantiles_5_50_95": [round(float(x), 2) for x in np.percentile(vals, [5, 50, 95])]}
-        print(name, "change", json.dumps(d["change_mv"]), "(flies: +5-8 mV blocked; about -7 to -10 silenced)", flush=True)
+        for key, by, total in (("change_mv", "by_glomerulus_u_mv", "upn_u_mv"), ("free_change_mv", "by_glomerulus_free_mv", "upn_free_mv")):
+            change = {g: round(d[by][g] - a[by][g], 2) for g in pn_of}
+            vals = np.array(list(change.values()))
+            d[key] = {"all": round(d[total] - a[total], 2), "nagel_glomeruli": round(float(np.mean(
+                [change[g] for g in ("DM6", "VM2", "VM7d", "VM7v") if g in change])), 2),
+                **{g: change.get(g) for g in SHOWN}, "quantiles_5_50_95": [round(float(x), 2) for x in np.percentile(vals, [5, 50, 95])]}
+            print(name, key, json.dumps(d[key]), "(flies: +5-8 mV blocked; about -7 to -10 silenced)", flush=True)
     print("resting divisor", out["resting_divisor"], "efficacy", json.dumps(out["resting_efficacy"]), flush=True)
     return out
 
