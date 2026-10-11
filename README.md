@@ -36,6 +36,24 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **What ends MBON11's burst: the depression of its Kenyon cell synapses.** Each Kenyon cell spike leaves its synapses
+  onto MBON11 half as strong, recovering over 1.5 s. With that depression off, MBON11's response to 3-octanol holds as
+  flies' does: 94 spikes/s from 0.5 to 1 s (flies 95–100) and 132 evoked spikes (flies 118), though it peaks too high
+  (224 spikes/s, flies 135–140) ([`mbon11_burst_check.py`](experiments/mbon11_burst_check.py)). Silencing APL doubles
+  the Kenyon cells' firing but leaves the response brief. As tested, the Kenyon cells keep firing at 5–25% of their
+  early rate, but the synapses their first spikes depressed deliver only 1.3% of the drive's peak from 0.6 s on, where
+  flies' EPSC keeps 43%. The depression comes from Yamada et al. 2024: a second light flash 400 ms after the first evokes
+  0.38–0.68 of the first EPSC. The model reads that as one spike per flash. At two or three spikes per flash, the same
+  data leave each spike 0.7–0.8 of the strength. And their flash EPSC peaks about 100 ms after the flash and fades over
+  hundreds of milliseconds, where the model's Kenyon cell current fades in 5 ms. Either Kenyon cells fire long after a
+  flash or their transmission is slow, and either would carry MBON11 through an odor. The next check runs Yamada et
+  al.'s flash in the model.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/mbon11_burst-dark.svg">
+  <img src="assets/mbon11_burst-light.svg" width="100%" alt="Three panels, 3-octanol, from 0.5 s before to 1.5 s after a 1 s odor. Left: MBON11's rate. As in the learning test it peaks at 144 spikes/s at 85 ms and falls to about 12 by 0.5 s; with its Kenyon cell synapses not depressing it peaks at 224 at 0.25 s and holds about 94 to the odor's end; with APL silenced it peaks at 208 and falls to about 28; with both, 323 and about 135. Flies' points rise to 135-140 spikes/s at 0.3 s and hold 95-100. Middle: the drive the Kenyon cells deliver onto MBON11 as a share of its peak: as tested it falls to about 1% by 0.6 s, undepressed to about 20%, against flies' EPSC at about 43%. Right: the Kenyon cells' firing as tested, by class: alpha-prime/beta-prime peak near 3 spikes/s per cell and fall to about 0.7, alpha/beta near 1.7 falling to about 0.3, gamma near 0.8 falling to nearly 0.">
+</picture>
+
 * **Rung 9's learning test, recorded: MBON11 answers in a burst where flies' holds.** The learning pilots report
   MBON11's evoked spikes before and after pairing as totals. Re-running learning pilot 11 with its seeds and keeping
   MBON11's spikes over time repeats its totals exactly and shows what they hid
@@ -1742,6 +1760,7 @@ a sign that the approach is broken."
 | `experiments/orn_pn_recovery_fit.py` | Exploratory analysis: does a receptor synapse whose recovery speeds up with residual calcium fit flies' trains better than two fixed pools, and rest deeper while transmitting more in a burst? | No (corrected for a timing error an independent review found): refitted pools 0.0128, calcium-dependent recovery 0.0127 (brainfly's pools 0.0199); the latter fits the slow recovery after 7 Hz best, but every model transmits about 2.4 times as much in a 100 Hz burst as at rest, since flies' trains depress almost to nothing at 50 Hz |
 | `experiments/pn_toy2.py` | Exploratory analysis: the fitted synapses in pn_toy.py's PN | Deeper resting depression costs the response in every model (corrected fits): a DL5-like cell's drive falls from 21 to 15-18 mV but Rmax from 128 to 94-101 and the sustained share from 0.35 to 0.17-0.20 (flies 5-10 mV, 167, 0.44); DL5 at its measured rate stays weak (Rmax 67-95). Flies' odor drive must come partly from elsewhere |
 | `experiments/odor_mch_input_sensitivity.py` | Exploratory check, not a change to the model: how much stronger or broader would 4-methylcyclohexanol's receptor input have to be for flies' Kenyon cell density (about 12%)? | Strength alone can't: tripling the weighed input (summed drive 0.92 of 3-octanol's, twice flies' receptor-level 0.41-0.51) reaches 7.0% of Kenyon cells (3-octanol 14.7%), half of them shared with 3-octanol (flies 0.33). Adding the glomeruli inferred from flies' PN imaging reaches 5.7% with a fly-like overlap (0.28): flies' representation is probably broader at the PNs than the receptor evidence |
+| `experiments/mbon11_burst_check.py` | Exploratory check, not a change to the model: why does MBON11 answer odors in a burst (learning_movie.py), where flies' holds? The Kenyon cell-to-MBON11 synapses not depressing, APL silenced, or both | The depression ends it. Undepressed, MBON11 holds 94 spikes/s from 0.5 to 1 s (flies 95-100) and gains 132 spikes to 3-octanol (flies 118), though it peaks at 224 (flies 135-140); APL silenced, the response stays brief (69% of its spikes in the first 0.3 s). As tested the Kenyon cells keep firing at 5-25% of their early rate, but their depressed synapses deliver 1.3% of the drive's peak from 0.6 s on (flies' EPSC 43%) |
 | `experiments/odor_pn_reset_check.py` | Exploratory check: the PNs' reset after a spike raised from rung 4's 5 mV below rest to rest and 3-6 mV above (threshold 10) | Reset at rest (Jeanne & Wilson's fitted PN) raises Rmax to 145-155 in DL5, VM7d and DM1 (flies 144-167); higher resets overshoot; sigma, the weakest input and 4-methylcyclohexanol barely move |
 | `experiments/odor_probe52.py` | Exploratory, not pre-registered: odor_probe51.py rebuilt with the PNs resetting to rest | Strong input answered as flies' (step Rmax 172-182, Olsen protocol 145-156) with the two pools' time course; Kenyon cells 2.4-13.8%, MBON11 24 spikes to 3-octanol; 4-methylcyclohexanol 0.52 at the PNs, 0.26 at the Kenyon cells. The base model from here on |
 | `experiments/odor_probe53.py` | Exploratory, not pre-registered: 4-methylcyclohexanol's untested receptors given the input Badel et al.'s PN responses imply (labelled stand-in) | Flies' breadth (15 glomeruli over 10 spikes/s, 3-octanol 17) but its PNs sum 0.58 of 3-octanol's and its Kenyon cells 0.26 (flies 0.85-0.98, 0.73-0.92) |
