@@ -1,0 +1,255 @@
+{
+ "question": "Exploratory check, not pre-registered and not a rung 5 attempt: does co-driving DNg97 with DNg100 speed the nerve\ncord model's front-leg rhythm, as co-activating them speeds headless flies' stepping?\n\nresearch_notes/Embodied fly connectome simulation/descending_neuron_rates.md: no one has recorded DNg100's or DNg97's\nspikes, so rung 5's drives still rest on no data; but in decapitated flies, activating DNg100 alone gives stepping at\nabout 7.6-8.3 Hz on a ball and 11-12 Hz in air, and adding DNg97 (oDN1) raises ball stepping to about 12 Hz and front-leg\nair-stepping to about 21 Hz (Sapkal et al. 2026, read off figures). A model whose rhythm comes from the right circuit\nshould at least speed up. rung5_vnc3.py: driven at 400 (the only drive at which they count), DNg100 makes 11.6 (right)\nand 13.7 Hz (left) front-leg rhythms.\nModel: rung5_vnc3.py's (the front legs' neuromere network, 4,309 neurons, brainfly's signed counts, Pugliese et al.'s\nvolumes, rate model and parameter distributions; rung5_vnc3.simulate and vnc_rhythm.rhythm). Each side separately: that\nside's DNg100 at 400 with its DNg97 at 0, 100, 200 and 400 (nothing measures DNg97's rate either), and DNg97 alone at 200\nand 400; 16 replicates per condition, the same parameters across the side's conditions, from seeds no earlier run used\n(18000 + side).\nMeasured, per condition: the rhythmic replicates (score above 0.5), their median frequency, the active motor neurons,\nthe network's active neurons and those above 100 Hz in the first second, and both descending neurons' rates.\n\n    python experiments/vnc_codrive_check.py      (writes experiments/vnc_codrive_check.json)\n",
+ "conditions": {
+  "L": {
+   "DNg100 400": {
+    "rhythmic": 16,
+    "of": 16,
+    "freq_hz_median": 13.0,
+    "freq_hz": [
+     13.0,
+     15.4,
+     12.8,
+     13.9,
+     14.5,
+     12.7,
+     13.7,
+     9.8,
+     10.9,
+     12.2,
+     13.2,
+     13.0,
+     14.5,
+     13.2,
+     12.7,
+     12.3
+    ],
+    "active_motor_neurons_median": 4,
+    "active_median": 90,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 16.5,
+    "dng97_hz": 0.0
+   },
+   "DNg100 400 + DNg97 100": {
+    "rhythmic": 14,
+    "of": 16,
+    "freq_hz_median": 13.9,
+    "freq_hz": [
+     14.1,
+     13.7,
+     14.1,
+     15.2,
+     13.7,
+     14.3,
+     11.6,
+     11.8,
+     13.2,
+     14.3,
+     15.2,
+     14.1,
+     13.3,
+     13.0
+    ],
+    "active_motor_neurons_median": 4,
+    "active_median": 105,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 16.7,
+    "dng97_hz": 1.8
+   },
+   "DNg100 400 + DNg97 200": {
+    "rhythmic": 5,
+    "of": 16,
+    "freq_hz_median": 14.5,
+    "freq_hz": [
+     1.0,
+     16.4,
+     0.9,
+     14.5,
+     16.7
+    ],
+    "active_motor_neurons_median": 14,
+    "active_median": 198,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 17.8,
+    "dng97_hz": 9.5
+   },
+   "DNg100 400 + DNg97 400": {
+    "rhythmic": 2,
+    "of": 16,
+    "freq_hz_median": 14.9,
+    "freq_hz": [
+     13.7,
+     16.1
+    ],
+    "active_motor_neurons_median": 11,
+    "active_median": 248,
+    "over_100hz_median": 0,
+    "rule_keeps": 14,
+    "dng100_hz": 17.8,
+    "dng97_hz": 18.9
+   },
+   "DNg97 200 alone": {
+    "rhythmic": 0,
+    "of": 16,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "active_motor_neurons_median": 3,
+    "active_median": 20,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 0.0,
+    "dng97_hz": 9.8
+   },
+   "DNg97 400 alone": {
+    "rhythmic": 0,
+    "of": 16,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "active_motor_neurons_median": 4,
+    "active_median": 89,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 0.0,
+    "dng97_hz": 23.5
+   }
+  },
+  "R": {
+   "DNg100 400": {
+    "rhythmic": 16,
+    "of": 16,
+    "freq_hz_median": 11.4,
+    "freq_hz": [
+     12.3,
+     12.3,
+     11.5,
+     10.8,
+     11.1,
+     10.4,
+     11.5,
+     11.2,
+     10.8,
+     11.0,
+     12.3,
+     11.1,
+     11.8,
+     11.8,
+     11.5,
+     9.6
+    ],
+    "active_motor_neurons_median": 8,
+    "active_median": 116,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 16.3,
+    "dng97_hz": 0.0
+   },
+   "DNg100 400 + DNg97 100": {
+    "rhythmic": 16,
+    "of": 16,
+    "freq_hz_median": 11.9,
+    "freq_hz": [
+     12.7,
+     13.2,
+     11.6,
+     11.2,
+     12.3,
+     11.1,
+     12.0,
+     11.5,
+     11.8,
+     11.4,
+     13.2,
+     11.4,
+     13.3,
+     12.2,
+     12.2,
+     10.2
+    ],
+    "active_motor_neurons_median": 8,
+    "active_median": 128,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 16.7,
+    "dng97_hz": 2.4
+   },
+   "DNg100 400 + DNg97 200": {
+    "rhythmic": 13,
+    "of": 16,
+    "freq_hz_median": 13.2,
+    "freq_hz": [
+     13.7,
+     14.9,
+     11.9,
+     12.8,
+     13.2,
+     12.5,
+     13.2,
+     12.3,
+     14.5,
+     14.3,
+     12.7,
+     13.2,
+     12.3
+    ],
+    "active_motor_neurons_median": 14,
+    "active_median": 211,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 17.9,
+    "dng97_hz": 10.0
+   },
+   "DNg100 400 + DNg97 400": {
+    "rhythmic": 3,
+    "of": 16,
+    "freq_hz_median": 12.7,
+    "freq_hz": [
+     13.2,
+     6.6,
+     12.7
+    ],
+    "active_motor_neurons_median": 30,
+    "active_median": 478,
+    "over_100hz_median": 2,
+    "rule_keeps": 14,
+    "dng100_hz": 17.3,
+    "dng97_hz": 18.5
+   },
+   "DNg97 200 alone": {
+    "rhythmic": 0,
+    "of": 16,
+    "freq_hz_median": null,
+    "freq_hz": [],
+    "active_motor_neurons_median": 4,
+    "active_median": 50,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 0.0,
+    "dng97_hz": 10.5
+   },
+   "DNg97 400 alone": {
+    "rhythmic": 7,
+    "of": 16,
+    "freq_hz_median": 5.6,
+    "freq_hz": [
+     5.6,
+     5.5,
+     6.2,
+     17.5,
+     3.0,
+     11.9,
+     4.0
+    ],
+    "active_motor_neurons_median": 22,
+    "active_median": 319,
+    "over_100hz_median": 0,
+    "rule_keeps": 16,
+    "dng100_hz": 0.0,
+    "dng97_hz": 22.5
+   }
+  }
+ },
+ "seconds": 611
+}
