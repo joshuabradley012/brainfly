@@ -93,8 +93,11 @@ def apply(o, drive: float | None = None, effect: float | None = None, reversal: 
     return out
 
 
-def install(o, drive: float, effect: float, reversal: float, base_weights: np.ndarray | None = None) -> None:
-    """The part of apply after mb_calibration.apply, from mb_calibration.py's weights (base_weights, or the brain's)."""
+def install(o, drive: float, effect: float, reversal: float, base_weights: np.ndarray | None = None,
+            tau: float = TAU_FAST) -> None:
+    """The part of apply after mb_calibration.apply, from mb_calibration.py's weights (base_weights, or the brain's).
+    tau: the Kenyon cells' slow current's time constant, s, its synapses scaled by TAU_FAST / tau so that a steady release
+    gives the same conductance (the fast current's 5 ms unless given)."""
     b = o.brain
     apl = b.cells(["APL"])
     kc = np.flatnonzero(o.m["kc"])
@@ -102,7 +105,7 @@ def install(o, drive: float, effect: float, reversal: float, base_weights: np.nd
     w = (b.weights if base_weights is None else base_weights).copy()
     w[o.m["kc"][pre] & np.isin(b.idx, apl)] *= drive / mb_calibration.KC_APL_SCALE
     apl_kc = np.flatnonzero(np.isin(pre, apl) & o.m["kc"][b.idx])
-    moved = w[apl_kc] * effect
+    moved = w[apl_kc] * effect * (TAU_FAST / tau)
     w[apl_kc] = 0.0
     b.weights, b._external_matrix = w, None
     if not hasattr(b, "_apl_slow_installed"):
@@ -116,4 +119,4 @@ def install(o, drive: float, effect: float, reversal: float, base_weights: np.nd
             sw[e] = lookup[(int(spre[e]), int(b.sidx[e]))]
         b.slow_weights = sw
     b.sets = {**b.sets, "kenyon_cells": kc}
-    b.set_type("kenyon_cells", tau_slow=TAU_FAST, slow_reversal=float(reversal))
+    b.set_type("kenyon_cells", tau_slow=float(tau), slow_reversal=float(reversal))
