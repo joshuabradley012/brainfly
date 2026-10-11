@@ -17,6 +17,23 @@ al. measured them (0.91, 0.629 s), or with the fast synapses (the two pools); ea
 Measured: the transform as odor_olsen_protocol_check.py measures it (cholinergic PNs) and odor_equalization_check.py's
 summed responses. Seeds: the polish 660000 + 1000 x condition; the measures odor_probe51.py's (570000, 560000).
 
+Ran: either measured-like depression makes the transform saturate and brings sigma to flies', and neither moves
+4-methylcyclohexanol. Over the cholinergic PNs, Olsen et al.'s protocol, DL5, VM7d, DM4 and DM1:
+  as built (0.9927, 33.2 s): sigma 19.7, 24.5, 24.7, 16.3; Rmax 150, 156, 105, 145; DL5 rising 19, 47, 105 and 151
+    spikes/s at 5, 10, 40 and 160 spikes/s of input (160 over 40: 1.43); strong responses keep 0.56 of their peak at
+    500 ms; 4-methylcyclohexanol's PNs 0.53 of 3-octanol's;
+  as measured (0.91, 0.629 s): sigma 14.9, 17.3, 16.8, 12.0; Rmax 136, 141, 91, 134; DL5 20, 52, 111 and 131 (1.18);
+    strong 0.37; 0.52;
+  with the fast pools: sigma 12.7, 15.2, 13.4, 10.7; Rmax 107, 106, 68, 107; DL5 19, 46, 92 and 103 (1.12); strong
+    0.26-0.28; 0.51.
+Flies: sigma 11.8, 12.4, 16.3 and 44.8, Rmax 167, 163, 170 and 144; DL5 44 at 5.1, 85 at 13.4, 149 at 41.5 and 158 at
+98.7 (98.7 over 41.5: 1.06); strong responses 0.44 of their peak at 500 ms. By sigma and saturation alone (the criterion
+stated before the last condition came in) the fast pools are a little closer (sigma off by 0.9, 2.8 and 2.9 against
+3.1, 4.9 and 0.5; 1.12 against 1.18), but they take Rmax down to two thirds of flies' and make strong responses fall
+faster than flies'; the measured depression keeps Rmax within about 15% of flies' in three glomeruli and strong responses
+near flies' shape, so it is the one carried forward (odor_probe54.py). The weakest input still gets half of flies'
+response, and DM1, without its GABA, is the most sensitive.
+
     python experiments/odor_slow_depression_check.py      (writes experiments/odor_slow_depression_check.json)
 """
 from __future__ import annotations
