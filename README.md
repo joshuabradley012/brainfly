@@ -36,49 +36,51 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
-* **APL's inhibition as a conductance: flies' graded response and silencing effect, within flies' limits (rung 9's
-  groundwork).** The graded APL below meets flies' numbers only by holding the Kenyon cells 20 mV down as an odor
-  begins, beyond anything measured in flies. Real synapses are conductances: their effect ends at their reversal
-  potential, and they divide a depolarized cell's input more than they pull a quiet one down. The simulator can now give
-  a type's slow synapses a reversal potential. With APL's synapses onto the Kenyon cells reversing 20 mV below rest, and
-  strong enough that APL at its ceiling holds a quiet Kenyon cell 11 mV down (flies' saturate at 10–12; Inada et al.
-  2017), APL answers 4-methylcyclohexanol with 0.45 of its response to 3-octanol (flies 0.49). Silencing it raises the
-  Kenyon cells' spikes 2.9- and 2.2-fold (flies 2–3), and during an odor it holds them at most 7 mV down. On it the
-  weighed input still passes all four of rung 9's marks in a pilot, the reciprocal by under half a point. But its
-  inhibition fades in 5 ms, where flies' takes about 0.3 s, so the pre-registered attempt waits for that too.
-  - **Correction: the reversal was measured from the wrong rest.** The simulator measures a reversal potential from
-    the model's zero, and the Kenyon cells don't rest there: each class sits its own distance below a shared threshold,
-    α'/β' cells at 0, α/β at −5.5 and γ at −16.5 mV. So "20 mV below rest" was 20, 14.5 and 3.5 mV below them. APL could
-    barely inhibit the γ cells, 38% of the Kenyon cells, among them MBON11's inputs in γ1, and at its ceiling it held the
-    quiet cells 3.8 mV down, not 11. A test of flies' recording (Inada et al.'s Fig. 5B on the model) caught it. The
-    numbers below and learning pilot 10 are for that version. [`mb_calibration4.py`](experiments/mb_calibration4.py)
-    puts each class's reversal below its own rest, and the check is being repeated with flies' time course.
-  - **The conductance** ([`odor_apl_conductance_check.py`](experiments/odor_apl_conductance_check.py),
-    [`mb_calibration3.py`](experiments/mb_calibration3.py), `slow_reversal` in
-    [`brainfly/hybrid.py`](brainfly/hybrid.py)). Three reversal potentials span what a mixture of GABA-A and GABA-B
-    receptors below rest allows (−15, −20 and −30 mV). Each was given the strength that holds a quiet Kenyon cell 11 mV
-    down at APL's ceiling, and tried with six drives from the Kenyon cells onto APL. At −15 mV silencing always raises
-    3-octanol's Kenyon cells more than 3-fold. At −20 mV a drive of 1.5 times MaleCNS's meets both of flies' numbers, as
-    does −30 mV at 2.5; a rule set before the run chose the first. The driving force is what does it: the same synapses
-    as a current hold the Kenyon cells 19 mV down, and silencing raises their spikes only 2.4- and 2.0-fold. The option
-    changes nothing unless set: the antennal lobe rebuilt through it is identical, attribute for attribute.
-  - **Still unlike flies': the time course, and maybe the strength**
-    ([notes](research_notes/Rung%209%20learning%20data/apl_kinetics.md)). Driving APL directly, flies' inhibition is
-    half up 0.27 s after the light and half gone 0.32 s after it; driven by Kenyon cells, it peaks at about 0.31 s
-    (Inada et al. 2017; Vrontou et al. 2021). The model's peaks at about 75 ms and fades 50–80 times too fast. And every
-    recording behind the 10–12 mV ceiling set chloride's reversal near −121 mV with its pipette. If that chloride
-    reached the synapses, APL's real conductance is about half the model's. A check with flies' time course and both
-    readings of the strength is running. 4-methylcyclohexanol's answering Kenyon cells are also 0.67 of 3-octanol's with
-    DoOR's input (flies about 0.9).
-  - **Learning pilot 10** ([`learning_pilot10.py`](experiments/learning_pilot10.py)). With the weighed input all four
-    marks pass again, as on the current-like APL: with 3-octanol paired 4-methylcyclohexanol's response falls 41.3%
-    (band 10–45%), and with 4-methylcyclohexanol paired 3-octanol's falls 15.4% (band 15–50%). Its Kenyon cells are 111
-    against 3-octanol's 514. With DoOR's input the unpaired odor falls 46.7%, just outside its band. The plan for the
-    pre-registered attempt was changed before this pilot reported: it waits for flies' time course.
+* **APL's inhibition as a conductance with flies' time course (rung 9's groundwork).** The graded APL below meets flies'
+  numbers only by holding the Kenyon cells 20 mV down as an odor begins, beyond anything measured in flies. Real
+  synapses are conductances: their effect ends at their reversal potential, and they divide a depolarized cell's input
+  more than they pull a quiet one down. The simulator can now give a type's slow synapses a reversal potential. APL's
+  synapses onto the Kenyon cells now reverse 20 mV below each cell's rest, are strong enough that APL at its ceiling
+  would hold a quiet Kenyon cell 11 mV down (flies' saturates at 10–12; Inada et al. 2017), and fade over 0.3 s as
+  flies' do. APL then answers 4-methylcyclohexanol with 0.53 of its response to 3-octanol (flies 0.49), silencing it
+  raises the Kenyon cells' spikes 2.7-fold (flies 2–3), and its inhibition rises and fades about as flies' does. But
+  with inhibition that builds slowly, more Kenyon cells answer, and APL no longer brings 4-methylcyclohexanol's Kenyon
+  cells closer to 3-octanol's, as flies' does. On it rung 9's reciprocal fails again with the weighed input (10.2%; band
+  15–50%), so the pre-registered second attempt isn't run.
+  - **A first version put the reversal in the wrong place** ([`mb_calibration3.py`](experiments/mb_calibration3.py),
+    [`odor_apl_kinetics_check.py`](experiments/odor_apl_kinetics_check.py)). The simulator measures a reversal potential
+    from the model's zero, and the Kenyon cells don't rest there: each class sits its own distance below a shared
+    threshold, α'/β' cells at 0, α/β at −5.5 and γ at −16.5 mV. So "20 mV below rest" was 20, 14.5 and 3.5 mV below
+    them, and APL could barely inhibit the γ cells, 38% of the Kenyon cells, among them MBON11's inputs in γ1. A test
+    copying flies' recording (Inada et al.'s Fig. 5B) caught it: APL at its ceiling held the quiet cells 3.8 mV down,
+    not 11. The first conductance check ([`odor_apl_conductance_check.py`](experiments/odor_apl_conductance_check.py))
+    and learning pilot 10 ([`learning_pilot10.py`](experiments/learning_pilot10.py); rung 9's marks passed, the
+    reciprocal at 15.4%) ran on that version.
+  - **The corrected conductance** ([`odor_apl_conductance2_check.py`](experiments/odor_apl_conductance2_check.py),
+    [`mb_calibration4.py`](experiments/mb_calibration4.py), `slow_reversal` in
+    [`brainfly/hybrid.py`](brainfly/hybrid.py)). Each class's reversal now lies 20 mV below its own rest, and APL holds
+    every class alike. With flies' 0.3 s decay ([notes](research_notes/Rung%209%20learning%20data/apl_kinetics.md)),
+    driving APL directly brings the inhibition half up at 0.14 s and half gone 0.36 s after the drive (flies 0.27 and
+    0.32 s), though it lacks flies' slower tail. Of the drives from the Kenyon cells onto APL tried, a rule set before
+    the run chose MaleCNS's own weight. The option changes nothing unless set: the antennal lobe rebuilt through it is
+    identical, attribute for attribute.
+  - **Which strength.** Every recording behind the 10–12 mV ceiling set chloride's reversal near −121 mV with its
+    pipette. If that chloride reached the synapses, APL's conductance is a quarter of the model's, and in the model that
+    APL can't hold the Kenyon cells back more than 1.7-fold at any drive (flies 2–3). So here flies' silencing effect
+    needs the larger conductance, as if the synapses kept physiological chloride while recorded.
+  - **What it costs.** When inhibition builds over hundreds of ms, the first spikes decide which Kenyon cells answer:
+    656 answer 3-octanol and 251 4-methylcyclohexanol with DoOR's input, and 0.63 of 4-methylcyclohexanol's also answer
+    3-octanol (flies 0.33). APL no longer equalizes the odors (0.85-fold; flies 1.25).
+  - **Learning pilot 11** ([`learning_pilot11.py`](experiments/learning_pilot11.py)). Pairing 3-octanol cuts
+    4-methylcyclohexanol's response 38.5% (band 10–45%), but pairing 4-methylcyclohexanol cuts 3-octanol's only 10.2%
+    (band 15–50%; flies 38%). 4-methylcyclohexanol reaches 87 Kenyon cells against 3-octanol's 562, and only 8% of
+    3-octanol's answer it. A rule written before the pilot ran said to register rung 9's second attempt only if all four
+    marks passed, so it isn't registered. What separates the model from flies is still 4-methylcyclohexanol's small
+    Kenyon cell set.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/apl_conductance-dark.svg">
-  <img src="assets/apl_conductance-light.svg" width="100%" alt="Two panels. Left: how far APL holds the Kenyon cells below where they sit with APL silenced, over the first 0.6 s of 3-octanol. The calibrated APL (a current, grey) dips to 10.6 mV at about 0.1 s; the graded APL as a current (dashed) to 20.8 mV at 0.08 s, below the 15 mV that is the most seen in flies (dotted) and the 10-12 mV at which flies' APL saturates (shaded); as a conductance reversing 20 mV below rest (red) it dips only to 7.1 mV. Right: every APL tried, its 4-methylcyclohexanol/3-octanol peak ratio (0.4-1.0) against how much silencing it raises the Kenyon cells' spikes (1.5-12-fold, log), each a segment spanning the two odors. Conductances reversing at -15, -20 and -30 mV rise up and to the right as the drive grows; the chosen one (-20 mV, drive 1.5) sits at 0.45 within flies' 2-3-fold band, next to flies' 0.49; the calibrated current sits at 1.0.">
+  <img src="assets/apl_conductance-light.svg" width="100%" alt="Three panels. Left: how far APL holds the Kenyon cells below where they sit with APL silenced, over the first 0.6 s of 3-octanol: the calibrated APL (a current, grey) dips to 10.6 mV, the graded APL as a current (dashed) to 20.8 mV, below the 15 mV that is the most seen in flies and the 10-12 mV at which flies' APL saturates; as a slow conductance (red) it dips to 5.4 mV at about 0.18 s and stays near 4 mV. Middle: APL driven to its ceiling for 1 s at rest, the quiet Kenyon cells' inhibition as a share of its plateau: the model rises to half by 0.14 s and falls to half 0.36 s after the drive, near flies' landmarks (0.27 s and 0.32 s), but leaves less after 1 s (0.08 against 0.22). Right: every conductance tried, APL's 4-methylcyclohexanol/3-octanol peak ratio against how much silencing APL raises Kenyon cell spikes: with the 11 mV ceiling at -20 mV, the chosen drive sits at 0.53 and 2.7-fold, inside flies' 2-3-fold band next to their 0.49; at -15 mV silencing raises spikes 4-6-fold; the pipette reading never exceeds 1.7-fold.">
 </picture>
 
 * **Weak odors divided less, and an APL that answers in proportion (rung 9's groundwork).** Flies' antennal lobe divides
@@ -1357,7 +1359,7 @@ From the [report's plan](reports/Embodied%20fly%20connectome%20simulation.md#nin
 | 6. Electrical synapses and proprioception | a curated layer of gap junctions; leg sensors driven by the body | giant fiber to jump muscle in 0.7–1.2 ms, slowing without the gap junctions as in *shakB* mutants | passed on its gap-junction half, mostly by construction: 0.9 ms to the jump muscle and 1.4 to the flight muscle (the model's assumed delays); the flight branch answers 40% of the spikes in 250 Hz trains, as flies' does, which follows from fitting PSI's depression to flies' twin-pulse refractory period; without the gap junctions neither branch answers, as the motor neurons' distance below threshold guarantees (flies keep a weak response). It ran on taste_escape.py's brain, before rung 4's ring. Leg sensors aren't in yet, and no criterion tests them |
 | 7. Body and muscles | a FlyGym body stepped with the brain: motor neurons drive torques, then a musculoskeletal foreleg | force per spike and twitch time match; the fly falls when its motor neurons are silenced | started: NeuroMechFly walks under a walking controller that the brain steers through DNa02, and jumps from spikes of its jump motor neurons through an assumed twitch-shaped torque (strength calibrated, tibia extension scripted). No muscle model yet: FlyGym's musculoskeletal front leg (FlyMimic) pushes a fly's force probe 40 times more weakly than a fly's tibia flexor does. Scaled to flies' force per spike, it reaches half its peak 20 times sooner than a fly's (its activation and deactivation time constants are 0.1 and 0.4 ms); with the 10 and 40 ms its paper states, it rises and sums like a fly's but relaxes four times too slowly |
 | 8. Flight, neck and song | wing power and steering, head pose, courtship song | saccades within about 10 wingbeats; song pulses about 35 ms apart | not started |
-| 9. State and learning | arousal, hunger, the mushroom body's dopamine learning rule | 80–90% depression after 1 s of odour paired with dopamine; and, as the final hurdle, held-out resting FC that beats independent firing and scrambled wiring once arousal gives the brain its brain-wide state | **failed** (attempt 1, pre-registered: [`rung9_learning.py`](experiments/rung9_learning.py)): Hige et al.'s pairing on the model with the receptor input the evidence supports. Pairing 3-octanol cuts MBON11's response to it 89% (flies 80%) and 4-methylcyclohexanol's 31% (flies 27%), and backward pairing changes nothing, but pairing 4-methylcyclohexanol cuts 3-octanol's only 4.9% (flies 38%; band 15-50%): its 60 responding Kenyon cells (3-octanol's 407) carry 3.4% of 3-octanol's input to MBON11. Groundwork: the antennal lobe's lateral inhibition reproduces Olsen et al.'s suppression, its projection neurons rest at about flies' rate with flies' steepness (sigma 12.6-15.4) and time course, but give weak input about three quarters of flies' gain and the odor's inhibition then silences the weakest; MBON11 answers at a quarter of flies' strength. Since then the antennal lobe's normalization scales with an odor's strength about as flies' does, and with an APL graded like flies' a pilot passes all four marks with the weighed input, two narrowly; that APL held the Kenyon cells farther down than flies' can. As a conductance held to flies' limits it still passes, the reciprocal by 0.4 points, but its inhibition fades about 60 times faster than flies', so the second attempt waits for flies' time course |
+| 9. State and learning | arousal, hunger, the mushroom body's dopamine learning rule | 80–90% depression after 1 s of odour paired with dopamine; and, as the final hurdle, held-out resting FC that beats independent firing and scrambled wiring once arousal gives the brain its brain-wide state | **failed** (attempt 1, pre-registered: [`rung9_learning.py`](experiments/rung9_learning.py)): Hige et al.'s pairing on the model with the receptor input the evidence supports. Pairing 3-octanol cuts MBON11's response to it 89% (flies 80%) and 4-methylcyclohexanol's 31% (flies 27%), and backward pairing changes nothing, but pairing 4-methylcyclohexanol cuts 3-octanol's only 4.9% (flies 38%; band 15-50%): its 60 responding Kenyon cells (3-octanol's 407) carry 3.4% of 3-octanol's input to MBON11. Groundwork: the antennal lobe's lateral inhibition reproduces Olsen et al.'s suppression, its projection neurons rest at about flies' rate with flies' steepness (sigma 12.6-15.4) and time course, but give weak input about three quarters of flies' gain and the odor's inhibition then silences the weakest; MBON11 answers at a quarter of flies' strength. Since then the antennal lobe's normalization scales with an odor's strength about as flies' does, and with an APL graded like flies' a pilot passes all four marks with the weighed input, two narrowly; that APL held the Kenyon cells farther down than flies' can. As a conductance with flies' limits and time course (once its reversal was placed below each Kenyon cell's own rest), the reciprocal fails again (10.2%): 4-methylcyclohexanol reaches 87 Kenyon cells against 3-octanol's 562 |
 
 Resting FC moved from rung 4 to the end of the ladder on 27 September 2026. Shared neurons plus one brain-wide signal explain the flies' resting FC at r = 0.69 with no network at all ([`experiments/rest_measurement.py`](experiments/rest_measurement.py)). FC therefore mostly tests whether a model has the flies' brain-wide state, and a hand-added signal would pass it without testing the wiring. It becomes a real test once arousal, modeled from the connectome's own neuromodulatory neurons (rung 9), produces that state, and it is still compared with scrambled wiring. The move came after attempts 1 and 2 had failed FC (in attempt 2 the rewired brains beat the intact one, 0.50 and 0.49 against 0.38), and rest_measurement.py, its justification, was run after that failure. Since then every rung 4 attempt reports FC but doesn't pass or fail on it; in the passing attempt both rewired brains again beat the intact one (0.475 and 0.458 against 0.45). On the same day, rung 4's bump test gained position entropy (at least 0.9) and a drift rate within flies' range (D of 0.003–0.04 rad²/s; `rest_calibration.bump_motion`), after a bump pinned in two places passed the old test ([`experiments/ring_heldout.py`](experiments/ring_heldout.py)).
 
@@ -1675,6 +1677,9 @@ a sign that the approach is broken."
 | `experiments/odor_apl_inhibition_check.py` | Exploratory check: how far does the model's APL hold the Kenyon cells down during an odor, against flies' 10-12 mV saturation (Inada et al. 2017) and 15 mV most (Vrontou et al. 2021)? | The graded APL (mb_calibration2.py) takes them up to 20.0 mV down as 3-octanol begins (50 ms means; the calibrated APL 10.9), 4.5 mV over the odor's first second for cells that never fire (3.7), and 2.3 mV at rest (1.0), largest at 80-110 ms where flies' peaks at about 0.3 s; the odors' shared Kenyon cells near flies' (0.28 and 0.46 of each odor's; flies 0.30 and 0.33). By a rule set before it reported, rung 9's second attempt waits for a conductance-based APL |
 | `experiments/odor_apl_conductance_check.py` | Exploratory check: with APL's synapses onto the Kenyon cells a conductance held to flies' 10-12 mV saturation (reversal -15, -20 or -30 mV; the simulator's new slow_reversal), can APL be graded like flies' and hold the Kenyon cells back 2-3-fold? | Yes: reversing 20 mV below rest, with the Kenyon cells' drive onto APL at 1.5x MaleCNS's, APL's ratio is 0.45 (flies 0.49), silencing raises the Kenyon cells' spikes 2.92 and 2.21-fold (2-3), and it holds them at most 7.1 mV down during an odor (the graded current 20.8). The driving force does it: as a current the same synapses give 19.2 mV and 2.40/1.96. Its 5 ms decay is 50-80x shorter than flies' (checked afterwards) |
 | `experiments/learning_pilot10.py` | Exploratory, not pre-registered: learning_pilot9.py with APL as that conductance (mb_calibration3.py) | Weighed input: all four of rung 9's marks pass, the reciprocal by 0.4 points (3-octanol 15.4%; with 3-octanol paired 4-methylcyclohexanol 41.3%, charge 36.8%); 111 against 514 Kenyon cells. DoOR: unpaired 46.7% (band 10-45). The second attempt waits for flies' APL time course (plan amended before it reported) |
+| `experiments/odor_apl_kinetics_check.py` | Exploratory check: APL's conductance with flies' 0.3 s decay, and two readings of its strength | Ran on mb_calibration3.py's misplaced reversals, which its own test of Inada et al.'s Fig. 5B exposed (3.8 mV at APL's ceiling, not 11); the time course near flies' (half gone 0.32-0.37 s after a drive; flies 0.32) |
+| `experiments/odor_apl_conductance2_check.py` | Exploratory check: the same with each Kenyon cell class's reversal below its own rest (mb_calibration4.py) | At -20 mV, an 11 mV ceiling and the Kenyon cells' drive onto APL at MaleCNS's weight: APL's ratio 0.53 (flies 0.49), silencing 2.71/2.73-fold (2-3), every class held alike, half gone 0.36 s after a drive. The pipette-chloride reading of its strength never exceeds 1.7-fold. Costs: 656/251 Kenyon cells answer, no equalization (0.85; flies 1.25), overlap 0.63 (flies 0.33) |
+| `experiments/learning_pilot11.py` | Exploratory, not pre-registered: learning on the corrected, slow APL conductance (mb_calibration4.py) | Weighed input: the reciprocal fails (3-octanol 10.2%, band 15-50); with 3-octanol paired 4-methylcyclohexanol 38.5%; 87 against 562 Kenyon cells. DoOR: unpaired 56%. By the rule set before it ran, rung 9's second attempt isn't registered |
 | `experiments/odor_pn_reset_check.py` | Exploratory check: the PNs' reset after a spike raised from rung 4's 5 mV below rest to rest and 3-6 mV above (threshold 10) | Reset at rest (Jeanne & Wilson's fitted PN) raises Rmax to 145-155 in DL5, VM7d and DM1 (flies 144-167); higher resets overshoot; sigma, the weakest input and 4-methylcyclohexanol barely move |
 | `experiments/odor_probe52.py` | Exploratory, not pre-registered: odor_probe51.py rebuilt with the PNs resetting to rest | Strong input answered as flies' (step Rmax 172-182, Olsen protocol 145-156) with the two pools' time course; Kenyon cells 2.4-13.8%, MBON11 24 spikes to 3-octanol; 4-methylcyclohexanol 0.52 at the PNs, 0.26 at the Kenyon cells. The base model from here on |
 | `experiments/odor_probe53.py` | Exploratory, not pre-registered: 4-methylcyclohexanol's untested receptors given the input Badel et al.'s PN responses imply (labelled stand-in) | Flies' breadth (15 glomeruli over 10 spikes/s, 3-octanol 17) but its PNs sum 0.58 of 3-octanol's and its Kenyon cells 0.26 (flies 0.85-0.98, 0.73-0.92) |

@@ -13,6 +13,18 @@ learning_pilot5.py. Seeds learning_pilot8.py's to learning_pilot10.py's (640000)
 Rule, written before it runs (and in the weekend's plan): if the weighed input passes all four of rung9_learning.py's
 marks, rung 9's second attempt is registered on this model with fresh seeds; if not, it isn't.
 
+Ran (28 minutes): no. On the corrected APL the weighed input fails the reciprocal, so by the rule rung 9's second attempt
+isn't registered. With the weighed input 4-methylcyclohexanol reaches 87 Kenyon cells against 3-octanol's 562
+(learning_pilot10.py 111 and 514), and MBON11 answers with 8.5 and 38.6 spikes (flies 110 and 118). Pairing 3-octanol cuts
+its own spikes 89% and 4-methylcyclohexanol's 38.5% (its charge 38.8%; band 10-45%); pairing 4-methylcyclohexanol cuts its
+own 98% but 3-octanol's only 10.2% (band 15-50%; flies 38%); backward pairing changes the charge 0.0% and 0.7%. With DoOR's
+input 240 against 572 Kenyon cells: pairing 3-octanol cuts 84% and 56% (band 10-45%), pairing 4-methylcyclohexanol 95% and
+20.9%. With the weighed input half of 4-methylcyclohexanol's answering cells answer 3-octanol (0.51; flies 0.33), but only
+0.08 of 3-octanol's answer 4-methylcyclohexanol (flies 0.30), carrying 7% of its charge. With inhibition that builds over
+0.3 s, the first spikes decide which Kenyon cells answer, and 3-octanol's stronger input recruits far more of them. What
+separates the model from flies is the same as before: 4-methylcyclohexanol's Kenyon cell set (flies answer the two odors
+with about as many cells), now without APL's equalizing (0.85-fold; flies 1.25; odor_apl_conductance2_check.py).
+
     python experiments/learning_pilot11.py        (writes experiments/learning_pilot11.json)
 """
 from __future__ import annotations
