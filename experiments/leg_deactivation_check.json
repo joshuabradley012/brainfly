@@ -1,0 +1,103 @@
+{
+ "question": "Exploratory check, not pre-registered: can any deactivation time constant give FlyMimic's tibia flexor a fly's fast\nrelaxation and keep its rise, summation and plateau?\n\nleg_twitch.py: with the activation and deactivation time constants Ozdil et al. state (10 and 40 ms), FlyMimic's tibia\nflexor twitches like a fly's in its rise, summation and 80 Hz plateau but relaxes about four times too slowly (half of\nit gone 58 ms after the peak, flies 12-16 ms; Azevedo et al. 2020, research_notes/Embodied fly connectome\nsimulation/leg_twitch_data.md). In a first-order activation model the relaxation follows the deactivation time constant.\nSetup: leg_twitch.twitch with activation 10 ms and deactivation 40 (the stated value), 20, 15 or 10 ms; for each, every\nmuscle's maximum force scaled so that full activation pushes the probe with 100 uN, and a spike set to give 9 uN (the\n0.1 ms step makes the spike's pulse coarse, so its peak comes out at 7.4-9.0 uN). Measured as leg_twitch.py measures:\nthe single twitch's half-rise, peak time and half-decay, two spikes 12 ms apart against one, and 1-17 spikes at 80 Hz.\n\n    python experiments/leg_deactivation_check.py      (writes experiments/leg_deactivation_check.json)\n",
+ "flies": {
+  "max_uN": 100.0,
+  "spike_uN": 9.0,
+  "half_ms": [
+   7.7,
+   9.7
+  ],
+  "peak_ms": [
+   17.0,
+   23.0
+  ],
+  "half_decay_ms": [
+   12.0,
+   16.0
+  ],
+  "two_spike_ratio": [
+   1.4,
+   1.6
+  ],
+  "isi_ms": 12.0
+ },
+ "activation_ms": 10.0,
+ "conditions": {
+  "40 ms": {
+   "scale": 613.899,
+   "spike_pulse_ms": 0.1,
+   "single_spike": {
+    "peak_uN": 9.02,
+    "half_ms": 6.1,
+    "peak_ms": 17.1,
+    "half_decay_ms": 58.1
+   },
+   "two_spike_ratio": 1.613,
+   "train_80Hz": {
+    "1": 9.02,
+    "2": 14.55,
+    "3": 18.53,
+    "5": 22.87,
+    "10": 26.26,
+    "17": 26.88
+   }
+  },
+  "20 ms": {
+   "scale": 613.899,
+   "spike_pulse_ms": 0.2,
+   "single_spike": {
+    "peak_uN": 7.93,
+    "half_ms": 5.4,
+    "peak_ms": 14.9,
+    "half_decay_ms": 28.8
+   },
+   "two_spike_ratio": 1.612,
+   "train_80Hz": {
+    "1": 7.93,
+    "2": 12.78,
+    "3": 15.82,
+    "5": 18.36,
+    "10": 19.52,
+    "17": 19.59
+   }
+  },
+  "15 ms": {
+   "scale": 613.899,
+   "spike_pulse_ms": 0.2,
+   "single_spike": {
+    "peak_uN": 7.38,
+    "half_ms": 5.1,
+    "peak_ms": 13.9,
+    "half_decay_ms": 21.5
+   },
+   "two_spike_ratio": 1.614,
+   "train_80Hz": {
+    "1": 7.38,
+    "2": 11.9,
+    "3": 14.4,
+    "5": 16.24,
+    "10": 16.85,
+    "17": 16.87
+   }
+  },
+  "10 ms": {
+   "scale": 613.899,
+   "spike_pulse_ms": 0.3,
+   "single_spike": {
+    "peak_uN": 8.27,
+    "half_ms": 5.0,
+    "peak_ms": 13.6,
+    "half_decay_ms": 15.5
+   },
+   "two_spike_ratio": 1.597,
+   "train_80Hz": {
+    "1": 8.27,
+    "2": 13.2,
+    "3": 15.53,
+    "5": 16.7,
+    "10": 16.88,
+    "17": 16.88
+   }
+  }
+ }
+}
