@@ -36,6 +36,24 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **Rung 9's learning test, recorded: MBON11 answers in a burst where flies' holds.** The learning pilots report
+  MBON11's evoked spikes before and after pairing as totals. Re-running learning pilot 11 with its seeds and keeping
+  MBON11's spikes over time repeats its totals exactly and shows what they hid
+  ([`learning_movie.py`](experiments/learning_movie.py)). Smoothed as Hige et al. smoothed theirs, MBON11's response to
+  3-octanol peaks about as high as flies' (144 spikes/s; flies 135–140), but 79% of its evoked spikes come in the first
+  0.3 s, and from 0.5 s to the odor's end it fires 12 spikes/s where flies' holds 95–100. So it gains a third of flies'
+  spikes to 3-octanol (39 against 118) for want of a sustained response, and to 4-methylcyclohexanol, which reaches a
+  sixth as many Kenyon cells, 8.5 (flies 110). Pairing acts on the burst as rung 9's test needs. Pairing 3-octanol with
+  dopamine cuts MBON11's response to it 89% and to 4-methylcyclohexanol 38% (flies 80% and 27%). Pairing
+  4-methylcyclohexanol cuts its own 98% (flies 76%) but 3-octanol's only 10% (flies 38%), because its 87 Kenyon cells
+  include only 8% of 3-octanol's 562 (flies 30%). The brief response is a second accuracy gap, and the next check: do
+  the Kenyon cells, the depression of their synapses onto MBON11, or MBON11 itself end it?
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/learning_movie-dark.svg">
+  <img src="assets/learning_movie-light.svg" width="100%" alt="An animation in four panels of MBON11's firing rate from 0.5 s before to 1.5 s after a 1 s odor, before pairing (grey) and after pairing an odor with dopamine (red), playing at half speed. Top row, 3-octanol paired. MBON11's response to 3-octanol is a burst peaking at 144 spikes/s 85 ms after the onset, falling to about 12 by 0.5 s; after pairing a 37 spikes/s bump remains (38.6 to 4.3 evoked spikes, 89% fewer; flies 80%). Its response to 4-methylcyclohexanol, a 57 spikes/s burst, falls to 43 (8.5 to 5.2, 38% fewer; flies 27%). Flies' response before pairing, drawn as points read off Hige et al.'s figure, rises from 0.15 s to 135-140 spikes/s at about 0.3 s and holds 95-100 until the odor ends. Bottom row, 4-methylcyclohexanol paired: the response to 3-octanol barely changes (38.6 to 34.6, 10% fewer; flies 38%, and rung 9 asks for 15-50%), and the response to 4-methylcyclohexanol disappears (8.5 to 0.2, 98% fewer; flies 76%).">
+</picture>
+
 * **Rung 5's nerve cord against a new benchmark from flies.** A fourth attempt at rung 5 would need the descending
   neurons' real firing rates. A literature search found none: no one has recorded DNg100's or DNb08's spikes, and
   walking descending neurons recorded whole-cell fire about 20–60 spikes/s, which would put DNg100 between the drive
