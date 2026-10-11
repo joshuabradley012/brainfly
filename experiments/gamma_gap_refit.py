@@ -16,6 +16,16 @@ share of each class responding by Turner et al.'s criterion, odor_probe10's runn
 Read as (written before the run): odor_probe48.py's rule. The offset whose gamma cells respond to 3-octanol nearest
 3.5% is chosen. If it isn't 11 mV, mb_calibration7.py adopts it and learning_pilot17.py runs rung 9's test on it.
 
+Ran (2026-10-11, 5 minutes): 11 mV again, so mb_calibration6.py stands. By Turner et al.'s criterion the gamma cells
+answer 3-octanol at 9.8, 5.9 and 2.5% at +2.5, +6.5 and +11 mV (flies about 3.5%), and +11 is nearest. At +11 the
+corrected input gives the classes flies' densities:
+- 3-octanol: alpha/beta 7.2% (flies about 6), alpha'/beta' 17.8% (about 20) and gamma 2.5% (about 3.5), 7.2% of all
+  Kenyon cells (flies 6 +- 5%). With the input a third too strong, odor_probe48.py had alpha/beta at 9.1% and gamma at
+  6.2%.
+- 4-methylcyclohexanol: alpha/beta 0.8%, alpha'/beta' 3.5% and gamma 0.3%, 1.0% of all, a seventh of 3-octanol's.
+So the corrected model's Kenyon cells answer 3-octanol as densely as flies' do, class by class, and the gaps that remain
+are 4-methylcyclohexanol's few cells and MBON11's small charge.
+
     python experiments/gamma_gap_refit.py      (writes experiments/gamma_gap_refit.json)
 """
 from __future__ import annotations
