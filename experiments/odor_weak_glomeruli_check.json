@@ -1,0 +1,906 @@
+{
+ "question": "Exploratory check, not pre-registered: why do 4-methylcyclohexanol's weakly driven glomeruli answer so little in the\nmodel, against flies' transform?\n\nodor_probe55.py: with the receptor input the evidence supports (receptor_fills.RECOMMENDED), the model's projection\nneurons answer 4-methylcyclohexanol at 0.51 of 3-octanol's over Badel et al.'s 37 glomeruli (flies 0.98). Olsen et al.\n2010's transform with their normalization (165 r^1.5 / (12^1.5 + r^1.5 + (0.05 x summed input)^1.5); research_notes/\nRung 9 learning data/oct_mch_concentration.md section 5.2) gives 0.90 on the same input. Compared glomerulus by\nglomerulus (from odor_probe55.json, before this was written): where the input is strong (80-300 Hz) the model matches the\nequation (3-octanol: 491 against 487 spikes/s summed), but it gives 0.68 of it at 30-80 Hz, 0.36 at 10-30 Hz and nothing\nbelow 10. 4-methylcyclohexanol leans on weak glomeruli: its seven at 10-30 Hz sum 141 against the equation's 405, its 22\nbelow 10 Hz 36 against 245. In the odor's context the equation divides a 20 Hz glomerulus's response by 1.7 for\n4-methylcyclohexanol and 7.6 for 3-octanol; the model's single-glomerulus transform is also weaker than flies' (Rmax\n127-130 against 163-170, sigma 14-17 against 12-16; odor_probe54.py).\nModel: odor_probe54.py's (its cache), receptor input as receptor_fills.RECOMMENDED gives it.\nMeasured (2 seeds of 8 flies; the cholinergic uniglomerular PNs' rate over the odor's first 0.5 s less the 0.4 s before,\nas odor_probe55.py measures it; Olsen's equation for each with and without the normalization):\n  alone     each of 4-methylcyclohexanol's glomeruli with at least 8 Hz of input driven alone, with that input's time\n            course (the others at their spontaneous rates): the transform without the odor's other glomeruli;\n  whole     the whole odor, each glomerulus's response, and with it the presynaptic inhibition's gain relative to rest\n            and the GABAergic LNs' rate;\n  no post   the whole odor with the GABAergic LNs' synapses onto uniglomerular PNs removed (each PN's bias lowered by the\n            mean inhibition they gave it at rest, so that it rests as before): how much of the suppression is\n            postsynaptic (presynaptic inhibition can't be removed the same way: the receptor synapses' resting depletion\n            follows its gain);\n  and the whole odor and no post for 3-octanol, for comparison.\n\n    python experiments/odor_weak_glomeruli_check.py      (writes experiments/odor_weak_glomeruli_check.json)\n",
+ "olsen": {
+  "rmax": 165.0,
+  "sigma": 12.0,
+  "m": 0.05,
+  "exponent": 1.5
+ },
+ "gaba_ln_to_upn": {
+  "fast_edges": 6461,
+  "slow_edges": 0
+ },
+ "odors": {
+  "4-methylcyclohexanol": {
+   "whole": {
+    "pn_evoked_hz": {
+     "D": 71.55,
+     "DA1": -2.44,
+     "DA2": 0.23,
+     "DA3": -1.38,
+     "DA4l": 27.48,
+     "DA4m": 15.94,
+     "DC1": 3.09,
+     "DC2": -1.59,
+     "DC3": 0.62,
+     "DC4": -2.69,
+     "DL1": 2.58,
+     "DL2d": -1.69,
+     "DL2v": -1.0,
+     "DL3": -2.09,
+     "DL4": 24.19,
+     "DL5": -2.34,
+     "DM1": -1.0,
+     "DM2": 27.15,
+     "DM3": -1.31,
+     "DM4": -2.62,
+     "DM5": -0.25,
+     "DM6": 4.13,
+     "DP1l": -2.03,
+     "DP1m": -2.34,
+     "V": -2.28,
+     "VA1d": -1.45,
+     "VA1v": -0.59,
+     "VA2": -1.61,
+     "VA3": 85.49,
+     "VA4": -1.47,
+     "VA5": -0.43,
+     "VA6": -2.09,
+     "VA7l": -0.7,
+     "VA7m": -1.69,
+     "VC1": 18.64,
+     "VC2": 21.11,
+     "VC3": 1.92,
+     "VC4": -0.66,
+     "VC5": -1.68,
+     "VL1": -1.55,
+     "VL2a": -2.77,
+     "VL2p": -1.22,
+     "VM1": -1.28,
+     "VM2": 17.0,
+     "VM3": -2.15,
+     "VM4": -1.92,
+     "VM5d": 3.07,
+     "VM5v": -1.69,
+     "VM7d": 1.82,
+     "VM7v": -1.56
+    },
+    "gain_over_rest": 0.713,
+    "gain_min_over_rest": 0.575,
+    "gaba_ln_hz": {
+     "rest": 4.04,
+     "odor": 5.16
+    }
+   },
+   "alone": {
+    "VA3": 96.39,
+    "D": 99.11,
+    "DA4l": 50.27,
+    "VC3": 18.83,
+    "VC1": 45.89,
+    "VC2": 45.94,
+    "DL4": 48.52,
+    "DM2": 53.19,
+    "VM2": 46.15,
+    "DM6": 37.12,
+    "VM7d": 23.58
+   },
+   "no post": {
+    "pn_evoked_hz": {
+     "D": 75.83,
+     "DA1": -1.89,
+     "DA2": -0.39,
+     "DA3": -1.6,
+     "DA4l": 28.73,
+     "DA4m": 18.55,
+     "DC1": 3.39,
+     "DC2": -0.17,
+     "DC3": 0.47,
+     "DC4": -3.0,
+     "DL1": 3.86,
+     "DL2d": -4.3,
+     "DL2v": -1.91,
+     "DL3": -2.28,
+     "DL4": 24.84,
+     "DL5": -3.22,
+     "DM1": -2.75,
+     "DM2": 27.31,
+     "DM3": -2.14,
+     "DM4": -2.14,
+     "DM5": -0.22,
+     "DM6": 5.15,
+     "DP1l": -2.25,
+     "DP1m": -2.55,
+     "V": -2.7,
+     "VA1d": -1.31,
+     "VA1v": -0.97,
+     "VA2": -1.67,
+     "VA3": 87.4,
+     "VA4": -2.02,
+     "VA5": -1.55,
+     "VA6": -2.36,
+     "VA7l": 0.53,
+     "VA7m": -2.04,
+     "VC1": 17.0,
+     "VC2": 21.77,
+     "VC3": 2.48,
+     "VC4": -2.15,
+     "VC5": -2.22,
+     "VL1": -2.55,
+     "VL2a": -2.06,
+     "VL2p": -1.77,
+     "VM1": -1.62,
+     "VM2": 17.81,
+     "VM3": -2.48,
+     "VM4": -1.99,
+     "VM5d": 5.15,
+     "VM5v": -1.02,
+     "VM7d": 1.7,
+     "VM7v": -1.75
+    },
+    "gain_over_rest": 0.705,
+    "gain_min_over_rest": 0.572,
+    "gaba_ln_hz": {
+     "rest": 4.02,
+     "odor": 5.19
+    },
+    "bias_change_mv": {
+     "upn_mean": -1.032
+    }
+   },
+   "summed_input_hz": 398.0,
+   "table": {
+    "VA3": {
+     "input_hz": 140.0,
+     "olsen_alone": 161.0,
+     "olsen_whole": 153.0,
+     "model_alone": 96.39,
+     "model_whole": 85.49,
+     "model_no_post": 87.4
+    },
+    "D": {
+     "input_hz": 42.0,
+     "olsen_alone": 143.1,
+     "olsen_whole": 111.6,
+     "model_alone": 99.11,
+     "model_whole": 71.55,
+     "model_no_post": 75.83
+    },
+    "DA4l": {
+     "input_hz": 20.0,
+     "olsen_alone": 112.6,
+     "olsen_whole": 67.1,
+     "model_alone": 50.27,
+     "model_whole": 27.48,
+     "model_no_post": 28.73
+    },
+    "VC3": {
+     "input_hz": 20.0,
+     "olsen_alone": 112.6,
+     "olsen_whole": 67.1,
+     "model_alone": 18.83,
+     "model_whole": 1.92,
+     "model_no_post": 2.48
+    },
+    "VC1": {
+     "input_hz": 18.0,
+     "olsen_alone": 106.8,
+     "olsen_whole": 61.0,
+     "model_alone": 45.89,
+     "model_whole": 18.64,
+     "model_no_post": 17.0
+    },
+    "VC2": {
+     "input_hz": 18.0,
+     "olsen_alone": 106.8,
+     "olsen_whole": 61.0,
+     "model_alone": 45.94,
+     "model_whole": 21.11,
+     "model_no_post": 21.77
+    },
+    "DL4": {
+     "input_hz": 16.0,
+     "olsen_alone": 100.0,
+     "olsen_whole": 54.3,
+     "model_alone": 48.52,
+     "model_whole": 24.19,
+     "model_no_post": 24.84
+    },
+    "DM2": {
+     "input_hz": 16.0,
+     "olsen_alone": 100.0,
+     "olsen_whole": 54.3,
+     "model_alone": 53.19,
+     "model_whole": 27.15,
+     "model_no_post": 27.31
+    },
+    "VM2": {
+     "input_hz": 12.0,
+     "olsen_alone": 82.5,
+     "olsen_whole": 39.9,
+     "model_alone": 46.15,
+     "model_whole": 17.0,
+     "model_no_post": 17.81
+    },
+    "DM6": {
+     "input_hz": 8.0,
+     "olsen_alone": 58.2,
+     "olsen_whole": 24.4,
+     "model_alone": 37.12,
+     "model_whole": 4.13,
+     "model_no_post": 5.15
+    },
+    "VM7d": {
+     "input_hz": 8.0,
+     "olsen_alone": 58.2,
+     "olsen_whole": 24.4,
+     "model_alone": 23.58,
+     "model_whole": 1.82,
+     "model_no_post": 1.7
+    },
+    "DC1": {
+     "input_hz": 6.0,
+     "olsen_alone": 43.1,
+     "olsen_whole": 16.7,
+     "model_alone": null,
+     "model_whole": 3.09,
+     "model_no_post": 3.39
+    },
+    "DC3": {
+     "input_hz": 6.0,
+     "olsen_alone": 43.1,
+     "olsen_whole": 16.7,
+     "model_alone": null,
+     "model_whole": 0.62,
+     "model_no_post": 0.47
+    },
+    "DL1": {
+     "input_hz": 6.0,
+     "olsen_alone": 43.1,
+     "olsen_whole": 16.7,
+     "model_alone": null,
+     "model_whole": 2.58,
+     "model_no_post": 3.86
+    },
+    "VA7l": {
+     "input_hz": 6.0,
+     "olsen_alone": 43.1,
+     "olsen_whole": 16.7,
+     "model_alone": null,
+     "model_whole": -0.7,
+     "model_no_post": 0.53
+    },
+    "VM5d": {
+     "input_hz": 6.0,
+     "olsen_alone": 43.1,
+     "olsen_whole": 16.7,
+     "model_alone": null,
+     "model_whole": 3.07,
+     "model_no_post": 5.15
+    },
+    "DA2": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": 0.23,
+     "model_no_post": -0.39
+    },
+    "DA3": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": -1.38,
+     "model_no_post": -1.6
+    },
+    "DA4m": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": 15.94,
+     "model_no_post": 18.55
+    },
+    "DC2": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": -1.59,
+     "model_no_post": -0.17
+    },
+    "DM5": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": -0.25,
+     "model_no_post": -0.22
+    },
+    "VA4": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": -1.47,
+     "model_no_post": -2.02
+    },
+    "VA5": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": -0.43,
+     "model_no_post": -1.55
+    },
+    "VC4": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": -0.66,
+     "model_no_post": -2.15
+    },
+    "VM5v": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": -1.69,
+     "model_no_post": -1.02
+    },
+    "VM7v": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 9.5,
+     "model_alone": null,
+     "model_whole": -1.56,
+     "model_no_post": -1.75
+    },
+    "DM3": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 3.5,
+     "model_alone": null,
+     "model_whole": -1.31,
+     "model_no_post": -2.14
+    },
+    "DM4": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 3.5,
+     "model_alone": null,
+     "model_whole": -2.62,
+     "model_no_post": -2.14
+    },
+    "VA1v": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 3.5,
+     "model_alone": null,
+     "model_whole": -0.59,
+     "model_no_post": -0.97
+    },
+    "VA6": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 3.5,
+     "model_alone": null,
+     "model_whole": -2.09,
+     "model_no_post": -2.36
+    },
+    "VM3": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 3.5,
+     "model_alone": null,
+     "model_whole": -2.15,
+     "model_no_post": -2.48
+    }
+   },
+   "bins": {
+    "0-10 Hz": {
+     "glomeruli": 22,
+     "olsen_whole": 244.8,
+     "model_whole": 31.5,
+     "model_no_post": 38.8,
+     "with_alone": 2,
+     "olsen_alone": 116.4,
+     "model_alone": 60.7,
+     "model_whole_same": 6.0,
+     "olsen_whole_same": 48.8
+    },
+    "10-30 Hz": {
+     "glomeruli": 7,
+     "olsen_whole": 404.7,
+     "model_whole": 137.5,
+     "model_no_post": 139.9,
+     "with_alone": 7,
+     "olsen_alone": 721.3,
+     "model_alone": 308.8,
+     "model_whole_same": 137.5,
+     "olsen_whole_same": 404.7
+    },
+    "30-80 Hz": {
+     "glomeruli": 1,
+     "olsen_whole": 111.6,
+     "model_whole": 71.5,
+     "model_no_post": 75.8,
+     "with_alone": 1,
+     "olsen_alone": 143.1,
+     "model_alone": 99.1,
+     "model_whole_same": 71.5,
+     "olsen_whole_same": 111.6
+    },
+    "80-400 Hz": {
+     "glomeruli": 1,
+     "olsen_whole": 153.0,
+     "model_whole": 85.5,
+     "model_no_post": 87.4,
+     "with_alone": 1,
+     "olsen_alone": 161.0,
+     "model_alone": 96.4,
+     "model_whole_same": 85.5,
+     "olsen_whole_same": 153.0
+    }
+   }
+  },
+  "3-octanol": {
+   "whole": {
+    "pn_evoked_hz": {
+     "D": 87.47,
+     "DA1": -1.95,
+     "DA2": -2.18,
+     "DA3": -2.27,
+     "DA4l": -1.41,
+     "DA4m": 23.3,
+     "DC1": 30.19,
+     "DC2": 95.65,
+     "DC3": -1.12,
+     "DC4": -2.64,
+     "DL1": -1.94,
+     "DL2d": -2.64,
+     "DL2v": -1.57,
+     "DL3": -1.82,
+     "DL4": 4.31,
+     "DL5": -1.66,
+     "DM1": -1.92,
+     "DM2": 76.75,
+     "DM3": 68.78,
+     "DM4": -1.61,
+     "DM5": -1.52,
+     "DM6": 103.88,
+     "DP1l": -2.81,
+     "DP1m": -3.88,
+     "V": -2.34,
+     "VA1d": -2.49,
+     "VA1v": -2.45,
+     "VA2": -2.36,
+     "VA3": -1.3,
+     "VA4": 52.92,
+     "VA5": -2.01,
+     "VA6": -3.02,
+     "VA7l": -2.06,
+     "VA7m": -2.07,
+     "VC1": 6.59,
+     "VC2": -1.52,
+     "VC3": 24.67,
+     "VC4": -2.42,
+     "VC5": -2.1,
+     "VL1": -1.8,
+     "VL2a": -2.3,
+     "VL2p": -2.25,
+     "VM1": -2.45,
+     "VM2": 107.16,
+     "VM3": 0.47,
+     "VM4": -1.68,
+     "VM5d": 157.79,
+     "VM5v": 126.56,
+     "VM7d": -2.73,
+     "VM7v": 27.86
+    },
+    "gain_over_rest": 0.524,
+    "gain_min_over_rest": 0.383,
+    "gaba_ln_hz": {
+     "rest": 3.96,
+     "odor": 6.74
+    }
+   },
+   "no post": {
+    "pn_evoked_hz": {
+     "D": 87.47,
+     "DA1": -2.15,
+     "DA2": -1.53,
+     "DA3": -2.25,
+     "DA4l": -1.5,
+     "DA4m": 24.31,
+     "DC1": 32.11,
+     "DC2": 96.77,
+     "DC3": -1.52,
+     "DC4": -1.89,
+     "DL1": -2.32,
+     "DL2d": -1.61,
+     "DL2v": -2.32,
+     "DL3": -2.32,
+     "DL4": 5.05,
+     "DL5": -1.56,
+     "DM1": -1.27,
+     "DM2": 77.95,
+     "DM3": 71.75,
+     "DM4": -1.92,
+     "DM5": -1.07,
+     "DM6": 105.15,
+     "DP1l": -1.33,
+     "DP1m": -3.14,
+     "V": -2.81,
+     "VA1d": -1.47,
+     "VA1v": -1.93,
+     "VA2": -2.16,
+     "VA3": 0.47,
+     "VA4": 55.08,
+     "VA5": -1.64,
+     "VA6": -4.36,
+     "VA7l": -1.81,
+     "VA7m": -2.76,
+     "VC1": 5.47,
+     "VC2": -1.69,
+     "VC3": 26.66,
+     "VC4": -1.5,
+     "VC5": -2.38,
+     "VL1": -2.41,
+     "VL2a": -2.34,
+     "VL2p": -2.75,
+     "VM1": -2.34,
+     "VM2": 108.84,
+     "VM3": 0.09,
+     "VM4": -1.34,
+     "VM5d": 159.92,
+     "VM5v": 127.95,
+     "VM7d": -2.68,
+     "VM7v": 32.36
+    },
+    "gain_over_rest": 0.513,
+    "gain_min_over_rest": 0.377,
+    "gaba_ln_hz": {
+     "rest": 3.96,
+     "odor": 6.86
+    },
+    "bias_change_mv": {
+     "upn_mean": -1.016
+    }
+   },
+   "summed_input_hz": 1064.0,
+   "table": {
+    "DC2": {
+     "input_hz": 150.0,
+     "olsen_alone": 161.3,
+     "olsen_whole": 133.7,
+     "model_alone": null,
+     "model_whole": 95.65,
+     "model_no_post": 96.77
+    },
+    "VM5d": {
+     "input_hz": 130.0,
+     "olsen_alone": 160.5,
+     "olsen_whole": 127.9,
+     "model_alone": null,
+     "model_whole": 157.79,
+     "model_no_post": 159.92
+    },
+    "VM5v": {
+     "input_hz": 100.0,
+     "olsen_alone": 158.4,
+     "olsen_whole": 115.4,
+     "model_alone": null,
+     "model_whole": 126.56,
+     "model_no_post": 127.95
+    },
+    "VM2": {
+     "input_hz": 90.0,
+     "olsen_alone": 157.3,
+     "olsen_whole": 109.8,
+     "model_alone": null,
+     "model_whole": 107.16,
+     "model_no_post": 108.84
+    },
+    "D": {
+     "input_hz": 76.0,
+     "olsen_alone": 155.3,
+     "olsen_whole": 100.1,
+     "model_alone": null,
+     "model_whole": 87.47,
+     "model_no_post": 87.47
+    },
+    "VC3": {
+     "input_hz": 76.0,
+     "olsen_alone": 155.3,
+     "olsen_whole": 100.1,
+     "model_alone": null,
+     "model_whole": 24.67,
+     "model_no_post": 26.66
+    },
+    "DM6": {
+     "input_hz": 68.0,
+     "olsen_alone": 153.6,
+     "olsen_whole": 93.4,
+     "model_alone": null,
+     "model_whole": 103.88,
+     "model_no_post": 105.15
+    },
+    "DM2": {
+     "input_hz": 62.0,
+     "olsen_alone": 152.1,
+     "olsen_whole": 87.8,
+     "model_alone": null,
+     "model_whole": 76.75,
+     "model_no_post": 77.95
+    },
+    "VA4": {
+     "input_hz": 60.0,
+     "olsen_alone": 151.5,
+     "olsen_whole": 85.7,
+     "model_alone": null,
+     "model_whole": 52.92,
+     "model_no_post": 55.08
+    },
+    "DM3": {
+     "input_hz": 56.0,
+     "olsen_alone": 150.1,
+     "olsen_whole": 81.5,
+     "model_alone": null,
+     "model_whole": 68.78,
+     "model_no_post": 71.75
+    },
+    "VM7v": {
+     "input_hz": 40.0,
+     "olsen_alone": 141.7,
+     "olsen_whole": 61.2,
+     "model_alone": null,
+     "model_whole": 27.86,
+     "model_no_post": 32.36
+    },
+    "DC1": {
+     "input_hz": 34.0,
+     "olsen_alone": 136.4,
+     "olsen_whole": 52.1,
+     "model_alone": null,
+     "model_whole": 30.19,
+     "model_no_post": 32.11
+    },
+    "VC1": {
+     "input_hz": 24.0,
+     "olsen_alone": 121.9,
+     "olsen_whole": 35.5,
+     "model_alone": null,
+     "model_whole": 6.59,
+     "model_no_post": 5.47
+    },
+    "DL4": {
+     "input_hz": 16.0,
+     "olsen_alone": 100.0,
+     "olsen_whole": 21.4,
+     "model_alone": null,
+     "model_whole": 4.31,
+     "model_no_post": 5.05
+    },
+    "DA4m": {
+     "input_hz": 12.0,
+     "olsen_alone": 82.5,
+     "olsen_whole": 14.6,
+     "model_alone": null,
+     "model_whole": 23.3,
+     "model_no_post": 24.31
+    },
+    "VA3": {
+     "input_hz": 12.0,
+     "olsen_alone": 82.5,
+     "olsen_whole": 14.6,
+     "model_alone": null,
+     "model_whole": -1.3,
+     "model_no_post": 0.47
+    },
+    "VM3": {
+     "input_hz": 12.0,
+     "olsen_alone": 82.5,
+     "olsen_whole": 14.6,
+     "model_alone": null,
+     "model_whole": 0.47,
+     "model_no_post": 0.09
+    },
+    "DC3": {
+     "input_hz": 6.0,
+     "olsen_alone": 43.1,
+     "olsen_whole": 5.5,
+     "model_alone": null,
+     "model_whole": -1.12,
+     "model_no_post": -1.52
+    },
+    "DM5": {
+     "input_hz": 6.0,
+     "olsen_alone": 43.1,
+     "olsen_whole": 5.5,
+     "model_alone": null,
+     "model_whole": -1.52,
+     "model_no_post": -1.07
+    },
+    "VM7d": {
+     "input_hz": 6.0,
+     "olsen_alone": 43.1,
+     "olsen_whole": 5.5,
+     "model_alone": null,
+     "model_whole": -2.73,
+     "model_no_post": -2.68
+    },
+    "DA3": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 3.0,
+     "model_alone": null,
+     "model_whole": -2.27,
+     "model_no_post": -2.25
+    },
+    "DM1": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 3.0,
+     "model_alone": null,
+     "model_whole": -1.92,
+     "model_no_post": -1.27
+    },
+    "VA5": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 3.0,
+     "model_alone": null,
+     "model_whole": -2.01,
+     "model_no_post": -1.64
+    },
+    "VA6": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 3.0,
+     "model_alone": null,
+     "model_whole": -3.02,
+     "model_no_post": -4.36
+    },
+    "VC4": {
+     "input_hz": 4.0,
+     "olsen_alone": 26.6,
+     "olsen_whole": 3.0,
+     "model_alone": null,
+     "model_whole": -2.42,
+     "model_no_post": -1.5
+    },
+    "DA2": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 1.1,
+     "model_alone": null,
+     "model_whole": -2.18,
+     "model_no_post": -1.53
+    },
+    "DL1": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 1.1,
+     "model_alone": null,
+     "model_whole": -1.94,
+     "model_no_post": -2.32
+    },
+    "DL5": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 1.1,
+     "model_alone": null,
+     "model_whole": -1.66,
+     "model_no_post": -1.56
+    },
+    "VC2": {
+     "input_hz": 2.0,
+     "olsen_alone": 10.5,
+     "olsen_whole": 1.1,
+     "model_alone": null,
+     "model_whole": -1.52,
+     "model_no_post": -1.69
+    }
+   },
+   "bins": {
+    "0-10 Hz": {
+     "glomeruli": 12,
+     "olsen_whole": 35.9,
+     "model_whole": 0.0,
+     "model_no_post": 0.0
+    },
+    "10-30 Hz": {
+     "glomeruli": 5,
+     "olsen_whole": 100.7,
+     "model_whole": 34.7,
+     "model_no_post": 35.4
+    },
+    "30-80 Hz": {
+     "glomeruli": 8,
+     "olsen_whole": 661.9,
+     "model_whole": 472.5,
+     "model_no_post": 488.5
+    },
+    "80-400 Hz": {
+     "glomeruli": 4,
+     "olsen_whole": 486.8,
+     "model_whole": 487.2,
+     "model_no_post": 493.5
+    }
+   }
+  }
+ },
+ "inputs": {
+  "recommended": {
+   "3-octanol": {
+    "DC2": 0.75,
+    "VM5d": 0.65,
+    "VM5v": 0.5,
+    "VM2": 0.45,
+    "D": 0.38,
+    "VC3": 0.38,
+    "DM6": 0.34,
+    "DM2": 0.31,
+    "VA4": 0.3,
+    "DM3": 0.28,
+    "VM7v": 0.2,
+    "DC1": 0.17,
+    "VC1": 0.12,
+    "DL4": 0.08,
+    "DA4m": 0.06,
+    "VA3": 0.06,
+    "VM3": 0.06,
+    "DC3": 0.03,
+    "DM5": 0.03,
+    "VM7d": 0.03,
+    "DA3": 0.02,
+    "DM1": 0.02,
+    "VA5": 0.02,
+    "VA6": 0.02,
+    "VC4": 0.02,
+    "DA2": 0.01,
+    "DL1": 0.01,
+    "DL5": 0.01,
+    "VC2": 0.01
+   },
+   "4-methylcyclohexanol": {
+    "VA3": 0.7,
+    "D": 0.21,
+    "DA4l": 0.1,
+    "VC3": 0.1,
+    "VC1": 0.09,
+    "VC2": 0.09,
+    "DL4": 0.08,
+    "DM2": 0.08,
+    "VM2": 0.06,
+    "DM6": 0.04,
+    "VM7d": 0.04,
+    "DC1": 0.03,
+    "DC3": 0.03,
+    "DL1": 0.03,
+    "VA7l": 0.03,
+    "VM5d": 0.03,
+    "DA2": 0.02,
+    "DA3": 0.02,
+    "DA4m": 0.02,
+    "DC2": 0.02,
+    "DM5": 0.02,
+    "VA4": 0.02,
+    "VA5": 0.02,
+    "VC4": 0.02,
+    "VM5v": 0.02,
+    "VM7v": 0.02,
+    "DM3": 0.01,
+    "DM4": 0.01,
+    "VA1v": 0.01,
+    "VA6": 0.01,
+    "VM3": 0.01
+   }
+  }
+ },
+ "settles": 4,
+ "seconds": 138
+}
