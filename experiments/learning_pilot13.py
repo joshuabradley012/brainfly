@@ -16,6 +16,24 @@ Rung 9's marks reported as rung9_learning.py states them. If all four pass with 
 second attempt (the input the evidence supports, set C chosen from Gruntman & Turner's measurements before any learning
 result, fresh seeds); if not, set C stays a candidate.
 
+Ran (2026-10-11, 15 minutes): set C moves the reciprocal into flies' band and spoils the other marks, so there is no second
+attempt. Before pairing, 479 Kenyon cells answer 3-octanol and 129 4-methylcyclohexanol (0.27 as many), and MBON11 gains
+45.8 and 9.5 spikes (learning pilot 12 70.8 and 11.4; flies 118 and 110), peaking at 76 spikes/s to 3-octanol and firing
+36 from 0.5 to 1 s; its slow current peaks at 191 pA, 108 pC (flies about 400 and 245-275).
+  PAIRED      fails: 3-octanol's spikes fall 92.4%, but only 25.5 points more than 4-methylcyclohexanol's (30 required).
+  UNPAIRED    fails: 4-methylcyclohexanol's spikes fall 66.9% and its charge 62.7% (band 10-45%; flies 27%).
+  RECIPROCAL  passes: 4-methylcyclohexanol paired cuts its own 97.6% and 3-octanol's 36.4% (band 15-50%; flies 38%).
+  BACKWARD    fails, narrowly: the paired odor's charge changes 1.9% and 16.0% (at most 15%; the second at eta 11.6, the
+              rule driving 4-methylcyclohexanol's small charge down 90%).
+Learning pilot 12 failed only the reciprocal (9.4%). Here 4-methylcyclohexanol's Kenyon cells reach more of 3-octanol's,
+so pairing it cuts 3-octanol as flies' does, but they also sit mostly inside 3-octanol's set (kc_setc_check.py: 0.62 of
+them answer 3-octanol; flies 0.33), so pairing 3-octanol cuts 4-methylcyclohexanol two and a half times as much as flies'.
+Flies' two odors reach separate sets of about the same size, sharing about a third each way; the model's
+4-methylcyclohexanol reaches a small set nested in 3-octanol's, with either Kenyon cell set, which points again at its
+projection neurons: too few of its glomeruli answer, and its strongest after VA3 (D) is one of 3-octanol's
+(odor_mch_input_sensitivity.py: with the glomeruli flies' projection neuron imaging adds, a fly-like 0.28 of its cells
+answered 3-octanol).
+
     python experiments/learning_pilot13.py      (writes experiments/learning_pilot13.json)
 """
 from __future__ import annotations

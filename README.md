@@ -36,6 +36,25 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **Rung 9's crux: 4-methylcyclohexanol's Kenyon cells sit inside 3-octanol's.** The Kenyon cells' firing falls away
+  through an odor much more steeply than their projection neurons' does, so the model's Kenyon cells, which integrate
+  over 20 ms, were the next suspect. Integrating over 50 or 100 ms they answer 4-methylcyclohexanol more nearly as often
+  as 3-octanol, but far too many answer: undepressed, a longer membrane takes in twice the sustained drive flies' Kenyon
+  cells keep ([`kc_membrane_check.py`](experiments/kc_membrane_check.py)). Gruntman & Turner's measurements allow a
+  50 ms membrane whose projection neuron synapses depress (set C; the simulator gained per-synapse depression for it).
+  It keeps flies' density and APL's effect, and moves 4-methylcyclohexanol a little toward 3-octanol
+  ([`kc_setc_check.py`](experiments/kc_setc_check.py)). On rung 9's test it moves the reciprocal mark into flies' band
+  (3-octanol's response falls 36%, flies 38%) and spoils the rest. Pairing 3-octanol now cuts 4-methylcyclohexanol 67%
+  (flies 27%) ([`learning_pilot13.py`](experiments/learning_pilot13.py)). Flies' two odors reach separate sets of about
+  the same size, a third of each shared. The model's 4-methylcyclohexanol reaches a small set mostly inside
+  3-octanol's, with either kind of Kenyon cell. So no second attempt, and the problem is back at 4-methylcyclohexanol's
+  projection neurons: too few of its glomeruli answer, and its second strongest, D, is also 3-octanol's.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/kc_sets-dark.svg">
+  <img src="assets/kc_sets-light.svg" width="100%" alt="Two panels. Left: Kenyon cells answering per 100 that answer 3-octanol, split into 3-octanol only, both odors and 4-methylcyclohexanol only. Flies: about 100 and 108, a third of each shared. The model with its Kenyon cells as now: 18 answer 4-methylcyclohexanol, 53% of them also 3-octanol's (10% of 3-octanol's cells answer the other). Integrating longer (set C): 28, 62% of them 3-octanol's (17% the other way). Right: rung 9's four marks for both sets against the bands and flies' values. Set A passes PAIRED (90%), UNPAIRED (42%) and BACKWARD (0.7%) and fails RECIPROCAL (9%); set C passes RECIPROCAL (36%, flies 38%) and fails PAIRED (its gap 25 points), UNPAIRED (67%, band 10-45%) and BACKWARD (16%).">
+</picture>
+
 * **A slow Kenyon cell current, adopted: MBON11 answers more as flies' does.** Every Kenyon cell-to-MBON synapse now acts
   through a slow current, rising over 40 ms and fading over 280 ms. The simulator gained both options, bit-exact when
   off: odor_probe60's model rebuilt through them is identical. Yamada et al.'s flash now gives MBON11 their EPSC (91 pA
@@ -1810,6 +1829,7 @@ a sign that the approach is broken."
 | `experiments/pn_accommodation_check.py` | Analysis of a saved recording (olfaction_movie.json): do the projection neurons accommodate during an odor as flies' do? | Yes: 3-octanol's 16 responding glomeruli keep a median 0.47 of their peak at 0.5 s (flies 0.48; strong responses 0.43-0.48). So the Kenyon cells' steeper decline (to 0.05-0.25 of their early rate) arises at the Kenyon cells' thresholds, the gamma cells' most |
 | `experiments/kc_membrane_check.py` | Exploratory check, not a change to the model: Kenyon cells integrating over 20, 50 and 100 ms (their unitary EPSP peak held, so their synapses carry 2.03 and 3.69 times the charge) | They answer 4-methylcyclohexanol more nearly as much as 3-octanol (0.18, 0.37, 0.49 as many cells; flies about as many) and hold their firing (gamma 0.05, 0.35, 0.50 of early), but far too many answer (3-octanol 15, 37, 51%; flies about 12%): undepressed, a longer membrane takes in twice flies' sustained drive (about 9 mV per connection at 115 spikes/s against Gruntman & Turner's 4.4). The test that keeps flies' plateau is kc_integration.md's set C (50 ms with the synapses depressing on their own) |
 | `experiments/kc_setc_check.py` | Exploratory check, not a change to the model: kc_integration.md's Kenyon cell sets that keep Gruntman & Turner's plateau: A (20 ms, undepressed; now), C (50 ms, synapses 0.85 / 0.1 s) and D (189 ms, 0.5 / 0.15 s) | C keeps flies' density (10.7% answer 3-octanol) and APL's effect (2.7-2.8-fold) and moves 4-methylcyclohexanol toward 3-octanol (0.28 as many cells, against 0.18) and the share of 3-octanol's cells it reaches toward flies' (0.17 against 0.10; flies 0.30), mostly by compressing 3-octanol's strong drive; MBON11's input would shrink (126 pC; flies 245-275). D makes 71-76% of the cells answer |
+| `experiments/learning_pilot13.py` | Exploratory, not pre-registered: learning pilot 12 with kc_setc_check.py's set C Kenyon cells | One mark of four: the reciprocal passes (3-octanol's spikes fall 36.4%; band 15-50, flies 38%), but pairing 3-octanol cuts 4-methylcyclohexanol 66.9% (band 10-45, flies 27%), the paired gap is 25.5 points (30 required) and backward pairing changes 4-methylcyclohexanol's charge 16% (at most 15). 4-methylcyclohexanol's Kenyon cells sit mostly inside 3-octanol's; no second attempt |
 | `experiments/odor_pn_reset_check.py` | Exploratory check: the PNs' reset after a spike raised from rung 4's 5 mV below rest to rest and 3-6 mV above (threshold 10) | Reset at rest (Jeanne & Wilson's fitted PN) raises Rmax to 145-155 in DL5, VM7d and DM1 (flies 144-167); higher resets overshoot; sigma, the weakest input and 4-methylcyclohexanol barely move |
 | `experiments/odor_probe52.py` | Exploratory, not pre-registered: odor_probe51.py rebuilt with the PNs resetting to rest | Strong input answered as flies' (step Rmax 172-182, Olsen protocol 145-156) with the two pools' time course; Kenyon cells 2.4-13.8%, MBON11 24 spikes to 3-octanol; 4-methylcyclohexanol 0.52 at the PNs, 0.26 at the Kenyon cells. The base model from here on |
 | `experiments/odor_probe53.py` | Exploratory, not pre-registered: 4-methylcyclohexanol's untested receptors given the input Badel et al.'s PN responses imply (labelled stand-in) | Flies' breadth (15 glomeruli over 10 spikes/s, 3-octanol 17) but its PNs sum 0.58 of 3-octanol's and its Kenyon cells 0.26 (flies 0.85-0.98, 0.73-0.92) |
