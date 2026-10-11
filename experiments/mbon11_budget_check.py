@@ -45,6 +45,17 @@ pC is the mean over both MBON11 cells (the left has 31% fewer Kenyon cell synaps
 right's input), through the slow current within 0-1.4 s, in the learning test's protocol. That is about 1.6 times below this
 measure's equivalent, and the two aren't reconciled here.
 
+Checked afterwards (2026-10-11): "it is the depression rule" is too simple, because the rule and the charge per
+synapse come from the same flash. kc_flash_check.py's 5% of the gamma cells, one spike each, gives flies' flash EPSC at
+0.054 pC per synapse. So the charge per spike scales as 1 / (share flashed x spikes per flash, depression included).
+- Read as two or three spikes per flash at the same paired-flash ratio, the depression eases (each spike leaving 0.71 or
+  0.79 of the strength), but each spike carries 1/1.71 or 1/2.42 of the charge.
+- By the same spikes that is roughly 100 and 80 pC onto MBON11_R (derived, with the depression's share estimated at
+  about 0.65 and 0.73), against 133 at one spike per flash. So the one-spike reading already gives the most.
+- What would close the gap is fewer cells flashed. Yamada et al.'s 3-7% is borrowed from SPARC2-S labelling in other
+  cell types (mbon11_kc_activity.md section 2.2). At 3% the charge per spike would be 0.09 pC, about 220 pC onto MBON11_R;
+  at 2.5%, about 265 pC (flies 245-250).
+
     python experiments/mbon11_budget_check.py      (writes experiments/mbon11_budget_check.json)
 """
 from __future__ import annotations
