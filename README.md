@@ -36,6 +36,18 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **The olfactory pathway, animated (rung 9).** One trial of each odor through the current model: projection neurons by
+  glomerulus, one fly's Kenyon cells, APL and MBON11 ([`olfaction_movie.py`](experiments/olfaction_movie.py)). 3-octanol
+  drives most of its glomeruli at once and 657 of the fly's 4,064 Kenyon cells. 4-methylcyclohexanol, with the receptor
+  input the evidence supports, drives two glomeruli strongly and a few weakly, and reaches 109 Kenyon cells, 50 of them
+  shared. That gap is why rung 9's learning test keeps failing one way round: pairing 4-methylcyclohexanol reaches only
+  the few Kenyon cells the two odors share, so it can barely change MBON11's response to 3-octanol.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/olfaction_movie-dark.svg">
+  <img src="assets/olfaction_movie-light.svg" width="100%" alt="An animation in two columns, 3-octanol and 4-methylcyclohexanol, each playing 1.8 s of the model in real time. Top: projection neuron rates by glomerulus as a heatmap: 3-octanol lights most rows at once from about 50 ms after onset, strongest at first and fading over the second; 4-methylcyclohexanol lights two rows strongly (VA3, D) and a few faintly. Middle: one fly's Kenyon cells as a spike raster: 3-octanol makes hundreds of cells fire a volley at about 80 ms and fewer later; 4-methylcyclohexanol makes about a hundred fire, most of them among the few rows the odors share. Bottom: APL's release jumps to its ceiling near 38 Hz for 3-octanol and stays near 5-9 Hz for 4-methylcyclohexanol; MBON11 rises briefly for 3-octanol.">
+</picture>
+
 * **APL's inhibition as a conductance with flies' time course (rung 9's groundwork).** The graded APL below meets flies'
   numbers only by holding the Kenyon cells 20 mV down as an odor begins, beyond anything measured in flies. Real
   synapses are conductances: their effect ends at their reversal potential, and they divide a depolarized cell's input
