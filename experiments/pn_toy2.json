@@ -1,0 +1,683 @@
+{
+ "question": "Exploratory analysis, not pre-registered: pn_toy.py with the receptor synapse models orn_pn_recovery_fit.py fitted,\nwhose slow pool can recover faster with residual calcium. Does a synapse that recovers fast during bursts and slowly at\nrest give a PN flies' small resting drive with flies' steep, strong transform?\n\npn_toy.py: with brainfly's two fixed pools, deeper depression lowers the resting drive but flattens the transform\n(Kazama & Wilson's single pool: 12 mV, Rmax 82-96), and a high spontaneous rate costs DL5 both. Here each model fitted in\norn_pn_recovery_fit.py (its parameters read from orn_pn_recovery_fit.json) drives pn_toy.py's PN, everything else as there:\na DL5-like cell (43 receptor neurons at the basiconic median 6 spikes/s), DL5 at its measured 14 spikes/s, and a DM4-like\ncell (32 at its measured 3.44). Measured as pn_toy.py measures: the resting drive, the synapses' resting efficacy, Olsen\net al.'s transform (sigma, Rmax) and the share of the peak left at 500 ms at 80 spikes/s.\nFly targets: resting drive 5-10 mV (DM4 about 5-7); DL5's points (5.1, 44), (13.4, 85), (41.5, 149), (98.7, 158), sigma\n11.8, Rmax 167; DM4 sigma 16.3, Rmax 170; 0.44 of the peak left at 500 ms.\n\n    python experiments/pn_toy2.py      (writes experiments/pn_toy2.json; needs orn_pn_recovery_fit.json)\n",
+ "flies": {
+  "drive_mv": [
+   5,
+   10
+  ],
+  "dl5_points": [
+   [
+    5.1,
+    44.2
+   ],
+   [
+    13.4,
+    84.9
+   ],
+   [
+    41.5,
+    148.6
+   ],
+   [
+    98.7,
+    158.4
+   ]
+  ],
+  "dl5_fit": [
+   167,
+   11.8
+  ],
+  "late_over_peak": 0.44
+ },
+ "conditions": [
+  {
+   "name": "M4 (brainfly): DL5-like, N 43, r0 6",
+   "settings": {
+    "w": 0.5,
+    "fa": 0.83,
+    "ta": 7.5,
+    "fb": 0.67,
+    "tb": 0.3,
+    "n_orn": 43,
+    "r0": 6.0
+   },
+   "bias_mv": -25.58,
+   "rest_hz": 4.76,
+   "drive_mv": 21.27,
+   "efficacy": 0.385,
+   "points": {
+    "5": {
+     "window_mean": 29.8,
+     "peak": 49.4,
+     "late_over_peak": 0.65
+    },
+    "10": {
+     "window_mean": 56.5,
+     "peak": 92.4,
+     "late_over_peak": 0.605
+    },
+    "20": {
+     "window_mean": 86.9,
+     "peak": 171.4,
+     "late_over_peak": 0.412
+    },
+    "40": {
+     "window_mean": 109.6,
+     "peak": 231.5,
+     "late_over_peak": 0.375
+    },
+    "80": {
+     "window_mean": 121.7,
+     "peak": 278.8,
+     "late_over_peak": 0.348
+    },
+    "160": {
+     "window_mean": 126.1,
+     "peak": 307.8,
+     "late_over_peak": 0.334
+    }
+   },
+   "fit": {
+    "rmax": 127.9,
+    "sigma": 11.7
+   },
+   "late_over_peak_80": 0.348
+  },
+  {
+   "name": "M4 (brainfly): DL5, N 43, measured r0 14",
+   "settings": {
+    "w": 0.5,
+    "fa": 0.83,
+    "ta": 7.5,
+    "fb": 0.67,
+    "tb": 0.3,
+    "n_orn": 43,
+    "r0": 14.0
+   },
+   "bias_mv": -36.33,
+   "rest_hz": 4.18,
+   "drive_mv": 32.37,
+   "efficacy": 0.236,
+   "points": {
+    "5": {
+     "window_mean": 13.0,
+     "peak": 25.1,
+     "late_over_peak": 0.518
+    },
+    "10": {
+     "window_mean": 27.6,
+     "peak": 49.6,
+     "late_over_peak": 0.485
+    },
+    "20": {
+     "window_mean": 48.8,
+     "peak": 112.7,
+     "late_over_peak": 0.3
+    },
+    "40": {
+     "window_mean": 70.1,
+     "peak": 168.8,
+     "late_over_peak": 0.284
+    },
+    "80": {
+     "window_mean": 84.9,
+     "peak": 219.1,
+     "late_over_peak": 0.274
+    },
+    "160": {
+     "window_mean": 92.8,
+     "peak": 251.0,
+     "late_over_peak": 0.263
+    }
+   },
+   "fit": {
+    "rmax": 95.2,
+    "sigma": 19.0
+   },
+   "late_over_peak_80": 0.274
+  },
+  {
+   "name": "M4 (brainfly): DM4-like, N 32, r0 3.44",
+   "settings": {
+    "w": 0.5,
+    "fa": 0.83,
+    "ta": 7.5,
+    "fb": 0.67,
+    "tb": 0.3,
+    "n_orn": 32,
+    "r0": 3.44
+   },
+   "bias_mv": -14.41,
+   "rest_hz": 4.29,
+   "drive_mv": 11.13,
+   "efficacy": 0.515,
+   "points": {
+    "5": {
+     "window_mean": 32.9,
+     "peak": 54.5,
+     "late_over_peak": 0.673
+    },
+    "10": {
+     "window_mean": 61.5,
+     "peak": 99.2,
+     "late_over_peak": 0.62
+    },
+    "20": {
+     "window_mean": 88.9,
+     "peak": 168.5,
+     "late_over_peak": 0.425
+    },
+    "40": {
+     "window_mean": 108.8,
+     "peak": 233.5,
+     "late_over_peak": 0.354
+    },
+    "80": {
+     "window_mean": 117.6,
+     "peak": 277.7,
+     "late_over_peak": 0.323
+    },
+    "160": {
+     "window_mean": 119.7,
+     "peak": 307.1,
+     "late_over_peak": 0.303
+    }
+   },
+   "fit": {
+    "rmax": 121.9,
+    "sigma": 9.9
+   },
+   "late_over_peak_80": 0.323
+  },
+  {
+   "name": "M4 refitted: DL5-like, N 43, r0 6",
+   "settings": {
+    "w": 0.4762,
+    "fa": 0.8523,
+    "ta": 9.5454,
+    "fb": 0.7531,
+    "tb": 1.1462,
+    "n_orn": 43,
+    "r0": 6.0
+   },
+   "bias_mv": -16.89,
+   "rest_hz": 4.94,
+   "drive_mv": 15.18,
+   "efficacy": 0.266,
+   "points": {
+    "5": {
+     "window_mean": 24.8,
+     "peak": 42.7,
+     "late_over_peak": 0.569
+    },
+    "10": {
+     "window_mean": 46.4,
+     "peak": 77.8,
+     "late_over_peak": 0.492
+    },
+    "20": {
+     "window_mean": 70.7,
+     "peak": 146.6,
+     "late_over_peak": 0.288
+    },
+    "40": {
+     "window_mean": 87.0,
+     "peak": 203.0,
+     "late_over_peak": 0.211
+    },
+    "80": {
+     "window_mean": 93.6,
+     "peak": 254.7,
+     "late_over_peak": 0.172
+    },
+    "160": {
+     "window_mean": 93.8,
+     "peak": 291.6,
+     "late_over_peak": 0.16
+    }
+   },
+   "fit": {
+    "rmax": 97.0,
+    "sigma": 10.3
+   },
+   "late_over_peak_80": 0.172
+  },
+  {
+   "name": "M4 refitted: DL5, N 43, measured r0 14",
+   "settings": {
+    "w": 0.4762,
+    "fa": 0.8523,
+    "ta": 9.5454,
+    "fb": 0.7531,
+    "tb": 1.1462,
+    "n_orn": 43,
+    "r0": 14.0
+   },
+   "bias_mv": -20.21,
+   "rest_hz": 4.27,
+   "drive_mv": 19.82,
+   "efficacy": 0.129,
+   "points": {
+    "5": {
+     "window_mean": 11.3,
+     "peak": 21.1,
+     "late_over_peak": 0.482
+    },
+    "10": {
+     "window_mean": 22.5,
+     "peak": 40.4,
+     "late_over_peak": 0.428
+    },
+    "20": {
+     "window_mean": 38.0,
+     "peak": 85.3,
+     "late_over_peak": 0.247
+    },
+    "40": {
+     "window_mean": 52.6,
+     "peak": 129.6,
+     "late_over_peak": 0.191
+    },
+    "80": {
+     "window_mean": 63.1,
+     "peak": 179.1,
+     "late_over_peak": 0.158
+    },
+    "160": {
+     "window_mean": 67.5,
+     "peak": 214.9,
+     "late_over_peak": 0.144
+    }
+   },
+   "fit": {
+    "rmax": 68.9,
+    "sigma": 16.9
+   },
+   "late_over_peak_80": 0.158
+  },
+  {
+   "name": "M4 refitted: DM4-like, N 32, r0 3.44",
+   "settings": {
+    "w": 0.4762,
+    "fa": 0.8523,
+    "ta": 9.5454,
+    "fb": 0.7531,
+    "tb": 1.1462,
+    "n_orn": 32,
+    "r0": 3.44
+   },
+   "bias_mv": -10.74,
+   "rest_hz": 4.29,
+   "drive_mv": 8.9,
+   "efficacy": 0.412,
+   "points": {
+    "5": {
+     "window_mean": 29.2,
+     "peak": 48.9,
+     "late_over_peak": 0.62
+    },
+    "10": {
+     "window_mean": 54.3,
+     "peak": 88.4,
+     "late_over_peak": 0.524
+    },
+    "20": {
+     "window_mean": 77.3,
+     "peak": 155.4,
+     "late_over_peak": 0.286
+    },
+    "40": {
+     "window_mean": 91.3,
+     "peak": 219.5,
+     "late_over_peak": 0.191
+    },
+    "80": {
+     "window_mean": 94.2,
+     "peak": 268.8,
+     "late_over_peak": 0.144
+    },
+    "160": {
+     "window_mean": 90.8,
+     "peak": 304.2,
+     "late_over_peak": 0.127
+    }
+   },
+   "fit": {
+    "rmax": 96.3,
+    "sigma": 8.3
+   },
+   "late_over_peak_80": 0.144
+  },
+  {
+   "name": "DKR: DL5-like, N 43, r0 6",
+   "settings": {
+    "w": 1.0,
+    "fa": 0.7667,
+    "ta": 5.8931,
+    "tmin": 1.2574,
+    "tc": 0.0661,
+    "kc": 0.05,
+    "n_orn": 43,
+    "r0": 6.0
+   },
+   "bias_mv": -19.85,
+   "rest_hz": 4.86,
+   "drive_mv": 17.34,
+   "efficacy": 0.302,
+   "points": {
+    "5": {
+     "window_mean": 29.5,
+     "peak": 48.0,
+     "late_over_peak": 0.696
+    },
+    "10": {
+     "window_mean": 54.0,
+     "peak": 87.8,
+     "late_over_peak": 0.595
+    },
+    "20": {
+     "window_mean": 80.9,
+     "peak": 160.5,
+     "late_over_peak": 0.361
+    },
+    "40": {
+     "window_mean": 98.7,
+     "peak": 218.4,
+     "late_over_peak": 0.294
+    },
+    "80": {
+     "window_mean": 106.9,
+     "peak": 268.8,
+     "late_over_peak": 0.257
+    },
+    "160": {
+     "window_mean": 108.5,
+     "peak": 304.3,
+     "late_over_peak": 0.237
+    }
+   },
+   "fit": {
+    "rmax": 110.9,
+    "sigma": 10.2
+   },
+   "late_over_peak_80": 0.257
+  },
+  {
+   "name": "DKR: DL5, N 43, measured r0 14",
+   "settings": {
+    "w": 1.0,
+    "fa": 0.7667,
+    "ta": 5.8931,
+    "tmin": 1.2574,
+    "tc": 0.0661,
+    "kc": 0.05,
+    "n_orn": 43,
+    "r0": 14.0
+   },
+   "bias_mv": -28.25,
+   "rest_hz": 4.31,
+   "drive_mv": 26.09,
+   "efficacy": 0.182,
+   "points": {
+    "5": {
+     "window_mean": 12.8,
+     "peak": 23.9,
+     "late_over_peak": 0.477
+    },
+    "10": {
+     "window_mean": 26.2,
+     "peak": 47.2,
+     "late_over_peak": 0.396
+    },
+    "20": {
+     "window_mean": 44.2,
+     "peak": 104.9,
+     "late_over_peak": 0.23
+    },
+    "40": {
+     "window_mean": 60.6,
+     "peak": 157.4,
+     "late_over_peak": 0.185
+    },
+    "80": {
+     "window_mean": 71.2,
+     "peak": 209.0,
+     "late_over_peak": 0.169
+    },
+    "160": {
+     "window_mean": 75.9,
+     "peak": 246.9,
+     "late_over_peak": 0.159
+    }
+   },
+   "fit": {
+    "rmax": 77.5,
+    "sigma": 16.1
+   },
+   "late_over_peak_80": 0.169
+  },
+  {
+   "name": "DKR: DM4-like, N 32, r0 3.44",
+   "settings": {
+    "w": 1.0,
+    "fa": 0.7667,
+    "ta": 5.8931,
+    "tmin": 1.2574,
+    "tc": 0.0661,
+    "kc": 0.05,
+    "n_orn": 32,
+    "r0": 3.44
+   },
+   "bias_mv": -10.45,
+   "rest_hz": 4.3,
+   "drive_mv": 8.79,
+   "efficacy": 0.397,
+   "points": {
+    "5": {
+     "window_mean": 31.4,
+     "peak": 50.0,
+     "late_over_peak": 0.73
+    },
+    "10": {
+     "window_mean": 57.1,
+     "peak": 88.9,
+     "late_over_peak": 0.637
+    },
+    "20": {
+     "window_mean": 81.1,
+     "peak": 155.2,
+     "late_over_peak": 0.383
+    },
+    "40": {
+     "window_mean": 97.1,
+     "peak": 217.1,
+     "late_over_peak": 0.293
+    },
+    "80": {
+     "window_mean": 103.6,
+     "peak": 264.3,
+     "late_over_peak": 0.256
+    },
+    "160": {
+     "window_mean": 103.7,
+     "peak": 298.7,
+     "late_over_peak": 0.23
+    }
+   },
+   "fit": {
+    "rmax": 106.5,
+    "sigma": 9.0
+   },
+   "late_over_peak_80": 0.256
+  },
+  {
+   "name": "M4-DKR: DL5-like, N 43, r0 6",
+   "settings": {
+    "w": 0.8048,
+    "fa": 0.7808,
+    "ta": 7.1925,
+    "fb": 0.7167,
+    "tb": 0.8231,
+    "tmin": 1.4916,
+    "tc": 0.0535,
+    "kc": 0.05,
+    "n_orn": 43,
+    "r0": 6.0
+   },
+   "bias_mv": -19.25,
+   "rest_hz": 4.93,
+   "drive_mv": 16.93,
+   "efficacy": 0.295,
+   "points": {
+    "5": {
+     "window_mean": 28.8,
+     "peak": 47.1,
+     "late_over_peak": 0.692
+    },
+    "10": {
+     "window_mean": 53.0,
+     "peak": 86.0,
+     "late_over_peak": 0.587
+    },
+    "20": {
+     "window_mean": 79.6,
+     "peak": 157.8,
+     "late_over_peak": 0.369
+    },
+    "40": {
+     "window_mean": 97.7,
+     "peak": 215.4,
+     "late_over_peak": 0.292
+    },
+    "80": {
+     "window_mean": 105.8,
+     "peak": 265.5,
+     "late_over_peak": 0.257
+    },
+    "160": {
+     "window_mean": 107.6,
+     "peak": 301.1,
+     "late_over_peak": 0.24
+    }
+   },
+   "fit": {
+    "rmax": 110.0,
+    "sigma": 10.3
+   },
+   "late_over_peak_80": 0.257
+  },
+  {
+   "name": "M4-DKR: DL5, N 43, measured r0 14",
+   "settings": {
+    "w": 0.8048,
+    "fa": 0.7808,
+    "ta": 7.1925,
+    "fb": 0.7167,
+    "tb": 0.8231,
+    "tmin": 1.4916,
+    "tc": 0.0535,
+    "kc": 0.05,
+    "n_orn": 43,
+    "r0": 14.0
+   },
+   "bias_mv": -27.26,
+   "rest_hz": 4.32,
+   "drive_mv": 25.32,
+   "efficacy": 0.176,
+   "points": {
+    "5": {
+     "window_mean": 12.8,
+     "peak": 23.9,
+     "late_over_peak": 0.497
+    },
+    "10": {
+     "window_mean": 26.0,
+     "peak": 46.3,
+     "late_over_peak": 0.425
+    },
+    "20": {
+     "window_mean": 44.1,
+     "peak": 101.7,
+     "late_over_peak": 0.251
+    },
+    "40": {
+     "window_mean": 60.3,
+     "peak": 153.4,
+     "late_over_peak": 0.194
+    },
+    "80": {
+     "window_mean": 71.1,
+     "peak": 204.7,
+     "late_over_peak": 0.175
+    },
+    "160": {
+     "window_mean": 75.8,
+     "peak": 243.3,
+     "late_over_peak": 0.162
+    }
+   },
+   "fit": {
+    "rmax": 77.4,
+    "sigma": 16.2
+   },
+   "late_over_peak_80": 0.175
+  },
+  {
+   "name": "M4-DKR: DM4-like, N 32, r0 3.44",
+   "settings": {
+    "w": 0.8048,
+    "fa": 0.7808,
+    "ta": 7.1925,
+    "fb": 0.7167,
+    "tb": 0.8231,
+    "tmin": 1.4916,
+    "tc": 0.0535,
+    "kc": 0.05,
+    "n_orn": 32,
+    "r0": 3.44
+   },
+   "bias_mv": -10.4,
+   "rest_hz": 4.29,
+   "drive_mv": 8.76,
+   "efficacy": 0.397,
+   "points": {
+    "5": {
+     "window_mean": 30.7,
+     "peak": 49.4,
+     "late_over_peak": 0.711
+    },
+    "10": {
+     "window_mean": 56.2,
+     "peak": 88.5,
+     "late_over_peak": 0.605
+    },
+    "20": {
+     "window_mean": 79.8,
+     "peak": 154.4,
+     "late_over_peak": 0.37
+    },
+    "40": {
+     "window_mean": 95.8,
+     "peak": 215.0,
+     "late_over_peak": 0.288
+    },
+    "80": {
+     "window_mean": 102.3,
+     "peak": 262.0,
+     "late_over_peak": 0.253
+    },
+    "160": {
+     "window_mean": 102.3,
+     "peak": 297.5,
+     "late_over_peak": 0.223
+    }
+   },
+   "fit": {
+    "rmax": 105.1,
+    "sigma": 9.1
+   },
+   "late_over_peak_80": 0.253
+  }
+ ],
+ "seconds": 48
+}
