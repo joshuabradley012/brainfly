@@ -54,6 +54,12 @@ brainfly.shiu, and lets each cell type differ:
                   at each spike and drops input arriving while the neuron is refractory, so a neuron driven to a high
                   rate by synapses loses much of their charge, which a constant bias doesn't; with 1, only the voltage
                   is held at reset while refractory and the current decays and takes input as usual
+    slow_rise     the rise time of the type's slow current, s (default 0: each input steps it up at once): input first
+                  fills a rising stage that drains into the slow current with this time constant, so the current from
+                  one input rises and falls as a difference of exponentials (slow_rise, tau_slow) carrying the same
+                  charge (Kenyon cells onto MBON11: Yamada et al. 2024's flash EPSC peaks about 100 ms after the flash)
+    slow_keep     1 to keep the slow current through a spike as keep_current keeps the fast one: by default (0) it is
+                  held where it was while the neuron is refractory and input arriving then is lost
 
 A spike adds w_syn x (signed synapse count) to a fast current in each target (tau 5 ms, as in
 Shiu), or to a slow current (tau_slow, the target type's) along the edges given as slow, t_dly
@@ -89,7 +95,7 @@ DEFAULTS = {"unit": "spiking", "tau_m": T_MBR, "threshold": V_TH - V0, "reset": 
             "bias": 0.0, "scale": 1.0, "gain": 6.0, "release_at": V_TH - V0, "max_release": np.inf,
             "depression": 1.0, "recovery": 1.0, "noise_rate": 0.0, "noise_kick": 0.0, "adaptation": 0.0,
             "adaptation_tau": 0.2, "tau_slow": 0.0, "slow_depression": 0.0, "slow_recovery": 0.0, "keep_current": 0.0,
-            "depression2": 1.0, "recovery2": 1.0, "share2": 0.0, "slow_reversal": np.inf}
+            "depression2": 1.0, "recovery2": 1.0, "share2": 0.0, "slow_reversal": np.inf, "slow_rise": 0.0, "slow_keep": 0.0}
 MONOAMINES = ("dopamine", "octopamine", "serotonin")
 
 
@@ -273,7 +279,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
              pfast, pslow, pinh, pdep, pdecay, pinc, pk, ppow, poff, psrc, preA,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out,
-             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, slow_ri):
+             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, slow_ri, a_rr, skeep, sr):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
@@ -308,9 +314,13 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
     timeline[b, (bin_start + k) // bin_steps] each step's spikes, if bin_steps > 0; a recorded neuron's spike
     (rec_pos[i] >= 0) also sets rec_out[b, k, rec_pos[i]]. Only the slow synapses' targets (stargets, flagged in
     slow_in) ever carry a slow current, so only they are updated for it. A graded neuron's release reaches its slow
-    synapses' targets the same way, through RS[b, i], each Hz like one spike a second into the slow current."""
+    synapses' targets the same way, through RS[b, i], each Hz like one spike a second into the slow current. A class
+    with a rising stage (a_rr, its per-step decay, not 0; sr holds it, when any class has one) takes its slow input there
+    and passes 1 - a_rr of it into the slow current each step; a class that keeps its slow current (skeep) isn't held
+    while refractory."""
     trials, n = u.shape
     slow = len(sw) > 0
+    rise_on = sr.shape[1] > 0
     ng = len(g_list)
     cap = touched.shape[2]
     tonic_on = len(tonic) > 0
@@ -323,6 +333,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
         # this trial's state in arrays of its own while it runs, which the compiler optimises better
         ub, xb, sb, untilb, Rb = u[b].copy(), x[b].copy(), s[b].copy(), until[b].copy(), R[b].copy()
         RSb = RS[b].copy()
+        srb = sr[b].copy()
         adb = ad[b].copy()
         tl, nt = touched[b], n_touched[b]
         rlist = np.empty(n, np.int64)          # the refractory neurons, and the slow current each is frozen with
@@ -395,6 +406,16 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
             if slow:                           # only the slow synapses' targets can have slow input due
                 for q in range(len(stargets)):
                     i = stargets[q]
+                    if rise_on and a_rr[cls[i]] != 0.0:     # into the rising stage, which drains into the current
+                        if srow[i] != 0.0:
+                            srb[i] += srow[i]
+                            srow[i] = 0.0
+                        if RSb[i] != 0.0:
+                            srb[i] += RSb[i] * dt
+                        moved = (np.float32(1.0) - a_rr[cls[i]]) * srb[i]
+                        srb[i] -= moved
+                        sb[i] += moved
+                        continue
                     if srow[i] != 0.0:
                         sb[i] += srow[i]
                         srow[i] = 0.0
@@ -419,7 +440,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                 ub[j] = reset[cls[j]]
                 if not keep[cls[j]]:
                     xb[j] = 0.0
-                if slow:
+                if slow and not skeep[cls[j]]:
                     sb[j] = rs[q]
             spikes = 0
             gp = np.float32(1.0)                # presynaptic inhibition: the flagged synapses' gain this step
@@ -514,6 +535,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
         u[b, :] = ub
         x[b, :] = xb
         s[b, :] = sb
+        sr[b, :] = srb
         ad[b, :] = adb
         until[b, :] = untilb
         R[b, :] = Rb
@@ -664,6 +686,7 @@ class HybridBrain:
             self._presynaptic["slow"] = np.zeros(len(self._slow_counts), np.bool_)
         self._tables_cache = None                        # whether the network is uniform depends on it
         self.s = np.zeros((self.trials, self.n), np.float32)
+        self.sr = np.zeros((self.trials, self.n) if self._rising() else (self.trials, 0), np.float32)
         self.pending_slow = np.zeros((self.trials, self.delay, self.n if len(self.slow_weights) else 0), np.float32)
         self.slow_graded_input = np.zeros((self.trials, self.n if len(self.slow_weights) else 0), np.float32)
         if len(self.slow_weights):
@@ -784,6 +807,8 @@ class HybridBrain:
             depress2=f32(lambda p: p["depression2"]), recover2=np.array([p["recovery2"] / dt for p in table]),
             share2=f32(lambda p: p["share2"]),
             r_inv=f32(lambda p: 0.0 if not np.isfinite(p.get("slow_reversal", np.inf)) else 1.0 / p["slow_reversal"]),
+            a_rr=f32(lambda p: np.exp(-dt / p["slow_rise"]) if p.get("slow_rise", 0.0) > 0 else 0.0),
+            skeep=np.array([bool(p.get("slow_keep", 0.0)) for p in table], np.bool_),
             noise_lambda=np.array([p["noise_rate"] * dt for p in table]) * np.bincount(self.cls, minlength=len(table)),
             noise_kick=f32(lambda p: p["noise_kick"]))
 
@@ -807,6 +832,7 @@ class HybridBrain:
         shape = (self.trials, self.n)
         self.u, self.x, self.s = np.zeros(shape, np.float32), np.zeros(shape, np.float32), np.zeros(shape, np.float32)
         self.until = np.zeros(shape, np.int64)
+        self.sr = np.zeros(shape if self._rising() else (self.trials, 0), np.float32)
         adapting = any(p["adaptation"] != 0 for p in self.params)
         self.ad = np.zeros(shape if adapting else (self.trials, 0), np.float32)
         self.pending = np.zeros((self.trials, self.delay, self.n), np.float32)
@@ -827,6 +853,18 @@ class HybridBrain:
         self.presynaptic_state = (np.zeros((self.trials, 0)) if self._presynaptic is None
                                   else np.tile(self._presynaptic["start"], (self.trials, 1)))
         self.t = 0
+
+    def _rising(self) -> bool:
+        """Whether any class's slow current has a rising stage (and there are slow synapses to fill it)."""
+        return bool(len(self.slow_weights)) and any(p.get("slow_rise", 0.0) > 0 for p in self.params)
+
+    def _rise_state(self, k: dict) -> np.ndarray:
+        """The slow currents' rising stages, per neuron while any class has one, else empty: made again (empty) when
+        that changes, as set_type can give a class one after reset."""
+        shape = (self.trials, self.n) if bool(len(self.slow_weights)) and bool((k["a_rr"] != 0).any()) else (self.trials, 0)
+        if getattr(self, "sr", None) is None or self.sr.shape != shape:
+            self.sr = np.zeros(shape, np.float32)
+        return self.sr
 
     def _depression_state(self, fresh: bool = False) -> None:
         """The fast synapses' depression state (left, last), the slow ones' where a type depresses them on their own
@@ -883,7 +921,7 @@ class HybridBrain:
                  k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps),
                  rec_pos, np.zeros((self.trials, 0, 0), np.int8) if spikes is None else spikes,
-                 bool(getattr(self, "blocked", True)), *self._blocked_tables())
+                 bool(getattr(self, "blocked", True)), *self._blocked_tables(), k["a_rr"], k["skeep"], self._rise_state(k))
         self.t += int(steps)
         return counts
 

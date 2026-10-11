@@ -28,7 +28,7 @@ import odor_probe7 as p7
 
 ROOT = Path(__file__).resolve().parent.parent
 DIR = ROOT / "fly-data" / "cache"
-TRANSIENT = {"u", "x", "s", "until", "ad", "pending", "fpending", "pending_slow", "touched", "n_touched", "graded_input",
+TRANSIENT = {"u", "x", "s", "sr", "until", "ad", "pending", "fpending", "pending_slow", "touched", "n_touched", "graded_input",
              "slow_graded_input", "external_input", "release", "rng", "driven", "left", "last", "left_s", "last_s",
              "presynaptic_state", "t"}                    # renewed by HybridBrain.reset
 CHECK_SEED, CHECK_ODOR = 999001, "3-octanol"

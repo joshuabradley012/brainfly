@@ -33,7 +33,7 @@ import numpy as np
 import odor_probe24 as p24
 from brainfly.hybrid import HybridBrain
 
-STATE = ("u", "x", "s", "until", "ad", "pending", "fpending", "pending_slow", "touched", "n_touched", "graded_input",
+STATE = ("u", "x", "s", "sr", "until", "ad", "pending", "fpending", "pending_slow", "touched", "n_touched", "graded_input",
          "slow_graded_input", "_external_release", "external_input", "release", "driven", "left", "last", "left_s",
          "last_s", "left2", "last2", "presynaptic_state", "t")
 SEED, SETTLE_S, RESTED_SETTLE_S = 440000, 6.0, 3.0

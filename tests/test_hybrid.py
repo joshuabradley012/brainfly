@@ -159,6 +159,47 @@ def test_a_type_can_give_its_slow_current_its_own_time_constant():
     assert brain.s[0, 2] == pytest.approx(5.0 * np.exp(-100 * DT / 0.08), rel=1e-5)
 
 
+def test_a_slow_rise_delays_the_slow_current_and_keeps_its_charge():
+    """With slow_rise, one input's slow current rises and falls as a difference of exponentials (here 20 and 80 ms:
+    peaking 37 ms after the input lands at 0.472 x 4/3 of the input) and carries the same charge as without, to within
+    the discrete steps' error; without, it steps up at once, to the bit as before."""
+    def trace(**target):
+        brain = small([(1, 1, 0.0)], 2, slow_edges=[(0, 1, 5.0)], tau_slow=0.08, w_poi=100.0,
+                      types={"c1": {"threshold": 1e9, **target}})
+        brain.advance(1, drive=[([0], 1 / DT)])         # step 0: a kick past threshold
+        assert brain.advance(1)[0, 0] == 1              # step 1: neuron 0 fires
+        brain.advance(17)                               # its slow input lands at step 19
+        out = []
+        for _ in range(20000):
+            brain.advance(1)
+            out.append(float(brain.s[0, 1]))
+        return np.array(out)
+    instant, rising = trace(), trace(slow_rise=0.02)
+    np.testing.assert_array_equal(instant, trace(slow_rise=0.0))
+    assert instant[0] == pytest.approx(5.0)
+    t_peak = np.log(4.0) * 0.02 * 0.08 / 0.06
+    assert np.argmax(rising) * DT == pytest.approx(t_peak, abs=2 * DT)
+    assert rising.max() == pytest.approx(5.0 * 4.0 / 3.0 * (np.exp(-t_peak / 0.08) - np.exp(-t_peak / 0.02)), rel=2e-3)
+    assert rising.sum() == pytest.approx(instant.sum(), rel=2e-3)
+
+
+def test_slow_keep_keeps_the_slow_current_through_spikes():
+    """With slow_keep, a target's slow current is the same to the bit whether or not the target fires (and so is held
+    refractory between spikes), with or without a rising stage; by default it is held while refractory and loses the
+    input arriving then."""
+    def slow_current(fires, **target):
+        brain = small([(1, 1, 0.0)], 2, slow_edges=[(0, 1, 0.5)], tau_slow=0.08, w_poi=100.0,
+                      types={"c1": {"bias": 40.0 if fires else 0.0, "threshold": 7.0 if fires else 1e9, **target}})
+        spikes = brain.advance(3000, drive=[([0], 300.0)])
+        return brain.s[0, 1].copy(), int(spikes[0, 1])
+    for target in ({"slow_keep": 1.0}, {"slow_keep": 1.0, "slow_rise": 0.03}):
+        kept, n = slow_current(True, **target)
+        assert n > 30                                   # it fired, and was refractory, many times
+        np.testing.assert_array_equal(kept, slow_current(False, **target)[0])
+    held, _ = slow_current(True)
+    assert held != slow_current(False)[0]
+
+
 def test_set_type_after_construction_is_the_same_as_building_with_it():
     """Giving a type its own slow time constant and threshold later gives the same spikes as building with them."""
     def run(later):
@@ -487,7 +528,7 @@ def test_delivery_is_the_same_whether_or_not_the_target_lists_overflow():
 def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
     """A random network of n neurons with every feature that reaches the membrane integration: graded and external
     neurons, a per-neuron bias, types of their own (with biases of their own), slow synapses (some onto external neurons,
-    some acting as conductances), adaptation (if
+    some acting as conductances, some rising and kept through spikes), adaptation (if
     adapting), depression with a second pool, keep_current, electrical and fast synapses, presynaptic inhibition and
     background kicks."""
     rng = np.random.default_rng(seed)
@@ -498,11 +539,11 @@ def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
                                                             rng.normal(2.0, 7.0, 12 * n))]
     slow = [(int(i), int(j), float(w)) for i, j, w in zip(rng.integers(0, n, n), rng.integers(0, n, n), rng.normal(-2.0, 2.0, n))]
     sets = {"graded": pick(6), "quick": pick(n // 5), "depressing": pick(n // 4), "kept": pick(n // 10), "noisy": pick(n // 3),
-            "reversing": pick(n // 4)}
+            "reversing": pick(n // 4), "rising": pick(n // 5)}
     types = {"graded": {"unit": "graded", "gain": 3.0}, "quick": {"tau_m": 0.008, "threshold": 9.0, "refractory": 0.003, "bias": 2.0},
              "depressing": {"depression": 0.7, "recovery": 0.08, "share2": 0.4, "depression2": 0.6, "recovery2": 1.5},
              "kept": {"keep_current": 1.0, "bias": -1.5}, "noisy": {"noise_rate": 30.0, "noise_kick": 3.0},
-             "reversing": {"slow_reversal": -15.0}}
+             "reversing": {"slow_reversal": -15.0}, "rising": {"slow_rise": 0.03, "slow_keep": 1.0}}
     if adapting:
         sets["adapting"] = pick(n // 3)
         types["adapting"] = {"adaptation": 2.0, "adaptation_tau": 0.1}
@@ -528,7 +569,7 @@ def test_the_blocked_integration_matches_the_reference_loops_to_the_bit(adapting
     ext = a.external.copy()
     for steps in (1, 7, 300, 1692):
         np.testing.assert_array_equal(a.advance(steps, drive), b.advance(steps, drive))
-    for name in ("u", "x", "s", "ad", "until", "graded_input", "slow_graded_input", "release", "left", "last", "left2",
+    for name in ("u", "x", "s", "sr", "ad", "until", "graded_input", "slow_graded_input", "release", "left", "last", "left2",
                  "last2", "presynaptic_state", "rng"):
         np.testing.assert_array_equal(getattr(a, name), getattr(b, name), err_msg=name)
     spikes = a.advance(1000, drive)
