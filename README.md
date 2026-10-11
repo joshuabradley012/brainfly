@@ -1635,8 +1635,10 @@ Three models share the package:
   be stepped in a loop with a body. With nothing changed, it is Shiu's model exactly. On rung 1's
   network, silent at rest, it simulates one fly faster than real time on one core of an Apple M4 Pro
   (0.67 s per simulated second), and 8 flies in 0.72 s on 8 cores. The current resting brain, with
-  background in every neuron, takes 2.2 s per simulated second for 8 flies on 8 cores, or 1.7 s with
-  flyvis's eyes attached, since it skips the neurons flyvis drives.
+  background in every neuron and flyvis's eyes attached, takes 1.5 s per simulated second for 8 flies on
+  8 cores (`scripts/remote/bench_current.py`'s calibration round), and the olfaction model 1.9 s. Its
+  membranes are integrated block by block, in loops the compiler vectorizes, which gives the same spikes
+  to the bit as the plain loops (1.8 and 2.3 s; `HybridBrain.blocked = False`).
   `set_release` lets an optic lobe simulated elsewhere drive it: `FlyvisNative` sets the release
   of its 69,917 neurons every 2 ms, in about 1 ms.
 
