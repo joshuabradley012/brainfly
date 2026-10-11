@@ -34,6 +34,22 @@ projection neurons: too few of its glomeruli answer, and its strongest after VA3
 (odor_mch_input_sensitivity.py: with the glomeruli flies' projection neuron imaging adds, a fly-like 0.28 of its cells
 answered 3-octanol).
 
+Correction (2026-10-11, after an independent review):
+- The Kenyon cells' rest wasn't set back to their distances below threshold after set C was installed.
+  odor_probe33.set_rest's first pass measured them with the old 20 ms time constant's share of the bias, and its second
+  pass didn't undo the overshoot (kc_rest.py). The JSON's kc_rest records them resting nearer threshold than the
+  targets: alpha/beta by 3.1 mV, alpha'/beta' by 4.3-4.5, gamma by up to 3.1. The alpha'/beta' cells fired 0.12
+  spikes/s at rest, 30 times learning pilot 12's rate. These aren't kc_setc_check.py's set C cells either, whose rest
+  was off differently (alpha'/beta' 14.5 mV from threshold there, 11.7 here). So the run above tests set C with cells
+  nearer threshold than meant. learning_pilot15.py runs it again with the rest held.
+- "Nested" overstates it. 0.62 of 4-methylcyclohexanol's answering cells answer 3-octanol in kc_setc_check.py's set C,
+  so 38% lie outside 3-octanol's set: mostly inside.
+- "Too few of its glomeruli answer" is an inference (odor_mch_input_sensitivity.py's own note says so), not a finding.
+  As tested, 13 glomeruli answer 4-methylcyclohexanol and 16 answer 3-octanol (more than 20 spikes/s above rest;
+  pn_accommodation_check.py). The bigger difference is strength: the answering glomeruli peak at 64 spikes/s against 133.
+- Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors;
+  4-methylcyclohexanol's is 265-273.
+
     python experiments/learning_pilot13.py      (writes experiments/learning_pilot13.json)
 """
 from __future__ import annotations

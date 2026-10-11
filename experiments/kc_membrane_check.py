@@ -44,6 +44,17 @@ twice flies' sustained drive, and the densities above overstate what a longer ti
 flies' plateau is set C, which needs those synapses to depress on their own (the model's projection neurons depress all
 their outputs alike, 0.85 and 0.8 s, and exempt their Kenyon cell synapses).
 
+Correction (2026-10-11, after an independent review):
+- At 50 and 100 ms the cells' rest wasn't set back to the same distances below threshold, though the reading needs it
+  and the model above says it was. odor_probe33.set_rest's first pass measured the cells with the old 20 ms time
+  constant's share of the bias, and its second pass didn't undo the overshoot (kc_rest.py). The JSON records the
+  realized distances. At 20 ms they are within 0.3 mV of the targets (alpha/beta 21.5, alpha'/beta' 16, gamma 32.5
+  mV). At 50 ms the cells rest 1.5-5.1 mV nearer threshold, and at 100 ms 1.0-4.3 mV nearer, where the alpha'/beta'
+  cells fire 0.25 spikes/s at rest. Part of the densities and of 4-methylcyclohexanol's rise to 0.37 and 0.49 may
+  therefore come from the rest, not the integration. kc_setc_check2.py runs these conditions again with the rest held.
+- "Twice flies' sustained drive" holds at 50 ms (about 9.2 mV per connection at 115 spikes/s, 2.1 times flies' 4.4).
+  At 100 ms it is about 16.7 mV, 3.8 times.
+
     python experiments/kc_membrane_check.py      (writes experiments/kc_membrane_check.json)
 """
 from __future__ import annotations

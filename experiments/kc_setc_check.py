@@ -40,6 +40,26 @@ So of the sets that keep Gruntman & Turner's plateau, C keeps flies' density and
 4-methylcyclohexanol and the cells' sustained firing toward flies', a little; whether that moves rung 9's reciprocal is
 learning_pilot13.py's question.
 
+Correction (2026-10-11, after an independent review):
+- In sets C and D the cells' rest wasn't set back to the same distances below threshold, though the model above says it
+  was. odor_probe33.set_rest's first pass measured the cells with the old 20 ms time constant's share of the bias, and
+  its second pass didn't undo the overshoot (kc_rest.py). The JSON records the realized distances. Set A's are within
+  0.3 mV of the targets (alpha/beta 21.5, alpha'/beta' 16, gamma 32.5 mV). Set C's cells rest 1.5-4.9 mV nearer
+  threshold. Set D's rest 6.3-22.8 mV nearer and fire 0.9-2.2 spikes/s at rest. So set C's numbers above were
+  measured with the cells nearer threshold than meant. Set D's answering shares mostly reflect cells resting near
+  threshold, so "it fails the reading" doesn't test set D. kc_setc_check2.py runs the sets again with the rest held.
+- The per-connection plateaus in the first paragraph disagree. kc_integration.md's table F gives 4.5, 3.9 and 3.2 mV
+  at 115 spikes/s (A, C, D) and 1.57, 2.37 and 2.77 at 40. The second set here (1.6, 2.1 and 3.2 at 40; 4.5, 3.4 and
+  3.7 at 115) comes from one unitary EPSP of about 1.24 mV held at the resting strength, as this check scales the
+  synapses. The note gives each set its own unitary EPSP (C 1.4, D 1.25 mV). The ratio of 40 to 115 spikes/s is the
+  same either way (about 0.35, 0.6 and 0.86), so the compression argument stands.
+- resting_strength assumes regular firing at 5 spikes/s. For Poisson firing (warm.rest_depression's mean,
+  1/(1 + r tau (1 - f))) a resting synapse keeps 0.930 of its strength in C and 0.727 in D, not 0.977 and 0.848. Its
+  EPSP is then about 5% (C) and 14% (D) below "as now".
+- "1,162 against 2,766" are the Kenyon cells' total spikes per fly (odor_apl_conductance_check.condition's kc_spikes).
+  Per answering cell they are 2.7 against 4.4.
+- Set D's shares are 71.5 and 76.5% of the Kenyon cells, not 71 and 76%.
+
     python experiments/kc_setc_check.py      (writes experiments/kc_setc_check.json)
 """
 from __future__ import annotations

@@ -22,6 +22,10 @@ spikes, the gamma cells (32.5 mV below threshold) most. Whether flies' Kenyon ce
 firing through an odor isn't measured class by class (one responding gamma cell in Turner et al. 2008;
 mbon11_kc_activity.md).
 
+Correction (2026-10-11, after an independent review): silencing APL doesn't "barely" change the cells' late-over-early
+ratios. As tested they are 0.18, 0.25 and 0.05; silenced 0.24, 0.35 and 0.09, 1.3-1.8 times as much. "Most of the decline
+isn't APL's" stands.
+
     python experiments/pn_accommodation_check.py      (writes experiments/pn_accommodation_check.json; seconds)
 """
 from __future__ import annotations

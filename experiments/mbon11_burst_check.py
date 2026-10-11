@@ -47,6 +47,10 @@ model's Kenyon cell-to-MBON11 current decays in 5 ms: either Kenyon cells fire f
 or their transmission is slow, and either would carry MBON11's response through an odor. The next check is Yamada et
 al.'s flash in the model.
 
+Correction (2026-10-11, after an independent review): "the Kenyon cell-to-MBON11 synapses not depressing" turned off the
+depression of the Kenyon cell synapses onto all 97 MBONs (set_depressing flags odor_probe7's kc_mbon, the Kenyon cell edges
+onto every MBON type), as learning_pilot3.py and learning_pilot4.py do, not only MBON11's.
+
     python experiments/mbon11_burst_check.py      (writes experiments/mbon11_burst_check.json)
 """
 from __future__ import annotations

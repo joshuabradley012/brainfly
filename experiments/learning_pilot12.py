@@ -49,6 +49,22 @@ So a slow Kenyon cell current, built from Yamada et al.'s flash EPSC alone, take
 response (the rest of the plateau's shortfall is the Kenyon cells' own decline, mbon11_burst_check.py), and leaves rung 9
 where it was: the reciprocal waits on 4-methylcyclohexanol's Kenyon cells. mb_calibration5.py carries the synapse forward.
 
+Correction (2026-10-11, after an independent review):
+- The paired-pulse ratio here, as in kc_flash_check.py, subtracts only the current left at 400 ms from the second
+  peak. Yamada et al. isolated the second EPSC by subtracting a single-flash reference trace from the paired trace
+  ("A second EPSC waveform was obtained every minute by subtracting a reference trace from the average of 4
+  paired-pulse EPSCs. PPR was then calculated ... by dividing the second EPSC amplitude by the first EPSC amplitude";
+  Methods). Under the second EPSC the first goes on decaying, so subtracting only its 400 ms value understates their
+  ratio for a slow current. Measured their way, this flash gives 0.64: the first EPSC continued as its 280 ms decay
+  from 400 ms on and subtracted. Criterion (1) still passes (0.38-0.68), and the reading of about one spike per flash
+  stands (kc_flash_check.py's correction).
+- "Most of the way to flies' odor response" overstates it. The evoked spikes close 41% of the gap (38.6 to 70.8
+  against 118), and the rate from 0.5 to 1 s 45% (12.4 to 50.8 against 97.5).
+- The flash's current is within the reading's ranges, which were widened by a quarter, but wider than flies': 308 ms
+  at half its peak against 235-260, with 0.41 left at 400 ms against 0.32-0.39.
+- Flies' 3-octanol charge is about 245-250 pC (Hige et al.'s 248 and 244). 245-275 pools both odors.
+- 3-octanol's spikes after pairing are 6.85, which the learning_slow figure rounds to 6.8 and the text above to 6.9.
+
     python experiments/learning_pilot12.py      (writes experiments/learning_pilot12.json)
 """
 from __future__ import annotations

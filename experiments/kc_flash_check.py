@@ -54,6 +54,25 @@ firing long enough to make it through fast synapses, unless something the model 
 or CsChrimson closes far more slowly in their preparation than 21 ms. The slow current's 40 and 280 ms were chosen to look
 like their EPSC, not fitted; mbon11_slow_epsc.py tests the reading against flies' odor EPSC, which played no part.
 
+Correction (2026-10-11, after an independent review):
+- The PPR here subtracts only the current left at 400 ms from the second peak. Yamada et al. isolated the second EPSC
+  by subtracting a single-flash reference trace from the paired trace (Methods: "A second EPSC waveform was obtained
+  every minute by subtracting a reference trace from the average of 4 paired-pulse EPSCs. PPR was then calculated ...
+  by dividing the second EPSC amplitude by the first EPSC amplitude"). Under the second EPSC the first goes on
+  decaying, so for the slow current this check's PPR understates theirs.
+  - Measured their way, the slow current's PPR is the ratio of the two flashes' charges, the same as the fast
+    current's: 0.61-0.64 at one spike per flash, 0.43-0.44 at two, 0.33-0.34 at three and 0.26 at five (20-100 ms).
+  - These were rebuilt from the saved currents. The drive was recovered from the fast current, split at 400 ms and
+    passed through the slow kernel, which reproduces the saved slow current exactly. At 150 ms the rebuild fails, as
+    the slow reading did.
+  - So through either current their 0.38-0.68 reads as one or two spikes per flash, not "only at one spike per
+    flash". The reading the depression rule assumed still fits.
+- "Gives their time course" means within the reading's ranges, which were widened by a quarter. The slow current is
+  about 20% wider than flies': 308-310 ms at half its peak against 235-260, with 0.40-0.42 left at 400 ms against
+  0.32-0.39.
+- The fast PPR falls below theirs at three or five spikes up to 100 ms (0.24-0.34). At 150 ms, three spikes give 0.46,
+  inside their range.
+
     python experiments/kc_flash_check.py      (writes experiments/kc_flash_check.json)
 """
 from __future__ import annotations
