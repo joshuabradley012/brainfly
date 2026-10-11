@@ -13,6 +13,19 @@ Inputs, each a condition, as learning_pilot6.py: DoOR alone; with receptor_fills
 as well. Protocol, rule, fit and measures as learning_pilot5.py. Seeds learning_pilot6.py's (640000), so that only the
 model differs.
 
+Ran: no; the reciprocal stays short, and the saturating transform barely changes learning. MBON11, held at 6.3 Hz, gains
+20.6-22.8 spikes to 3-octanol and 8.7-11.9 to 4-methylcyclohexanol (flies 118 and 110), whose Kenyon cells number a
+quarter of 3-octanol's (99 against 379 with DoOR alone, 95 against 422 with the receptor fills, 143 against 508 with the
+PN-inferred tier too; flies 49 and 53).
+  DoOR alone: 3-octanol paired cuts its own spikes 84% and 4-methylcyclohexanol's 47% (charge 45%); 4-methylcyclohexanol
+    paired cuts its own 99.6% and 3-octanol's 9.2% (charge 14%).
+  receptor fills: 83% and 45% (charge 45%); 99% and 9.6% (charge 14%).
+  with the PN-inferred tier: 83% and 49% (charge 53%); 94% and 13.9% (charge 20%).
+Backward pairing: 0-0.4% of the charge. Flies: 80% and 27%; 76% and 38% (bands: the unpaired odor 10-45%, the reciprocal
+15-50%). learning_pilot6.py on the unsaturated model gave 84%/42% and 98%/8.3%, 83%/43% and 97%/7.7%, 81%/47% and
+93%/12.8% on the same seeds. The shared Kenyon cells carry 10-15% of 3-octanol's input to MBON11 (flies' two odors share
+30-33% of their responders each way).
+
     python experiments/learning_pilot7.py        (writes experiments/learning_pilot7.json)
 """
 from __future__ import annotations
