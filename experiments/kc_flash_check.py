@@ -34,6 +34,26 @@ Read as (written before the run): a combination matches Yamada et al.'s time cou
 the flash, is 180-320 ms wide at half its peak and keeps 0.25-0.45 of its peak at 400 ms (their ranges widened by about a
 quarter, being read off figures); and their PPR if it is 0.38-0.68.
 
+Ran (2026-10-11, 12 minutes): the model's Kenyon cells can't make Yamada et al.'s EPSC through fast synapses, and a slow
+synaptic current makes it from about one spike per flash. Flashed, the gamma Kenyon cells fire within about 50 ms
+whatever their membrane time constant (half their spikes by 7-19 ms, 90% by 15-53 ms; at 20 ms, 1-5 spikes per cell from
+flashes of 108-273 mV), so the current through the model's 5 ms synapses peaks 3-19 ms after the flash, is 4-20 ms wide
+at half its peak and is gone by 400 ms (Yamada et al.: 102-118 ms, 235-260 ms, 0.32-0.39 left). No combination matches
+their time course. Its peak, about 1,000-6,200 pA per MBON11 cell, is 8-80 times theirs (80-117 pA): the charge per
+flash is theirs (the synapses' 0.054 pC came from it), delivered about 30 times faster. The paired-pulse ratio matches
+theirs at one or two spikes per flash (0.62-0.72 and 0.43-0.58) and falls below it at three or five (0.24-0.46). Through
+the slow current (rising with 40 ms, decaying with 280 ms) the same input gives their time course at every spike count
+and membrane time constant up to 100 ms (peak at 97-111 ms, 308-310 ms wide, 0.40-0.42 left at 400 ms), 90-98 pA at one
+spike per flash (theirs 80-117), and their PPR only at one spike per flash (0.49-0.50; two spikes 0.30-0.33, three
+0.21-0.22). At 150 ms the gamma cells fire spontaneously (the flashed ones 0.17 spikes/s before the flash, none at
+20-100 ms), and the slow current's baseline, built from the recorded window only, rises through the recording, so the
+slow reading isn't reliable there.
+So, within this model, Yamada et al.'s flash EPSC reads as about one spike per Kenyon cell per flash, depressing by about
+half per spike (the model's rule), through a slow current; a longer membrane time constant doesn't keep the Kenyon cells
+firing long enough to make it through fast synapses, unless something the model lacks keeps them firing after the flash
+or CsChrimson closes far more slowly in their preparation than 21 ms. The slow current's 40 and 280 ms were chosen to look
+like their EPSC, not fitted; mbon11_slow_epsc.py tests the reading against flies' odor EPSC, which played no part.
+
     python experiments/kc_flash_check.py      (writes experiments/kc_flash_check.json)
 """
 from __future__ import annotations
