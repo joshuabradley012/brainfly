@@ -17,6 +17,19 @@ answering (more than half an evoked spike over 1.4 s) and their evoked spikes; t
 the odor (all cells, and those answering), the model's nearest measure to claw calcium; each odor's ratios
 (4-methylcyclohexanol over 3-octanol). Seeds 670000 + 10 x odor + seed.
 
+Ran: no; the model's APL saturates for both odors and divides their Kenyon cells alike. With APL working its release
+peaks at 38.3 Hz for 3-octanol (its calibrated maximum) and 36.3 for 4-methylcyclohexanol (0.95; flies' APL 0.49 of
+3-octanol's), averaging 9.7 and 6.9 Hz over the odor (0.71); 377 and 91 Kenyon cells answer (0.24), firing 1155 and 282
+evoked spikes (0.24), and the Kenyon cells sit 2.28 and 0.85 mV above rest over the odor (0.37; the answering ones 9.8
+and 9.9). With APL silenced 860 and 260 answer (0.30), firing 2792 and 673 spikes (0.24), depolarized 3.77 and 1.86 mV
+(0.49). Silencing APL raises both odors' Kenyon cell spikes by the same factor (2.42 and 2.39; flies 2-3), so APL scales
+both down alike instead of holding 3-octanol back more, as flies' does (claw responses 0.65 of 3-octanol's peak without
+APL and 0.89 with it; claws answering 0.76 and 0.95; Prisco et al. 2021). Even without APL the model's Kenyon cells get
+less of 4-methylcyclohexanol relative to 3-octanol than flies' (0.30 against 0.76 of the claws answering), the share the
+projection neurons pass on over the whole antennal lobe (0.52), including the glomeruli flies' imaging leaves out. APL's
+graded release saturates about 10 mV above its rest (release from 3.5 mV, 6 Hz per mV, which nothing measures, up to
+38.3 Hz), and both odors take it there within the first 100 ms.
+
     python experiments/odor_apl_check.py      (writes experiments/odor_apl_check.json)
 """
 from __future__ import annotations

@@ -1,0 +1,125 @@
+{
+ "question": "Exploratory check, not pre-registered: does the model's APL answer each odor in proportion to its Kenyon cell drive,\nand equalize 4-methylcyclohexanol with 3-octanol in the Kenyon cells, as flies' APL does?\n\nlearning_pilot6.py and learning_pilot7.py: 4-methylcyclohexanol reaches a quarter as many Kenyon cells as 3-octanol (flies\nabout as many), which leaves the reciprocal pairing short. research_notes/Rung 9 learning data/mch_oct_equalization.md: at\nthe projection neurons the model already equalizes about as flies' do on the glomeruli flies' imaging covers (0.82-0.86\nagainst 0.85-0.98), and in flies APL equalizes the Kenyon cells: Prisco et al. 2021 found APL's calcium response to\n4-methylcyclohexanol about half its response to 3-octanol (43 against 88 %max, 0.49), and the Kenyon cells' claw responses\nat 0.89 of 3-octanol's peak (63 against 71) and 0.95 of its count (17.5 against 18.5 claws) with APL working, but 0.65\n(115 against 177) and 0.76 (21 against 27.5) with APL silenced. odor_probe54.py: the model's APL releases at 23.3 Hz at\nits peak for 3-octanol and 21.8 for 4-methylcyclohexanol (0.94).\nModel: odor_probe54.py's (its cache) with mb_calibration.py's mushroom body, the Kenyon cells' rest set as the learning\npilots set it, settled starts.\nMeasured, for each odor with APL working and with it silenced (Hige et al.'s protocol: a 1 s odor after 1.5 s; 2 seeds of\n8 flies, the same seeds for both): APL's release (peak of 50 ms running means, mean over the odor); the Kenyon cells\nanswering (more than half an evoked spike over 1.4 s) and their evoked spikes; the Kenyon cells' mean depolarization over\nthe odor (all cells, and those answering), the model's nearest measure to claw calcium; each odor's ratios\n(4-methylcyclohexanol over 3-octanol). Seeds 670000 + 10 x odor + seed.\n\n    python experiments/odor_apl_check.py      (writes experiments/odor_apl_check.json)\n",
+ "flies": {
+  "apl": 0.49,
+  "claw_peak_apl_on": 0.89,
+  "claw_peak_apl_off": 0.65,
+  "claws_apl_on": 0.95,
+  "claws_apl_off": 0.76
+ },
+ "mb_calibration": {
+  "classes": {
+   "alpha/beta": {
+    "pn_scale": 1.657,
+    "apl_scale": 1.125,
+    "cells": 1810
+   },
+   "alpha'/beta'": {
+    "pn_scale": 2.523,
+    "apl_scale": 0.831,
+    "cells": 695
+   },
+   "gamma": {
+    "pn_scale": 2.291,
+    "apl_scale": 0.963,
+    "cells": 1557
+   },
+   "other": {
+    "pn_scale": 0.297,
+    "apl_scale": 0.741,
+    "cells": 2
+   }
+  },
+  "kc_apl_scale": 10.0,
+  "apl_release_at_mv": 3.5,
+  "apl_max_hz": 38.29,
+  "kc_gaps_mv": {
+   "KCab": 21.5,
+   "KCa'b'": 16.0,
+   "KCg": 32.5
+  }
+ },
+ "conditions": {
+  "APL working": {
+   "3-octanol": {
+    "apl_release_peak_hz": 38.29,
+    "apl_release_mean_hz": 9.68,
+    "kcs_answering": 377,
+    "kc_evoked_spikes": 1155.2,
+    "kc_depolarization_mv": 2.276,
+    "answering_kc_depolarization_mv": 9.808
+   },
+   "4-methylcyclohexanol": {
+    "apl_release_peak_hz": 36.33,
+    "apl_release_mean_hz": 6.86,
+    "kcs_answering": 91,
+    "kc_evoked_spikes": 281.5,
+    "kc_depolarization_mv": 0.853,
+    "answering_kc_depolarization_mv": 9.856
+   },
+   "mch_over_oct": {
+    "apl_release_peak_hz": 0.949,
+    "apl_release_mean_hz": 0.709,
+    "kcs_answering": 0.241,
+    "kc_evoked_spikes": 0.244,
+    "kc_depolarization_mv": 0.375,
+    "answering_kc_depolarization_mv": 1.005
+   }
+  },
+  "APL silenced": {
+   "3-octanol": {
+    "apl_release_peak_hz": 0.0,
+    "apl_release_mean_hz": 0.0,
+    "kcs_answering": 860,
+    "kc_evoked_spikes": 2792.3,
+    "kc_depolarization_mv": 3.77,
+    "answering_kc_depolarization_mv": 8.679
+   },
+   "4-methylcyclohexanol": {
+    "apl_release_peak_hz": 0.0,
+    "apl_release_mean_hz": 0.0,
+    "kcs_answering": 260,
+    "kc_evoked_spikes": 672.5,
+    "kc_depolarization_mv": 1.857,
+    "answering_kc_depolarization_mv": 8.52
+   },
+   "mch_over_oct": {
+    "apl_release_peak_hz": null,
+    "apl_release_mean_hz": null,
+    "kcs_answering": 0.302,
+    "kc_evoked_spikes": 0.241,
+    "kc_depolarization_mv": 0.493,
+    "answering_kc_depolarization_mv": 0.982
+   }
+  }
+ },
+ "kc_rest": {
+  "gap_mv": {
+   "KC": 21.46,
+   "KCa'b'-ap1": 16.02,
+   "KCa'b'-ap2": 16.14,
+   "KCa'b'-m": 16.21,
+   "KCab-c": 21.65,
+   "KCab-m": 21.67,
+   "KCab-p": 21.57,
+   "KCab-s": 21.66,
+   "KCg": 32.72,
+   "KCg-d": 32.58,
+   "KCg-m": 32.61,
+   "KCg-s1": 32.72,
+   "KCg-s2": 32.31,
+   "KCg-s3": 32.44,
+   "KCg-s4": 32.5
+  },
+  "rest_hz_by_class": {
+   "alpha/beta": 0.0016,
+   "alpha'/beta'": 0.0016,
+   "gamma": 0.0
+  }
+ },
+ "block_ratio": {
+  "3-octanol": 2.42,
+  "4-methylcyclohexanol": 2.39
+ },
+ "seconds": 109
+}
