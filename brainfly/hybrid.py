@@ -42,7 +42,8 @@ brainfly.shiu, and lets each cell type differ:
                   current that holds the neuron about `adaptation` mV lower and decays with time
                   constant adaptation_tau, s (default 0: none, as in Shiu's model; 0.2 s)
     tau_slow      the time constant of the type's slow current, s (default 0: the brain's tau_slow)
-    slow_reversal the reversal potential of the type's slow synapses, mV above rest (default inf: a current, as every
+    slow_reversal the reversal potential of the type's slow synapses, mV above rest (v = 0, the model's rest, not where a
+                  bias holds a neuron; default inf: a current, as every
                   other synapse is): finite, the slow current becomes a conductance, its effect on the membrane scaled
                   by (slow_reversal - v) / slow_reversal, so that it acts at rest as a current would, more strongly
                   the farther v is from the reversal potential, and not at all there, which inhibition can approach

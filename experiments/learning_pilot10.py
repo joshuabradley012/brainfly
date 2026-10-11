@@ -24,6 +24,12 @@ weekend's plan was amended (04:55, on research_notes/Rung 9 learning data/apl_ki
 for an APL with flies' time course, whatever this pilot showed, since this APL's conductance decays in 5 ms where flies'
 takes about 0.3 s (odor_apl_kinetics_check.py).
 
+Correction (2026-10-11, odor_apl_kinetics_check.py's Fig. 5B test): HybridBrain measures slow_reversal from the model's
+zero, and the Kenyon cells don't rest there: each class sits its measured distance below the shared 16 mV threshold, so
+alpha'/beta' cells rest at 0, alpha/beta at -5.5 and gamma at -16.5 mV. A reversal of -20 therefore lay 20, 14.5 and 3.5 mV
+below them, not 20 below each, and APL could barely inhibit the gamma cells (38% of the Kenyon cells, among them MBON11's γ1
+input). APL at its ceiling held the quiet Kenyon cells 3.8 mV down on average, not 11. mb_calibration4.py corrects it. This pilot ran on that APL.
+
     python experiments/learning_pilot10.py        (writes experiments/learning_pilot10.json)
 """
 from __future__ import annotations

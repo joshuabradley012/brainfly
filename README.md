@@ -46,6 +46,13 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
   Kenyon cells' spikes 2.9- and 2.2-fold (flies 2–3), and during an odor it holds them at most 7 mV down. On it the
   weighed input still passes all four of rung 9's marks in a pilot, the reciprocal by under half a point. But its
   inhibition fades in 5 ms, where flies' takes about 0.3 s, so the pre-registered attempt waits for that too.
+  - **Correction: the reversal was measured from the wrong rest.** The simulator measures a reversal potential from
+    the model's zero, and the Kenyon cells don't rest there: each class sits its own distance below a shared threshold,
+    α'/β' cells at 0, α/β at −5.5 and γ at −16.5 mV. So "20 mV below rest" was 20, 14.5 and 3.5 mV below them. APL could
+    barely inhibit the γ cells, 38% of the Kenyon cells, among them MBON11's inputs in γ1, and at its ceiling it held the
+    quiet cells 3.8 mV down, not 11. A test of flies' recording (Inada et al.'s Fig. 5B on the model) caught it. The
+    numbers below and learning pilot 10 are for that version. [`mb_calibration4.py`](experiments/mb_calibration4.py)
+    puts each class's reversal below its own rest, and the check is being repeated with flies' time course.
   - **The conductance** ([`odor_apl_conductance_check.py`](experiments/odor_apl_conductance_check.py),
     [`mb_calibration3.py`](experiments/mb_calibration3.py), `slow_reversal` in
     [`brainfly/hybrid.py`](brainfly/hybrid.py)). Three reversal potentials span what a mixture of GABA-A and GABA-B

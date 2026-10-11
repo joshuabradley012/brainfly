@@ -64,6 +64,14 @@ decays with tau about 0.39 s (Vrontou et al. Fig. 7C), and driving APL directly 
 0.32 s after the drive (Inada et al. Fig. 5B). So the model's is largest about 0.2 s early and fades about ten times too
 fast: its synapses' 5 ms decay is 50-80 times shorter than what the recordings imply.
 
+Correction (2026-10-11, odor_apl_kinetics_check.py's Fig. 5B test): HybridBrain measures slow_reversal from the model's
+zero, and the Kenyon cells don't rest there: each class sits its measured distance below the shared 16 mV threshold, so
+alpha'/beta' cells rest at 0, alpha/beta at -5.5 and gamma at -16.5 mV. A reversal of -20 therefore lay 20, 14.5 and 3.5 mV
+below them, not 20 below each, and APL could barely inhibit the gamma cells (38% of the Kenyon cells, among them MBON11's γ1
+input). APL at its ceiling held the quiet Kenyon cells 3.8 mV down on average, not 11. mb_calibration4.py corrects it. The choices and
+numbers above are for that APL: "reversing 20 mV below rest" and "11 mV at its ceiling" held only for the alpha'/beta'
+cells, and every condition's reversal was 5.5 and 16.5 mV nearer the alpha/beta and gamma cells' rest than its label.
+
     python experiments/odor_apl_conductance_check.py      (writes experiments/odor_apl_conductance_check.json)
 """
 from __future__ import annotations

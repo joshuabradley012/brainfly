@@ -33,6 +33,23 @@ Chosen, as stated before running: among the tau 0.3 s conditions whose silencing
 log ratios to 2.5 and 0.49), reported as missing. Then reported against flies: Inada et al.'s time course (10/50/90% at
 0.14/0.27/0.56 s, half gone 0.32 s after, about 0.2 of it left at 1 s) and plateau with the pipette's reversal (10-12 mV).
 
+Ran (22 minutes), but on a mis-specified APL, which its own Fig. 5B test exposed: driven to its ceiling, APL held the
+quiet Kenyon cells 3.8 mV down at a reversal of -20 (3.8 too with the 5 ms decay), where the design said 11. HybridBrain
+measures slow_reversal from the model's zero, and the Kenyon cells rest at 0 (alpha'/beta'), -5.5 (alpha/beta) and -16.5
+mV (gamma), their shared threshold of 16 less their gaps, so a reversal of -20 lay 20, 14.5 and 3.5 mV below them and APL
+could barely inhibit the gamma cells. mb_calibration3.py and every run on it share the error (mb_calibration4.py corrects
+it; odor_apl_conductance2_check.py repeats this check). Also, where a test changed the reversal it held the conductance's
+current at rest fixed, not the conductance: "strength 2" was a conductance of 0.70 times the Kenyon cell's leak, not 0.28,
+and the pipette test's conductance 0.4 times its condition's. With those caveats, the time course is near flies': driven
+directly, the inhibition reaches 10, 50 and 90% of its plateau at 0.02-0.03, 0.11-0.16 and 0.37-0.51 s (flies 0.14, 0.27,
+0.56) and half of it is gone 0.32-0.37 s after the drive (flies 0.32), where the 5 ms decay gave 0.01-0.02 s and 0.06 s;
+but only 0.05-0.06 of it is left after 1 s (flies about 0.2: the slower GABA-B part, which the model lacks). In odors it
+is largest at 0.17-0.23 s, not 0.075. By the rule, strength 1 at -20 with drive 1 was chosen: APL's ratio 0.48 (flies
+0.49), silencing 2.39 and 2.31-fold. But 695 Kenyon cells answered 3-octanol and 248 4-methylcyclohexanol (the 5 ms
+comparison 356 and 219), APL no longer equalized the odors (0.82-fold; flies 1.25), and 0.63 of 4-methylcyclohexanol's
+answering cells answered 3-octanol (flies 0.33), with the gamma cells nearly free of APL. Stronger drives took APL to its
+ceiling for 3-octanol (ratios 0.62-0.93); -15 mV held the Kenyon cells back 3.4-4.6-fold.
+
     python experiments/odor_apl_kinetics_check.py      (writes experiments/odor_apl_kinetics_check.json)
 """
 from __future__ import annotations

@@ -18,6 +18,12 @@ down), drive 1.5. Then APL answers 4-methylcyclohexanol with 0.45 of its peak fo
 raises the Kenyon cells' spikes 2.92 and 2.21-fold (flies 2-3), and it holds them at most 7.1 mV down during an odor
 (flies 15 at most; mb_calibration2.py 20.8).
 
+Correction (2026-10-11, odor_apl_kinetics_check.py's Fig. 5B test): HybridBrain measures slow_reversal from the model's
+zero, and the Kenyon cells don't rest there: each class sits its measured distance below the shared 16 mV threshold, so
+alpha'/beta' cells rest at 0, alpha/beta at -5.5 and gamma at -16.5 mV. A reversal of -20 therefore lay 20, 14.5 and 3.5 mV
+below them, not 20 below each, and APL could barely inhibit the gamma cells (38% of the Kenyon cells, among them MBON11's γ1
+input). APL at its ceiling held the quiet Kenyon cells 3.8 mV down on average, not 11. mb_calibration4.py corrects it.
+
     o, rec, built = brain_cache.load("odor_probe60", odor_probe60.build, odor_probe44.prepare)
     mb_calibration3.apply(o)
 """
