@@ -12,7 +12,7 @@ on every model since learning_pilot3.py the 3-octanol-paired direction has match
 short (3-octanol's spikes down 5-14% with 4-methylcyclohexanol paired, flies 38%), because 4-methylcyclohexanol reaches a
 quarter as many Kenyon cells as 3-octanol, where flies' two odors reach about as many. So this attempt is expected to
 fail on the reciprocal; it is run to fix the rung's status on the model as it stands. Its design, the weighed input
-included (chosen on accuracy), was fixed on 10 October 2026 at 22:00 PDT, before learning_pilot8.py, which runs the same
+included (chosen on accuracy), was fixed on 10 October 2026 at 21:55 PDT, before learning_pilot8.py, which runs the same
 protocol on the same model with the pilots' seeds, had reported.
 Model: odor_probe56.py's (its cache; the PNs resting at about flies' rate) with mb_calibration.py's mushroom body, the
 Kenyon cells' rest set to its classes' distances below threshold (odor_probe33.set_rest), MBON11 keeping its synaptic
