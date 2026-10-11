@@ -17,6 +17,22 @@ Inputs, each a condition: DoOR alone; with receptor_fills.FILLS; with receptor_f
 Protocol, rule, fit and measures as learning_pilot5.py (learning_pilot4.variant). Seeds 640000 (learning_pilot3.py's
 offsets), the same for every condition.
 
+Ran: pairing 3-octanol is as specific as flies' at the band's upper edge, the reciprocal falls short in every
+condition, and filling 4-methylcyclohexanol's missing receptors moves it toward flies' but not into the band. MBON11,
+held at 6.4 Hz, gains 19.7-21.4 spikes to 3-octanol and 8.7-11.4 to 4-methylcyclohexanol (flies 118 and 110), whose
+Kenyon cells number a quarter of 3-octanol's (92 against 368 with DoOR alone, 89 against 410 with the receptor fills,
+141 against 496 with the PN-inferred tier too; flies 49 and 53).
+  DoOR alone: 3-octanol paired cuts its own spikes 84% and 4-methylcyclohexanol's 42% (charge 42%); 4-methylcyclohexanol
+    paired cuts its own 98% and 3-octanol's 8.3% (charge 13%).
+  receptor fills: 83% and 43% (charge 42%); 97% and 7.7% (charge 14%).
+  with the PN-inferred tier: 81% and 47% (charge 52%); 93% and 12.8% (charge 19%).
+Backward pairing: 0.1-0.5% of the charge. Flies: 80% and 27% with 3-octanol paired, 76% and 38% with
+4-methylcyclohexanol paired (hige2015_specificity.md's bands: the unpaired odor 10-45%, the reciprocal 15-50%, the paired
+at least 65% and 30 points beyond). The asymmetry follows the overlap: 49-58% of 4-methylcyclohexanol's responders also
+answer 3-octanol, carrying 37-50% of its input to MBON11, but those shared cells carry only 10-15% of 3-octanol's input,
+where flies' two odors share 30-33% of their responders each way. The reciprocal waits on 4-methylcyclohexanol reaching
+as many Kenyon cells as 3-octanol, which none of the receptor inputs gives it on this antennal lobe (odor_probe53.py).
+
     python experiments/learning_pilot6.py        (writes experiments/learning_pilot6.json)
 """
 from __future__ import annotations
