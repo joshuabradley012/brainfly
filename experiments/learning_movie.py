@@ -16,6 +16,13 @@ spikes come in the first 0.3 s, and from 0.5 to 1 s it fires 12.4 spikes/s (5.7 
 4-methylcyclohexanol it peaks at 57 and is back at rest by 0.3 s (flies 135, then about 100). So the model's MBON11 gains
 a third of flies' spikes to 3-octanol (38.6 against 118) for want of a sustained response, not a peak.
 
+Correction (2026-10-11, from an independent review): the recording took the trial's pieces as every advance but the
+first, the trial's settle; but warm.tracking settles the brain again at the first reset after its weights change, through
+the same advance, so the first trial after each change of weights (calls 32, 40 and 48: the first test after each
+pairing's weights go in, and the first eligibility trial of the second pairing) was stored one 10 ms bin late. The
+pieces are now taken from the end, and the recording was re-run; the totals were never affected (the trial counts them
+itself), and the time courses above are the re-run's.
+
     python experiments/learning_movie.py      (writes experiments/learning_movie.json)
 """
 from __future__ import annotations
@@ -58,8 +65,8 @@ def wrap(trial):
             out = trial(o, rec, odor, seed, mbon, kc, f, recover_s)
         finally:
             del b.advance                                  # back to the class's method
-        n_pre = int(round(lp.PRE / lp.BIN))
-        series = np.array(bins[1:])                        # the first advance is the 0.5 s settle
+        n_pre, n_odor = int(round(lp.PRE / lp.BIN)), int(round(1.0 / lp.BIN))
+        series = np.array(bins[-(n_pre + 2 * n_odor):])    # the trial's own pieces, after its settle (and any re-settle)
         CALLS.append({"odor": odor, "seed": int(seed), "mbon11_hz": np.round(series[n_pre - 50:n_pre + 150] / lp.BIN, 2).tolist(),
                       "evoked_spikes": float(np.mean(out["mbon"]))})
         return out

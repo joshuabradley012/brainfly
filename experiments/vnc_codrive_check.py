@@ -24,6 +24,18 @@ joins (median active neurons from 90-116 to 248-478, motor neurons from 4-8 to 1
 and a slow one at 400 on the right only (7 of 16 at 5.6 Hz), with DNg97 at 10-24 spikes/s. So the model's walking rhythm
 comes from DNg100 at one narrow drive and isn't the network flies speed up by recruiting DNg97.
 
+Correction (2026-10-11, from an independent review): two readings above need correcting. (1) The left's rhythmic
+replicates at DNg97 200 include two oscillations near 1 Hz (1.0 and 0.9 Hz, against 16.4, 14.5 and 16.7), which aren't
+stepping rhythms (flies step at about 3.5-21 Hz). In the stepping range the left is rhythmic in 3 of 16 there, at a median
+16.4 Hz, 26% faster than DNg100 alone; so the speed-up is at most 16% counting every rhythm and at most 26% in the
+stepping range, against flies' about 50%. (2) The last sentence doesn't follow. The rhythm did speed up in flies'
+direction in every co-drive condition (on the right at DNg97 100 every replicate was faster, by 0.1 to 1.5 Hz), which is
+the test the question set ("should at least speed up"). The shortfall has other readings the check can't exclude:
+DNg97's rate in flies is unknown and here it fired 2-19 spikes/s; flies' stepping speeds up on the ball by shortening
+stance, which needs the sensory feedback the model lacks; and an over-excitable network (vnc_drive_sweep.py) would also
+fall apart as more of it joins. What the check shows is a speed-up in flies' direction, smaller than flies', with the
+rhythm breaking down as DNg97's drive grows; not that the model's rhythm comes from a different circuit than flies'.
+
     python experiments/vnc_codrive_check.py      (writes experiments/vnc_codrive_check.json)
 """
 from __future__ import annotations

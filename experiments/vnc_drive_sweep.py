@@ -19,6 +19,19 @@ rhythm), then runaway. As the network runs away it silences DNg100 itself (7.4, 
 600 and 700). So the model's front-leg rhythm needs DNg100 at about 10-20 spikes/s, the low end of what walking
 descending neurons recorded in flies fire (about 20-60), and the network can't take DNg100 any faster.
 
+Correction (2026-10-11, from an independent review): four readings above overstate. (1) The note maps 20-60 spikes/s to
+drives of about 460-1,160; 460-800 is its estimate for DNg100 itself (20-40 spikes/s). (2) The note gives DNg100 "about
+20-40 Hz during steady walking, plausibly 10-60 Hz" with low confidence: DNg100 has never been recorded, the 20-60 comes
+mostly from steering neurons (DNa02, DNg13), and MDN, the one walking-command neuron with recorded rates, fires about 12-16
+spikes/s while flies walk backward. So the model's window (DNg100 at 10-20 spikes/s) sits at the low edge of what flies'
+DNg100 plausibly fires, below the note's estimate, not outside flies' range; "below the rates walking descending neurons
+reach" says more than the evidence does. What the data show on their own is that the network goes from rhythmic at 450
+to runaway at 500-550, within 1.2 times the drive, and that DNg100 never fires above about 20 spikes/s in it. (3) The
+left's rhythmic replicates at 500 (1.4, 1.3 and 13.3 Hz) and 550 (2.0 Hz) are mostly oscillations near 1 Hz, not stepping
+rhythms (flies step at about 3.5-21 Hz); in the stepping range the left is rhythmic in 1 of 16 at 500 and none from 550.
+(4) "The network can't take DNg100 any faster" describes the model's rate unit, which the network's synapses silence as
+its drive rises; in a fly DNg100's spikes start in the brain.
+
     python experiments/vnc_drive_sweep.py      (writes experiments/vnc_drive_sweep.json)
 """
 from __future__ import annotations
