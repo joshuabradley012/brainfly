@@ -90,6 +90,15 @@ def probe(scale: float, ctrl: np.ndarray, time_constants: tuple | None = None) -
     return out
 
 
+def traces(force, dt: float, shift_ms: float) -> dict:
+    """The probe force every 0.5 ms from the soma for one spike, two 12 ms apart and 17 at 120 Hz (for the figure)."""
+    step = int(round(0.0005 / dt))
+    pad = int(round(shift_ms / 1e3 / dt))
+    shown = lambda x: [round(float(v), 2) for v in np.concatenate([np.zeros(pad), x])[::step]]
+    return {"dt_ms": 0.5, "one spike": shown(force([0.0], lt.SECONDS)), "two spikes 12 ms apart": shown(force([0.0, 0.012], lt.SECONDS)),
+            "17 spikes at 120 Hz": shown(force([i / 120.0 for i in range(17)], 17 / 120.0 + 0.15))}
+
+
 def measures(force, dt: float, shift_ms: float) -> dict:
     """Twitch, doublets and trains from force(spike times, seconds) -> probe trace; times shifted to the soma."""
     single = force([0.0], lt.SECONDS)
@@ -119,6 +128,8 @@ def main() -> None:
         print("two-state:", name, json.dumps(p), flush=True)
         force = lambda spikes, seconds: probe(scale, g * two_state(spikes, int(round(seconds / dt)), dt, p))
         out["two_state"][name] = {"parameters": p, **measures(force, dt, 0.0)}
+        if name == "note's set":
+            out["two_state"][name]["traces"] = traces(force, dt, 0.0)
         OUT.write_text(json.dumps(out, indent=1))
     for name in ("10 ms", "40 ms"):
         run = deact["conditions"][name]
@@ -127,7 +138,8 @@ def main() -> None:
         print("first-order: deactivation", name, "spike pulse", round(width * 1e3, 4), "ms", flush=True)    # as leg_twitch.twitch finds it
         force = lambda spikes, seconds: lt.force_trace(run["scale"], [(s, width) for s in spikes], seconds, tc)
         out["first_order"][f"deactivation {name}"] = {"scale": run["scale"], "spike_pulse_ms": round(width * 1e3, 4),
-                                                      "pulse_steps": sum(k * dt < width for k in range(int(0.02 / dt) + 2)), **measures(force, dt, DELAY_S * 1e3)}
+                                                      "pulse_steps": sum(k * dt < width for k in range(int(0.02 / dt) + 2)), **measures(force, dt, DELAY_S * 1e3),
+                                                      "traces": traces(force, dt, DELAY_S * 1e3)}
         OUT.write_text(json.dumps(out, indent=1))
 
 
