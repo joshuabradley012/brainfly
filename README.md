@@ -36,6 +36,27 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
+* **MBON11's input: flies' Kenyon cell activity, half flies' charge.** With the input corrected and APL refitted, the
+  Kenyon cells answer 3-octanol at flies' densities class by class. By Turner et al.'s criterion that is α/β 7.2%,
+  α′/β′ 17.8% and γ 2.5% (flies about 6, 20 and 3.5%) ([`gamma_gap_refit.py`](experiments/gamma_gap_refit.py)). They give
+  the right MBON11 4,400 synapse-spikes in Hige et al.'s window, against flies' budget of about 3,200 (1,300–7,500)
+  ([`mbon11_budget_check.py`](experiments/mbon11_budget_check.py)).
+  - Undepressed, at the model's 0.054 pC per synapse, that would carry flies' charge (238 pC; flies 245–250). The
+    synapses' depression leaves half.
+  - The charge per synapse and the depression come from the same calibration, Yamada et al.'s flash. Read as more
+    spikes per flash, the depression eases but each spike carries less, so the one-spike reading already gives the
+    most.
+  - What would give flies' charge is fewer cells flashed. Their 3–7% labelling is borrowed from another cell type, and
+    at 3% rather than the model's 5%, MBON11 would get about 220 pC. Choosing that from Hige et al.'s odor current would
+    make the current a calibration target, so it waits.
+
+  To 4-methylcyclohexanol the activity itself is a seventh of flies' (456 synapse-spikes), the larger gap.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/mbon11_budget-dark.svg">
+  <img src="assets/mbon11_budget-light.svg" width="100%" alt="Two panels. Left: synapse-spikes onto the right MBON11 in 0-1.4 s, stacked by Kenyon cell class (gamma, alpha/beta, alpha'/beta'). To 3-octanol the model gives 4,401 against flies' estimated 3,206 (range 1,300-7,500); to 4-methylcyclohexanol 456, against the same estimate. Right: what that activity carries onto the right MBON11 at 0.054 pC per synapse: 238 pC undepressed and 133 after the synapses' depression for 3-octanol (flies 245-250), 25 and 18 for 4-methylcyclohexanol (flies 230-273).">
+</picture>
+
 * **The Kenyon cells' input was a third stronger than flies'.** An audit of the model as every rung 9 experiment runs
   it ([`kc_input_audit.py`](experiments/kc_input_audit.py)): one projection neuron spike gave a Kenyon cell a 1.90 mV
   EPSP, where Turner et al. 2008 measured 1.4 mV and Gruntman & Turner 2013 1.24–1.48. The steady drive per connection
