@@ -13,6 +13,16 @@ receptor input (two seeds), every 10 ms: the PNs' rate, their fast and slow syna
 (means over PNs and flies), DL5's receptor neurons' rate and fast synapses' mean strength (the two pools together) and
 the presynaptic gain; their means over the 500 ms window, its first 100 ms and its last 300 ms. Seeds 650000.
 
+Ran: it is the slow component. Over the last 300 ms of the odor, DL5's PNs' fast synaptic current is 39, 45, 48, 48
+and 48 at 10, 20, 40, 80 and 160 spikes/s of receptor input (flat from 20 on, the receptor synapses' fast strength falling
+from 0.25 to 0.03 of full), while their slow current is 5.0, 8.1, 13.3, 22.6 and 38.9, nearly doubling with each doubling
+of the input, and their rate 57, 88, 118, 142 and 176 spikes/s follows it; the presynaptic gain stays at 0.89-0.93 (one
+glomerulus recruits little inhibition, as in flies). At 160 spikes/s the slow component carries about 45% of the late
+drive. With 0.73% of its strength used per spike it barely depresses at odor rates, so it passes on the receptor
+neurons' rate almost linearly, where flies' synapse's whole charge saturates by about 50 spikes/s (Kazama & Wilson 2008
+Fig. 9D). Over the whole window the fast current rises 36, 45, 52, 57 and 61 (the onset transient grows with the rate)
+and the slow 3.9, 6.0, 9.4, 15.4 and 26.1.
+
     python experiments/odor_drive_check.py      (writes experiments/odor_drive_check.json)
 """
 from __future__ import annotations
