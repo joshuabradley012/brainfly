@@ -49,7 +49,9 @@ brainfly.shiu, and lets each cell type differ:
                   the farther v is from the reversal potential, and not at all there, which inhibition can approach
                   but not pass (Kenyon cells, held by APL no more than 10-12 mV below rest: Inada et al. 2017)
     slow_depression, slow_recovery    depression of the type's outgoing slow synapses, on their own (default 0: with
-                  the fast ones; Nagel, Hong & Wilson 2015's slow receptor component: 0.9927 and 33.2 s)
+                  the fast ones; Nagel, Hong & Wilson 2015's slow receptor component: 0.9927 and 33.2 s), and of the
+                  fast synapses flagged in brain.own_depression (one flag per fast synapse, in brain.weights' order;
+                  empty for none): a second set of depression for some of a type's synapses
     keep_current  1 to keep the fast synaptic current through a spike: Shiu's model (the default, 0) sets it to zero
                   at each spike and drops input arriving while the neuron is refractory, so a neuron driven to a high
                   rate by synapses loses much of their charge, which a constant bias doesn't; with 1, only the voltage
@@ -279,7 +281,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
              pfast, pslow, pinh, pdep, pdecay, pinc, pk, ppow, poff, psrc, preA,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out,
-             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, slow_ri, a_rr, skeep, sr):
+             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, slow_ri, a_rr, skeep, sr, own):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
@@ -317,10 +319,12 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
     synapses' targets the same way, through RS[b, i], each Hz like one spike a second into the slow current. A class
     with a rising stage (a_rr, its per-step decay, not 0; sr holds it, when any class has one) takes its slow input there
     and passes 1 - a_rr of it into the slow current each step; a class that keeps its slow current (skeep) isn't held
-    while refractory."""
+    while refractory. A fast synapse flagged in own (when given) carries the strength its neuron's slow synapses do, by
+    the class's own depression and recovery for them (depress_s, recover_s), instead of the fast one's."""
     trials, n = u.shape
     slow = len(sw) > 0
     rise_on = sr.shape[1] > 0
+    own_on = len(own) > 0
     ng = len(g_list)
     cap = touched.shape[2]
     tonic_on = len(tonic) > 0
@@ -492,7 +496,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                     last2[b, i] = t
                     strength = np.float32((1.0 - share2[cls[i]]) * strength + share2[cls[i]] * second)
                 strength_s = strength                   # the slow synapses' strength: the fast one's, unless the
-                if slow and depress_s[cls[i]] > 0.0:    # type depresses them on their own
+                if (slow or own_on) and depress_s[cls[i]] > 0.0:    # type depresses them on their own
                     strength_s = np.float32(1.0)
                     if depress_s[cls[i]] < 1.0:
                         strength_s = np.float32(1.0 - (1.0 - left_s[b, i]) * np.exp(-(t - last_s[b, i]) / recover_s[cls[i]]))
@@ -509,7 +513,7 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                             if count < cap:
                                 tl[slot, count] = j
                             count += 1
-                        wv = w[e] if full[e] else w[e] * strength
+                        wv = w[e] if full[e] else w[e] * (strength_s if own_on and own[e] else strength)
                         if npre and pfast[e]:
                             wv *= gp
                         row[j] += wv
@@ -653,6 +657,7 @@ class HybridBrain:
         self._external_matrix = None                     # rows: every neuron; columns: the external ones
         self.external_input = np.zeros(self.n, np.float32)
         self.blocked = True                              # integrate block by block (False: the reference loops it matches)
+        self.own_depression = np.zeros(0, np.bool_)      # fast synapses depressing as the slow ones do (empty: none)
         self.reset(seed)
 
     @property
@@ -854,6 +859,15 @@ class HybridBrain:
                                   else np.tile(self._presynaptic["start"], (self.trials, 1)))
         self.t = 0
 
+    def _own_flags(self) -> np.ndarray:
+        """brain.own_depression for the kernel: one flag per fast synapse, or empty when none is flagged."""
+        own = getattr(self, "own_depression", None)
+        if own is None or not len(own) or not np.any(own):
+            return np.zeros(0, np.bool_)
+        if len(own) != len(self.weights):
+            raise ValueError(f"own_depression needs one flag per fast synapse ({len(self.weights)}), not {len(own)}")
+        return np.ascontiguousarray(own, np.bool_)
+
     def _rising(self) -> bool:
         """Whether any class's slow current has a rising stage (and there are slow synapses to fill it)."""
         return bool(len(self.slow_weights)) and any(p.get("slow_rise", 0.0) > 0 for p in self.params)
@@ -921,7 +935,8 @@ class HybridBrain:
                  k["noise_lambda"], k["noise_kick"], self._members, self._member_start, silenced, counts,
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps),
                  rec_pos, np.zeros((self.trials, 0, 0), np.int8) if spikes is None else spikes,
-                 bool(getattr(self, "blocked", True)), *self._blocked_tables(), k["a_rr"], k["skeep"], self._rise_state(k))
+                 bool(getattr(self, "blocked", True)), *self._blocked_tables(), k["a_rr"], k["skeep"], self._rise_state(k),
+                 self._own_flags())
         self.t += int(steps)
         return counts
 

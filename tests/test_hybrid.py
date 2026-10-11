@@ -200,6 +200,32 @@ def test_slow_keep_keeps_the_slow_current_through_spikes():
     assert held != slow_current(False)[0]
 
 
+def test_flagged_fast_synapses_depress_as_the_slow_ones_do():
+    """A fast synapse flagged in own_depression carries the strength its neuron's slow synapses would (slow_depression,
+    slow_recovery), its unflagged siblings the fast one's; with nothing flagged, nothing changes, to the bit."""
+    def second_jump(flag):
+        brain = small([(0, 1, 1.0), (0, 2, 1.0)], 3, slow_edges=[(0, 2, 0.0)], tau_slow=0.08, w_poi=100.0,
+                      types={"c0": {"depression": 0.5, "recovery": 1.0, "slow_depression": 0.9, "slow_recovery": 1.0},
+                             "c1": {"threshold": 1e9}, "c2": {"threshold": 1e9}})
+        if flag:
+            brain.own_depression = np.array([e == 1 for e in range(len(brain.weights))])
+        brain.advance(1, drive=[([0], 1 / DT)])         # step 0: a kick past threshold
+        assert brain.advance(1)[0, 0] == 1              # step 1: neuron 0 fires
+        brain.advance(18)                               # its input lands at step 19
+        first = brain.x[0, 1:].copy()
+        brain.advance(200)                              # the fast current gone (40 time constants)
+        brain.advance(1, drive=[([0], 1 / DT)])         # step 220: kicked again
+        assert brain.advance(1)[0, 0] == 1              # step 221: it fires, 220 steps after the first spike
+        brain.advance(18)                               # it lands 220 steps after the first did
+        return brain.x[0, 1:] - first * np.float32(np.exp(-220 * DT / TAU)), first
+    plain, first = second_jump(False)
+    flagged, _ = second_jump(True)
+    assert first == pytest.approx([1.0, 1.0], rel=1e-5)
+    recovered = lambda f: 1.0 - (1.0 - f) * np.exp(-220 * DT / 1.0)
+    assert plain == pytest.approx([recovered(0.5)] * 2, rel=1e-3)
+    assert flagged == pytest.approx([recovered(0.5), recovered(0.9)], rel=1e-3)
+
+
 def test_set_type_after_construction_is_the_same_as_building_with_it():
     """Giving a type its own slow time constant and threshold later gives the same spikes as building with them."""
     def run(later):
@@ -541,7 +567,8 @@ def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
     sets = {"graded": pick(6), "quick": pick(n // 5), "depressing": pick(n // 4), "kept": pick(n // 10), "noisy": pick(n // 3),
             "reversing": pick(n // 4), "rising": pick(n // 5)}
     types = {"graded": {"unit": "graded", "gain": 3.0}, "quick": {"tau_m": 0.008, "threshold": 9.0, "refractory": 0.003, "bias": 2.0},
-             "depressing": {"depression": 0.7, "recovery": 0.08, "share2": 0.4, "depression2": 0.6, "recovery2": 1.5},
+             "depressing": {"depression": 0.7, "recovery": 0.08, "share2": 0.4, "depression2": 0.6, "recovery2": 1.5,
+                            "slow_depression": 0.8, "slow_recovery": 0.2},
              "kept": {"keep_current": 1.0, "bias": -1.5}, "noisy": {"noise_rate": 30.0, "noise_kick": 3.0},
              "reversing": {"slow_reversal": -15.0}, "rising": {"slow_rise": 0.03, "slow_keep": 1.0}}
     if adapting:
@@ -553,6 +580,7 @@ def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
     brain.set_presynaptic(fast=rng.random(len(brain.weights)) < 0.3, slow=rng.random(len(brain.slow_weights)) < 0.3,
                           inhibitors=pick(n // 20), tau=(0.02, 0.2), k=(0.01, 0.004), depleting=pick(n // 10))
     brain.set_release(pick(n // 3), rng.normal(0.0, 10.0, n // 3))
+    brain.own_depression = rng.random(len(brain.weights)) < 0.2
     return brain
 
 
