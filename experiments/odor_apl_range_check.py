@@ -17,6 +17,19 @@ release (peak and mean over the odor) and the Kenyon cells answering and their e
 block effect (2.5) and APL's ratio (0.49 of 3-octanol's mean release), by the sum of their squared log ratios; the Kenyon
 cells' equalization is then the test.
 
+Ran: within this APL, flies' block effect and flies' odor-graded, equalizing APL exclude each other. The chosen
+condition (gain 1 Hz/mV, Kenyon cell synapses x30: block effect 2.13 and 2.12, APL's mean release for
+4-methylcyclohexanol 0.60 of 3-octanol's) doesn't equalize: 0.295 as many Kenyon cells answer 4-methylcyclohexanol as
+3-octanol with APL working and 0.312 with it silenced. Every condition strong enough for flies' 2-3-fold block effect
+takes APL to its ceiling (38.3 Hz) for 3-octanol within the first 100 ms and divides both odors alike or holds
+4-methylcyclohexanol back more (the answering ratio with APL working over silenced: 0.70-0.98 at block effects of
+1.98-2.92). Only weak APL stays graded and equalizes: at gain 1-3 and x3-x10, block effects of 1.39-1.76 for 3-octanol
+and 1.20-1.49 for 4-methylcyclohexanol, APL ratios 0.46-0.58, the answering ratio rises from 0.31 to 0.38-0.39 with APL
+working, 1.17-1.28-fold, about the 1.25-fold flies' claws show (0.76 to 0.95; Prisco et al. 2021). The ceiling comes from
+Inada et al.'s -11 mV at APL's saturation (mb_calibration.py); in flies 3-octanol takes APL's calcium to 88% of its
+maximum, not past it. Whatever APL does, the Kenyon cells start from about 0.31 of 3-octanol's answering cells before
+it acts, where flies' claws start from 0.76.
+
     python experiments/odor_apl_range_check.py      (writes experiments/odor_apl_range_check.json)
 """
 from __future__ import annotations
