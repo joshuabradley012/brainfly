@@ -13,6 +13,19 @@ Inputs, each a condition: DoOR alone; and the receptor input the evidence suppor
 (receptor_fills.RECOMMENDED). Protocol, rule, fit and measures as learning_pilot5.py. Seeds learning_pilot6.py's
 (640000), so that only the model (and the second input) differs.
 
+Ran: no; the reciprocal stays short, and with the PNs nearer flies' rate 3-octanol's pairing spares DoOR's
+4-methylcyclohexanol less. MBON11, held at 6.06 Hz, gains 27.6 spikes to 3-octanol and 12.8 to 4-methylcyclohexanol with
+DoOR's input (learning_pilot7.py 20.6 and 8.7; flies 118 and 110), and 31.1 and 5.3 with the weighed input, whose
+4-methylcyclohexanol reaches 61 Kenyon cells against 3-octanol's 388 (DoOR 129 against 438; flies 49 and 53).
+  DoOR: 3-octanol paired cuts its own spikes 86% and 4-methylcyclohexanol's 51% (charge 50%), beyond the band's 45%,
+    57% of 4-methylcyclohexanol's responders also answering 3-octanol and carrying 47% of its charge;
+    4-methylcyclohexanol paired cuts its own 98% and 3-octanol's 12.5% (charge 16%), its responders carrying 14% of
+    3-octanol's charge.
+  weighed input: 88% and 35% (charge 31%), inside the band; 4-methylcyclohexanol paired takes its own response below
+    its baseline (114%) and 3-octanol's down only 4.2% (charge 7%), its responders carrying 3.5% of 3-octanol's charge.
+Backward pairing: 0.1-1.9% of the charge. Flies: 80% and 27%; 76% and 38% (bands: the unpaired odor 10-45%, the reciprocal
+15-50%). rung9_learning.py, pre-registered before these results, runs the weighed input on fresh seeds.
+
     python experiments/learning_pilot8.py        (writes experiments/learning_pilot8.json)
 """
 from __future__ import annotations
