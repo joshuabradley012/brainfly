@@ -46,6 +46,25 @@ need, the weak pairs don't avoid each other at all. The JSON's pairs_inside_flie
 flies' pair medians, not with flies' per-fly ranges, so they are strict: no pair passes all three, though many lie
 within flies' per-fly ranges.
 
+Correction (2026-10-11, review 11):
+- "The strongly coupled pairs and MN5's come out about as flies'" doesn't hold for MN5. MN5's pairs fit flies' r and fall
+  within the spread of flies' four MN5-pair dip10s, but they are uniform where flies' differ. MN4-MN5, flies'
+  best-measured pair, has dip10 0.110 against flies' 0.016-0.097, above it in every run. And MN5's pairs come within
+  10 ms of their partners more often than flies' (0.59-0.64 against 0.34-0.58 times chance). In review 11's
+  exploratory reruns MN5's pairs come inside flies' ranges only with MN5 running about 1.2 times MN1-4, inside flies'
+  0.98-1.26. At one rate, MN5's pairs fall short too.
+- "Avoid each other only about half as much": the weak pairs come within 10 ms of each other 1.6-3.3 times as often as
+  flies' pairs (0.50-0.52 against 0.16-0.31 times chance), which is about two thirds of flies' avoidance measured
+  against independent firing.
+- With flies' AHP, "the strong pairs come out as flies'" overclaims. They fire in antiphase with few spikes within 10 ms
+  (0.11-0.18 times chance), but lock less tightly (vector strength 0.52 and 0.53 against 0.70 and 0.73), and the JSON's
+  flags fail them on r and dip10. The order there is flies' (preferred orders 58%, 5% of windows with a repeat). The
+  weak pairs fire about independently, not "not at all" avoiding (MN1-MN4 within 10 ms 0.82 times chance).
+- The bisection left the units within 4% of each other (6.46-6.70 Hz), not every unit at 6.6 Hz: units bisected all at
+  once can see their targets leave their brackets as partners move. A pre-registered use needs a tolerance check.
+- "No pair passes all three" holds for "LIF, MN5 assumed" and the AHP condition; in "LIF, MN5 as weak pairs", MN3-MN5
+  passes. Flies' per-fly ranges exist only for r (every pair) and for dip10 on the strong pairs and MN4-MN5.
+
     python experiments/dlm_splay_check6.py      (writes experiments/dlm_splay_check6.json)
 """
 from __future__ import annotations

@@ -56,6 +56,11 @@ Correction (2026-10-11, review 10):
 - Numbers: with depression dMS2 ran 8.4-9.6 Hz. Of the core's 77 neurons, 64 had depressed (pIP10 and pMP2 descend, and
   vPR9 is GABAergic).
 
+Correction (2026-10-11, review 11):
+"hg3 and hg4 rise tenfold" in the note above is relative to the depressed run at 100 Hz (42.1 against 4.2 and 33.8
+against 3.4 Hz); from rest it is 18-20 times. Depressed over undepressed, dMS2, dMS9 and vMS12 run at 0.30-0.38 at
+100 Hz and 0.54-0.58 at 25 Hz.
+
     python experiments/song_recruit_check2.py      (writes experiments/song_recruit_check2.json)
 """
 from __future__ import annotations

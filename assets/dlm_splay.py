@@ -10,7 +10,7 @@ them. The conditions are leaky-integrator units at flies' irregularity (CV 0.22)
 (dlm_splay_check2.py); joined by conductances fitted to flies' coupling coefficients as flies measured them, 20 ms
 peak ratios, with each unit's drive set so all five fire at one rate (dlm_splay_check6.py); and with the spikes' own
 spikelets as well (dlm_splay_check6.py). Each is rerun here for 3 s (1 s discarded) with its check's own drives, kicks
-and junctions (seed 7). Under each clock, its 2 s as a raster. Bottom: the splayness every check measured (300 s x 8 runs, medians), against flies' 0.73-0.79 and the
+and junctions (seed 7). Under each clock, its 2 s as a raster. Bottom: the splayness of selected conditions (300 s x 8 runs, medians), against flies' 0.73-0.79 and the
 0.59 that independent phases give: the clocks' conditions, the AHP unit with spikelets and 95% of its irregularity
 shared at flies' coupling with MN5 coupled like a weak pair (dlm_splay_check6.py) and uncoupled (dlm_splay_check4.py),
 and the first runs' coupling at about half flies' (dlm_splay_check2.py).
@@ -152,7 +152,7 @@ def figure(theme: str, d2: dict, runs: dict, splay: list) -> str:
     }}
     {" ".join(keyframes)}
     """
-    title = "Five flight motor neurons as dots on clock faces: uncoupled they drift independently, with flies' measured coupling they spread round the cycle, with spikelets they bunch; and the splayness of every condition run"
+    title = "Five flight motor neurons as dots on clock faces: uncoupled they drift independently, with flies' measured coupling they spread round the cycle, with spikelets they bunch; and the splayness of selected conditions"
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")
