@@ -1,0 +1,369 @@
+{
+ "question": "Exploratory probe, not pre-registered and not a change to the model: does driving the song command neuron pIP10, in\nrung 6's brain, make the wing steering motor neurons fire in volleys spaced like flies' song pulses?\n\nRung 8's song criterion is \"song pulses about 35 ms apart\". In flies at about 25 C the inter-pulse interval (IPI) is\n34-35 ms (per-fly means 31.6-39.4 ms, pooled CV 0.22, mode about 31 ms). Driving pIP10, one cholinergic descending\nneuron per side, gives near-natural IPIs that barely change with drive (33.3, 34.1 and 35.4 ms while pulses per minute\nrose elevenfold; von Philipsborn et al. 2011). pIP10 drives pulse song in decapitated flies, so the rhythm is thoracic.\nDuring pulse song the i1 and hg1-4 muscles are reliably active, b1 and b2 silent; the power muscles fire tonically\nat about 14 Hz without locking to pulses. No recording resolves what times the pulses, and no model reproduces the IPI\n(research_notes/Rung 8 flight data/courtship_song.md). The model has no wings, so a pulse has to be defined from motor\nneuron spikes.\nModel: rung6_relay.build(\"intact\") (the brain and nerve cord of rung 6's test, its biases), 8 flies, at grey. Each\ncondition drives its neurons with Poisson spikes (every event fires its neuron) for 5 s after 1 s at rest, and the\nlast 4 s are read:\n  rest            no drive\n  pIP10           both pIP10 (MaleCNS 11116, 523998) at 25, 50, 100 and 200 Hz\n  pIP10 + pMP2    with pMP2 (10765, 10930), the pulse-specific second command, at 50 and 100 Hz\nRead, with the definitions fixed here before the run:\n- each motor neuron group's rate (the steering motor neurons i1, b3, hg1-4, ps1 and MNwm35; b1 and b2, silent in\n  flies' song; the power neurons DLMn and DVMn) and the core premotor types' (dPR1, vMS12, TN1A, dMS2, vPR9, dMS9);\n- volleys: within a fly, a 5 ms window with spikes from at least 3 distinct steering motor neurons (both sides\n  together), overlapping windows merged, timed by the first spike. Trains are volleys separated by at most 65 ms\n  (Stern's rule), and IPIs are the intervals within trains. Reported: volleys per second, the IPIs' median, CV and\n  share within 30-40 ms, and train lengths; also with 2 distinct neurons instead of 3;\n- the steering motor neurons' summed spike train's autocorrelation, and the lag of its highest peak in 15-80 ms.\nRead: a drive at which volleys recur in trains at a median IPI of 30-40 ms, holding as the drive rises, is a candidate\nfor a song test. Otherwise, what the steering neurons do instead is the finding.\n\n    python experiments/song_drive_probe.py      (writes experiments/song_drive_probe.json)\n",
+ "cells": {
+  "steering": 16,
+  "control": 4,
+  "power": 24,
+  "dPR1": 2,
+  "vMS12": 18,
+  "TN1A": 22,
+  "dMS2": 20,
+  "vPR9": 9,
+  "dMS9": 2,
+  "pIP10": 2,
+  "pMP2": 2
+ },
+ "conditions": {
+  "rest": {
+   "drive_hz": 0,
+   "driven_hz": 0.0,
+   "steering_hz": {
+    "i1 MN": 1.66,
+    "b3 MN": 2.03,
+    "hg1 MN": 2.28,
+    "hg2 MN": 1.97,
+    "hg3 MN": 2.12,
+    "hg4 MN": 2.12,
+    "ps1 MN": 1.75,
+    "MNwm35": 2.23
+   },
+   "control_hz": 1.77,
+   "power_hz": 1.4,
+   "core_hz": {
+    "dPR1": 2.41,
+    "vMS12": 2.09,
+    "TN1A": 2.26,
+    "dMS2": 2.3,
+    "vPR9": 2.19,
+    "dMS9": 2.16
+   },
+   "volleys_3": {
+    "per_s": 2.75,
+    "ipi_median_ms": 11.8,
+    "ipi_cv": 0.827,
+    "ipi_share_30_40": 0.0,
+    "trains_median_length": 1.0,
+    "ipis": 6
+   },
+   "autocorr_peak_ms": [
+    22.0,
+    23.0,
+    32.0,
+    17.0,
+    78.0,
+    48.0,
+    65.0,
+    79.0
+   ],
+   "volleys_2": {
+    "per_s": 5.84,
+    "ipi_median_ms": 18.7,
+    "ipi_cv": 0.631,
+    "ipi_share_30_40": 0.178,
+    "trains_median_length": 1.0,
+    "ipis": 45
+   }
+  },
+  "pIP10 25 Hz": {
+   "drive_hz": 25,
+   "driven_hz": 26.6,
+   "steering_hz": {
+    "i1 MN": 2.11,
+    "b3 MN": 4.31,
+    "hg1 MN": 1.64,
+    "hg2 MN": 1.39,
+    "hg3 MN": 5.8,
+    "hg4 MN": 3.34,
+    "ps1 MN": 2.34,
+    "MNwm35": 0.98
+   },
+   "control_hz": 1.41,
+   "power_hz": 0.92,
+   "core_hz": {
+    "dPR1": 21.28,
+    "vMS12": 7.58,
+    "TN1A": 17.85,
+    "dMS2": 9.35,
+    "vPR9": 19.64,
+    "dMS9": 8.58
+   },
+   "volleys_3": {
+    "per_s": 3.47,
+    "ipi_median_ms": 44.3,
+    "ipi_cv": 0.527,
+    "ipi_share_30_40": 0.062,
+    "trains_median_length": 1.0,
+    "ipis": 16
+   },
+   "autocorr_peak_ms": [
+    78.0,
+    72.0,
+    52.0,
+    48.0,
+    18.0,
+    70.0,
+    16.0,
+    15.0
+   ],
+   "volleys_2": {
+    "per_s": 9.47,
+    "ipi_median_ms": 31.8,
+    "ipi_cv": 0.564,
+    "ipi_share_30_40": 0.124,
+    "trains_median_length": 1.0,
+    "ipis": 113
+   }
+  },
+  "pIP10 50 Hz": {
+   "drive_hz": 50,
+   "driven_hz": 50.1,
+   "steering_hz": {
+    "i1 MN": 2.17,
+    "b3 MN": 4.81,
+    "hg1 MN": 1.5,
+    "hg2 MN": 1.59,
+    "hg3 MN": 5.42,
+    "hg4 MN": 3.61,
+    "ps1 MN": 2.72,
+    "MNwm35": 0.66
+   },
+   "control_hz": 1.05,
+   "power_hz": 1.07,
+   "core_hz": {
+    "dPR1": 31.08,
+    "vMS12": 7.29,
+    "TN1A": 26.46,
+    "dMS2": 9.57,
+    "vPR9": 29.21,
+    "dMS9": 8.23
+   },
+   "volleys_3": {
+    "per_s": 3.53,
+    "ipi_median_ms": 31.7,
+    "ipi_cv": 0.623,
+    "ipi_share_30_40": 0.067,
+    "trains_median_length": 1.0,
+    "ipis": 15
+   },
+   "autocorr_peak_ms": [
+    69.0,
+    64.0,
+    55.0,
+    78.0,
+    48.0,
+    73.0,
+    74.0,
+    64.0
+   ],
+   "volleys_2": {
+    "per_s": 10.16,
+    "ipi_median_ms": 35.9,
+    "ipi_cv": 0.545,
+    "ipi_share_30_40": 0.102,
+    "trains_median_length": 1.0,
+    "ipis": 128
+   }
+  },
+  "pIP10 100 Hz": {
+   "drive_hz": 100,
+   "driven_hz": 101.3,
+   "steering_hz": {
+    "i1 MN": 1.95,
+    "b3 MN": 4.86,
+    "hg1 MN": 1.16,
+    "hg2 MN": 1.3,
+    "hg3 MN": 4.17,
+    "hg4 MN": 3.38,
+    "ps1 MN": 1.94,
+    "MNwm35": 0.41
+   },
+   "control_hz": 0.77,
+   "power_hz": 1.65,
+   "core_hz": {
+    "dPR1": 47.53,
+    "vMS12": 7.52,
+    "TN1A": 41.67,
+    "dMS2": 9.46,
+    "vPR9": 47.19,
+    "dMS9": 8.42
+   },
+   "volleys_3": {
+    "per_s": 2.25,
+    "ipi_median_ms": 39.4,
+    "ipi_cv": 0.317,
+    "ipi_share_30_40": 0.4,
+    "trains_median_length": 1.0,
+    "ipis": 5
+   },
+   "autocorr_peak_ms": [
+    60.0,
+    27.0,
+    21.0,
+    48.0,
+    46.0,
+    67.0,
+    72.0,
+    79.0
+   ],
+   "volleys_2": {
+    "per_s": 7.81,
+    "ipi_median_ms": 33.0,
+    "ipi_cv": 0.522,
+    "ipi_share_30_40": 0.208,
+    "trains_median_length": 1.0,
+    "ipis": 77
+   }
+  },
+  "pIP10 200 Hz": {
+   "drive_hz": 200,
+   "driven_hz": 198.3,
+   "steering_hz": {
+    "i1 MN": 1.47,
+    "b3 MN": 4.36,
+    "hg1 MN": 1.17,
+    "hg2 MN": 1.45,
+    "hg3 MN": 2.67,
+    "hg4 MN": 3.38,
+    "ps1 MN": 1.8,
+    "MNwm35": 0.22
+   },
+   "control_hz": 0.7,
+   "power_hz": 1.67,
+   "core_hz": {
+    "dPR1": 72.56,
+    "vMS12": 6.2,
+    "TN1A": 63.93,
+    "dMS2": 8.36,
+    "vPR9": 73.04,
+    "dMS9": 7.33
+   },
+   "volleys_3": {
+    "per_s": 1.5,
+    "ipi_median_ms": 40.1,
+    "ipi_cv": 0.237,
+    "ipi_share_30_40": 0.0,
+    "trains_median_length": 1.0,
+    "ipis": 3
+   },
+   "autocorr_peak_ms": [
+    52.0,
+    66.0,
+    70.0,
+    17.0,
+    49.0,
+    73.0,
+    58.0,
+    63.0
+   ],
+   "volleys_2": {
+    "per_s": 6.44,
+    "ipi_median_ms": 31.3,
+    "ipi_cv": 0.565,
+    "ipi_share_30_40": 0.079,
+    "trains_median_length": 1.0,
+    "ipis": 63
+   }
+  },
+  "pIP10 + pMP2 50 Hz": {
+   "drive_hz": 50,
+   "driven_hz": 50.3,
+   "steering_hz": {
+    "i1 MN": 1.11,
+    "b3 MN": 2.92,
+    "hg1 MN": 1.45,
+    "hg2 MN": 1.33,
+    "hg3 MN": 4.61,
+    "hg4 MN": 2.94,
+    "ps1 MN": 2.62,
+    "MNwm35": 0.61
+   },
+   "control_hz": 0.87,
+   "power_hz": 1.37,
+   "core_hz": {
+    "dPR1": 56.22,
+    "vMS12": 7.17,
+    "TN1A": 30.14,
+    "dMS2": 8.85,
+    "vPR9": 36.51,
+    "dMS9": 9.62
+   },
+   "volleys_3": {
+    "per_s": 1.66,
+    "ipi_median_ms": 42.1,
+    "ipi_cv": 0.609,
+    "ipi_share_30_40": 0.0,
+    "trains_median_length": 1.0,
+    "ipis": 3
+   },
+   "autocorr_peak_ms": [
+    73.0,
+    44.0,
+    19.0,
+    42.0,
+    62.0,
+    47.0,
+    66.0,
+    68.0
+   ],
+   "volleys_2": {
+    "per_s": 7.22,
+    "ipi_median_ms": 36.4,
+    "ipi_cv": 0.495,
+    "ipi_share_30_40": 0.11,
+    "trains_median_length": 1.0,
+    "ipis": 73
+   }
+  },
+  "pIP10 + pMP2 100 Hz": {
+   "drive_hz": 100,
+   "driven_hz": 97.7,
+   "steering_hz": {
+    "i1 MN": 0.73,
+    "b3 MN": 2.33,
+    "hg1 MN": 1.03,
+    "hg2 MN": 1.17,
+    "hg3 MN": 3.27,
+    "hg4 MN": 2.73,
+    "ps1 MN": 1.61,
+    "MNwm35": 0.14
+   },
+   "control_hz": 0.51,
+   "power_hz": 1.59,
+   "core_hz": {
+    "dPR1": 81.75,
+    "vMS12": 4.87,
+    "TN1A": 45.11,
+    "dMS2": 7.07,
+    "vPR9": 56.76,
+    "dMS9": 8.98
+   },
+   "volleys_3": {
+    "per_s": 0.84,
+    "ipi_median_ms": 56.7,
+    "ipi_cv": null,
+    "ipi_share_30_40": 0.0,
+    "trains_median_length": 1.0,
+    "ipis": 1
+   },
+   "autocorr_peak_ms": [
+    67.0,
+    34.0,
+    71.0,
+    31.0,
+    50.0,
+    39.0,
+    64.0,
+    64.0
+   ],
+   "volleys_2": {
+    "per_s": 4.09,
+    "ipi_median_ms": 33.8,
+    "ipi_cv": 0.485,
+    "ipi_share_30_40": 0.263,
+    "trains_median_length": 1.0,
+    "ipis": 19
+   }
+  }
+ },
+ "seconds": 151
+}

@@ -26,6 +26,27 @@ Read, with the definitions fixed here before the run:
 Read: a drive at which volleys recur in trains at a median IPI of 30-40 ms, holding as the drive rises, is a candidate
 for a song test. Otherwise, what the steering neurons do instead is the finding.
 
+Ran (2026-10-11, 151 s): no song. Driving pIP10 recruits part of the song circuit's core but not the steering motor
+neurons.
+- At rest the steering motor neurons fire at 1.7-2.3 Hz (the whole-brain calibration's rate). They fall into volleys of
+  at least 3 within 5 ms 2.75 times a second, more than chance, so their resting input is correlated.
+- pIP10 at 25-200 Hz drives dPR1 to 21-73 Hz, TN1A to 18-64 Hz and the GABAergic vPR9 to 20-73 Hz. vMS12, dMS2 and
+  dMS9 stay at 6-10 Hz, about their resting rates. dMS2 and vMS12 are the steering motor neurons' largest core inputs
+  (onto hg1-4, MNwm35 and ps1).
+- The steering motor neurons barely change. b3, hg3 and hg4 rise to 3-6 Hz, i1, hg1, hg2 and ps1 stay at 1-3 Hz, and
+  MNwm35 falls (to 0.2 Hz). Volleys get rarer as the drive rises (3.5 a second at 25-50 Hz, 1.5 at 200 Hz), and they
+  don't form trains (median train length 1).
+- The few IPIs within 65 ms (3-16 per condition with 3 neurons) have medians of 31-44 ms. A Poisson series of volleys
+  at these rates, cut at 65 ms, gives about 27-29 ms. With 2 neurons the medians are 31-36 ms from 63-128 IPIs, with
+  8-21% of them within 30-40 ms (Poisson about 15%). So the near-flies' medians are the 65 ms rule, not a rhythm. The
+  summed train's autocorrelation peaks scatter over 15-79 ms.
+- Adding pMP2 drives dPR1 to 56-82 Hz, and the volleys get rarer still (1.7 and 0.8 a second).
+- b1 and b2 fall from 1.8 to 0.5-1.4 Hz; the power motor neurons stay at about 1-1.7 Hz.
+So in rung 6's brain pIP10 reaches dPR1, TN1A and vPR9, but not dMS2 and vMS12, which carry most of the core's input
+to the steering motor neurons, and those neurons stay near the calibration's resting rate. In flies dMS2 may act
+largely through electrical synapses (courtship_song.md, summary 11), which the model doesn't have there, and vPR9's
+GABA may hold the motor neurons down. A song test needs the nerve cord's song circuit to answer pIP10 first.
+
     python experiments/song_drive_probe.py      (writes experiments/song_drive_probe.json)
 """
 from __future__ import annotations
