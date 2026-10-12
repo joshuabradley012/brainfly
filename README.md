@@ -65,9 +65,10 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     ([`dlm_drive_probe.py`](experiments/dlm_drive_probe.py)). And driving the song command neuron pIP10 at up to 200 Hz
     makes no song ([`song_drive_probe.py`](experiments/song_drive_probe.py),
     [notes](research_notes/Rung%208%20flight%20data/courtship_song.md)). It drives the song circuit's dPR1, TN1A and
-    vPR9 to up to 73 Hz, but not dMS2 and vMS12, the steering motor neurons' main inputs, and those motor neurons stay
-    near their resting 1–6 Hz with no pulse trains (flies: pulses 34–35 ms apart). The nerve cord's flight and song
-    circuits need a fly-like resting state and recruitment first, rung 5's open question.
+    vPR9 to up to 73 Hz, but not dMS2 and vMS12, the steering motor neurons' main inputs, though MaleCNS gives strong
+    chemical paths to both (TN1A onto dMS2 is 7,913 synapses). The motor neurons stay near their resting 1–6 Hz with no
+    pulse trains (flies: pulses 34–35 ms apart). The nerve cord's flight and song circuits need a fly-like resting
+    state and recruitment first, rung 5's open question.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/dlm_splay-dark.svg">

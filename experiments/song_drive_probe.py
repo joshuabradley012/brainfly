@@ -47,6 +47,15 @@ to the steering motor neurons, and those neurons stay near the calibration's res
 largely through electrical synapses (courtship_song.md, summary 11), which the model doesn't have there, and vPR9's
 GABA may hold the motor neurons down. A song test needs the nerve cord's song circuit to answer pIP10 first.
 
+Checked afterwards (2026-10-11, MaleCNS counts): the connectome gives pIP10 strong chemical paths to both.
+- pIP10 -> TN1A has 3,440 synapses, and TN1A -> dMS2 7,913, dMS2's largest input.
+- pIP10 -> dPR1 has 1,112, dPR1 -> dMS9 822, and dMS9 -> vMS12 7,415, vMS12's largest.
+So the missing recruitment isn't a missing path; it is in how the model's nerve cord transmits along these paths.
+TN1A at 64 Hz leaves dMS2 near rest, and dPR1 at 73 Hz leaves dMS9 near rest. dMS2's input synapses are 49% from
+neurons brainfly's sign rule makes inhibitory (GABA or glutamate), and vMS12's 53%. The recipe also scales each neuron's
+input by its size, and the calibration holds each group near its resting target. Electrical synapses in flies may add
+to this, but the model lacks transmission along chemical paths that exist.
+
     python experiments/song_drive_probe.py      (writes experiments/song_drive_probe.json)
 """
 from __future__ import annotations
