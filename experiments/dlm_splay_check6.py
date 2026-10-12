@@ -65,6 +65,11 @@ Correction (2026-10-11, review 11):
 - "No pair passes all three" holds for "LIF, MN5 assumed" and the AHP condition; in "LIF, MN5 as weak pairs", MN3-MN5
   passes. Flies' per-fly ranges exist only for r (every pair) and for dip10 on the strong pairs and MN4-MN5.
 
+Correction (2026-10-12, review 12): "in review 11's exploratory reruns MN5's pairs come inside flies' ranges only with
+MN5 running about 1.2 times MN1-4" inherits a confound. Those reruns raised MN5's drive and kept its kicks, which made MN5
+more regular as it fired faster. dlm_splay_check7.py did the same (MN5's CV 0.158 at 1.26 times, against MN1-4's
+0.25-0.26). dlm_splay_check10.py runs the ratios with each unit's kicks set for its own rate.
+
     python experiments/dlm_splay_check6.py      (writes experiments/dlm_splay_check6.json)
 """
 from __future__ import annotations

@@ -19,6 +19,26 @@ Read: if MN5's pairs come inside flies' ranges (within 10 ms 0.34-0.58 times cha
 or 1.26 times with MN5's CV within 0.05 of MN1-4's, the rate ratio is enough. If they don't, check 7's fit came from MN5's
 regularity, and the MN5 shortfall found in review 11 stands at flies' rate ratios.
 
+Ran (2026-10-12, 3 minutes): once MN5 is as irregular as the others, its pairs stay outside flies' ranges at every rate
+ratio, and move away from flies' as MN5 speeds up. By the reading, dlm_splay_check7.py's fit at 1.26 times came from
+MN5's regularity, and the MN5 shortfall stands at flies' rate ratios.
+- Kicks for a CV of 0.22, uncoupled: 9.17 a second at 6.3 Hz, 13.34 at 6.93 and 23.93 at 7.938 (dlm_splay_check2.py's
+  10.80 at 6.6). All three conditions calibrated within 2% (MN1-4 6.27-6.38 Hz; MN5 6.29, 6.89 and 7.94).
+- In the main runs MN1-4's CVs were 0.225-0.239 and MN5's 0.259, 0.259 and 0.237, within 0.05 of MN1-4's at every
+  ratio.
+- MN5's pairs (flies: within 10 ms 0.34-0.58 times chance, MN4-MN5 dip10 0.016-0.097):
+  - at 1.0 times, within 10 ms 0.585-0.620 and dip10 0.101-0.108 (MN4-MN5 0.104);
+  - at 1.10, 0.625-0.639 and 0.107-0.112 (0.112);
+  - at 1.26, 0.630-0.682 and 0.115-0.121 (0.117).
+- Splayness 0.749, 0.744 and 0.736 (flies 0.73-0.79); preferred orders 61-62%; 25% of windows with a repeat (flies
+  5-20%).
+- Weak MN1-4 pairs: within 10 ms 0.44-0.52 times chance and dip10 0.080-0.087 (flies 0.16-0.31 and 0.030-0.056).
+- Strong pairs: within 10 ms 0.24-0.34, dip10 0.029-0.040, r 0.30-0.32. Flies' two pairs: 0.05 and 0.20, 0.006 and
+  0.025, 0.336 and 0.394.
+So with every unit about as irregular as flies', leaky integrators at flies' coupling have flies' splayness, but none of
+the three kinds of pair falls inside flies' ranges. The strong pairs come closest, and the weak pairs and MN5's fire
+together more often than flies'.
+
     python experiments/dlm_splay_check10.py      (writes experiments/dlm_splay_check10.json)
 """
 from __future__ import annotations

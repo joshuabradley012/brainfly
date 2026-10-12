@@ -29,6 +29,23 @@ conditions calibrated within 2% (MN1-4 at 6.29-6.32 Hz, MN5 at 6.93 and 7.93).
 So with MN5 at the top of flies' rate range its pairs fit flies'. At flies' median ratio they don't, so it is a
 boundary result. The weakly coupled pairs' shortfall doesn't depend on MN5's rate.
 
+Correction (2026-10-12, review 12):
+- The two conditions changed MN5's regularity along with its rate. The kicks were dlm_splay_check2.py's, set for a CV of
+  0.22 at 6.6 Hz. So in the main runs MN5's CV was 0.158 at 1.26 times and 0.225 at 1.10, while MN1-4's was
+  0.251-0.263 at 6.3 Hz (dlm_splay_check6.py: MN1-4 0.219-0.224, MN5 0.258).
+- So the fit at 1.26 times came with MN5 far more regular than the others. Flies' five fire with similar CVs (0.22 ±
+  0.07 for each MN; research_notes/Rung 8 flight data/dlm_splay_state.md, section 1.2). "With MN5 at the top of flies'
+  rate range its pairs fit flies'" doesn't follow. dlm_splay_check10.py runs both ratios with each unit's kicks set for
+  its own rate.
+- The strong pairs' rise from check 6 (within 10 ms 0.23 to 0.35-0.40 times chance) came with MN1-4's CV rising from
+  0.22 to 0.25-0.26, as well as with their rate (6.6 to 6.3 Hz).
+- "As in dlm_splay_check6.py (dip10 0.09-0.10, within 10 ms 0.50-0.59)": those are this check's ranges. Check 6's weak
+  pairs are at dip10 0.086-0.094 and within 10 ms 0.50-0.52.
+- "The strong pairs keep flies' r (0.33-0.35)": at 1.26 times MN1-MN2's r is 0.332, just below flies' 0.336-0.394
+  (inside the per-fly range).
+- "Inside flies' ranges" holds against flies' MN5 pairs as a class (0.34-0.58). MN4-MN5's own recordings give 0.28
+  (0.10-0.42; the notes' section 2.5: 0.029 against a chance of 0.105), which 0.44 exceeds.
+
     python experiments/dlm_splay_check7.py      (writes experiments/dlm_splay_check7.json)
 """
 from __future__ import annotations

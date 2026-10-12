@@ -1,0 +1,1915 @@
+{
+ "question": "Exploratory check, written after review 12 and before it runs, not pre-registered and not a change to the model:\ndlm_splay_check7.py with each unit's irregularity set for its own rate.\n\ndlm_splay_check7.py ran MN5 at 1.10 and 1.26 times MN1-4's 6.3 Hz, with every unit's kicks as dlm_splay_check2.py set\nthem for a CV of 0.22 at 6.6 Hz. Review 12 found that this changed MN5's regularity along with its rate. In the main runs\nMN5's CV was 0.158 at 1.26 times and 0.225 at 1.10, against MN1-4's 0.25-0.26. So the fit at 1.26 times came with MN5\nfar more regular than the others, which flies don't show: their five fire \"with similar variance in the ISI (CV 0.22 \u00b1\n0.07 for each MN)\" (research_notes/Rung 8 flight data/dlm_splay_state.md, section 1.2).\nModel: dlm_splay_check7.py's (dlm_splay_check6.py's \"LIF, MN5 assumed\": the leaky integrator, flies' coupling as 20 ms\npeak ratios, MN5's junctions at the assumed CC 0.0075, no spikelets), MN1-4 targeted at 6.3 Hz and MN5 at 1.0, 1.10 or\n1.26 times that (6.3, 6.93 and 7.938 Hz). Each unit's kicks (0.1 mV) are set as dlm_splay_check2.py set them, but for\nits own rate: an uncoupled unit at its target rate gets a CV of 0.22, with the kick rate found by bisection (16 steps,\ngeometric) and, at each, the bias for the rate (18 steps; 8 runs of 60 s). The coupled drives are then found as in\ndlm_splay_check7.py, in two passes (plus or minus 3 mV, then 0.05 mV) on 8 runs of 60 s. Each unit must end within 2% of\nits target, or the condition is reported as failing calibration.\nMeasured as dlm_splay_check6.py measures (8 runs of 300 s after 3 s, seeds 5100 + 10 x condition), with each unit's rate\nand CV, and the ten pairs against flies'.\nRead: if MN5's pairs come inside flies' ranges (within 10 ms 0.34-0.58 times chance, MN4-MN5 dip10 0.016-0.097) at 1.10\nor 1.26 times with MN5's CV within 0.05 of MN1-4's, the rate ratio is enough. If they don't, check 7's fit came from MN5's\nregularity, and the MN5 shortfall found in review 11 stands at flies' rate ratios.\n\n    python experiments/dlm_splay_check10.py      (writes experiments/dlm_splay_check10.json)\n",
+ "flies_pairs": {
+  "strong": {
+   "r": [
+    0.336,
+    0.394
+   ],
+   "dip10": [
+    0.006,
+    0.025
+   ],
+   "within_10ms_over_chance": [
+    0.05,
+    0.2
+   ]
+  },
+  "weak": {
+   "r": [
+    0.598,
+    0.666
+   ],
+   "dip10": [
+    0.03,
+    0.056
+   ],
+   "within_10ms_over_chance": [
+    0.16,
+    0.31
+   ]
+  },
+  "mn5": {
+   "r": [
+    0.57,
+    0.621
+   ],
+   "dip10": [
+    0.063,
+    0.141
+   ],
+   "within_10ms_over_chance": [
+    0.34,
+    0.58
+   ]
+  }
+ },
+ "kicks": {
+  "6.3": {
+   "target_hz": 6.3,
+   "target_cv": 0.22,
+   "chosen": {
+    "kick_hz": 9.174,
+    "bias_mv": 7.00071,
+    "rate_hz": 6.3,
+    "isi_cv": 0.2202
+   },
+   "trail": [
+    {
+     "kick_hz": 63.246,
+     "bias_mv": 6.80243,
+     "rate_hz": 6.301,
+     "isi_cv": 0.3719
+    },
+    {
+     "kick_hz": 3.557,
+     "bias_mv": 7.00281,
+     "rate_hz": 6.31,
+     "isi_cv": 0.1234
+    },
+    {
+     "kick_hz": 14.998,
+     "bias_mv": 7.00004,
+     "rate_hz": 6.558,
+     "isi_cv": 0.3091
+    },
+    {
+     "kick_hz": 7.303,
+     "bias_mv": 7.00138,
+     "rate_hz": 6.324,
+     "isi_cv": 0.184
+    },
+    {
+     "kick_hz": 10.466,
+     "bias_mv": 7.00041,
+     "rate_hz": 6.257,
+     "isi_cv": 0.2538
+    },
+    {
+     "kick_hz": 8.743,
+     "bias_mv": 7.0009,
+     "rate_hz": 6.32,
+     "isi_cv": 0.209
+    },
+    {
+     "kick_hz": 9.566,
+     "bias_mv": 7.00061,
+     "rate_hz": 6.28,
+     "isi_cv": 0.2319
+    },
+    {
+     "kick_hz": 9.145,
+     "bias_mv": 7.00081,
+     "rate_hz": 6.336,
+     "isi_cv": 0.2158
+    },
+    {
+     "kick_hz": 9.353,
+     "bias_mv": 7.00071,
+     "rate_hz": 6.326,
+     "isi_cv": 0.2218
+    },
+    {
+     "kick_hz": 9.248,
+     "bias_mv": 7.00069,
+     "rate_hz": 6.268,
+     "isi_cv": 0.2263
+    },
+    {
+     "kick_hz": 9.197,
+     "bias_mv": 7.00071,
+     "rate_hz": 6.303,
+     "isi_cv": 0.2204
+    },
+    {
+     "kick_hz": 9.171,
+     "bias_mv": 7.0008,
+     "rate_hz": 6.338,
+     "isi_cv": 0.2159
+    },
+    {
+     "kick_hz": 9.184,
+     "bias_mv": 7.00071,
+     "rate_hz": 6.302,
+     "isi_cv": 0.2203
+    },
+    {
+     "kick_hz": 9.177,
+     "bias_mv": 7.0007,
+     "rate_hz": 6.255,
+     "isi_cv": 0.2254
+    },
+    {
+     "kick_hz": 9.174,
+     "bias_mv": 7.00071,
+     "rate_hz": 6.3,
+     "isi_cv": 0.2202
+    },
+    {
+     "kick_hz": 9.172,
+     "bias_mv": 7.0008,
+     "rate_hz": 6.338,
+     "isi_cv": 0.2159
+    }
+   ]
+  },
+  "6.93": {
+   "target_hz": 6.93,
+   "target_cv": 0.22,
+   "chosen": {
+    "kick_hz": 13.337,
+    "bias_mv": 7.00119,
+    "rate_hz": 6.931,
+    "isi_cv": 0.2197
+   },
+   "trail": [
+    {
+     "kick_hz": 63.246,
+     "bias_mv": 6.8247,
+     "rate_hz": 6.93,
+     "isi_cv": 0.325
+    },
+    {
+     "kick_hz": 3.557,
+     "bias_mv": 7.00711,
+     "rate_hz": 6.938,
+     "isi_cv": 0.0919
+    },
+    {
+     "kick_hz": 14.998,
+     "bias_mv": 7.00071,
+     "rate_hz": 6.951,
+     "isi_cv": 0.2398
+    },
+    {
+     "kick_hz": 7.303,
+     "bias_mv": 7.00442,
+     "rate_hz": 6.913,
+     "isi_cv": 0.1425
+    },
+    {
+     "kick_hz": 10.466,
+     "bias_mv": 7.00261,
+     "rate_hz": 6.924,
+     "isi_cv": 0.1811
+    },
+    {
+     "kick_hz": 12.529,
+     "bias_mv": 7.00157,
+     "rate_hz": 6.942,
+     "isi_cv": 0.2069
+    },
+    {
+     "kick_hz": 13.708,
+     "bias_mv": 7.00109,
+     "rate_hz": 6.94,
+     "isi_cv": 0.2235
+    },
+    {
+     "kick_hz": 13.105,
+     "bias_mv": 7.00129,
+     "rate_hz": 6.932,
+     "isi_cv": 0.2163
+    },
+    {
+     "kick_hz": 13.403,
+     "bias_mv": 7.00117,
+     "rate_hz": 6.911,
+     "isi_cv": 0.2227
+    },
+    {
+     "kick_hz": 13.253,
+     "bias_mv": 7.00127,
+     "rate_hz": 6.92,
+     "isi_cv": 0.2192
+    },
+    {
+     "kick_hz": 13.328,
+     "bias_mv": 7.00128,
+     "rate_hz": 6.954,
+     "isi_cv": 0.2171
+    },
+    {
+     "kick_hz": 13.365,
+     "bias_mv": 7.00118,
+     "rate_hz": 6.908,
+     "isi_cv": 0.2226
+    },
+    {
+     "kick_hz": 13.347,
+     "bias_mv": 7.00117,
+     "rate_hz": 6.904,
+     "isi_cv": 0.2224
+    },
+    {
+     "kick_hz": 13.337,
+     "bias_mv": 7.00119,
+     "rate_hz": 6.931,
+     "isi_cv": 0.2197
+    },
+    {
+     "kick_hz": 13.342,
+     "bias_mv": 7.00118,
+     "rate_hz": 6.903,
+     "isi_cv": 0.2223
+    },
+    {
+     "kick_hz": 13.34,
+     "bias_mv": 7.00119,
+     "rate_hz": 6.931,
+     "isi_cv": 0.2197
+    }
+   ]
+  },
+  "7.938": {
+   "target_hz": 7.938,
+   "target_cv": 0.22,
+   "chosen": {
+    "kick_hz": 23.932,
+    "bias_mv": 7.00156,
+    "rate_hz": 7.938,
+    "isi_cv": 0.2194
+   },
+   "trail": [
+    {
+     "kick_hz": 63.246,
+     "bias_mv": 6.86791,
+     "rate_hz": 7.94,
+     "isi_cv": 0.2639
+    },
+    {
+     "kick_hz": 3.557,
+     "bias_mv": 7.0205,
+     "rate_hz": 7.942,
+     "isi_cv": 0.0642
+    },
+    {
+     "kick_hz": 14.998,
+     "bias_mv": 7.00844,
+     "rate_hz": 7.934,
+     "isi_cv": 0.1488
+    },
+    {
+     "kick_hz": 30.799,
+     "bias_mv": 6.97249,
+     "rate_hz": 7.936,
+     "isi_cv": 0.2639
+    },
+    {
+     "kick_hz": 21.492,
+     "bias_mv": 7.00317,
+     "rate_hz": 7.938,
+     "isi_cv": 0.1958
+    },
+    {
+     "kick_hz": 25.728,
+     "bias_mv": 7.0006,
+     "rate_hz": 7.934,
+     "isi_cv": 0.2428
+    },
+    {
+     "kick_hz": 23.515,
+     "bias_mv": 7.00176,
+     "rate_hz": 7.935,
+     "isi_cv": 0.2151
+    },
+    {
+     "kick_hz": 24.597,
+     "bias_mv": 7.00117,
+     "rate_hz": 7.931,
+     "isi_cv": 0.2275
+    },
+    {
+     "kick_hz": 24.05,
+     "bias_mv": 7.00147,
+     "rate_hz": 7.934,
+     "isi_cv": 0.2214
+    },
+    {
+     "kick_hz": 23.781,
+     "bias_mv": 7.00157,
+     "rate_hz": 7.94,
+     "isi_cv": 0.218
+    },
+    {
+     "kick_hz": 23.915,
+     "bias_mv": 7.00157,
+     "rate_hz": 7.951,
+     "isi_cv": 0.2178
+    },
+    {
+     "kick_hz": 23.982,
+     "bias_mv": 7.00146,
+     "rate_hz": 7.928,
+     "isi_cv": 0.2214
+    },
+    {
+     "kick_hz": 23.948,
+     "bias_mv": 7.00146,
+     "rate_hz": 7.927,
+     "isi_cv": 0.2215
+    },
+    {
+     "kick_hz": 23.932,
+     "bias_mv": 7.00156,
+     "rate_hz": 7.938,
+     "isi_cv": 0.2194
+    },
+    {
+     "kick_hz": 23.94,
+     "bias_mv": 7.00148,
+     "rate_hz": 7.939,
+     "isi_cv": 0.2194
+    },
+    {
+     "kick_hz": 23.944,
+     "bias_mv": 7.00147,
+     "rate_hz": 7.933,
+     "isi_cv": 0.2204
+    }
+   ]
+  }
+ },
+ "conditions": {
+  "LIF, MN5 at 1.00 x MN1-4, own kicks": {
+   "summary": {
+    "splayness": [
+     0.7486,
+     0.7453,
+     0.7512
+    ],
+    "r_mn4_mn5": [
+     0.5879,
+     0.5723,
+     0.597
+    ],
+    "dip10": [
+     0.1036,
+     0.0979,
+     0.1069
+    ],
+    "preferred_order_share": [
+     0.6208,
+     0.599,
+     0.6321
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.688,
+     0.633,
+     0.718
+    ],
+    "rate_hz": 6.33,
+    "isi_cv": 0.233,
+    "mn2_in_mn1": [
+     0.5,
+     0.661
+    ],
+    "preferred_share_of_complete": [
+     0.8272,
+     0.8118,
+     0.8376
+    ],
+    "repeat_share": 0.2477,
+    "mn4_in_mn3": [
+     0.504,
+     0.672
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      6.27,
+      6.32,
+      6.36,
+      6.3,
+      6.32
+     ],
+     "isi_cv": [
+      0.228,
+      0.221,
+      0.219,
+      0.229,
+      0.259
+     ],
+     "splayness": 0.75,
+     "r_mn4_mn5": 0.5874,
+     "dip10": 0.1018,
+     "mn2_in_mn1": [
+      0.501,
+      0.658
+     ],
+     "mn4_in_mn3": [
+      0.512,
+      0.676
+     ],
+     "orders": {
+      "1234": 0.0314,
+      "1243": 0.045,
+      "1324": 0.3072,
+      "1342": 0.0296,
+      "1423": 0.3024,
+      "1432": 0.0353,
+      "rest": 0.2491
+     },
+     "preferred_order_share": 0.6096,
+     "coincidence_vs_chance_3ms": 0.633,
+     "preferred_share_of_complete": 0.8118
+    },
+    {
+     "rate_hz": [
+      6.3,
+      6.4,
+      6.35,
+      6.22,
+      6.39
+     ],
+     "isi_cv": [
+      0.223,
+      0.226,
+      0.22,
+      0.23,
+      0.259
+     ],
+     "splayness": 0.7474,
+     "r_mn4_mn5": 0.5855,
+     "dip10": 0.1054,
+     "mn2_in_mn1": [
+      0.5,
+      0.648
+     ],
+     "mn4_in_mn3": [
+      0.503,
+      0.682
+     ],
+     "orders": {
+      "1234": 0.0329,
+      "1243": 0.0359,
+      "1324": 0.3072,
+      "1342": 0.0319,
+      "1423": 0.314,
+      "1432": 0.0304,
+      "rest": 0.2477
+     },
+     "preferred_order_share": 0.6212,
+     "coincidence_vs_chance_3ms": 0.718,
+     "preferred_share_of_complete": 0.8257
+    },
+    {
+     "rate_hz": [
+      6.29,
+      6.37,
+      6.36,
+      6.27,
+      6.37
+     ],
+     "isi_cv": [
+      0.216,
+      0.214,
+      0.216,
+      0.225,
+      0.26
+     ],
+     "splayness": 0.7512,
+     "r_mn4_mn5": 0.589,
+     "dip10": 0.0994,
+     "mn2_in_mn1": [
+      0.498,
+      0.685
+     ],
+     "mn4_in_mn3": [
+      0.504,
+      0.669
+     ],
+     "orders": {
+      "1234": 0.0332,
+      "1243": 0.033,
+      "1324": 0.3381,
+      "1342": 0.0334,
+      "1423": 0.294,
+      "1432": 0.0301,
+      "rest": 0.2383
+     },
+     "preferred_order_share": 0.6321,
+     "coincidence_vs_chance_3ms": 0.658,
+     "preferred_share_of_complete": 0.8299
+    },
+    {
+     "rate_hz": [
+      6.25,
+      6.38,
+      6.37,
+      6.26,
+      6.35
+     ],
+     "isi_cv": [
+      0.227,
+      0.223,
+      0.225,
+      0.234,
+      0.259
+     ],
+     "splayness": 0.7487,
+     "r_mn4_mn5": 0.5723,
+     "dip10": 0.1003,
+     "mn2_in_mn1": [
+      0.5,
+      0.665
+     ],
+     "mn4_in_mn3": [
+      0.507,
+      0.685
+     ],
+     "orders": {
+      "1234": 0.0285,
+      "1243": 0.0312,
+      "1324": 0.3304,
+      "1342": 0.0318,
+      "1423": 0.2997,
+      "1432": 0.0308,
+      "rest": 0.2477
+     },
+     "preferred_order_share": 0.6301,
+     "coincidence_vs_chance_3ms": 0.685,
+     "preferred_share_of_complete": 0.8376
+    },
+    {
+     "rate_hz": [
+      6.31,
+      6.34,
+      6.38,
+      6.24,
+      6.41
+     ],
+     "isi_cv": [
+      0.231,
+      0.228,
+      0.23,
+      0.236,
+      0.259
+     ],
+     "splayness": 0.7453,
+     "r_mn4_mn5": 0.5885,
+     "dip10": 0.1057,
+     "mn2_in_mn1": [
+      0.507,
+      0.661
+     ],
+     "mn4_in_mn3": [
+      0.503,
+      0.673
+     ],
+     "orders": {
+      "1234": 0.0376,
+      "1243": 0.0257,
+      "1324": 0.2906,
+      "1342": 0.0351,
+      "1423": 0.3084,
+      "1432": 0.04,
+      "rest": 0.2625
+     },
+     "preferred_order_share": 0.599,
+     "coincidence_vs_chance_3ms": 0.663,
+     "preferred_share_of_complete": 0.8122
+    },
+    {
+     "rate_hz": [
+      6.28,
+      6.4,
+      6.39,
+      6.31,
+      6.39
+     ],
+     "isi_cv": [
+      0.232,
+      0.226,
+      0.229,
+      0.232,
+      0.273
+     ],
+     "splayness": 0.7464,
+     "r_mn4_mn5": 0.5833,
+     "dip10": 0.1069,
+     "mn2_in_mn1": [
+      0.503,
+      0.65
+     ],
+     "mn4_in_mn3": [
+      0.506,
+      0.669
+     ],
+     "orders": {
+      "1234": 0.0313,
+      "1243": 0.0336,
+      "1324": 0.3026,
+      "1342": 0.0331,
+      "1423": 0.3178,
+      "1432": 0.0301,
+      "rest": 0.2514
+     },
+     "preferred_order_share": 0.6204,
+     "coincidence_vs_chance_3ms": 0.715,
+     "preferred_share_of_complete": 0.8287
+    },
+    {
+     "rate_hz": [
+      6.27,
+      6.31,
+      6.36,
+      6.3,
+      6.37
+     ],
+     "isi_cv": [
+      0.23,
+      0.224,
+      0.238,
+      0.225,
+      0.266
+     ],
+     "splayness": 0.7498,
+     "r_mn4_mn5": 0.597,
+     "dip10": 0.0979,
+     "mn2_in_mn1": [
+      0.495,
+      0.661
+     ],
+     "mn4_in_mn3": [
+      0.502,
+      0.671
+     ],
+     "orders": {
+      "1234": 0.0316,
+      "1243": 0.0338,
+      "1324": 0.3122,
+      "1342": 0.0336,
+      "1423": 0.3167,
+      "1432": 0.0276,
+      "rest": 0.2445
+     },
+     "preferred_order_share": 0.6289,
+     "coincidence_vs_chance_3ms": 0.697,
+     "preferred_share_of_complete": 0.8324
+    },
+    {
+     "rate_hz": [
+      6.32,
+      6.34,
+      6.32,
+      6.27,
+      6.38
+     ],
+     "isi_cv": [
+      0.218,
+      0.226,
+      0.231,
+      0.229,
+      0.258
+     ],
+     "splayness": 0.7485,
+     "r_mn4_mn5": 0.5945,
+     "dip10": 0.1062,
+     "mn2_in_mn1": [
+      0.501,
+      0.664
+     ],
+     "mn4_in_mn3": [
+      0.502,
+      0.658
+     ],
+     "orders": {
+      "1234": 0.0353,
+      "1243": 0.0324,
+      "1324": 0.3175,
+      "1342": 0.0357,
+      "1423": 0.3015,
+      "1432": 0.0325,
+      "rest": 0.2452
+     },
+     "preferred_order_share": 0.619,
+     "coincidence_vs_chance_3ms": 0.691,
+     "preferred_share_of_complete": 0.8201
+    }
+   ],
+   "unit_rates_hz": [
+    6.283,
+    6.358,
+    6.363,
+    6.27,
+    6.375
+   ],
+   "unit_isi_cv": [
+    0.227,
+    0.225,
+    0.227,
+    0.229,
+    0.259
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.3122,
+     "dip10": 0.0335,
+     "within_10ms_over_chance": 0.274
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.6489,
+     "dip10": 0.0831,
+     "within_10ms_over_chance": 0.456
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.6433,
+     "dip10": 0.0807,
+     "within_10ms_over_chance": 0.4535
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.5788,
+     "dip10": 0.1016,
+     "within_10ms_over_chance": 0.62
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.6386,
+     "dip10": 0.0801,
+     "within_10ms_over_chance": 0.4405
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.6445,
+     "dip10": 0.0819,
+     "within_10ms_over_chance": 0.4835
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.5956,
+     "dip10": 0.1077,
+     "within_10ms_over_chance": 0.6045
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.3095,
+     "dip10": 0.0287,
+     "within_10ms_over_chance": 0.2395
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.5907,
+     "dip10": 0.1013,
+     "within_10ms_over_chance": 0.5885
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.5879,
+     "dip10": 0.1036,
+     "within_10ms_over_chance": 0.5845
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN4-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    }
+   },
+   "targets_hz": [
+    6.3,
+    6.3,
+    6.3,
+    6.3,
+    6.3
+   ],
+   "kick_hz": {
+    "MN1-4": 9.174,
+    "MN5": 9.174
+   },
+   "calibration_rates_hz": [
+    6.306,
+    6.344,
+    6.381,
+    6.3,
+    6.29
+   ],
+   "calibrated_within_2pct": true,
+   "unit_biases_mv": [
+    7.10468,
+    7.10571,
+    7.10681,
+    7.10457,
+    7.06142
+   ]
+  },
+  "LIF, MN5 at 1.10 x MN1-4, own kicks": {
+   "summary": {
+    "splayness": [
+     0.7435,
+     0.7412,
+     0.7478
+    ],
+    "r_mn4_mn5": [
+     0.5928,
+     0.5802,
+     0.6021
+    ],
+    "dip10": [
+     0.1115,
+     0.0985,
+     0.1209
+    ],
+    "preferred_order_share": [
+     0.608,
+     0.5914,
+     0.6327
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.698,
+     0.665,
+     0.777
+    ],
+    "rate_hz": 6.41,
+    "isi_cv": 0.238,
+    "mn2_in_mn1": [
+     0.501,
+     0.645
+    ],
+    "preferred_share_of_complete": [
+     0.8137,
+     0.8041,
+     0.8403
+    ],
+    "repeat_share": 0.255,
+    "mn4_in_mn3": [
+     0.502,
+     0.661
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      6.25,
+      6.3,
+      6.25,
+      6.26,
+      6.93
+     ],
+     "isi_cv": [
+      0.228,
+      0.234,
+      0.232,
+      0.226,
+      0.261
+     ],
+     "splayness": 0.7451,
+     "r_mn4_mn5": 0.5872,
+     "dip10": 0.1044,
+     "mn2_in_mn1": [
+      0.5,
+      0.655
+     ],
+     "mn4_in_mn3": [
+      0.495,
+      0.683
+     ],
+     "orders": {
+      "1234": 0.0335,
+      "1243": 0.0375,
+      "1324": 0.3088,
+      "1342": 0.0347,
+      "1423": 0.3034,
+      "1432": 0.0326,
+      "rest": 0.2494
+     },
+     "preferred_order_share": 0.6122,
+     "coincidence_vs_chance_3ms": 0.666,
+     "preferred_share_of_complete": 0.8156
+    },
+    {
+     "rate_hz": [
+      6.26,
+      6.25,
+      6.36,
+      6.25,
+      6.87
+     ],
+     "isi_cv": [
+      0.243,
+      0.232,
+      0.232,
+      0.237,
+      0.267
+     ],
+     "splayness": 0.7436,
+     "r_mn4_mn5": 0.5968,
+     "dip10": 0.1209,
+     "mn2_in_mn1": [
+      0.497,
+      0.645
+     ],
+     "mn4_in_mn3": [
+      0.504,
+      0.661
+     ],
+     "orders": {
+      "1234": 0.0309,
+      "1243": 0.0386,
+      "1324": 0.2804,
+      "1342": 0.0372,
+      "1423": 0.3174,
+      "1432": 0.0348,
+      "rest": 0.2606
+     },
+     "preferred_order_share": 0.5978,
+     "coincidence_vs_chance_3ms": 0.665,
+     "preferred_share_of_complete": 0.8085
+    },
+    {
+     "rate_hz": [
+      6.29,
+      6.27,
+      6.29,
+      6.24,
+      6.89
+     ],
+     "isi_cv": [
+      0.225,
+      0.241,
+      0.22,
+      0.221,
+      0.263
+     ],
+     "splayness": 0.745,
+     "r_mn4_mn5": 0.5993,
+     "dip10": 0.1132,
+     "mn2_in_mn1": [
+      0.502,
+      0.645
+     ],
+     "mn4_in_mn3": [
+      0.501,
+      0.682
+     ],
+     "orders": {
+      "1234": 0.0391,
+      "1243": 0.0326,
+      "1324": 0.2946,
+      "1342": 0.0342,
+      "1423": 0.3176,
+      "1432": 0.0327,
+      "rest": 0.2493
+     },
+     "preferred_order_share": 0.6122,
+     "coincidence_vs_chance_3ms": 0.777,
+     "preferred_share_of_complete": 0.8155
+    },
+    {
+     "rate_hz": [
+      6.29,
+      6.23,
+      6.34,
+      6.31,
+      6.9
+     ],
+     "isi_cv": [
+      0.242,
+      0.25,
+      0.228,
+      0.229,
+      0.259
+     ],
+     "splayness": 0.7429,
+     "r_mn4_mn5": 0.5802,
+     "dip10": 0.0985,
+     "mn2_in_mn1": [
+      0.493,
+      0.644
+     ],
+     "mn4_in_mn3": [
+      0.503,
+      0.645
+     ],
+     "orders": {
+      "1234": 0.0388,
+      "1243": 0.0354,
+      "1324": 0.3064,
+      "1342": 0.0321,
+      "1423": 0.2975,
+      "1432": 0.0338,
+      "rest": 0.2562
+     },
+     "preferred_order_share": 0.6039,
+     "coincidence_vs_chance_3ms": 0.725,
+     "preferred_share_of_complete": 0.8119
+    },
+    {
+     "rate_hz": [
+      6.33,
+      6.34,
+      6.31,
+      6.34,
+      6.93
+     ],
+     "isi_cv": [
+      0.244,
+      0.242,
+      0.231,
+      0.23,
+      0.259
+     ],
+     "splayness": 0.7412,
+     "r_mn4_mn5": 0.5862,
+     "dip10": 0.1141,
+     "mn2_in_mn1": [
+      0.503,
+      0.639
+     ],
+     "mn4_in_mn3": [
+      0.504,
+      0.651
+     ],
+     "orders": {
+      "1234": 0.0346,
+      "1243": 0.0299,
+      "1324": 0.3176,
+      "1342": 0.0365,
+      "1423": 0.2838,
+      "1432": 0.0386,
+      "rest": 0.259
+     },
+     "preferred_order_share": 0.6014,
+     "coincidence_vs_chance_3ms": 0.757,
+     "preferred_share_of_complete": 0.8116
+    },
+    {
+     "rate_hz": [
+      6.26,
+      6.19,
+      6.31,
+      6.31,
+      6.89
+     ],
+     "isi_cv": [
+      0.236,
+      0.235,
+      0.221,
+      0.229,
+      0.259
+     ],
+     "splayness": 0.7434,
+     "r_mn4_mn5": 0.596,
+     "dip10": 0.1079,
+     "mn2_in_mn1": [
+      0.505,
+      0.676
+     ],
+     "mn4_in_mn3": [
+      0.509,
+      0.662
+     ],
+     "orders": {
+      "1234": 0.031,
+      "1243": 0.0273,
+      "1324": 0.3162,
+      "1342": 0.0281,
+      "1423": 0.3109,
+      "1432": 0.033,
+      "rest": 0.2537
+     },
+     "preferred_order_share": 0.6271,
+     "coincidence_vs_chance_3ms": 0.681,
+     "preferred_share_of_complete": 0.8403
+    },
+    {
+     "rate_hz": [
+      6.25,
+      6.3,
+      6.28,
+      6.25,
+      6.88
+     ],
+     "isi_cv": [
+      0.226,
+      0.232,
+      0.229,
+      0.227,
+      0.258
+     ],
+     "splayness": 0.7478,
+     "r_mn4_mn5": 0.5896,
+     "dip10": 0.1099,
+     "mn2_in_mn1": [
+      0.498,
+      0.667
+     ],
+     "mn4_in_mn3": [
+      0.499,
+      0.662
+     ],
+     "orders": {
+      "1234": 0.0366,
+      "1243": 0.0295,
+      "1324": 0.2932,
+      "1342": 0.029,
+      "1423": 0.3395,
+      "1432": 0.0281,
+      "rest": 0.2442
+     },
+     "preferred_order_share": 0.6327,
+     "coincidence_vs_chance_3ms": 0.673,
+     "preferred_share_of_complete": 0.8371
+    },
+    {
+     "rate_hz": [
+      6.29,
+      6.27,
+      6.34,
+      6.35,
+      6.96
+     ],
+     "isi_cv": [
+      0.241,
+      0.232,
+      0.236,
+      0.239,
+      0.258
+     ],
+     "splayness": 0.7418,
+     "r_mn4_mn5": 0.6021,
+     "dip10": 0.1169,
+     "mn2_in_mn1": [
+      0.505,
+      0.644
+     ],
+     "mn4_in_mn3": [
+      0.502,
+      0.638
+     ],
+     "orders": {
+      "1234": 0.0325,
+      "1243": 0.0361,
+      "1324": 0.3067,
+      "1342": 0.0375,
+      "1423": 0.2847,
+      "1432": 0.038,
+      "rest": 0.2645
+     },
+     "preferred_order_share": 0.5914,
+     "coincidence_vs_chance_3ms": 0.715,
+     "preferred_share_of_complete": 0.8041
+    }
+   ],
+   "unit_rates_hz": [
+    6.275,
+    6.27,
+    6.31,
+    6.285,
+    6.898
+   ],
+   "unit_isi_cv": [
+    0.239,
+    0.234,
+    0.23,
+    0.229,
+    0.259
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.3162,
+     "dip10": 0.0404,
+     "within_10ms_over_chance": 0.3355
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.6381,
+     "dip10": 0.0832,
+     "within_10ms_over_chance": 0.4555
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.6459,
+     "dip10": 0.0819,
+     "within_10ms_over_chance": 0.4725
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.5876,
+     "dip10": 0.1088,
+     "within_10ms_over_chance": 0.6255
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.6401,
+     "dip10": 0.084,
+     "within_10ms_over_chance": 0.4675
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.6394,
+     "dip10": 0.0806,
+     "within_10ms_over_chance": 0.4775
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.5975,
+     "dip10": 0.1118,
+     "within_10ms_over_chance": 0.638
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.3125,
+     "dip10": 0.0363,
+     "within_10ms_over_chance": 0.303
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.5967,
+     "dip10": 0.1065,
+     "within_10ms_over_chance": 0.627
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.5928,
+     "dip10": 0.1115,
+     "within_10ms_over_chance": 0.6395
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN4-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    }
+   },
+   "targets_hz": [
+    6.3,
+    6.3,
+    6.3,
+    6.3,
+    6.93
+   ],
+   "kick_hz": {
+    "MN1-4": 9.174,
+    "MN5": 13.337
+   },
+   "calibration_rates_hz": [
+    6.35,
+    6.31,
+    6.279,
+    6.31,
+    6.887
+   ],
+   "calibrated_within_2pct": true,
+   "unit_biases_mv": [
+    7.10452,
+    7.10453,
+    7.10525,
+    7.10511,
+    7.06157
+   ]
+  },
+  "LIF, MN5 at 1.26 x MN1-4, own kicks": {
+   "summary": {
+    "splayness": [
+     0.736,
+     0.7335,
+     0.7379
+    ],
+    "r_mn4_mn5": [
+     0.6036,
+     0.5931,
+     0.6145
+    ],
+    "dip10": [
+     0.1174,
+     0.1133,
+     0.1294
+    ],
+    "preferred_order_share": [
+     0.6204,
+     0.6087,
+     0.6301
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.7,
+     0.657,
+     0.726
+    ],
+    "rate_hz": 6.62,
+    "isi_cv": 0.234,
+    "mn2_in_mn1": [
+     0.503,
+     0.664
+    ],
+    "preferred_share_of_complete": [
+     0.8306,
+     0.8194,
+     0.8378
+    ],
+    "repeat_share": 0.2515,
+    "mn4_in_mn3": [
+     0.502,
+     0.677
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      6.23,
+      6.32,
+      6.28,
+      6.33,
+      7.99
+     ],
+     "isi_cv": [
+      0.237,
+      0.231,
+      0.231,
+      0.231,
+      0.236
+     ],
+     "splayness": 0.7362,
+     "r_mn4_mn5": 0.6077,
+     "dip10": 0.1182,
+     "mn2_in_mn1": [
+      0.506,
+      0.658
+     ],
+     "mn4_in_mn3": [
+      0.498,
+      0.673
+     ],
+     "orders": {
+      "1234": 0.0298,
+      "1243": 0.0298,
+      "1324": 0.3159,
+      "1342": 0.03,
+      "1423": 0.3142,
+      "1432": 0.0325,
+      "rest": 0.2479
+     },
+     "preferred_order_share": 0.6301,
+     "coincidence_vs_chance_3ms": 0.693,
+     "preferred_share_of_complete": 0.8378
+    },
+    {
+     "rate_hz": [
+      6.22,
+      6.32,
+      6.24,
+      6.28,
+      8.02
+     ],
+     "isi_cv": [
+      0.23,
+      0.239,
+      0.243,
+      0.233,
+      0.24
+     ],
+     "splayness": 0.7335,
+     "r_mn4_mn5": 0.6046,
+     "dip10": 0.1193,
+     "mn2_in_mn1": [
+      0.506,
+      0.663
+     ],
+     "mn4_in_mn3": [
+      0.497,
+      0.671
+     ],
+     "orders": {
+      "1234": 0.0317,
+      "1243": 0.0245,
+      "1324": 0.298,
+      "1342": 0.0342,
+      "1423": 0.3238,
+      "1432": 0.0325,
+      "rest": 0.2554
+     },
+     "preferred_order_share": 0.6218,
+     "coincidence_vs_chance_3ms": 0.657,
+     "preferred_share_of_complete": 0.8351
+    },
+    {
+     "rate_hz": [
+      6.28,
+      6.31,
+      6.29,
+      6.28,
+      7.96
+     ],
+     "isi_cv": [
+      0.247,
+      0.233,
+      0.247,
+      0.241,
+      0.237
+     ],
+     "splayness": 0.735,
+     "r_mn4_mn5": 0.5931,
+     "dip10": 0.1174,
+     "mn2_in_mn1": [
+      0.503,
+      0.677
+     ],
+     "mn4_in_mn3": [
+      0.502,
+      0.657
+     ],
+     "orders": {
+      "1234": 0.0298,
+      "1243": 0.027,
+      "1324": 0.2945,
+      "1342": 0.0341,
+      "1423": 0.323,
+      "1432": 0.033,
+      "rest": 0.2586
+     },
+     "preferred_order_share": 0.6175,
+     "coincidence_vs_chance_3ms": 0.705,
+     "preferred_share_of_complete": 0.8329
+    },
+    {
+     "rate_hz": [
+      6.28,
+      6.33,
+      6.29,
+      6.26,
+      7.96
+     ],
+     "isi_cv": [
+      0.233,
+      0.236,
+      0.229,
+      0.225,
+      0.239
+     ],
+     "splayness": 0.736,
+     "r_mn4_mn5": 0.6064,
+     "dip10": 0.1174,
+     "mn2_in_mn1": [
+      0.508,
+      0.665
+     ],
+     "mn4_in_mn3": [
+      0.497,
+      0.691
+     ],
+     "orders": {
+      "1234": 0.0305,
+      "1243": 0.0274,
+      "1324": 0.3124,
+      "1342": 0.034,
+      "1423": 0.3158,
+      "1432": 0.0338,
+      "rest": 0.246
+     },
+     "preferred_order_share": 0.6282,
+     "coincidence_vs_chance_3ms": 0.712,
+     "preferred_share_of_complete": 0.8332
+    },
+    {
+     "rate_hz": [
+      6.27,
+      6.3,
+      6.3,
+      6.23,
+      8.01
+     ],
+     "isi_cv": [
+      0.234,
+      0.237,
+      0.232,
+      0.234,
+      0.235
+     ],
+     "splayness": 0.7335,
+     "r_mn4_mn5": 0.6025,
+     "dip10": 0.1149,
+     "mn2_in_mn1": [
+      0.503,
+      0.68
+     ],
+     "mn4_in_mn3": [
+      0.506,
+      0.681
+     ],
+     "orders": {
+      "1234": 0.0331,
+      "1243": 0.0336,
+      "1324": 0.2893,
+      "1342": 0.0319,
+      "1423": 0.3262,
+      "1432": 0.0343,
+      "rest": 0.2516
+     },
+     "preferred_order_share": 0.6155,
+     "coincidence_vs_chance_3ms": 0.726,
+     "preferred_share_of_complete": 0.8224
+    },
+    {
+     "rate_hz": [
+      6.24,
+      6.28,
+      6.25,
+      6.25,
+      8.01
+     ],
+     "isi_cv": [
+      0.226,
+      0.225,
+      0.228,
+      0.227,
+      0.233
+     ],
+     "splayness": 0.7361,
+     "r_mn4_mn5": 0.6006,
+     "dip10": 0.1145,
+     "mn2_in_mn1": [
+      0.498,
+      0.667
+     ],
+     "mn4_in_mn3": [
+      0.503,
+      0.684
+     ],
+     "orders": {
+      "1234": 0.0348,
+      "1243": 0.0325,
+      "1324": 0.2933,
+      "1342": 0.0317,
+      "1423": 0.3308,
+      "1432": 0.0305,
+      "rest": 0.2464
+     },
+     "preferred_order_share": 0.6241,
+     "coincidence_vs_chance_3ms": 0.709,
+     "preferred_share_of_complete": 0.8282
+    },
+    {
+     "rate_hz": [
+      6.25,
+      6.33,
+      6.24,
+      6.28,
+      7.86
+     ],
+     "isi_cv": [
+      0.24,
+      0.24,
+      0.23,
+      0.227,
+      0.242
+     ],
+     "splayness": 0.7379,
+     "r_mn4_mn5": 0.6017,
+     "dip10": 0.1133,
+     "mn2_in_mn1": [
+      0.501,
+      0.645
+     ],
+     "mn4_in_mn3": [
+      0.501,
+      0.658
+     ],
+     "orders": {
+      "1234": 0.0324,
+      "1243": 0.0348,
+      "1324": 0.316,
+      "1342": 0.0339,
+      "1423": 0.3031,
+      "1432": 0.0283,
+      "rest": 0.2515
+     },
+     "preferred_order_share": 0.6191,
+     "coincidence_vs_chance_3ms": 0.686,
+     "preferred_share_of_complete": 0.8271
+    },
+    {
+     "rate_hz": [
+      6.28,
+      6.35,
+      6.27,
+      6.24,
+      7.91
+     ],
+     "isi_cv": [
+      0.233,
+      0.238,
+      0.229,
+      0.23,
+      0.23
+     ],
+     "splayness": 0.7369,
+     "r_mn4_mn5": 0.6145,
+     "dip10": 0.1294,
+     "mn2_in_mn1": [
+      0.502,
+      0.637
+     ],
+     "mn4_in_mn3": [
+      0.506,
+      0.682
+     ],
+     "orders": {
+      "1234": 0.0328,
+      "1243": 0.0378,
+      "1324": 0.2978,
+      "1342": 0.033,
+      "1423": 0.3109,
+      "1432": 0.0306,
+      "rest": 0.2571
+     },
+     "preferred_order_share": 0.6087,
+     "coincidence_vs_chance_3ms": 0.695,
+     "preferred_share_of_complete": 0.8194
+    }
+   ],
+   "unit_rates_hz": [
+    6.258,
+    6.323,
+    6.275,
+    6.27,
+    7.977
+   ],
+   "unit_isi_cv": [
+    0.233,
+    0.237,
+    0.231,
+    0.23,
+    0.237
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.3001,
+     "dip10": 0.0361,
+     "within_10ms_over_chance": 0.2925
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.6403,
+     "dip10": 0.086,
+     "within_10ms_over_chance": 0.488
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.6397,
+     "dip10": 0.0853,
+     "within_10ms_over_chance": 0.5165
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.5994,
+     "dip10": 0.1187,
+     "within_10ms_over_chance": 0.6445
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.6446,
+     "dip10": 0.0801,
+     "within_10ms_over_chance": 0.4685
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.6411,
+     "dip10": 0.0869,
+     "within_10ms_over_chance": 0.4925
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.6012,
+     "dip10": 0.1148,
+     "within_10ms_over_chance": 0.6305
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.2967,
+     "dip10": 0.0356,
+     "within_10ms_over_chance": 0.2875
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.5997,
+     "dip10": 0.1209,
+     "within_10ms_over_chance": 0.6825
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.6036,
+     "dip10": 0.1174,
+     "within_10ms_over_chance": 0.6545
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN4-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    }
+   },
+   "targets_hz": [
+    6.3,
+    6.3,
+    6.3,
+    6.3,
+    7.938
+   ],
+   "kick_hz": {
+    "MN1-4": 9.174,
+    "MN5": 23.932
+   },
+   "calibration_rates_hz": [
+    6.271,
+    6.302,
+    6.285,
+    6.302,
+    7.94
+   ],
+   "calibrated_within_2pct": true,
+   "unit_biases_mv": [
+    7.10655,
+    7.10737,
+    7.10681,
+    7.10675,
+    7.06275
+   ]
+  }
+ },
+ "seconds": 174
+}
