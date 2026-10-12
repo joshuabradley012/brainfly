@@ -41,6 +41,13 @@ Correction (2026-10-11, after a review):
   weight; mb_calibration.py's x 10 is replaced by mb_calibration4.py), and APL's conductance design. apl_refit.py and
   apl_refit2.py have since fitted APL's drive again.
 
+Correction (2026-10-11, review 7):
+- The earlier correction's last sentence was amended in place on 2026-10-11 (commit 425d6bd). Before, it read "...the
+  Kenyon cell-to-APL x 10, and APL's conductance design. The last two haven't been refitted."
+- Every fit it lists has now been made again and kept. On this pilot's own model, mbon11_budget_check2.py finds the
+  Kenyon cells giving MBON11_R 1.1 times flies' budget of synapse-spikes to 3-octanol. So the Ran's "too little Kenyon
+  cell drive overall" is a shortfall in the charge each spike carries, not in the cells' activity.
+
     python experiments/learning_pilot16.py      (writes experiments/learning_pilot16.json)
 """
 from __future__ import annotations

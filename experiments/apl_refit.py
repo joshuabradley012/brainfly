@@ -50,6 +50,12 @@ Correction (2026-10-11, after a review):
   effect stayed within 2-3. This refit, and gamma_gap_refit.py, were decided after learning_pilot16.py's result, when a
   review listed the fits made with the strong input.
 
+Withdrawn (2026-10-11, review 7): apl_refit2.py made this choice on receptor_fills.RECOMMENDED and kept drive 1, so
+mb_calibration7.py, which took drive 0.5 from here, is withdrawn. The correction's third bullet credits the input with
+APL's ratio there (0.31 against 0.36 here). apl_refit2.py ran these seeds on RECOMMENDED: at drive 1 its ratio is 0.23.
+So at fixed seeds the input moves the ratio from 0.36 to 0.23, and the seeds move it between 0.23 and 0.31 at fixed
+input.
+
     python experiments/apl_refit.py      (writes experiments/apl_refit.json)
 """
 from __future__ import annotations

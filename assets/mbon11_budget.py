@@ -7,7 +7,8 @@ Left: experiments/mbon11_budget_check2.json (the model in use, mb_calibration6.p
 synapse counts (research_notes/Rung 9 learning data/mbon11_kc_activity.md section 3.7: gamma-main and gamma-s 3.5% x 3.5
 spikes, alpha/beta s, m, c 6% x 2.5, alpha'/beta' 20% x 5; total range 1,300-7,500; estimated at Hige's stimulus, where
 flies answer the two odors about equally). Right: what that activity carries onto MBON11_R at the model's 0.054 pC per
-synapse, before and after the synapses' depression (0.5 per spike, recovering over 1.5 s; the same spikes at 10 ms),
+synapse, before and after the synapses' depression (0.5 per spike, recovering over 1.5 s; the share of the spikes'
+strength it leaves comes from a separate timed run at 10 ms, applied here to the window's charge),
 against flies' odor charge (Hige et al. 2015: about 245-250 pC for 3-octanol, 230-273 for 4-methylcyclohexanol).
 """
 from __future__ import annotations
@@ -94,7 +95,8 @@ def figure(theme: str, d: dict) -> str:
         out.append(text(x1 - 6, ty2(v) + 4, f"{v}", "tick", "end"))
     for g, odor in enumerate(("3-octanol", "4-methylcyclohexanol")):
         r = d["odors"][odor]
-        und, dep = r["charge_pc_at_q_undepressed"], r["timed"]["charge_pc_depressed"]
+        und = r["charge_pc_at_q_undepressed"]
+        dep = und * r["timed"]["share_left_by_depression"]     # the timed run's share, on the window's charge
         gx = x1 + 30 + g * 180
         lo, hi = FLIES_CHARGE[odor]
         out.append(f'<rect x="{gx - 10}" y="{ty2(hi):.1f}" width="150" height="{max(ty2(lo) - ty2(hi), 2):.1f}" fill="{c["ink"]}" fill-opacity="0.12">'

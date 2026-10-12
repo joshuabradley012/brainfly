@@ -45,6 +45,10 @@ Withdrawn model (2026-10-11): apl_refit2.py, made on this test's own input, kept
 mb_calibration7.py is withdrawn and mb_calibration6.py stays the model, with learning_pilot16.py its test. This pilot
 stays as the record of the halved drive, which moved none of the marks.
 
+Correction (2026-10-11, review 7):
+The correction above contradicts itself: learning pilots 13 and 15 came after pilot 12 and passed the reciprocal, both
+on set C's Kenyon cells. The reciprocal has failed on every model except set C's since learning pilot 11.
+
     python experiments/learning_pilot17.py      (writes experiments/learning_pilot17.json)
 """
 from __future__ import annotations

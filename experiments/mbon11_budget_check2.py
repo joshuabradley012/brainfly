@@ -28,6 +28,20 @@ would carry 0.77 of flies' charge undepressed and 0.46 after the depression. mbo
 scale with it. With 3% of cells flashed in Yamada et al.'s calibration instead of 5%, MBON11_R would get about 190 pC
 (114 x 5/3). Flies' charge would need about 2.3%, below the borrowed 3-7%.
 
+Correction (2026-10-11, review 7):
+- As in mbon11_budget_check.py, the share responding and the spikes per responder refer to different cells, so the
+  class pairs above can't be compared with flies'. Like for like, each class's measured synapse-spikes against flies'
+  budget for it: gamma-main and gamma-s 1,416 against 1,786 (0.79), alpha/beta s, m and c 1,922 against 1,084 (1.77),
+  alpha'/beta' 198 against 336 (0.59). So the total matches flies' budget through a different mix: gamma under, alpha/beta
+  over.
+- alpha/beta s, m and c respond at 8.6%, above the derived 4-8%.
+- The depression's share (0.54) and 114 pC come from a separate timed run (3,908 synapse-spikes, 211 pC undepressed
+  there). Applied to this measure's 191 pC, the share gives about 103 pC, so after the depression about 100-115 pC. The
+  derived figures shift with it: with 3% of cells flashed, about 170-190 pC, and flies' charge would need about
+  2.1-2.3%.
+- It imports mb_calibration6 and mb_calibration7 before the cache loads, and replaces mb_calibration7.apply for the
+  whole process; brain_cache checks only the files it recorded when saving, so the run was unaffected (cache restored).
+
     python experiments/mbon11_budget_check2.py      (writes experiments/mbon11_budget_check2.json)
 """
 from __future__ import annotations

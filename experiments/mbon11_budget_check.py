@@ -66,6 +66,27 @@ and gamma-main and gamma-s 3.5%.
 Withdrawn model (2026-10-11): this ran on mb_calibration7.py, which apl_refit2.py's rule withdrew (it kept APL's
 drive at 1). mbon11_budget_check2.py repeats the measurement on mb_calibration6.py, the model in use.
 
+Correction (2026-10-11, review 7):
+- Each class's "responding" share and its "spikes per responder" refer to different cells. The share is the mean of
+  the two seeds' shares. The spikes are averaged over the cells responding on either seed (the code's comment said
+  "on both seeds' tests, or on one of them at the edge"; corrected to "on either seed"), and over all 16 flies,
+  including those where a cell didn't fire. So share x spikes x synapses doesn't give the measured synapse-spikes (gamma
+  1.90 times short), and the pairs above can't be compared with flies' pairs. Like for like, each class's measured
+  synapse-spikes against flies' budget for it: gamma-main and gamma-s 1,729 against 1,786 (0.97), alpha/beta s, m and c
+  2,428 against 1,084 (2.24), alpha'/beta' 244 against 336 (0.73).
+- The depression's share (0.499) and 133 pC come from a separate timed run (different seeds and protocol; 4,919
+  synapse-spikes, 266 pC undepressed there). Applied to this measure's 238 pC, the share gives about 119 pC.
+- The densities note above compared whole classes with subclass ranges and gave "together about 7.4%". The ranges are
+  for alpha/beta s, m and c and gamma-main and gamma-s; alpha/beta-p and gamma-d are inhibited. Weighted that way by
+  MaleCNS's class sizes the estimates give 7.1% (4.2-10.4%).
+- The 10 ms depression measure was added after the script's first commit, before it ran; the JSON's question is the
+  docstring it ran with.
+- "Their data also allow it at two spikes per flash with a milder depression": kc_flash_check.py's correction found two
+  spikes per flash fitting their paired-flash ratio at the model's own depression (0.43-0.44). Either reading gives
+  less charge than one spike per flash, so "Checked afterwards" stands.
+- The JSON's mb_calibration record gives "kc_apl_scale": 10.0, from mb_calibration.apply; the drive in force was
+  mb_calibration7.py's 0.5 ("kc_apl_drive").
+
     python experiments/mbon11_budget_check.py      (writes experiments/mbon11_budget_check.json)
 """
 from __future__ import annotations
@@ -147,7 +168,7 @@ def main() -> None:
                 h = runner(o, odor, SEED + 100 + 10 * j + k, 1.0, 0.4)                  # Hige's protocol
                 evoked.append((h["window"][:, kc] - 1.4 * h["rest"][:, kc]).mean(0))
             r, e = np.mean(resp, 0), np.mean(evoked, 0)
-            responders = r >= 0.5                       # responding on both seeds' tests, or on one of them at the edge
+            responders = r >= 0.5                       # responding on either seed (comment corrected 2026-10-11)
             row = {}
             for name, mk in masks.items():
                 sel = mk & responders

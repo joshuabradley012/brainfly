@@ -42,6 +42,15 @@ Correction (2026-10-11, after a review):
   alpha/beta 4.1%, alpha'/beta' 10.7% and gamma 2.3%. These densities were measured before apl_refit.py changed
   APL.
 
+Correction (2026-10-11, review 7):
+- The note above compares whole classes with ranges for subclasses (alpha/beta s, m and c; gamma-main and gamma-s), and
+  its "together about 7.4%" counts the inhibited alpha/beta-p and gamma-d. Like for like, with those answering nothing,
+  this run's shares are 7.7% for alpha/beta s, m and c and 2.9% for gamma-main and gamma-s, and the estimates give 7.1%
+  (4.2-10.4%). mbon11_budget_check2.py, on the same model with the learning pilots' seeds, gives 8.6% for alpha/beta s, m
+  and c, above 4-8%: alpha/beta sits at the top of its range or just above it.
+- "Measured before APL's refit": apl_refit.py's change has since been withdrawn (apl_refit2.py), so these densities are
+  of the model in use.
+
     python experiments/gamma_gap_refit.py      (writes experiments/gamma_gap_refit.json)
 """
 from __future__ import annotations

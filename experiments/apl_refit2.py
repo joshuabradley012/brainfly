@@ -44,6 +44,14 @@ can't move rung 9's gap. Only the weakest drive answers the odors in flies' rati
 than flies' APL does. APL's conductance is unchanged, and Inada et al.'s Fig. 5B test gives what it gave before: 8.1 mV
 at the plateau, 10, 50 and 90% of it at 0.02, 0.14 and 0.42 s, half gone 0.37 s after the drive.
 
+Correction (2026-10-11, review 7):
+- "4-methylcyclohexanol reaches 43-44 Kenyon cells at every drive at -20 mV" holds at strength 1; strength 2, also at
+  -20 mV, gives 43-47, and over all thirteen conditions it is 38-47.
+- "Only the weakest drive answers the odors in flies' ratio (0.51)": strength 2 at drive 6 gives 0.507, though it fails
+  the silencing rule (1.60 and 1.32-fold).
+- "Drives 1-2.5, the drives that hold the Kenyon cells back as flies' APL does": at drives 1.5 and 2.5 silencing raises
+  3-octanol's spikes 3.24 and 3.65-fold, above flies' 2-3; only drive 1 does.
+
     python experiments/apl_refit2.py      (writes experiments/apl_refit2.json)
 """
 from __future__ import annotations
