@@ -83,6 +83,44 @@ Checked afterwards (2026-10-11, the same code, not part of the plan above):
   21.2-21.3 at 109.75, and 22, 27, 34, 40 and 50 Hz at 110, 112, 116, 120 and 130 pA (MN5 18-47). None of these drives
   gives flies' 4.5-8 Hz. Between 108 and 108.25 pA, B's and C's drives switch from silence to about 14-15 Hz.
 
+Correction (2026-10-12, review 12):
+- The reading's test didn't run as planned. B and C failed calibration, so their runs aren't at 6.6 Hz, and "by the
+  reading" above draws on conditions the reading wasn't written for.
+- A isn't like for like with the leaky integrators at flies' coupling (dlm_splay_check6.py). It differs in three ways:
+  - about a quarter of flies' 20 ms coupling (peak ratios 0.24, 0.22 and 0.23 of flies');
+  - a third of their irregularity (CV 0.064 against 0.22);
+  - MN1-4 at 8.68 Hz, with MN5 at 0.90 times them.
+  So its weak pairs landing near the leaky integrators' compares nothing about phase responses. dlm_splay_check11.py ran
+  the leaky integrators at A's and D's coupling, irregularity and rates. They hold the weak pairs apart better than
+  Hürkey et al.'s model: 0.33-0.38 against 0.55-0.59 times chance as A, 0.60-0.67 against 0.90-0.95 as D. So the
+  conclusion's direction holds for this model, and more strongly, but not on the basis the Ran gave. As corrected:
+  Hürkey et al.'s falling phase response holds the weak pairs apart no better than the leaky integrator at the same
+  coupling and irregularity, and at flies' coupling it can't be run at a fly-like rate.
+- B's result, weak pairs over-separated, comes from its low noise. At flies' coupling and A's noise, review 12 found the
+  leaky integrators over-separating them too.
+- "Silent, or 14 Hz and faster" misses a bistable branch. Once firing, the network keeps firing down to 107.45-107.6 pA
+  at 9-11 Hz (MN5 5-7 Hz) before it stops (dlm_splay_check11.py, part 3). No drive tried gives all five 4.5-8 Hz.
+- The first "Checked afterwards" bullet has two errors:
+  - The switch from silence comes at 0-115 s in B's main runs and 0-77 s in C's (dlm_splay_check11.py, part 4), not
+    "within 30-60 s".
+  - The run said to have "fell back to 4 Hz in its last 30 s" (C, calibration seed, run 1) was silent until 291 s and
+    then fired at 14 Hz (review 12).
+- The implementation also reproduces the paper's network values with its homogeneous coupling: splayness 0.761 and
+  0.679, MN4-MN5 0.564 (dlm_splay_check11.py, part 1). A's 0.713 against "about 0.76" compares the heterogeneous
+  coupling, which slows MN5 to 0.90 times MN1-4, with a figure made with homogeneous coupling. The published coupling
+  raises the units from 6.56 to 8.4-8.7 Hz.
+- Numbers:
+  - The fitted conductances are 4.24, 4.53 and 4.34 times the published ones: 4.2-4.5 times, not "4.2 times".
+  - "(dlm_splay_check6.py: dip10 0.09-0.10, 0.50-0.59)" are dlm_splay_check7.py's ranges. Check 6's weak pairs are at
+    dip10 0.086-0.094 and within 10 ms 0.50-0.52.
+  - In B every run locks into one order, not one run: 1324 in five runs, 1423 in three, 99.2-100% of windows.
+  - "The 300 s runs give 8.8-14.6 and 10.1-13.9 Hz" are MN1-4's, averaging a silent start with the firing state. After
+    the switch they fire at 14.3-14.6 and 13.5-13.9 Hz.
+  - On the firing part alone, C's weak pairs are at 0.68-0.74 times chance and B's at 0.062-0.071 (review 12).
+  - In C's main runs MN1-4's CV is 0.10-0.11, half flies'. Only the noise was set for flies' CV, on an uncoupled unit
+    at 6.6 Hz.
+  - "The paper's own numbers" (6.59 Hz, -61.5 mV) are the notes' derivations from the authors' code and saved run.
+
     python experiments/dlm_splay_check8.py      (writes experiments/dlm_splay_check8.json)
 """
 from __future__ import annotations

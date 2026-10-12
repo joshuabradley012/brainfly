@@ -696,6 +696,8 @@ summary 15, §7 and §8 predate it. §8.1's "ratio 0.0235 / 0.0111" is the stead
 warns against. Flies' CCs are 20 ms peak ratios; in a 20 ms membrane the conductance that reproduces them is about 1.8
 times larger (0.0423 / 0.0199), and 1.5-1.6 times in a 13-15 ms one.
 
+**Note (2026-10-12, review 12).** Summary item 13's "the neurons fire at 6.6 Hz" is the uncoupled unit (6.59 Hz without noise). Coupled as published they fire at 8.4-8.7 Hz: 8.42-8.43 Hz with the homogeneous coupling, and with the heterogeneous coupling 8.68 Hz for MN1-4 and 7.81 Hz for MN5 (experiments/dlm_splay_check8.py, condition A; experiments/dlm_splay_check11.py, part 1). Run as the paper ran its figures, the model reproduces their values: splayness 0.761 at noise 0.949 and 0.679 at 1.9, and MN4-MN5's sync index 0.564.
+
 ## Sources
 
 - Hürkey S, Niemeyer N, Schleimer J-H, Ryglewski S, Schreiber S, Duch C (2023) Nature 618:118–125.

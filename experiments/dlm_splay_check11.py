@@ -42,6 +42,39 @@ Read:
 - Part 3 gives the firing branch's lowest steady rates, and whether any drive gives all five 4.5-8 Hz.
 - Part 4 gives when B's and C's runs switch on.
 
+Ran (2026-10-12, 6 minutes):
+- Part 1: the implementation reproduces the paper's network values. With homogeneous coupling, splayness is 0.761 at
+  noise 0.949 and 0.679 at 1.9 (ED Fig. 6a: about 0.76 and 0.68), and MN4-MN5's sync index is 0.564 (Fig. 3d: 0.54).
+  Uncoupled, the units fire at 6.56-6.58 Hz with CV 0.09 and independent phases (splayness 0.593). The coupling raises
+  them to 8.42-8.43 Hz (8.29 at noise 1.9).
+- Part 2: at the same coupling, irregularity and rates, the leaky integrators hold the weak pairs apart better than
+  Hürkey et al.'s model, not equally. Both conditions calibrated within 2%.
+  - As A (CV 0.064-0.066, MN1-4 at 8.66-8.69 Hz, MN5 at 7.82):
+    - splayness 0.762 (A 0.713); preferred orders 0.77 (0.81); repeats 0.033 (0.023);
+    - weak pairs: within 10 ms 0.33-0.38 times chance and dip10 0.065-0.074 (A 0.55-0.59 and 0.10-0.11; flies 0.16-0.31
+      and 0.030-0.056);
+    - MN5's pairs: 0.63-0.72 (A 1.03-1.06);
+    - strong pairs: 0.015-0.022 (A 0.00; flies' two pairs 0.05 and 0.20).
+  - As D (CV 0.24-0.25, 6.56-6.66 Hz):
+    - splayness 0.712 (D 0.642); repeats 0.31 (D 0.21);
+    - weak pairs: 0.60-0.67 times chance, dip10 0.11-0.12 (D 0.90-0.95 and 0.17-0.18);
+    - MN5's pairs: 0.63-0.67 (D 0.94-0.99);
+    - strong pairs: 0.63-0.65 (D 0.61).
+  By the reading, Hürkey et al.'s falling phase response holds the weak pairs apart no better than the leaky integrator
+  at the same coupling, irregularity and rates. Here it does worse. At flies' irregularity neither comes near flies'
+  weak pairs.
+- Part 3: at flies' coupling the network is bistable, and its firing branch never comes down to flies' rates.
+  - At noise 0.949: rising from rest, the units stay silent through 108.15 pA and fire from 108.2 (11.8-12.7 Hz; 15.5-16.8
+    Hz at 108.25-108.5). Lowered from firing, they keep firing down to 107.45 pA (MN1-4 at 9.1-9.3 Hz, MN5 at 4.9-5.2) and
+    have stopped by 107.35.
+  - At noise 2.30: silent through 108.05 pA, firing from 108.1-108.15 (14.7 Hz and up). Lowered, they fire down to 107.6
+    (10.3-10.7 Hz, MN5 6.6-6.9) and have stopped by 107.45.
+  - MN1-4's lowest steady rate is about 9-11 Hz, with MN5 at about 0.55-0.65 times theirs. No drive gives all five
+    4.5-8 Hz, and none gives MN5 flies' ratio (0.98-1.26).
+- Part 4: B's and C's main runs regenerate exactly (every run's rates as in dlm_splay_check8.json).
+  - MN1-4 switch on at 0, 18, 18, 24, 29, 60, 79 and 115 s in B, and at 0, 0, 4, 16, 49, 61, 68 and 77 s in C (sorted).
+  - Afterwards they fire at 14.3-14.6 Hz in B (MN5 11.2-11.4) and 13.5-13.9 Hz in C (MN5 10.7-11.0).
+
     python experiments/dlm_splay_check11.py      (writes experiments/dlm_splay_check11.json)
 """
 from __future__ import annotations

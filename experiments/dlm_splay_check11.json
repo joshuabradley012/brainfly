@@ -1,0 +1,4803 @@
+{
+ "question": "Exploratory check, written after review 12 and before it runs, not pre-registered and not a change to the model: four\nthings review 12 found missing from dlm_splay_check8.py's reading, put on record with this check's own runs.\n\nReview 12 found:\n- dlm_splay_check8.py's conclusion (\"a falling phase response alone doesn't give flies' weak pairs\") compared two\n  things that differed in three ways at once:\n  - H\u00fcrkey et al.'s model as published (condition A: about a quarter of flies' 20 ms coupling, ISI CV 0.064, MN1-4 at\n    8.68 Hz and MN5 at 7.81);\n  - leaky integrators at flies' coupling, CV 0.22 and 6.6 Hz.\n- The conditions meant to test it at flies' coupling (B and C) failed calibration.\n- At flies' coupling the network is bistable: once firing, it keeps firing below the drive at which it starts from\n  rest.\n- The implementation's network values, not only its single unit, can be checked against the paper.\nIts numbers came from review-only runs.\nPart 1, H\u00fcrkey et al.'s model as the paper ran it for those figures: dlm_splay_check8.py's equations, with 108.75 pA\nfor every unit:\n- uncoupled, at noise 0.949 pA ms^0.5;\n- homogeneous coupling (43.5 pS between every pair; their Fig. 3d and ED Fig. 6a) at noise 0.949 and 1.9.\nThe paper gives MN4-MN5's sync index as 0.54 (Fig. 3d), and splayness about 0.76 at 0.9 and 0.68 at 1.9 (ED Fig. 6a).\nPart 2, leaky integrators like for like with dlm_splay_check8.py's A and D: dlm_splay_check6.py's units, with junctions\nfitted (dlm_splay_check5.fitted_ratio) to A's 20 ms peak ratios (0.00551, 0.00244, 0.00174). Two conditions:\n- \"as A\": each unit's kicks set uncoupled (dlm_splay_check10.kicks_for) for A's main-run CV at A's main-run rate\n  (MN1-4: 0.064 at 8.678 Hz; MN5: 0.071 at 7.808 Hz). Each unit's bias is then found for that rate with the junctions:\n  dlm_splay_check7.py's two passes on 8 runs of 60 s, with each unit within 2% or the condition reported as failing\n  calibration.\n- \"as D\": dlm_splay_check2.py's kicks (CV 0.22 at 6.6 Hz), all five at 6.6 Hz, biases found the same way.\nPart 3, the firing branch at flies' coupling (dlm_splay_check8.py's fitted conductances), all five at one drive, at\nnoise 0.949 and 2.30. From rest, the drive is raised from 107.0 to 108.5 pA in steps of 0.05 pA, each held 10 s. Then,\nfrom 20 s of firing at 108.5 pA, it is lowered back to 107.0 the same way. 4 starts each (seeds 5300 + start); each\nstep's rates.\nPart 4, the switching in dlm_splay_check8.py's B and C: their main runs regenerated, with drives found again by\ndlm_splay_check8.calibrated_drives, seeds as there, and checked against the JSON's per-run rates. In each run, the first\ntime MN1-4's mean rate over a 10 s window (stepped by 1 s) exceeds 5 Hz.\nParts 1 and 2 are measured as dlm_splay_check6.py measures (8 runs of 300 s after 3 s; seeds 5200 + 10 x condition),\nwith each unit's rate and CV, and the ten pairs against flies'.\nRead:\n- Part 1 checks the implementation at the network level.\n- Part 2: if the leaky integrators' weak pairs come out nearer flies' (within 10 ms 0.16-0.31 times chance, dip10\n  0.030-0.056) than A's and D's, then H\u00fcrkey et al.'s falling phase response holds them apart no better than the leaky\n  integrator at the same coupling, irregularity and rates. If they come out about as A's and D's, the unit type doesn't\n  matter there; if farther, the falling phase response helps.\n- Part 3 gives the firing branch's lowest steady rates, and whether any drive gives all five 4.5-8 Hz.\n- Part 4 gives when B's and C's runs switch on.\n\n    python experiments/dlm_splay_check11.py      (writes experiments/dlm_splay_check11.json)\n",
+ "flies_pairs": {
+  "strong": {
+   "r": [
+    0.336,
+    0.394
+   ],
+   "dip10": [
+    0.006,
+    0.025
+   ],
+   "within_10ms_over_chance": [
+    0.05,
+    0.2
+   ]
+  },
+  "weak": {
+   "r": [
+    0.598,
+    0.666
+   ],
+   "dip10": [
+    0.03,
+    0.056
+   ],
+   "within_10ms_over_chance": [
+    0.16,
+    0.31
+   ]
+  },
+  "mn5": {
+   "r": [
+    0.57,
+    0.621
+   ],
+   "dip10": [
+    0.063,
+    0.141
+   ],
+   "within_10ms_over_chance": [
+    0.34,
+    0.58
+   ]
+  }
+ },
+ "part1": {
+  "uncoupled, noise 0.949": {
+   "g_ns": 0.0,
+   "sigma_pa_ms05": 0.949,
+   "drive_pa": 108.75,
+   "summary": {
+    "splayness": [
+     0.5927,
+     0.5826,
+     0.6042
+    ],
+    "r_mn4_mn5": [
+     0.6322,
+     0.6185,
+     0.6702
+    ],
+    "dip10": [
+     0.1876,
+     0.1727,
+     0.2269
+    ],
+    "preferred_order_share": [
+     0.2828,
+     0.2595,
+     0.3402
+    ],
+    "coincidence_vs_chance_3ms": [
+     1.0385,
+     0.995,
+     1.071
+    ],
+    "rate_hz": 6.56,
+    "isi_cv": 0.09,
+    "mn2_in_mn1": [
+     0.503,
+     0.041
+    ],
+    "preferred_share_of_complete": [
+     0.3276,
+     0.3038,
+     0.4015
+    ],
+    "repeat_share": 0.1412,
+    "mn4_in_mn3": [
+     0.331,
+     0.041
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      6.55,
+      6.57,
+      6.56,
+      6.54,
+      6.55
+     ],
+     "isi_cv": [
+      0.089,
+      0.091,
+      0.09,
+      0.089,
+      0.092
+     ],
+     "splayness": 0.5925,
+     "r_mn4_mn5": 0.6185,
+     "dip10": 0.1772,
+     "mn2_in_mn1": [
+      0.574,
+      0.06
+     ],
+     "mn4_in_mn3": [
+      0.403,
+      0.048
+     ],
+     "orders": {
+      "1234": 0.1542,
+      "1243": 0.1479,
+      "1324": 0.1235,
+      "1342": 0.1295,
+      "1423": 0.1593,
+      "1432": 0.1448,
+      "rest": 0.1408
+     },
+     "preferred_order_share": 0.2828,
+     "coincidence_vs_chance_3ms": 1.041,
+     "preferred_share_of_complete": 0.3291
+    },
+    {
+     "rate_hz": [
+      6.58,
+      6.56,
+      6.55,
+      6.56,
+      6.58
+     ],
+     "isi_cv": [
+      0.089,
+      0.093,
+      0.092,
+      0.089,
+      0.09
+     ],
+     "splayness": 0.59,
+     "r_mn4_mn5": 0.6503,
+     "dip10": 0.2036,
+     "mn2_in_mn1": [
+      0.894,
+      0.009
+     ],
+     "mn4_in_mn3": [
+      0.149,
+      0.041
+     ],
+     "orders": {
+      "1234": 0.1305,
+      "1243": 0.1338,
+      "1324": 0.112,
+      "1342": 0.1463,
+      "1423": 0.1651,
+      "1432": 0.1739,
+      "rest": 0.1383
+     },
+     "preferred_order_share": 0.2771,
+     "coincidence_vs_chance_3ms": 1.071,
+     "preferred_share_of_complete": 0.3216
+    },
+    {
+     "rate_hz": [
+      6.58,
+      6.57,
+      6.56,
+      6.55,
+      6.56
+     ],
+     "isi_cv": [
+      0.091,
+      0.089,
+      0.09,
+      0.089,
+      0.092
+     ],
+     "splayness": 0.5924,
+     "r_mn4_mn5": 0.6656,
+     "dip10": 0.2269,
+     "mn2_in_mn1": [
+      0.28,
+      0.051
+     ],
+     "mn4_in_mn3": [
+      0.307,
+      0.061
+     ],
+     "orders": {
+      "1234": 0.1729,
+      "1243": 0.1388,
+      "1324": 0.1833,
+      "1342": 0.1299,
+      "1423": 0.112,
+      "1432": 0.1261,
+      "rest": 0.137
+     },
+     "preferred_order_share": 0.2953,
+     "coincidence_vs_chance_3ms": 1.065,
+     "preferred_share_of_complete": 0.3422
+    },
+    {
+     "rate_hz": [
+      6.59,
+      6.57,
+      6.57,
+      6.56,
+      6.55
+     ],
+     "isi_cv": [
+      0.088,
+      0.092,
+      0.094,
+      0.089,
+      0.091
+     ],
+     "splayness": 0.593,
+     "r_mn4_mn5": 0.6219,
+     "dip10": 0.1727,
+     "mn2_in_mn1": [
+      0.495,
+      0.039
+     ],
+     "mn4_in_mn3": [
+      0.567,
+      0.056
+     ],
+     "orders": {
+      "1234": 0.126,
+      "1243": 0.1419,
+      "1324": 0.1851,
+      "1342": 0.1111,
+      "1423": 0.1551,
+      "1432": 0.1281,
+      "rest": 0.1527
+     },
+     "preferred_order_share": 0.3402,
+     "coincidence_vs_chance_3ms": 1.023,
+     "preferred_share_of_complete": 0.4015
+    },
+    {
+     "rate_hz": [
+      6.58,
+      6.56,
+      6.54,
+      6.54,
+      6.59
+     ],
+     "isi_cv": [
+      0.092,
+      0.091,
+      0.092,
+      0.092,
+      0.09
+     ],
+     "splayness": 0.6042,
+     "r_mn4_mn5": 0.6278,
+     "dip10": 0.1823,
+     "mn2_in_mn1": [
+      0.511,
+      0.043
+     ],
+     "mn4_in_mn3": [
+      0.236,
+      0.016
+     ],
+     "orders": {
+      "1234": 0.1409,
+      "1243": 0.1404,
+      "1324": 0.1046,
+      "1342": 0.1655,
+      "1423": 0.1712,
+      "1432": 0.1314,
+      "rest": 0.146
+     },
+     "preferred_order_share": 0.2758,
+     "coincidence_vs_chance_3ms": 1.022,
+     "preferred_share_of_complete": 0.323
+    },
+    {
+     "rate_hz": [
+      6.59,
+      6.54,
+      6.55,
+      6.56,
+      6.57
+     ],
+     "isi_cv": [
+      0.086,
+      0.092,
+      0.089,
+      0.089,
+      0.09
+     ],
+     "splayness": 0.5826,
+     "r_mn4_mn5": 0.6264,
+     "dip10": 0.1878,
+     "mn2_in_mn1": [
+      0.206,
+      0.035
+     ],
+     "mn4_in_mn3": [
+      0.015,
+      0.041
+     ],
+     "orders": {
+      "1234": 0.1518,
+      "1243": 0.1402,
+      "1324": 0.1448,
+      "1342": 0.1587,
+      "1423": 0.1147,
+      "1432": 0.1439,
+      "rest": 0.1458
+     },
+     "preferred_order_share": 0.2595,
+     "coincidence_vs_chance_3ms": 1.064,
+     "preferred_share_of_complete": 0.3038
+    },
+    {
+     "rate_hz": [
+      6.58,
+      6.55,
+      6.55,
+      6.56,
+      6.55
+     ],
+     "isi_cv": [
+      0.092,
+      0.088,
+      0.089,
+      0.09,
+      0.091
+     ],
+     "splayness": 0.5957,
+     "r_mn4_mn5": 0.6702,
+     "dip10": 0.2158,
+     "mn2_in_mn1": [
+      0.524,
+      0.067
+     ],
+     "mn4_in_mn3": [
+      0.355,
+      0.035
+     ],
+     "orders": {
+      "1234": 0.1146,
+      "1243": 0.1388,
+      "1324": 0.1563,
+      "1342": 0.1494,
+      "1423": 0.1525,
+      "1432": 0.1467,
+      "rest": 0.1417
+     },
+     "preferred_order_share": 0.3088,
+     "coincidence_vs_chance_3ms": 1.036,
+     "preferred_share_of_complete": 0.3598
+    },
+    {
+     "rate_hz": [
+      6.56,
+      6.56,
+      6.58,
+      6.57,
+      6.55
+     ],
+     "isi_cv": [
+      0.091,
+      0.088,
+      0.091,
+      0.092,
+      0.091
+     ],
+     "splayness": 0.5994,
+     "r_mn4_mn5": 0.6366,
+     "dip10": 0.1875,
+     "mn2_in_mn1": [
+      0.33,
+      0.029
+     ],
+     "mn4_in_mn3": [
+      0.443,
+      0.031
+     ],
+     "orders": {
+      "1234": 0.1371,
+      "1243": 0.1527,
+      "1324": 0.1408,
+      "1342": 0.1463,
+      "1423": 0.142,
+      "1432": 0.1486,
+      "rest": 0.1325
+     },
+     "preferred_order_share": 0.2828,
+     "coincidence_vs_chance_3ms": 0.995,
+     "preferred_share_of_complete": 0.326
+    }
+   ],
+   "unit_rates_hz": [
+    6.578,
+    6.562,
+    6.555,
+    6.558,
+    6.555
+   ],
+   "unit_isi_cv": [
+    0.09,
+    0.091,
+    0.091,
+    0.089,
+    0.091
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.6237,
+     "dip10": 0.197,
+     "within_10ms_over_chance": 1.0595
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.6294,
+     "dip10": 0.1973,
+     "within_10ms_over_chance": 1.0555
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.6297,
+     "dip10": 0.1978,
+     "within_10ms_over_chance": 1.0365
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.6454,
+     "dip10": 0.2002,
+     "within_10ms_over_chance": 1.087
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.6287,
+     "dip10": 0.199,
+     "within_10ms_over_chance": 1.0395
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.6302,
+     "dip10": 0.1898,
+     "within_10ms_over_chance": 1.0105
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.6545,
+     "dip10": 0.2144,
+     "within_10ms_over_chance": 1.1475
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.6256,
+     "dip10": 0.1946,
+     "within_10ms_over_chance": 1.038
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.638,
+     "dip10": 0.2011,
+     "within_10ms_over_chance": 1.0485
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.6322,
+     "dip10": 0.1876,
+     "within_10ms_over_chance": 1.0565
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN4-MN5": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    }
+   }
+  },
+  "homogeneous 43.5 pS, noise 0.949": {
+   "g_ns": 0.0435,
+   "sigma_pa_ms05": 0.949,
+   "drive_pa": 108.75,
+   "summary": {
+    "splayness": [
+     0.7613,
+     0.7574,
+     0.763
+    ],
+    "r_mn4_mn5": [
+     0.5643,
+     0.4947,
+     0.594
+    ],
+    "dip10": [
+     0.0917,
+     0.0589,
+     0.1065
+    ],
+    "preferred_order_share": [
+     0.3232,
+     0.2271,
+     0.3857
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.38,
+     0.339,
+     0.4
+    ],
+    "rate_hz": 8.43,
+    "isi_cv": 0.065,
+    "mn2_in_mn1": [
+     0.476,
+     0.212
+    ],
+    "preferred_share_of_complete": [
+     0.3327,
+     0.2339,
+     0.397
+    ],
+    "repeat_share": 0.0283,
+    "mn4_in_mn3": [
+     0.577,
+     0.227
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      8.41,
+      8.41,
+      8.42,
+      8.4,
+      8.42
+     ],
+     "isi_cv": [
+      0.065,
+      0.064,
+      0.065,
+      0.066,
+      0.065
+     ],
+     "splayness": 0.7595,
+     "r_mn4_mn5": 0.5834,
+     "dip10": 0.0947,
+     "mn2_in_mn1": [
+      0.496,
+      0.175
+     ],
+     "mn4_in_mn3": [
+      0.592,
+      0.283
+     ],
+     "orders": {
+      "1234": 0.1425,
+      "1243": 0.1967,
+      "1324": 0.1332,
+      "1342": 0.1291,
+      "1423": 0.1854,
+      "1432": 0.1851,
+      "rest": 0.0281
+     },
+     "preferred_order_share": 0.3186,
+     "coincidence_vs_chance_3ms": 0.4,
+     "preferred_share_of_complete": 0.3278
+    },
+    {
+     "rate_hz": [
+      8.42,
+      8.45,
+      8.43,
+      8.42,
+      8.42
+     ],
+     "isi_cv": [
+      0.065,
+      0.064,
+      0.064,
+      0.063,
+      0.066
+     ],
+     "splayness": 0.7616,
+     "r_mn4_mn5": 0.5618,
+     "dip10": 0.0847,
+     "mn2_in_mn1": [
+      0.444,
+      0.227
+     ],
+     "mn4_in_mn3": [
+      0.484,
+      0.279
+     ],
+     "orders": {
+      "1234": 0.2075,
+      "1243": 0.1505,
+      "1324": 0.1466,
+      "1342": 0.14,
+      "1423": 0.2037,
+      "1432": 0.1244,
+      "rest": 0.0273
+     },
+     "preferred_order_share": 0.3503,
+     "coincidence_vs_chance_3ms": 0.399,
+     "preferred_share_of_complete": 0.3601
+    },
+    {
+     "rate_hz": [
+      8.44,
+      8.43,
+      8.43,
+      8.44,
+      8.45
+     ],
+     "isi_cv": [
+      0.064,
+      0.064,
+      0.064,
+      0.066,
+      0.064
+     ],
+     "splayness": 0.7615,
+     "r_mn4_mn5": 0.594,
+     "dip10": 0.0887,
+     "mn2_in_mn1": [
+      0.368,
+      0.021
+     ],
+     "mn4_in_mn3": [
+      0.594,
+      0.221
+     ],
+     "orders": {
+      "1234": 0.1728,
+      "1243": 0.2064,
+      "1324": 0.138,
+      "1342": 0.1173,
+      "1423": 0.0891,
+      "1432": 0.247,
+      "rest": 0.0292
+     },
+     "preferred_order_share": 0.2271,
+     "coincidence_vs_chance_3ms": 0.359,
+     "preferred_share_of_complete": 0.2339
+    },
+    {
+     "rate_hz": [
+      8.45,
+      8.44,
+      8.42,
+      8.43,
+      8.43
+     ],
+     "isi_cv": [
+      0.064,
+      0.064,
+      0.066,
+      0.065,
+      0.065
+     ],
+     "splayness": 0.763,
+     "r_mn4_mn5": 0.4947,
+     "dip10": 0.0589,
+     "mn2_in_mn1": [
+      0.477,
+      0.259
+     ],
+     "mn4_in_mn3": [
+      0.384,
+      0.269
+     ],
+     "orders": {
+      "1234": 0.1882,
+      "1243": 0.1146,
+      "1324": 0.1649,
+      "1342": 0.1833,
+      "1423": 0.2208,
+      "1432": 0.0997,
+      "rest": 0.0284
+     },
+     "preferred_order_share": 0.3857,
+     "coincidence_vs_chance_3ms": 0.37,
+     "preferred_share_of_complete": 0.397
+    },
+    {
+     "rate_hz": [
+      8.43,
+      8.43,
+      8.43,
+      8.43,
+      8.43
+     ],
+     "isi_cv": [
+      0.065,
+      0.065,
+      0.064,
+      0.063,
+      0.064
+     ],
+     "splayness": 0.7612,
+     "r_mn4_mn5": 0.5577,
+     "dip10": 0.095,
+     "mn2_in_mn1": [
+      0.558,
+      0.29
+     ],
+     "mn4_in_mn3": [
+      0.537,
+      0.201
+     ],
+     "orders": {
+      "1234": 0.1367,
+      "1243": 0.1333,
+      "1324": 0.1571,
+      "1342": 0.1459,
+      "1423": 0.1707,
+      "1432": 0.2275,
+      "rest": 0.0288
+     },
+     "preferred_order_share": 0.3278,
+     "coincidence_vs_chance_3ms": 0.383,
+     "preferred_share_of_complete": 0.3375
+    },
+    {
+     "rate_hz": [
+      8.42,
+      8.43,
+      8.43,
+      8.43,
+      8.41
+     ],
+     "isi_cv": [
+      0.066,
+      0.064,
+      0.066,
+      0.064,
+      0.066
+     ],
+     "splayness": 0.7617,
+     "r_mn4_mn5": 0.5336,
+     "dip10": 0.0816,
+     "mn2_in_mn1": [
+      0.475,
+      0.197
+     ],
+     "mn4_in_mn3": [
+      0.571,
+      0.143
+     ],
+     "orders": {
+      "1234": 0.1392,
+      "1243": 0.1899,
+      "1324": 0.1472,
+      "1342": 0.1537,
+      "1423": 0.1461,
+      "1432": 0.197,
+      "rest": 0.0268
+     },
+     "preferred_order_share": 0.2933,
+     "coincidence_vs_chance_3ms": 0.339,
+     "preferred_share_of_complete": 0.3014
+    },
+    {
+     "rate_hz": [
+      8.42,
+      8.43,
+      8.45,
+      8.43,
+      8.42
+     ],
+     "isi_cv": [
+      0.064,
+      0.066,
+      0.063,
+      0.063,
+      0.065
+     ],
+     "splayness": 0.7574,
+     "r_mn4_mn5": 0.5669,
+     "dip10": 0.1001,
+     "mn2_in_mn1": [
+      0.536,
+      0.228
+     ],
+     "mn4_in_mn3": [
+      0.582,
+      0.232
+     ],
+     "orders": {
+      "1234": 0.1385,
+      "1243": 0.171,
+      "1324": 0.1435,
+      "1342": 0.1428,
+      "1423": 0.1853,
+      "1432": 0.1912,
+      "rest": 0.0278
+     },
+     "preferred_order_share": 0.3288,
+     "coincidence_vs_chance_3ms": 0.384,
+     "preferred_share_of_complete": 0.3382
+    },
+    {
+     "rate_hz": [
+      8.42,
+      8.42,
+      8.43,
+      8.41,
+      8.42
+     ],
+     "isi_cv": [
+      0.064,
+      0.065,
+      0.064,
+      0.065,
+      0.065
+     ],
+     "splayness": 0.7577,
+     "r_mn4_mn5": 0.5855,
+     "dip10": 0.1065,
+     "mn2_in_mn1": [
+      0.474,
+      0.185
+     ],
+     "mn4_in_mn3": [
+      0.608,
+      0.219
+     ],
+     "orders": {
+      "1234": 0.138,
+      "1243": 0.2099,
+      "1324": 0.201,
+      "1342": 0.1252,
+      "1423": 0.0902,
+      "1432": 0.2067,
+      "rest": 0.0291
+     },
+     "preferred_order_share": 0.2912,
+     "coincidence_vs_chance_3ms": 0.377,
+     "preferred_share_of_complete": 0.2999
+    }
+   ],
+   "unit_rates_hz": [
+    8.422,
+    8.43,
+    8.427,
+    8.43,
+    8.423
+   ],
+   "unit_isi_cv": [
+    0.064,
+    0.064,
+    0.064,
+    0.064,
+    0.065
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.5565,
+     "dip10": 0.0837,
+     "within_10ms_over_chance": 0.4385
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.5561,
+     "dip10": 0.0865,
+     "within_10ms_over_chance": 0.439
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.5525,
+     "dip10": 0.0823,
+     "within_10ms_over_chance": 0.4195
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.5512,
+     "dip10": 0.0908,
+     "within_10ms_over_chance": 0.4775
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.5523,
+     "dip10": 0.088,
+     "within_10ms_over_chance": 0.47
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.5476,
+     "dip10": 0.0858,
+     "within_10ms_over_chance": 0.4295
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.5379,
+     "dip10": 0.0801,
+     "within_10ms_over_chance": 0.414
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.5614,
+     "dip10": 0.0892,
+     "within_10ms_over_chance": 0.475
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.5595,
+     "dip10": 0.0912,
+     "within_10ms_over_chance": 0.472
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.5643,
+     "dip10": 0.0917,
+     "within_10ms_over_chance": 0.463
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": false,
+     "dip10": true,
+     "within_10ms_over_chance": true
+    },
+    "MN2-MN3": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": false,
+     "dip10": true,
+     "within_10ms_over_chance": true
+    },
+    "MN3-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": false,
+     "dip10": true,
+     "within_10ms_over_chance": true
+    },
+    "MN4-MN5": {
+     "r": false,
+     "dip10": true,
+     "within_10ms_over_chance": true
+    }
+   }
+  },
+  "homogeneous 43.5 pS, noise 1.9": {
+   "g_ns": 0.0435,
+   "sigma_pa_ms05": 1.9,
+   "drive_pa": 108.75,
+   "summary": {
+    "splayness": [
+     0.6793,
+     0.6749,
+     0.6844
+    ],
+    "r_mn4_mn5": [
+     0.5899,
+     0.5664,
+     0.5971
+    ],
+    "dip10": [
+     0.1469,
+     0.1265,
+     0.1637
+    ],
+    "preferred_order_share": [
+     0.2976,
+     0.2614,
+     0.3228
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.7375,
+     0.691,
+     0.757
+    ],
+    "rate_hz": 8.29,
+    "isi_cv": 0.129,
+    "mn2_in_mn1": [
+     0.503,
+     0.135
+    ],
+    "preferred_share_of_complete": [
+     0.3377,
+     0.2989,
+     0.3691
+    ],
+    "repeat_share": 0.1202,
+    "mn4_in_mn3": [
+     0.489,
+     0.15
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      8.28,
+      8.31,
+      8.26,
+      8.28,
+      8.31
+     ],
+     "isi_cv": [
+      0.131,
+      0.13,
+      0.129,
+      0.13,
+      0.128
+     ],
+     "splayness": 0.6803,
+     "r_mn4_mn5": 0.5684,
+     "dip10": 0.1385,
+     "mn2_in_mn1": [
+      0.532,
+      0.157
+     ],
+     "mn4_in_mn3": [
+      0.427,
+      0.145
+     ],
+     "orders": {
+      "1234": 0.1527,
+      "1243": 0.1193,
+      "1324": 0.1559,
+      "1342": 0.1506,
+      "1423": 0.1495,
+      "1432": 0.1589,
+      "rest": 0.113
+     },
+     "preferred_order_share": 0.3054,
+     "coincidence_vs_chance_3ms": 0.743,
+     "preferred_share_of_complete": 0.3443
+    },
+    {
+     "rate_hz": [
+      8.27,
+      8.25,
+      8.3,
+      8.29,
+      8.27
+     ],
+     "isi_cv": [
+      0.128,
+      0.13,
+      0.131,
+      0.129,
+      0.133
+     ],
+     "splayness": 0.6749,
+     "r_mn4_mn5": 0.5923,
+     "dip10": 0.1465,
+     "mn2_in_mn1": [
+      0.506,
+      0.105
+     ],
+     "mn4_in_mn3": [
+      0.53,
+      0.15
+     ],
+     "orders": {
+      "1234": 0.1389,
+      "1243": 0.1651,
+      "1324": 0.1536,
+      "1342": 0.1188,
+      "1423": 0.1463,
+      "1432": 0.153,
+      "rest": 0.1243
+     },
+     "preferred_order_share": 0.2999,
+     "coincidence_vs_chance_3ms": 0.711,
+     "preferred_share_of_complete": 0.3425
+    },
+    {
+     "rate_hz": [
+      8.31,
+      8.29,
+      8.28,
+      8.31,
+      8.29
+     ],
+     "isi_cv": [
+      0.131,
+      0.128,
+      0.13,
+      0.126,
+      0.127
+     ],
+     "splayness": 0.6784,
+     "r_mn4_mn5": 0.5971,
+     "dip10": 0.1637,
+     "mn2_in_mn1": [
+      0.503,
+      0.081
+     ],
+     "mn4_in_mn3": [
+      0.529,
+      0.152
+     ],
+     "orders": {
+      "1234": 0.1497,
+      "1243": 0.1382,
+      "1324": 0.1536,
+      "1342": 0.1411,
+      "1423": 0.127,
+      "1432": 0.1705,
+      "rest": 0.1199
+     },
+     "preferred_order_share": 0.2806,
+     "coincidence_vs_chance_3ms": 0.742,
+     "preferred_share_of_complete": 0.3188
+    },
+    {
+     "rate_hz": [
+      8.3,
+      8.34,
+      8.3,
+      8.31,
+      8.31
+     ],
+     "isi_cv": [
+      0.129,
+      0.127,
+      0.129,
+      0.128,
+      0.128
+     ],
+     "splayness": 0.6755,
+     "r_mn4_mn5": 0.5664,
+     "dip10": 0.1265,
+     "mn2_in_mn1": [
+      0.478,
+      0.172
+     ],
+     "mn4_in_mn3": [
+      0.472,
+      0.152
+     ],
+     "orders": {
+      "1234": 0.1424,
+      "1243": 0.1282,
+      "1324": 0.1697,
+      "1342": 0.1439,
+      "1423": 0.1531,
+      "1432": 0.1372,
+      "rest": 0.1255
+     },
+     "preferred_order_share": 0.3228,
+     "coincidence_vs_chance_3ms": 0.757,
+     "preferred_share_of_complete": 0.3691
+    },
+    {
+     "rate_hz": [
+      8.25,
+      8.29,
+      8.29,
+      8.28,
+      8.29
+     ],
+     "isi_cv": [
+      0.127,
+      0.127,
+      0.129,
+      0.127,
+      0.13
+     ],
+     "splayness": 0.6835,
+     "r_mn4_mn5": 0.5932,
+     "dip10": 0.1528,
+     "mn2_in_mn1": [
+      0.463,
+      0.129
+     ],
+     "mn4_in_mn3": [
+      0.493,
+      0.15
+     ],
+     "orders": {
+      "1234": 0.1621,
+      "1243": 0.1483,
+      "1324": 0.1454,
+      "1342": 0.1328,
+      "1423": 0.1485,
+      "1432": 0.1458,
+      "rest": 0.117
+     },
+     "preferred_order_share": 0.2939,
+     "coincidence_vs_chance_3ms": 0.691,
+     "preferred_share_of_complete": 0.3328
+    },
+    {
+     "rate_hz": [
+      8.29,
+      8.3,
+      8.32,
+      8.3,
+      8.31
+     ],
+     "isi_cv": [
+      0.132,
+      0.127,
+      0.127,
+      0.13,
+      0.126
+     ],
+     "splayness": 0.6844,
+     "r_mn4_mn5": 0.5892,
+     "dip10": 0.1474,
+     "mn2_in_mn1": [
+      0.4,
+      0.156
+     ],
+     "mn4_in_mn3": [
+      0.486,
+      0.11
+     ],
+     "orders": {
+      "1234": 0.1691,
+      "1243": 0.1655,
+      "1324": 0.1408,
+      "1342": 0.1219,
+      "1423": 0.1546,
+      "1432": 0.1392,
+      "rest": 0.1088
+     },
+     "preferred_order_share": 0.2954,
+     "coincidence_vs_chance_3ms": 0.705,
+     "preferred_share_of_complete": 0.3315
+    },
+    {
+     "rate_hz": [
+      8.25,
+      8.29,
+      8.26,
+      8.29,
+      8.26
+     ],
+     "isi_cv": [
+      0.134,
+      0.13,
+      0.132,
+      0.128,
+      0.128
+     ],
+     "splayness": 0.6772,
+     "r_mn4_mn5": 0.5907,
+     "dip10": 0.151,
+     "mn2_in_mn1": [
+      0.566,
+      0.086
+     ],
+     "mn4_in_mn3": [
+      0.55,
+      0.121
+     ],
+     "orders": {
+      "1234": 0.1397,
+      "1243": 0.1548,
+      "1324": 0.1304,
+      "1342": 0.159,
+      "1423": 0.131,
+      "1432": 0.1597,
+      "rest": 0.1254
+     },
+     "preferred_order_share": 0.2614,
+     "coincidence_vs_chance_3ms": 0.733,
+     "preferred_share_of_complete": 0.2989
+    },
+    {
+     "rate_hz": [
+      8.31,
+      8.3,
+      8.27,
+      8.29,
+      8.28
+     ],
+     "isi_cv": [
+      0.124,
+      0.128,
+      0.133,
+      0.13,
+      0.128
+     ],
+     "splayness": 0.6801,
+     "r_mn4_mn5": 0.5694,
+     "dip10": 0.133,
+     "mn2_in_mn1": [
+      0.503,
+      0.141
+     ],
+     "mn4_in_mn3": [
+      0.486,
+      0.193
+     ],
+     "orders": {
+      "1234": 0.1635,
+      "1243": 0.137,
+      "1324": 0.1803,
+      "1342": 0.1097,
+      "1423": 0.1389,
+      "1432": 0.1499,
+      "rest": 0.1206
+     },
+     "preferred_order_share": 0.3192,
+     "coincidence_vs_chance_3ms": 0.747,
+     "preferred_share_of_complete": 0.363
+    }
+   ],
+   "unit_rates_hz": [
+    8.287,
+    8.297,
+    8.285,
+    8.29,
+    8.293
+   ],
+   "unit_isi_cv": [
+    0.13,
+    0.128,
+    0.13,
+    0.129,
+    0.128
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.5821,
+     "dip10": 0.1483,
+     "within_10ms_over_chance": 0.8105
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.5756,
+     "dip10": 0.1372,
+     "within_10ms_over_chance": 0.753
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.5739,
+     "dip10": 0.1462,
+     "within_10ms_over_chance": 0.797
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.5781,
+     "dip10": 0.1374,
+     "within_10ms_over_chance": 0.7565
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.5989,
+     "dip10": 0.1527,
+     "within_10ms_over_chance": 0.8185
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.5782,
+     "dip10": 0.1387,
+     "within_10ms_over_chance": 0.752
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.5652,
+     "dip10": 0.1304,
+     "within_10ms_over_chance": 0.6855
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.5761,
+     "dip10": 0.1373,
+     "within_10ms_over_chance": 0.745
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.5833,
+     "dip10": 0.1484,
+     "within_10ms_over_chance": 0.792
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.5899,
+     "dip10": 0.1469,
+     "within_10ms_over_chance": 0.774
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": false,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN4-MN5": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    }
+   }
+  }
+ },
+ "part2": {
+  "ratios_fitted_to_a": {
+   "strong": 0.009925,
+   "weak": 0.004379,
+   "mn5": 0.00312
+  },
+  "kicks_as_a": {
+   "MN1-4": {
+    "target_hz": 8.676,
+    "target_cv": 0.064,
+    "chosen": {
+     "kick_hz": 5.999,
+     "bias_mv": 7.03406,
+     "rate_hz": 8.676,
+     "isi_cv": 0.0641
+    },
+    "trail": [
+     {
+      "kick_hz": 63.246,
+      "bias_mv": 6.89879,
+      "rate_hz": 8.675,
+      "isi_cv": 0.212
+     },
+     {
+      "kick_hz": 3.557,
+      "bias_mv": 7.03732,
+      "rate_hz": 8.678,
+      "isi_cv": 0.0497
+     },
+     {
+      "kick_hz": 14.998,
+      "bias_mv": 7.02222,
+      "rate_hz": 8.678,
+      "isi_cv": 0.1085
+     },
+     {
+      "kick_hz": 7.303,
+      "bias_mv": 7.03244,
+      "rate_hz": 8.674,
+      "isi_cv": 0.0708
+     },
+     {
+      "kick_hz": 5.097,
+      "bias_mv": 7.03523,
+      "rate_hz": 8.681,
+      "isi_cv": 0.0594
+     },
+     {
+      "kick_hz": 6.101,
+      "bias_mv": 7.03397,
+      "rate_hz": 8.675,
+      "isi_cv": 0.0644
+     },
+     {
+      "kick_hz": 5.576,
+      "bias_mv": 7.03454,
+      "rate_hz": 8.675,
+      "isi_cv": 0.0628
+     },
+     {
+      "kick_hz": 5.833,
+      "bias_mv": 7.03435,
+      "rate_hz": 8.675,
+      "isi_cv": 0.0635
+     },
+     {
+      "kick_hz": 5.965,
+      "bias_mv": 7.03418,
+      "rate_hz": 8.68,
+      "isi_cv": 0.064
+     },
+     {
+      "kick_hz": 6.033,
+      "bias_mv": 7.03397,
+      "rate_hz": 8.672,
+      "isi_cv": 0.0645
+     },
+     {
+      "kick_hz": 5.999,
+      "bias_mv": 7.03406,
+      "rate_hz": 8.676,
+      "isi_cv": 0.0641
+     },
+     {
+      "kick_hz": 5.982,
+      "bias_mv": 7.03417,
+      "rate_hz": 8.675,
+      "isi_cv": 0.064
+     },
+     {
+      "kick_hz": 5.991,
+      "bias_mv": 7.03408,
+      "rate_hz": 8.676,
+      "isi_cv": 0.0642
+     },
+     {
+      "kick_hz": 5.986,
+      "bias_mv": 7.03407,
+      "rate_hz": 8.676,
+      "isi_cv": 0.0641
+     },
+     {
+      "kick_hz": 5.984,
+      "bias_mv": 7.03416,
+      "rate_hz": 8.676,
+      "isi_cv": 0.0641
+     },
+     {
+      "kick_hz": 5.983,
+      "bias_mv": 7.03416,
+      "rate_hz": 8.675,
+      "isi_cv": 0.0641
+     }
+    ]
+   },
+   "MN5": {
+    "target_hz": 7.808,
+    "target_cv": 0.071,
+    "chosen": {
+     "kick_hz": 3.98,
+     "bias_mv": 7.01773,
+     "rate_hz": 7.808,
+     "isi_cv": 0.0712
+    },
+    "trail": [
+     {
+      "kick_hz": 63.246,
+      "bias_mv": 6.86132,
+      "rate_hz": 7.81,
+      "isi_cv": 0.2711
+     },
+     {
+      "kick_hz": 3.557,
+      "bias_mv": 7.0184,
+      "rate_hz": 7.815,
+      "isi_cv": 0.0662
+     },
+     {
+      "kick_hz": 14.998,
+      "bias_mv": 7.00673,
+      "rate_hz": 7.808,
+      "isi_cv": 0.1585
+     },
+     {
+      "kick_hz": 7.303,
+      "bias_mv": 7.01417,
+      "rate_hz": 7.804,
+      "isi_cv": 0.1005
+     },
+     {
+      "kick_hz": 5.097,
+      "bias_mv": 7.01657,
+      "rate_hz": 7.803,
+      "isi_cv": 0.0812
+     },
+     {
+      "kick_hz": 4.258,
+      "bias_mv": 7.01743,
+      "rate_hz": 7.803,
+      "isi_cv": 0.0733
+     },
+     {
+      "kick_hz": 3.891,
+      "bias_mv": 7.01791,
+      "rate_hz": 7.805,
+      "isi_cv": 0.0701
+     },
+     {
+      "kick_hz": 4.07,
+      "bias_mv": 7.01771,
+      "rate_hz": 7.808,
+      "isi_cv": 0.0717
+     },
+     {
+      "kick_hz": 3.98,
+      "bias_mv": 7.01773,
+      "rate_hz": 7.808,
+      "isi_cv": 0.0712
+     },
+     {
+      "kick_hz": 3.935,
+      "bias_mv": 7.01782,
+      "rate_hz": 7.81,
+      "isi_cv": 0.0707
+     },
+     {
+      "kick_hz": 3.957,
+      "bias_mv": 7.01782,
+      "rate_hz": 7.812,
+      "isi_cv": 0.0711
+     },
+     {
+      "kick_hz": 3.946,
+      "bias_mv": 7.01782,
+      "rate_hz": 7.81,
+      "isi_cv": 0.0707
+     },
+     {
+      "kick_hz": 3.952,
+      "bias_mv": 7.01781,
+      "rate_hz": 7.806,
+      "isi_cv": 0.0709
+     },
+     {
+      "kick_hz": 3.955,
+      "bias_mv": 7.01783,
+      "rate_hz": 7.812,
+      "isi_cv": 0.0711
+     },
+     {
+      "kick_hz": 3.953,
+      "bias_mv": 7.01781,
+      "rate_hz": 7.806,
+      "isi_cv": 0.071
+     },
+     {
+      "kick_hz": 3.954,
+      "bias_mv": 7.01783,
+      "rate_hz": 7.812,
+      "isi_cv": 0.071
+     }
+    ]
+   }
+  },
+  "as A": {
+   "kick_hz": {
+    "MN1-4": 5.999,
+    "MN5": 3.98
+   },
+   "targets_hz": [
+    8.676,
+    8.676,
+    8.676,
+    8.676,
+    7.808
+   ],
+   "calibration_rates_hz": [
+    8.679,
+    8.675,
+    8.675,
+    8.685,
+    7.819
+   ],
+   "calibrated_within_2pct": true,
+   "unit_biases_mv": [
+    7.07903,
+    7.07912,
+    7.07562,
+    7.08232,
+    7.04325
+   ],
+   "summary": {
+    "splayness": [
+     0.7616,
+     0.7589,
+     0.7659
+    ],
+    "r_mn4_mn5": [
+     0.5876,
+     0.5725,
+     0.5904
+    ],
+    "dip10": [
+     0.1226,
+     0.1132,
+     0.1296
+    ],
+    "preferred_order_share": [
+     0.7657,
+     0.7313,
+     0.8079
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.2875,
+     0.281,
+     0.326
+    ],
+    "rate_hz": 8.5,
+    "isi_cv": 0.069,
+    "mn2_in_mn1": [
+     0.5,
+     0.8
+    ],
+    "preferred_share_of_complete": [
+     0.7929,
+     0.7535,
+     0.8308
+    ],
+    "repeat_share": 0.0331,
+    "mn4_in_mn3": [
+     0.459,
+     0.804
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      8.68,
+      8.69,
+      8.68,
+      8.69,
+      7.82
+     ],
+     "isi_cv": [
+      0.066,
+      0.066,
+      0.066,
+      0.065,
+      0.082
+     ],
+     "splayness": 0.7607,
+     "r_mn4_mn5": 0.5892,
+     "dip10": 0.1262,
+     "mn2_in_mn1": [
+      0.504,
+      0.794
+     ],
+     "mn4_in_mn3": [
+      0.459,
+      0.815
+     ],
+     "orders": {
+      "1234": 0.0711,
+      "1243": 0.0257,
+      "1324": 0.3633,
+      "1342": 0.0675,
+      "1423": 0.4044,
+      "1432": 0.0349,
+      "rest": 0.0329
+     },
+     "preferred_order_share": 0.7677,
+     "coincidence_vs_chance_3ms": 0.292,
+     "preferred_share_of_complete": 0.7938
+    },
+    {
+     "rate_hz": [
+      8.68,
+      8.69,
+      8.65,
+      8.67,
+      7.81
+     ],
+     "isi_cv": [
+      0.063,
+      0.066,
+      0.064,
+      0.066,
+      0.081
+     ],
+     "splayness": 0.7659,
+     "r_mn4_mn5": 0.5826,
+     "dip10": 0.1132,
+     "mn2_in_mn1": [
+      0.495,
+      0.828
+     ],
+     "mn4_in_mn3": [
+      0.459,
+      0.808
+     ],
+     "orders": {
+      "1234": 0.0743,
+      "1243": 0.0234,
+      "1324": 0.3696,
+      "1342": 0.0526,
+      "1423": 0.4383,
+      "1432": 0.0142,
+      "rest": 0.0276
+     },
+     "preferred_order_share": 0.8079,
+     "coincidence_vs_chance_3ms": 0.283,
+     "preferred_share_of_complete": 0.8308
+    },
+    {
+     "rate_hz": [
+      8.68,
+      8.69,
+      8.66,
+      8.69,
+      7.8
+     ],
+     "isi_cv": [
+      0.067,
+      0.066,
+      0.067,
+      0.065,
+      0.082
+     ],
+     "splayness": 0.7589,
+     "r_mn4_mn5": 0.5879,
+     "dip10": 0.1198,
+     "mn2_in_mn1": [
+      0.503,
+      0.802
+     ],
+     "mn4_in_mn3": [
+      0.461,
+      0.799
+     ],
+     "orders": {
+      "1234": 0.0528,
+      "1243": 0.0432,
+      "1324": 0.4171,
+      "1342": 0.0753,
+      "1423": 0.346,
+      "1432": 0.029,
+      "rest": 0.0365
+     },
+     "preferred_order_share": 0.7631,
+     "coincidence_vs_chance_3ms": 0.281,
+     "preferred_share_of_complete": 0.792
+    },
+    {
+     "rate_hz": [
+      8.67,
+      8.68,
+      8.66,
+      8.68,
+      7.81
+     ],
+     "isi_cv": [
+      0.063,
+      0.064,
+      0.065,
+      0.068,
+      0.083
+     ],
+     "splayness": 0.7595,
+     "r_mn4_mn5": 0.5725,
+     "dip10": 0.117,
+     "mn2_in_mn1": [
+      0.5,
+      0.806
+     ],
+     "mn4_in_mn3": [
+      0.452,
+      0.784
+     ],
+     "orders": {
+      "1234": 0.0815,
+      "1243": 0.0305,
+      "1324": 0.4789,
+      "1342": 0.0736,
+      "1423": 0.2687,
+      "1432": 0.0333,
+      "rest": 0.0335
+     },
+     "preferred_order_share": 0.7476,
+     "coincidence_vs_chance_3ms": 0.285,
+     "preferred_share_of_complete": 0.7735
+    },
+    {
+     "rate_hz": [
+      8.67,
+      8.68,
+      8.66,
+      8.69,
+      7.82
+     ],
+     "isi_cv": [
+      0.066,
+      0.066,
+      0.065,
+      0.065,
+      0.084
+     ],
+     "splayness": 0.7618,
+     "r_mn4_mn5": 0.5904,
+     "dip10": 0.1167,
+     "mn2_in_mn1": [
+      0.5,
+      0.794
+     ],
+     "mn4_in_mn3": [
+      0.463,
+      0.809
+     ],
+     "orders": {
+      "1234": 0.0629,
+      "1243": 0.0392,
+      "1324": 0.303,
+      "1342": 0.0614,
+      "1423": 0.4609,
+      "1432": 0.038,
+      "rest": 0.0346
+     },
+     "preferred_order_share": 0.7639,
+     "coincidence_vs_chance_3ms": 0.29,
+     "preferred_share_of_complete": 0.7913
+    },
+    {
+     "rate_hz": [
+      8.68,
+      8.69,
+      8.67,
+      8.69,
+      7.82
+     ],
+     "isi_cv": [
+      0.065,
+      0.065,
+      0.067,
+      0.065,
+      0.083
+     ],
+     "splayness": 0.7625,
+     "r_mn4_mn5": 0.5869,
+     "dip10": 0.1296,
+     "mn2_in_mn1": [
+      0.498,
+      0.799
+     ],
+     "mn4_in_mn3": [
+      0.461,
+      0.798
+     ],
+     "orders": {
+      "1234": 0.0759,
+      "1243": 0.0247,
+      "1324": 0.357,
+      "1342": 0.0581,
+      "1423": 0.4105,
+      "1432": 0.0405,
+      "rest": 0.0333
+     },
+     "preferred_order_share": 0.7675,
+     "coincidence_vs_chance_3ms": 0.326,
+     "preferred_share_of_complete": 0.7939
+    },
+    {
+     "rate_hz": [
+      8.66,
+      8.67,
+      8.67,
+      8.68,
+      7.82
+     ],
+     "isi_cv": [
+      0.063,
+      0.063,
+      0.066,
+      0.063,
+      0.083
+     ],
+     "splayness": 0.7636,
+     "r_mn4_mn5": 0.5873,
+     "dip10": 0.1279,
+     "mn2_in_mn1": [
+      0.502,
+      0.815
+     ],
+     "mn4_in_mn3": [
+      0.459,
+      0.81
+     ],
+     "orders": {
+      "1234": 0.0677,
+      "1243": 0.0194,
+      "1324": 0.311,
+      "1342": 0.0769,
+      "1423": 0.4684,
+      "1432": 0.0242,
+      "rest": 0.0324
+     },
+     "preferred_order_share": 0.7794,
+     "coincidence_vs_chance_3ms": 0.299,
+     "preferred_share_of_complete": 0.8055
+    },
+    {
+     "rate_hz": [
+      8.67,
+      8.67,
+      8.66,
+      8.68,
+      7.82
+     ],
+     "isi_cv": [
+      0.063,
+      0.065,
+      0.066,
+      0.064,
+      0.083
+     ],
+     "splayness": 0.7615,
+     "r_mn4_mn5": 0.5882,
+     "dip10": 0.1254,
+     "mn2_in_mn1": [
+      0.501,
+      0.791
+     ],
+     "mn4_in_mn3": [
+      0.458,
+      0.782
+     ],
+     "orders": {
+      "1234": 0.0887,
+      "1243": 0.033,
+      "1324": 0.4418,
+      "1342": 0.0881,
+      "1423": 0.2895,
+      "1432": 0.0294,
+      "rest": 0.0295
+     },
+     "preferred_order_share": 0.7313,
+     "coincidence_vs_chance_3ms": 0.282,
+     "preferred_share_of_complete": 0.7535
+    }
+   ],
+   "unit_rates_hz": [
+    8.677,
+    8.683,
+    8.662,
+    8.685,
+    7.818
+   ],
+   "unit_isi_cv": [
+    0.064,
+    0.065,
+    0.066,
+    0.065,
+    0.083
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.2417,
+     "dip10": 0.0027,
+     "within_10ms_over_chance": 0.0155
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.6466,
+     "dip10": 0.065,
+     "within_10ms_over_chance": 0.325
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.6619,
+     "dip10": 0.0738,
+     "within_10ms_over_chance": 0.375
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.6091,
+     "dip10": 0.1298,
+     "within_10ms_over_chance": 0.656
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.6488,
+     "dip10": 0.0696,
+     "within_10ms_over_chance": 0.343
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.657,
+     "dip10": 0.0726,
+     "within_10ms_over_chance": 0.3615
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.6048,
+     "dip10": 0.1337,
+     "within_10ms_over_chance": 0.687
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.2573,
+     "dip10": 0.0038,
+     "within_10ms_over_chance": 0.022
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.6227,
+     "dip10": 0.1391,
+     "within_10ms_over_chance": 0.7175
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.5876,
+     "dip10": 0.1226,
+     "within_10ms_over_chance": 0.625
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": false,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN4-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    }
+   }
+  },
+  "as D": {
+   "kick_hz": {
+    "MN1-4": 10.798,
+    "MN5": 10.798
+   },
+   "targets_hz": [
+    6.6,
+    6.6,
+    6.6,
+    6.6,
+    6.6
+   ],
+   "calibration_rates_hz": [
+    6.592,
+    6.59,
+    6.6,
+    6.594,
+    6.602
+   ],
+   "calibrated_within_2pct": true,
+   "unit_biases_mv": [
+    7.0268,
+    7.02633,
+    7.02709,
+    7.02598,
+    7.0172
+   ],
+   "summary": {
+    "splayness": [
+     0.712,
+     0.7094,
+     0.7149
+    ],
+    "r_mn4_mn5": [
+     0.5924,
+     0.5833,
+     0.6019
+    ],
+    "dip10": [
+     0.1178,
+     0.1115,
+     0.1319
+    ],
+    "preferred_order_share": [
+     0.3487,
+     0.3399,
+     0.3635
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.6635,
+     0.633,
+     0.72
+    ],
+    "rate_hz": 6.61,
+    "isi_cv": 0.248,
+    "mn2_in_mn1": [
+     0.516,
+     0.306
+    ],
+    "preferred_share_of_complete": [
+     0.5054,
+     0.4962,
+     0.5158
+    ],
+    "repeat_share": 0.3082,
+    "mn4_in_mn3": [
+     0.52,
+     0.315
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      6.6,
+      6.59,
+      6.65,
+      6.54,
+      6.67
+     ],
+     "isi_cv": [
+      0.246,
+      0.252,
+      0.249,
+      0.252,
+      0.235
+     ],
+     "splayness": 0.7124,
+     "r_mn4_mn5": 0.5911,
+     "dip10": 0.1135,
+     "mn2_in_mn1": [
+      0.515,
+      0.295
+     ],
+     "mn4_in_mn3": [
+      0.518,
+      0.318
+     ],
+     "orders": {
+      "1234": 0.0934,
+      "1243": 0.0829,
+      "1324": 0.1547,
+      "1342": 0.0826,
+      "1423": 0.188,
+      "1432": 0.089,
+      "rest": 0.3094
+     },
+     "preferred_order_share": 0.3427,
+     "coincidence_vs_chance_3ms": 0.671,
+     "preferred_share_of_complete": 0.4962
+    },
+    {
+     "rate_hz": [
+      6.57,
+      6.63,
+      6.62,
+      6.56,
+      6.67
+     ],
+     "isi_cv": [
+      0.25,
+      0.262,
+      0.241,
+      0.251,
+      0.245
+     ],
+     "splayness": 0.7117,
+     "r_mn4_mn5": 0.5996,
+     "dip10": 0.1181,
+     "mn2_in_mn1": [
+      0.5,
+      0.306
+     ],
+     "mn4_in_mn3": [
+      0.51,
+      0.289
+     ],
+     "orders": {
+      "1234": 0.0943,
+      "1243": 0.093,
+      "1324": 0.1651,
+      "1342": 0.0815,
+      "1423": 0.1748,
+      "1432": 0.0745,
+      "rest": 0.3168
+     },
+     "preferred_order_share": 0.3399,
+     "coincidence_vs_chance_3ms": 0.669,
+     "preferred_share_of_complete": 0.4975
+    },
+    {
+     "rate_hz": [
+      6.65,
+      6.58,
+      6.63,
+      6.56,
+      6.61
+     ],
+     "isi_cv": [
+      0.251,
+      0.254,
+      0.249,
+      0.25,
+      0.239
+     ],
+     "splayness": 0.7107,
+     "r_mn4_mn5": 0.5847,
+     "dip10": 0.1155,
+     "mn2_in_mn1": [
+      0.52,
+      0.287
+     ],
+     "mn4_in_mn3": [
+      0.524,
+      0.307
+     ],
+     "orders": {
+      "1234": 0.0808,
+      "1243": 0.0826,
+      "1324": 0.1747,
+      "1342": 0.0824,
+      "1423": 0.1751,
+      "1432": 0.0895,
+      "rest": 0.3149
+     },
+     "preferred_order_share": 0.3498,
+     "coincidence_vs_chance_3ms": 0.667,
+     "preferred_share_of_complete": 0.5106
+    },
+    {
+     "rate_hz": [
+      6.63,
+      6.59,
+      6.67,
+      6.54,
+      6.65
+     ],
+     "isi_cv": [
+      0.243,
+      0.254,
+      0.249,
+      0.256,
+      0.245
+     ],
+     "splayness": 0.7121,
+     "r_mn4_mn5": 0.5968,
+     "dip10": 0.1319,
+     "mn2_in_mn1": [
+      0.515,
+      0.267
+     ],
+     "mn4_in_mn3": [
+      0.514,
+      0.335
+     ],
+     "orders": {
+      "1234": 0.09,
+      "1243": 0.0768,
+      "1324": 0.166,
+      "1342": 0.0825,
+      "1423": 0.1816,
+      "1432": 0.0961,
+      "rest": 0.307
+     },
+     "preferred_order_share": 0.3476,
+     "coincidence_vs_chance_3ms": 0.72,
+     "preferred_share_of_complete": 0.5016
+    },
+    {
+     "rate_hz": [
+      6.64,
+      6.54,
+      6.71,
+      6.56,
+      6.58
+     ],
+     "isi_cv": [
+      0.251,
+      0.268,
+      0.242,
+      0.256,
+      0.242
+     ],
+     "splayness": 0.7119,
+     "r_mn4_mn5": 0.5892,
+     "dip10": 0.1115,
+     "mn2_in_mn1": [
+      0.518,
+      0.306
+     ],
+     "mn4_in_mn3": [
+      0.528,
+      0.304
+     ],
+     "orders": {
+      "1234": 0.0745,
+      "1243": 0.0852,
+      "1324": 0.1639,
+      "1342": 0.0872,
+      "1423": 0.1811,
+      "1432": 0.0981,
+      "rest": 0.3101
+     },
+     "preferred_order_share": 0.345,
+     "coincidence_vs_chance_3ms": 0.649,
+     "preferred_share_of_complete": 0.5001
+    },
+    {
+     "rate_hz": [
+      6.58,
+      6.6,
+      6.61,
+      6.54,
+      6.61
+     ],
+     "isi_cv": [
+      0.248,
+      0.252,
+      0.243,
+      0.256,
+      0.247
+     ],
+     "splayness": 0.7149,
+     "r_mn4_mn5": 0.5833,
+     "dip10": 0.1215,
+     "mn2_in_mn1": [
+      0.522,
+      0.308
+     ],
+     "mn4_in_mn3": [
+      0.504,
+      0.329
+     ],
+     "orders": {
+      "1234": 0.0921,
+      "1243": 0.0722,
+      "1324": 0.1901,
+      "1342": 0.0851,
+      "1423": 0.1645,
+      "1432": 0.0924,
+      "rest": 0.3037
+     },
+     "preferred_order_share": 0.3546,
+     "coincidence_vs_chance_3ms": 0.639,
+     "preferred_share_of_complete": 0.5093
+    },
+    {
+     "rate_hz": [
+      6.69,
+      6.62,
+      6.65,
+      6.59,
+      6.66
+     ],
+     "isi_cv": [
+      0.245,
+      0.244,
+      0.247,
+      0.242,
+      0.241
+     ],
+     "splayness": 0.7094,
+     "r_mn4_mn5": 0.5938,
+     "dip10": 0.1211,
+     "mn2_in_mn1": [
+      0.518,
+      0.307
+     ],
+     "mn4_in_mn3": [
+      0.522,
+      0.311
+     ],
+     "orders": {
+      "1234": 0.0819,
+      "1243": 0.0842,
+      "1324": 0.1695,
+      "1342": 0.0901,
+      "1423": 0.194,
+      "1432": 0.0851,
+      "rest": 0.2953
+     },
+     "preferred_order_share": 0.3635,
+     "coincidence_vs_chance_3ms": 0.66,
+     "preferred_share_of_complete": 0.5158
+    },
+    {
+     "rate_hz": [
+      6.57,
+      6.59,
+      6.65,
+      6.57,
+      6.73
+     ],
+     "isi_cv": [
+      0.249,
+      0.246,
+      0.239,
+      0.253,
+      0.237
+     ],
+     "splayness": 0.7126,
+     "r_mn4_mn5": 0.6019,
+     "dip10": 0.1175,
+     "mn2_in_mn1": [
+      0.509,
+      0.328
+     ],
+     "mn4_in_mn3": [
+      0.524,
+      0.324
+     ],
+     "orders": {
+      "1234": 0.0872,
+      "1243": 0.0903,
+      "1324": 0.1797,
+      "1342": 0.0814,
+      "1423": 0.1783,
+      "1432": 0.0797,
+      "rest": 0.3035
+     },
+     "preferred_order_share": 0.358,
+     "coincidence_vs_chance_3ms": 0.633,
+     "preferred_share_of_complete": 0.514
+    }
+   ],
+   "unit_rates_hz": [
+    6.617,
+    6.587,
+    6.647,
+    6.557,
+    6.657
+   ],
+   "unit_isi_cv": [
+    0.248,
+    0.253,
+    0.245,
+    0.252,
+    0.241
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.4776,
+     "dip10": 0.1114,
+     "within_10ms_over_chance": 0.654
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.5986,
+     "dip10": 0.1096,
+     "within_10ms_over_chance": 0.6015
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.6066,
+     "dip10": 0.1198,
+     "within_10ms_over_chance": 0.644
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.588,
+     "dip10": 0.1115,
+     "within_10ms_over_chance": 0.6265
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.609,
+     "dip10": 0.12,
+     "within_10ms_over_chance": 0.665
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.5991,
+     "dip10": 0.1125,
+     "within_10ms_over_chance": 0.639
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.5839,
+     "dip10": 0.1158,
+     "within_10ms_over_chance": 0.649
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.4728,
+     "dip10": 0.1076,
+     "within_10ms_over_chance": 0.6335
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.5924,
+     "dip10": 0.119,
+     "within_10ms_over_chance": 0.6735
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.5924,
+     "dip10": 0.1178,
+     "within_10ms_over_chance": 0.664
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN4": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN4-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    }
+   }
+  }
+ },
+ "part3": {
+  "noise 0.949": {
+   "up from rest": [
+    {
+     "drive_pa": 107.0,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.05,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.1,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.15,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.2,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.25,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.3,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.35,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.4,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.45,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.5,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.55,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.6,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.65,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.7,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.75,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.8,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.85,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.9,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.95,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 108.0,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 108.05,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 108.1,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 108.15,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 108.2,
+     "mn1_4_hz": [
+      12.65,
+      11.77,
+      12.05,
+      12.32
+     ],
+     "mn5_hz": [
+      9.3,
+      8.8,
+      8.9,
+      9.1
+     ]
+    },
+    {
+     "drive_pa": 108.25,
+     "mn1_4_hz": [
+      15.53,
+      15.58,
+      15.58,
+      15.53
+     ],
+     "mn5_hz": [
+      11.6,
+      11.4,
+      11.4,
+      11.5
+     ]
+    },
+    {
+     "drive_pa": 108.3,
+     "mn1_4_hz": [
+      15.85,
+      15.82,
+      15.88,
+      15.85
+     ],
+     "mn5_hz": [
+      11.6,
+      11.8,
+      11.8,
+      11.8
+     ]
+    },
+    {
+     "drive_pa": 108.35,
+     "mn1_4_hz": [
+      16.08,
+      16.08,
+      16.1,
+      16.1
+     ],
+     "mn5_hz": [
+      12.1,
+      12.0,
+      12.1,
+      12.1
+     ]
+    },
+    {
+     "drive_pa": 108.4,
+     "mn1_4_hz": [
+      16.35,
+      16.32,
+      16.32,
+      16.3
+     ],
+     "mn5_hz": [
+      12.4,
+      12.3,
+      12.3,
+      12.3
+     ]
+    },
+    {
+     "drive_pa": 108.45,
+     "mn1_4_hz": [
+      16.55,
+      16.52,
+      16.5,
+      16.58
+     ],
+     "mn5_hz": [
+      12.5,
+      12.7,
+      12.5,
+      12.4
+     ]
+    },
+    {
+     "drive_pa": 108.5,
+     "mn1_4_hz": [
+      16.77,
+      16.77,
+      16.77,
+      16.78
+     ],
+     "mn5_hz": [
+      12.8,
+      12.8,
+      12.7,
+      12.8
+     ]
+    }
+   ],
+   "down from firing": [
+    {
+     "drive_pa": 108.5,
+     "mn1_4_hz": [
+      16.77,
+      16.8,
+      16.75,
+      16.75
+     ],
+     "mn5_hz": [
+      12.7,
+      12.7,
+      12.8,
+      12.7
+     ]
+    },
+    {
+     "drive_pa": 108.45,
+     "mn1_4_hz": [
+      16.52,
+      16.55,
+      16.52,
+      16.55
+     ],
+     "mn5_hz": [
+      12.5,
+      12.5,
+      12.5,
+      12.6
+     ]
+    },
+    {
+     "drive_pa": 108.4,
+     "mn1_4_hz": [
+      16.35,
+      16.3,
+      16.25,
+      16.32
+     ],
+     "mn5_hz": [
+      12.3,
+      12.4,
+      12.2,
+      12.2
+     ]
+    },
+    {
+     "drive_pa": 108.35,
+     "mn1_4_hz": [
+      16.08,
+      16.05,
+      16.08,
+      16.1
+     ],
+     "mn5_hz": [
+      12.1,
+      12.0,
+      12.0,
+      12.0
+     ]
+    },
+    {
+     "drive_pa": 108.3,
+     "mn1_4_hz": [
+      15.85,
+      15.82,
+      15.85,
+      15.82
+     ],
+     "mn5_hz": [
+      11.9,
+      11.8,
+      11.9,
+      11.7
+     ]
+    },
+    {
+     "drive_pa": 108.25,
+     "mn1_4_hz": [
+      15.62,
+      15.55,
+      15.65,
+      15.62
+     ],
+     "mn5_hz": [
+      11.5,
+      11.5,
+      11.5,
+      11.6
+     ]
+    },
+    {
+     "drive_pa": 108.2,
+     "mn1_4_hz": [
+      15.35,
+      15.32,
+      15.38,
+      15.32
+     ],
+     "mn5_hz": [
+      11.4,
+      11.2,
+      11.3,
+      11.4
+     ]
+    },
+    {
+     "drive_pa": 108.15,
+     "mn1_4_hz": [
+      15.08,
+      15.0,
+      15.12,
+      15.08
+     ],
+     "mn5_hz": [
+      10.9,
+      11.0,
+      11.1,
+      11.0
+     ]
+    },
+    {
+     "drive_pa": 108.1,
+     "mn1_4_hz": [
+      14.8,
+      14.77,
+      14.85,
+      14.73
+     ],
+     "mn5_hz": [
+      10.7,
+      10.7,
+      10.8,
+      10.7
+     ]
+    },
+    {
+     "drive_pa": 108.05,
+     "mn1_4_hz": [
+      14.53,
+      14.5,
+      14.5,
+      14.47
+     ],
+     "mn5_hz": [
+      10.5,
+      10.4,
+      10.4,
+      10.4
+     ]
+    },
+    {
+     "drive_pa": 108.0,
+     "mn1_4_hz": [
+      14.22,
+      14.23,
+      14.15,
+      14.25
+     ],
+     "mn5_hz": [
+      10.1,
+      10.1,
+      10.1,
+      10.1
+     ]
+    },
+    {
+     "drive_pa": 107.95,
+     "mn1_4_hz": [
+      13.85,
+      13.85,
+      13.92,
+      13.8
+     ],
+     "mn5_hz": [
+      9.8,
+      9.8,
+      9.8,
+      9.8
+     ]
+    },
+    {
+     "drive_pa": 107.9,
+     "mn1_4_hz": [
+      13.58,
+      13.57,
+      13.6,
+      13.53
+     ],
+     "mn5_hz": [
+      9.5,
+      9.5,
+      9.6,
+      9.4
+     ]
+    },
+    {
+     "drive_pa": 107.85,
+     "mn1_4_hz": [
+      13.27,
+      13.3,
+      13.25,
+      13.25
+     ],
+     "mn5_hz": [
+      9.1,
+      9.1,
+      9.1,
+      9.3
+     ]
+    },
+    {
+     "drive_pa": 107.8,
+     "mn1_4_hz": [
+      12.92,
+      12.97,
+      12.85,
+      12.88
+     ],
+     "mn5_hz": [
+      8.8,
+      8.9,
+      8.8,
+      8.8
+     ]
+    },
+    {
+     "drive_pa": 107.75,
+     "mn1_4_hz": [
+      12.47,
+      12.5,
+      12.53,
+      12.55
+     ],
+     "mn5_hz": [
+      8.3,
+      8.4,
+      8.4,
+      8.5
+     ]
+    },
+    {
+     "drive_pa": 107.7,
+     "mn1_4_hz": [
+      12.2,
+      12.18,
+      12.12,
+      12.08
+     ],
+     "mn5_hz": [
+      8.0,
+      8.1,
+      8.0,
+      7.9
+     ]
+    },
+    {
+     "drive_pa": 107.65,
+     "mn1_4_hz": [
+      11.75,
+      11.7,
+      11.7,
+      11.7
+     ],
+     "mn5_hz": [
+      7.7,
+      7.5,
+      7.6,
+      7.5
+     ]
+    },
+    {
+     "drive_pa": 107.6,
+     "mn1_4_hz": [
+      11.12,
+      11.2,
+      11.23,
+      11.25
+     ],
+     "mn5_hz": [
+      7.1,
+      7.2,
+      7.1,
+      7.3
+     ]
+    },
+    {
+     "drive_pa": 107.55,
+     "mn1_4_hz": [
+      10.72,
+      10.67,
+      10.77,
+      10.7
+     ],
+     "mn5_hz": [
+      6.7,
+      6.5,
+      6.7,
+      6.5
+     ]
+    },
+    {
+     "drive_pa": 107.5,
+     "mn1_4_hz": [
+      10.15,
+      9.97,
+      10.07,
+      9.97
+     ],
+     "mn5_hz": [
+      6.0,
+      5.8,
+      5.9,
+      5.8
+     ]
+    },
+    {
+     "drive_pa": 107.45,
+     "mn1_4_hz": [
+      9.12,
+      9.33,
+      9.12,
+      9.1
+     ],
+     "mn5_hz": [
+      4.9,
+      5.2,
+      5.0,
+      4.9
+     ]
+    },
+    {
+     "drive_pa": 107.4,
+     "mn1_4_hz": [
+      0.72,
+      0.9,
+      2.93,
+      6.88
+     ],
+     "mn5_hz": [
+      0.4,
+      0.5,
+      1.4,
+      3.3
+     ]
+    },
+    {
+     "drive_pa": 107.35,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.3,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.25,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.2,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.15,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.1,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.05,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.0,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  "noise 2.2967": {
+   "up from rest": [
+    {
+     "drive_pa": 107.0,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.05,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.1,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.15,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.2,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.25,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.3,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.35,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.4,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.45,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.5,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.55,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.6,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.65,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.7,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.75,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.8,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.85,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.9,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.95,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 108.0,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 108.05,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 108.1,
+     "mn1_4_hz": [
+      3.22,
+      12.42,
+      12.75,
+      6.83
+     ],
+     "mn5_hz": [
+      2.4,
+      9.1,
+      9.2,
+      5.1
+     ]
+    },
+    {
+     "drive_pa": 108.15,
+     "mn1_4_hz": [
+      14.83,
+      14.7,
+      14.67,
+      14.75
+     ],
+     "mn5_hz": [
+      10.9,
+      11.0,
+      11.0,
+      11.1
+     ]
+    },
+    {
+     "drive_pa": 108.2,
+     "mn1_4_hz": [
+      15.05,
+      15.1,
+      15.15,
+      15.23
+     ],
+     "mn5_hz": [
+      11.2,
+      11.3,
+      11.1,
+      11.3
+     ]
+    },
+    {
+     "drive_pa": 108.25,
+     "mn1_4_hz": [
+      15.27,
+      15.28,
+      15.27,
+      15.22
+     ],
+     "mn5_hz": [
+      11.4,
+      11.2,
+      11.4,
+      11.4
+     ]
+    },
+    {
+     "drive_pa": 108.3,
+     "mn1_4_hz": [
+      15.57,
+      15.53,
+      15.47,
+      15.57
+     ],
+     "mn5_hz": [
+      11.4,
+      11.8,
+      11.6,
+      11.7
+     ]
+    },
+    {
+     "drive_pa": 108.35,
+     "mn1_4_hz": [
+      15.83,
+      15.75,
+      15.75,
+      15.8
+     ],
+     "mn5_hz": [
+      12.0,
+      12.0,
+      12.0,
+      11.9
+     ]
+    },
+    {
+     "drive_pa": 108.4,
+     "mn1_4_hz": [
+      16.15,
+      16.03,
+      15.72,
+      16.08
+     ],
+     "mn5_hz": [
+      12.3,
+      12.0,
+      12.1,
+      12.2
+     ]
+    },
+    {
+     "drive_pa": 108.45,
+     "mn1_4_hz": [
+      16.35,
+      16.4,
+      16.12,
+      16.27
+     ],
+     "mn5_hz": [
+      12.5,
+      12.7,
+      12.3,
+      12.4
+     ]
+    },
+    {
+     "drive_pa": 108.5,
+     "mn1_4_hz": [
+      16.5,
+      16.42,
+      16.65,
+      16.35
+     ],
+     "mn5_hz": [
+      12.7,
+      12.8,
+      12.6,
+      12.6
+     ]
+    }
+   ],
+   "down from firing": [
+    {
+     "drive_pa": 108.5,
+     "mn1_4_hz": [
+      16.4,
+      16.48,
+      16.4,
+      16.48
+     ],
+     "mn5_hz": [
+      12.7,
+      12.7,
+      12.6,
+      12.4
+     ]
+    },
+    {
+     "drive_pa": 108.45,
+     "mn1_4_hz": [
+      16.3,
+      16.38,
+      16.3,
+      16.38
+     ],
+     "mn5_hz": [
+      12.7,
+      12.4,
+      12.5,
+      12.3
+     ]
+    },
+    {
+     "drive_pa": 108.4,
+     "mn1_4_hz": [
+      16.02,
+      16.2,
+      16.08,
+      16.08
+     ],
+     "mn5_hz": [
+      12.1,
+      12.3,
+      12.2,
+      12.0
+     ]
+    },
+    {
+     "drive_pa": 108.35,
+     "mn1_4_hz": [
+      15.7,
+      15.85,
+      15.77,
+      15.92
+     ],
+     "mn5_hz": [
+      12.0,
+      11.8,
+      12.1,
+      12.0
+     ]
+    },
+    {
+     "drive_pa": 108.3,
+     "mn1_4_hz": [
+      15.6,
+      15.65,
+      15.62,
+      15.55
+     ],
+     "mn5_hz": [
+      11.8,
+      11.8,
+      11.7,
+      11.6
+     ]
+    },
+    {
+     "drive_pa": 108.25,
+     "mn1_4_hz": [
+      15.27,
+      15.25,
+      15.58,
+      15.32
+     ],
+     "mn5_hz": [
+      11.5,
+      11.4,
+      11.6,
+      11.4
+     ]
+    },
+    {
+     "drive_pa": 108.2,
+     "mn1_4_hz": [
+      15.05,
+      15.2,
+      15.08,
+      15.05
+     ],
+     "mn5_hz": [
+      11.3,
+      11.0,
+      11.2,
+      11.4
+     ]
+    },
+    {
+     "drive_pa": 108.15,
+     "mn1_4_hz": [
+      14.82,
+      14.68,
+      14.9,
+      14.82
+     ],
+     "mn5_hz": [
+      10.7,
+      10.6,
+      11.1,
+      10.8
+     ]
+    },
+    {
+     "drive_pa": 108.1,
+     "mn1_4_hz": [
+      14.57,
+      14.57,
+      14.62,
+      14.27
+     ],
+     "mn5_hz": [
+      10.5,
+      10.5,
+      10.8,
+      10.4
+     ]
+    },
+    {
+     "drive_pa": 108.05,
+     "mn1_4_hz": [
+      14.18,
+      14.3,
+      14.17,
+      14.22
+     ],
+     "mn5_hz": [
+      10.5,
+      10.3,
+      10.2,
+      10.3
+     ]
+    },
+    {
+     "drive_pa": 108.0,
+     "mn1_4_hz": [
+      13.82,
+      13.88,
+      13.8,
+      13.97
+     ],
+     "mn5_hz": [
+      10.0,
+      9.9,
+      9.9,
+      9.9
+     ]
+    },
+    {
+     "drive_pa": 107.95,
+     "mn1_4_hz": [
+      13.35,
+      13.55,
+      13.53,
+      13.4
+     ],
+     "mn5_hz": [
+      9.7,
+      9.5,
+      9.8,
+      9.7
+     ]
+    },
+    {
+     "drive_pa": 107.9,
+     "mn1_4_hz": [
+      13.18,
+      13.2,
+      13.28,
+      13.08
+     ],
+     "mn5_hz": [
+      9.5,
+      9.3,
+      9.5,
+      9.2
+     ]
+    },
+    {
+     "drive_pa": 107.85,
+     "mn1_4_hz": [
+      12.77,
+      13.0,
+      12.75,
+      12.8
+     ],
+     "mn5_hz": [
+      8.6,
+      9.1,
+      8.9,
+      9.1
+     ]
+    },
+    {
+     "drive_pa": 107.8,
+     "mn1_4_hz": [
+      12.65,
+      12.68,
+      12.3,
+      12.38
+     ],
+     "mn5_hz": [
+      8.7,
+      8.6,
+      8.7,
+      8.6
+     ]
+    },
+    {
+     "drive_pa": 107.75,
+     "mn1_4_hz": [
+      11.8,
+      11.65,
+      11.75,
+      11.97
+     ],
+     "mn5_hz": [
+      7.9,
+      7.9,
+      7.8,
+      8.2
+     ]
+    },
+    {
+     "drive_pa": 107.7,
+     "mn1_4_hz": [
+      11.65,
+      11.8,
+      11.88,
+      11.53
+     ],
+     "mn5_hz": [
+      7.5,
+      7.8,
+      7.6,
+      7.7
+     ]
+    },
+    {
+     "drive_pa": 107.65,
+     "mn1_4_hz": [
+      11.5,
+      10.95,
+      11.03,
+      11.18
+     ],
+     "mn5_hz": [
+      7.5,
+      6.8,
+      7.3,
+      7.0
+     ]
+    },
+    {
+     "drive_pa": 107.6,
+     "mn1_4_hz": [
+      10.68,
+      10.38,
+      10.53,
+      10.35
+     ],
+     "mn5_hz": [
+      6.9,
+      6.6,
+      6.7,
+      6.8
+     ]
+    },
+    {
+     "drive_pa": 107.55,
+     "mn1_4_hz": [
+      9.85,
+      3.28,
+      9.45,
+      4.25
+     ],
+     "mn5_hz": [
+      5.8,
+      2.1,
+      5.7,
+      2.4
+     ]
+    },
+    {
+     "drive_pa": 107.5,
+     "mn1_4_hz": [
+      4.72,
+      0.0,
+      0.12,
+      0.0
+     ],
+     "mn5_hz": [
+      2.8,
+      0.0,
+      0.1,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.45,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.4,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.35,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.3,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.25,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.2,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.15,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.1,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.05,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "drive_pa": 107.0,
+     "mn1_4_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "mn5_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  }
+ },
+ "part4": {
+  "B, flies' coupling": {
+   "drives_pa": [
+    108.0789,
+    108.0789,
+    108.0789,
+    108.0789,
+    108.3026
+   ],
+   "same_as_check8": true,
+   "switch_s": [
+    18.0,
+    18.0,
+    79.0,
+    115.0,
+    29.0,
+    60.0,
+    0.0,
+    24.0
+   ],
+   "rates_after_switch_hz": [
+    [
+     14.47,
+     14.46,
+     14.46,
+     14.47,
+     11.32
+    ],
+    [
+     14.45,
+     14.44,
+     14.44,
+     14.45,
+     11.29
+    ],
+    [
+     14.38,
+     14.38,
+     14.38,
+     14.38,
+     11.23
+    ],
+    [
+     14.27,
+     14.27,
+     14.26,
+     14.27,
+     11.17
+    ],
+    [
+     14.45,
+     14.45,
+     14.45,
+     14.46,
+     11.3
+    ],
+    [
+     14.39,
+     14.4,
+     14.39,
+     14.39,
+     11.25
+    ],
+    [
+     14.61,
+     14.61,
+     14.61,
+     14.61,
+     11.42
+    ],
+    [
+     14.46,
+     14.46,
+     14.46,
+     14.46,
+     11.29
+    ]
+   ]
+  },
+  "C, flies' coupling and irregularity": {
+   "drives_pa": [
+    107.9849,
+    107.9849,
+    107.9849,
+    107.9849,
+    108.2428
+   ],
+   "same_as_check8": true,
+   "switch_s": [
+    0.0,
+    4.0,
+    49.0,
+    68.0,
+    61.0,
+    0.0,
+    77.0,
+    16.0
+   ],
+   "rates_after_switch_hz": [
+    [
+     13.93,
+     13.93,
+     13.91,
+     13.91,
+     10.97
+    ],
+    [
+     13.63,
+     13.63,
+     13.61,
+     13.61,
+     10.75
+    ],
+    [
+     13.63,
+     13.63,
+     13.63,
+     13.63,
+     10.75
+    ],
+    [
+     13.52,
+     13.52,
+     13.53,
+     13.53,
+     10.73
+    ],
+    [
+     13.57,
+     13.57,
+     13.57,
+     13.57,
+     10.73
+    ],
+    [
+     13.86,
+     13.86,
+     13.87,
+     13.86,
+     10.93
+    ],
+    [
+     13.55,
+     13.55,
+     13.57,
+     13.57,
+     10.71
+    ],
+    [
+     13.6,
+     13.6,
+     13.6,
+     13.6,
+     10.72
+    ]
+   ]
+  }
+ },
+ "seconds": 367
+}
