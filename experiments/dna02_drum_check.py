@@ -20,6 +20,29 @@ Read: if DNa02 sits tens of mV below threshold while its inputs' drive changes b
 hear the drum, as the flight motor neurons were (dlm_drive_probe.py). If its inputs don't change, the signal doesn't
 reach it through the wiring.
 
+Ran (2026-10-12, 76 s): DNa02 sits about 13.5 mV below threshold, and the drum moves it 2-3.5 mV, mostly by inhibiting
+one side, so it never fires.
+- At grey its median membrane potential is 13.5 mV (left) and 13.8 mV (right) below threshold (95th percentile 9.0 and
+  8.3 below). It fires at 0 and 0.08 spikes/s.
+- Counterclockwise: left 13.65 mV below (about unchanged), right 17.1 below. Clockwise: left 15.4 below, right 12.6
+  below. So the side the drum would turn a fly toward ends up 2.8-3.4 mV less hyperpolarized than the other, the sign of
+  flies' steering signal. That comes mainly from inhibiting the other side, and no DNa02 spike results.
+- Its strongest inputs by summed weight:
+  - AN03A008: +30 mV, about 1.5 spikes/s, unchanged;
+  - VES051/052: -25 mV;
+  - LAL028/029: +21 mV; 1.7-2.1 spikes/s at grey, falling to 0.1-0.4 under either drum;
+  - PS049: -20 mV; the right PS049 rises to 21 spikes/s under counterclockwise, 2.3 mV of drive onto the right DNa02;
+  - PS059: -20 mV;
+  - PFL3: +15 mV; the central complex's steering cells, unchanged at 1.6-2.1 spikes/s;
+  - LLPC1 (59 cells): +14 mV; onto the right DNa02, 0 spikes/s under counterclockwise and 5.7 under clockwise.
+- Of the left HS cells' 50 strongest targets, 24 change by more than 5 spikes/s with the drum. 12 of those also synapse
+  onto DNa02: DNp15, CB2473, DNg41, CB1693 and CB3560/CB3177 change by 24-57 spikes/s. But their weights are too small to
+  rank among its 25 strongest input types.
+So by the reading, DNa02 is held too far down to hear the drum: 13.5 mV below threshold, against a 2-3.5 mV signal. The
+flight motor neurons were held down the same way (dlm_drive_probe.py). The signal does reach it, with flies' sign, but
+mostly as inhibition of one side. In flies, DNa02's firing during walking predicts turning (Rayshubskiy et al. 2020). In
+rung 6's brain at rest it is silent, so the body can't be steered through it until its resting state is fly-like.
+
     python experiments/dna02_drum_check.py      (writes experiments/dna02_drum_check.json)
 """
 from __future__ import annotations
