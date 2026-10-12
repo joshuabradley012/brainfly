@@ -31,6 +31,40 @@ Expected from the wiring (the note's sections 3.6 and 7.3):
 These are expectations to describe, not criteria. A pre-registered test comes after, with these signs and the
 selectivity as criteria and rewiring as the null.
 
+Ran (2026-10-12, 99 s): the drum drives the brain's yaw neck MNs strongly, on the side whose HS cells it excites, with
+the signs the wiring predicts. The pitch MN CvN7 stays where it was. CvN6 answers on the opposite side through its HSS
+input. DNa02, the steering check, stays silent.
+- The brain's own neurons average 1.67 Hz at grey, with none over 100 Hz. They average 3.6 Hz with the static grating
+  and 5.0 with either drum (0.05-0.07% over 100 Hz).
+- HS: 66 Hz on the left and 0 on the right under counterclockwise, the mirror under clockwise (direction signal +134
+  Hz, t 483). H2: 73 and 148 Hz, then 150 and 68 (-157). The static grating alone raises HS to 6-10 Hz and H2 to 55-66
+  Hz, the pattern's onset.
+- Yaw MNs, left and right under counterclockwise, then under clockwise (Hz), and their direction signals:
+  - GNG283: 36 and 3, then 1 and 41 (+72, t 80);
+  - GNG276: 24 and 4, then 2 and 24 (+43, t 62);
+  - GNG647 (VCvN1/2): 24 and 2, then 1 and 17 (+37, t 57);
+  - GNG653 (CvN1/2): 10.5 and 0.8, then 0.2 and 6.8 (+16, t 21);
+  - GNG314 (VCvN3): 2.5 and 1.5, then 1.3 and 3.0 (+2.7, t 5.9).
+- DNp15: 52 and 2 Hz, then 0.2 and 68 (+118, t 168), from 0.1-0.2 at grey. DNp20: 1.3 and 0.2, then 0.2 and 1.7 (+2.7,
+  t 6.4). DNp22 is silent.
+- Pitch and other brain MNs:
+  - CvN7 stays at 1-2 Hz throughout (+0.4, t 0.4).
+  - CvN4 (+7, t 8.5) and CvN5 (+5.7, t 4.9) move a little.
+  - CvN6 fires on the side opposite the stimulated HS (4.9 and 18.8, then 14.8 and 3.3; -25, t -34), as its
+    opposite-side HSS input predicts.
+  - GNG648 (CvN3, roll): +6 (t 8.6). GNG641 and GNG650 stay within 2.3 Hz.
+- DNa02 stays at 0-0.1 Hz in every scene. The optomotor steering signal doesn't reach it in this brain, though
+  optomotor.py found it in FlyBrain.
+- The VS cells weren't read. MaleCNS types them as one type, "VS" (18 cells), not VS1-VS8.
+So in rung 6's brain a yaw drum drives the brain's yaw neck MNs on the side whose HS it excites. That fits the
+connectome's routes and blowfly VCNM's preference for front-to-back motion on its own side (Haag et al. 2010). It also
+leaves CvN7 alone, as its wiring and Gorko et al.'s tuning (best axis 60-90 deg, nose-up pitch with roll) predict. The
+rates run above flies' at rest:
+- DNp15 at 52-68 Hz, against about 3 to 12 Hz in quiescent flies (Suver et al. 2016);
+- HS spiking at 66 Hz, where flies' HS cells are graded.
+So a test should rest on signs and selectivity, not rates. Next: a pre-registered version with these signs and a
+rewiring null, and a pitch probe (vertical motion, VS by receptive field, CvN4-7).
+
     python experiments/neck_drive_probe.py      (writes experiments/neck_drive_probe.json)
 """
 from __future__ import annotations

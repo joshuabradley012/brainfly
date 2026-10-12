@@ -1,0 +1,546 @@
+{
+ "question": "Exploratory probe, written before it runs, not pre-registered: in rung 6's whole brain with its eyes, does a rotating\ndrum reach the brain's neck motor neurons, with the signs the wiring predicts?\n\nresearch_notes/Rung 8 flight data/neck_head_control.md:\n- About half of the fly's 49 neck motor neurons (MNs) sit in the brain, in the labial neuromere of the GNG.\n- The yaw MNs among them take synapses straight from the lobula plate tangential cells: soma-side HS and opposite-side\n  H2. These are VCvN1-3 (MaleCNS GNG647 and GNG314), CvN1/2 (GNG653) and the unmatched GNG283 and GNG276. The pitch MNs\n  CvN4-7 take frontal VS cells.\n- In blowflies VCNM depolarizes to front-to-back motion on its own side (Haag et al. 2010). In Drosophila only CvN7, a\n  pitch MN, has been recorded (Gorko et al. 2024).\n- DNp15 (DNHS1), which carries HS signals to the nerve cord's neck MNs, prefers yaw (Suver et al. 2016).\n- The nerve cord relay doesn't pass descending signals yet (rung 5), so the brain MNs are this probe's targets.\nModel: rung6_relay.build(\"intact\") with its eyes (flyvis flow/0000/001 at gain 1, as rung 6's looms), 8 flies.\nScenes: eyes_at_rest.Setup.run, 1 s of grey then 2 s of the scene, with rates from 0.5 to 2 s; seed 7700, the same\nnoise in every scene.\n- grey;\n- a static vertical sine grating, period 30 deg;\n- the grating rotating counterclockwise at 40 deg/s (1.33 Hz) and clockwise (optomotor.py's drum).\nRead-out, per side:\n- the brain neck MNs (GNG647, GNG314, GNG653, GNG283, GNG276, GNG648, CvN4-7, GNG641, GNG650; the note's section 2.2);\n- HS (HSN, HSE, HSS), H2 and the VS cells;\n- DNp15, DNp20 and DNp22;\n- DNa02, the optomotor steering signal, as a check that the drum gets through.\nFor each: its rate in every scene, and its direction signal, (left - right under counterclockwise) - (left - right under\nclockwise), with t over flies.\nExpected from the wiring (the note's sections 3.6 and 7.3):\n- A counterclockwise drum sweeps front-to-back across the left eye, so left HS rises. The left yaw MNs (VCvN, CvN1/2,\n  GNG283/GNG276), the left DNp15 and the left DNa02 should then rise, with clockwise the reverse: positive direction\n  signals.\n- The pitch MNs CvN4-7 should move little.\nThese are expectations to describe, not criteria. A pre-registered test comes after, with these signs and the\nselectivity as criteria and rewiring as the null.\n\n    python experiments/neck_drive_probe.py      (writes experiments/neck_drive_probe.json)\n",
+ "cells": {
+  "GNG647": {
+   "L": 1,
+   "R": 2
+  },
+  "GNG314": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG653": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG283": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG276": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG648": {
+   "L": 1,
+   "R": 1
+  },
+  "CvN4": {
+   "L": 1,
+   "R": 1
+  },
+  "CvN5": {
+   "L": 1,
+   "R": 1
+  },
+  "CvN6": {
+   "L": 1,
+   "R": 1
+  },
+  "CvN7": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG641": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG650": {
+   "L": 1,
+   "R": 1
+  },
+  "HS": {
+   "L": 3,
+   "R": 3
+  },
+  "H2": {
+   "L": 1,
+   "R": 1
+  },
+  "VS": {
+   "L": 0,
+   "R": 0
+  },
+  "DNp15": {
+   "L": 1,
+   "R": 1
+  },
+  "DNp20": {
+   "L": 1,
+   "R": 1
+  },
+  "DNp22": {
+   "L": 1,
+   "R": 1
+  },
+  "DNa02": {
+   "L": 1,
+   "R": 1
+  }
+ },
+ "scenes": {
+  "grey": {
+   "own_mean_hz": 1.668,
+   "own_over_100hz": 0.0,
+   "rates_hz": {
+    "GNG647": {
+     "L": 1.5,
+     "R": 2.54
+    },
+    "GNG314": {
+     "L": 1.67,
+     "R": 1.67
+    },
+    "GNG653": {
+     "L": 2.17,
+     "R": 2.08
+    },
+    "GNG283": {
+     "L": 1.42,
+     "R": 2.33
+    },
+    "GNG276": {
+     "L": 2.0,
+     "R": 2.08
+    },
+    "GNG648": {
+     "L": 2.17,
+     "R": 2.42
+    },
+    "CvN4": {
+     "L": 1.75,
+     "R": 2.25
+    },
+    "CvN5": {
+     "L": 1.58,
+     "R": 2.5
+    },
+    "CvN6": {
+     "L": 2.67,
+     "R": 2.08
+    },
+    "CvN7": {
+     "L": 2.42,
+     "R": 1.83
+    },
+    "GNG641": {
+     "L": 2.17,
+     "R": 3.0
+    },
+    "GNG650": {
+     "L": 2.42,
+     "R": 2.08
+    },
+    "HS": {
+     "L": 1.56,
+     "R": 2.28
+    },
+    "H2": {
+     "L": 2.75,
+     "R": 1.92
+    },
+    "VS": {},
+    "DNp15": {
+     "L": 0.08,
+     "R": 0.25
+    },
+    "DNp20": {
+     "L": 0.25,
+     "R": 0.75
+    },
+    "DNp22": {
+     "L": 0.17,
+     "R": 0.17
+    },
+    "DNa02": {
+     "L": 0.0,
+     "R": 0.08
+    }
+   }
+  },
+  "static": {
+   "own_mean_hz": 3.603,
+   "own_over_100hz": 0.00228,
+   "rates_hz": {
+    "GNG647": {
+     "L": 3.92,
+     "R": 6.33
+    },
+    "GNG314": {
+     "L": 1.33,
+     "R": 1.67
+    },
+    "GNG653": {
+     "L": 1.67,
+     "R": 3.92
+    },
+    "GNG283": {
+     "L": 5.17,
+     "R": 9.75
+    },
+    "GNG276": {
+     "L": 3.92,
+     "R": 6.92
+    },
+    "GNG648": {
+     "L": 1.17,
+     "R": 2.25
+    },
+    "CvN4": {
+     "L": 1.17,
+     "R": 1.75
+    },
+    "CvN5": {
+     "L": 1.42,
+     "R": 4.0
+    },
+    "CvN6": {
+     "L": 4.67,
+     "R": 2.92
+    },
+    "CvN7": {
+     "L": 1.58,
+     "R": 0.92
+    },
+    "GNG641": {
+     "L": 1.42,
+     "R": 2.67
+    },
+    "GNG650": {
+     "L": 2.83,
+     "R": 1.83
+    },
+    "HS": {
+     "L": 6.28,
+     "R": 10.06
+    },
+    "H2": {
+     "L": 66.25,
+     "R": 54.75
+    },
+    "VS": {},
+    "DNp15": {
+     "L": 0.83,
+     "R": 10.25
+    },
+    "DNp20": {
+     "L": 0.67,
+     "R": 0.75
+    },
+    "DNp22": {
+     "L": 0.0,
+     "R": 0.08
+    },
+    "DNa02": {
+     "L": 0.0,
+     "R": 0.0
+    }
+   }
+  },
+  "ccw": {
+   "own_mean_hz": 5.016,
+   "own_over_100hz": 0.0007,
+   "rates_hz": {
+    "GNG647": {
+     "L": 23.67,
+     "R": 1.92
+    },
+    "GNG314": {
+     "L": 2.5,
+     "R": 1.5
+    },
+    "GNG653": {
+     "L": 10.5,
+     "R": 0.75
+    },
+    "GNG283": {
+     "L": 35.92,
+     "R": 3.25
+    },
+    "GNG276": {
+     "L": 23.83,
+     "R": 3.58
+    },
+    "GNG648": {
+     "L": 3.83,
+     "R": 1.33
+    },
+    "CvN4": {
+     "L": 7.17,
+     "R": 3.25
+    },
+    "CvN5": {
+     "L": 3.92,
+     "R": 3.83
+    },
+    "CvN6": {
+     "L": 4.92,
+     "R": 18.75
+    },
+    "CvN7": {
+     "L": 1.83,
+     "R": 1.08
+    },
+    "GNG641": {
+     "L": 0.83,
+     "R": 3.08
+    },
+    "GNG650": {
+     "L": 2.33,
+     "R": 3.25
+    },
+    "HS": {
+     "L": 66.39,
+     "R": 0.0
+    },
+    "H2": {
+     "L": 72.58,
+     "R": 147.67
+    },
+    "VS": {},
+    "DNp15": {
+     "L": 52.08,
+     "R": 2.0
+    },
+    "DNp20": {
+     "L": 1.33,
+     "R": 0.17
+    },
+    "DNp22": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "DNa02": {
+     "L": 0.0,
+     "R": 0.0
+    }
+   }
+  },
+  "cw": {
+   "own_mean_hz": 4.984,
+   "own_over_100hz": 0.00052,
+   "rates_hz": {
+    "GNG647": {
+     "L": 1.25,
+     "R": 16.54
+    },
+    "GNG314": {
+     "L": 1.33,
+     "R": 3.0
+    },
+    "GNG653": {
+     "L": 0.25,
+     "R": 6.83
+    },
+    "GNG283": {
+     "L": 1.33,
+     "R": 41.0
+    },
+    "GNG276": {
+     "L": 1.58,
+     "R": 24.33
+    },
+    "GNG648": {
+     "L": 0.92,
+     "R": 4.42
+    },
+    "CvN4": {
+     "L": 2.17,
+     "R": 5.33
+    },
+    "CvN5": {
+     "L": 1.75,
+     "R": 7.33
+    },
+    "CvN6": {
+     "L": 14.83,
+     "R": 3.33
+    },
+    "CvN7": {
+     "L": 1.42,
+     "R": 1.08
+    },
+    "GNG641": {
+     "L": 1.92,
+     "R": 1.92
+    },
+    "GNG650": {
+     "L": 3.75,
+     "R": 3.0
+    },
+    "HS": {
+     "L": 0.0,
+     "R": 67.42
+    },
+    "H2": {
+     "L": 149.67,
+     "R": 68.08
+    },
+    "VS": {},
+    "DNp15": {
+     "L": 0.17,
+     "R": 67.75
+    },
+    "DNp20": {
+     "L": 0.17,
+     "R": 1.67
+    },
+    "DNp22": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "DNa02": {
+     "L": 0.0,
+     "R": 0.0
+    }
+   }
+  }
+ },
+ "direction": {
+  "GNG647": {
+   "direction_signal_hz": 37.042,
+   "t": 57.27,
+   "cw_minus_ccw_hz": {
+    "L": -22.417,
+    "R": 14.625
+   }
+  },
+  "GNG314": {
+   "direction_signal_hz": 2.667,
+   "t": 5.87,
+   "cw_minus_ccw_hz": {
+    "L": -1.167,
+    "R": 1.5
+   }
+  },
+  "GNG653": {
+   "direction_signal_hz": 16.333,
+   "t": 20.76,
+   "cw_minus_ccw_hz": {
+    "L": -10.25,
+    "R": 6.083
+   }
+  },
+  "GNG283": {
+   "direction_signal_hz": 72.333,
+   "t": 80.39,
+   "cw_minus_ccw_hz": {
+    "L": -34.583,
+    "R": 37.75
+   }
+  },
+  "GNG276": {
+   "direction_signal_hz": 43.0,
+   "t": 62.31,
+   "cw_minus_ccw_hz": {
+    "L": -22.25,
+    "R": 20.75
+   }
+  },
+  "GNG648": {
+   "direction_signal_hz": 6.0,
+   "t": 8.55,
+   "cw_minus_ccw_hz": {
+    "L": -2.917,
+    "R": 3.083
+   }
+  },
+  "CvN4": {
+   "direction_signal_hz": 7.083,
+   "t": 8.48,
+   "cw_minus_ccw_hz": {
+    "L": -5.0,
+    "R": 2.083
+   }
+  },
+  "CvN5": {
+   "direction_signal_hz": 5.667,
+   "t": 4.94,
+   "cw_minus_ccw_hz": {
+    "L": -2.167,
+    "R": 3.5
+   }
+  },
+  "CvN6": {
+   "direction_signal_hz": -25.333,
+   "t": -34.48,
+   "cw_minus_ccw_hz": {
+    "L": 9.917,
+    "R": -15.417
+   }
+  },
+  "CvN7": {
+   "direction_signal_hz": 0.417,
+   "t": 0.41,
+   "cw_minus_ccw_hz": {
+    "L": -0.417,
+    "R": -0.0
+   }
+  },
+  "GNG641": {
+   "direction_signal_hz": -2.25,
+   "t": -4.22,
+   "cw_minus_ccw_hz": {
+    "L": 1.083,
+    "R": -1.167
+   }
+  },
+  "GNG650": {
+   "direction_signal_hz": -1.667,
+   "t": -1.89,
+   "cw_minus_ccw_hz": {
+    "L": 1.417,
+    "R": -0.25
+   }
+  },
+  "HS": {
+   "direction_signal_hz": 133.806,
+   "t": 483.43,
+   "cw_minus_ccw_hz": {
+    "L": -66.389,
+    "R": 67.417
+   }
+  },
+  "H2": {
+   "direction_signal_hz": -156.667,
+   "t": -144.55,
+   "cw_minus_ccw_hz": {
+    "L": 77.083,
+    "R": -79.583
+   }
+  },
+  "DNp15": {
+   "direction_signal_hz": 117.667,
+   "t": 167.74,
+   "cw_minus_ccw_hz": {
+    "L": -51.917,
+    "R": 65.75
+   }
+  },
+  "DNp20": {
+   "direction_signal_hz": 2.667,
+   "t": 6.38,
+   "cw_minus_ccw_hz": {
+    "L": -1.167,
+    "R": 1.5
+   }
+  },
+  "DNp22": {
+   "direction_signal_hz": 0.0,
+   "t": 0.0,
+   "cw_minus_ccw_hz": {
+    "L": 0.0,
+    "R": 0.0
+   }
+  },
+  "DNa02": {
+   "direction_signal_hz": 0.0,
+   "t": 0.0,
+   "cw_minus_ccw_hz": {
+    "L": 0.0,
+    "R": 0.0
+   }
+  }
+ },
+ "seconds": 99
+}

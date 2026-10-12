@@ -65,8 +65,8 @@ def rungs() -> list[dict]:
                    (bool(verdict("jump_calibration", "bilateral", "took_off")), "jumps from jump motor neuron spikes"),
                    (False, "motor neurons drive muscles")]},
         {"name": "Flight, neck and song", "status": "started",     # groundwork: dlm_splay_check2-5, song_drive_probe
-         "marks": [(False, "flight motor neurons splay (groundwork, five units)"),
-                   (False, "song pulses ~35 ms apart (none yet)"), (False, "saccades, head pose")]},
+         "marks": [(False, "flight MNs splay (five units)"), (False, "song pulses ~35 ms apart (none yet)"),
+                   (False, "neck yaw MNs follow a drum (exploratory)"), (False, "saccades")]},
         {"name": "State and learning", "status": "started" if verdict("rung9_learning", "verdicts") else "not started",     # attempt 1
          "marks": [(bool(verdict("rung9_learning", "verdicts", "PAIRED", "pass")), "pairing depresses MBON11's odor response"),
                    (bool(verdict("rung9_learning", "verdicts", "UNPAIRED", "pass")), "sparing the unpaired odor"),
