@@ -22,6 +22,32 @@ Read:
 - If the change is spread thinly over many inputs, it is the brain's general rise with upward motion (own mean 6.2 Hz,
   against 5.2 for down), not a specific route.
 
+Ran (2026-10-12, 82 s): a few input types on the left carry the upward response. It is partly excitation from cells that
+prefer upward motion and partly release from inhibition that downward motion drives. DNp15's response is mostly that
+release.
+- Context:
+  - HS is silent in both stripe scenes.
+  - H2 fires at 89-94 Hz to both, its response to the pattern, not to its motion (neck_drive_probe.py's correction).
+  - VS: 85-88 Hz down, 7-8 up.
+  - The lobula plate's columnar cells split by direction: LLPC2 62-75 Hz up and 3-4 down; LLPC3 0-0.5 up and 35-42 down;
+    LPLC2 19 up and 7-8 down.
+- Left yaw MNs: the summed drive change, up minus down, is +5.0 mV for GNG276, +3.4 for GNG647 and +2.7 for GNG283,
+  against +0.2 to +1.4 on the right. Five input types carry 85-118% of it; above 100%, the rest oppose:
+  - CB3714 (4 cells, excitatory; 7.1 Hz up, 4.5 down), onto all three (+0.9 to +2.0 mV);
+  - inhibitory CB0392 (0.8 Hz up, 5.9 down) and CB0034 (5.2 up, 8.8 down), released under upward motion (+0.6 to
+    +1.9 mV);
+  - descending neurons DNge006 (13 Hz up, 5.3 down), DNae006 (27 up, 0.1 down) and DNb03 (44 up, 31 down).
+  - The right cells' most-changing inputs are other cell types (AN_GNG_175, AN06A112, AN16B078_d), whose changes largely
+    cancel.
+- DNp15: +8.2 and +9.2 mV. Most of it (5.8 and 7.6 mV) comes from PS055, an inhibitory input (8 cells) that fires at
+  23-24 Hz to downward stripes and 2.6-3.6 Hz to upward ones. DNb03 and H2 add 1-2 mV each.
+So by the reading, a few input types are the route. The left yaw MNs gain excitation from cells that prefer upward
+motion (CB3714, DNae006, DNge006) and lose inhibition from cells that prefer downward motion (CB0392, CB0034). Their
+right counterparts' inputs differ, so the response is left-sided. DNp15's response to upward motion is mostly release
+from PS055's downward-driven inhibition, and it sits above grey to either direction. Whether flies' versions of these
+cells are tuned this way isn't in the notes (no recordings). The left-right difference comes from the connectome as
+reconstructed.
+
     python experiments/neck_upward_check.py      (writes experiments/neck_upward_check.json)
 """
 from __future__ import annotations
