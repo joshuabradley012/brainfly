@@ -36,25 +36,27 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
 ## Where it stands (October 2026)
 
-* **MBON11's input: flies' Kenyon cell activity, half flies' charge.** With the input corrected and APL refitted, the
-  Kenyon cells answer 3-octanol at flies' densities class by class. By Turner et al.'s criterion that is α/β 7.2%,
-  α′/β′ 17.8% and γ 2.5% (flies about 6, 20 and 3.5%) ([`gamma_gap_refit.py`](experiments/gamma_gap_refit.py)). They give
-  the right MBON11 4,400 synapse-spikes in Hige et al.'s window, against flies' budget of about 3,200 (1,300–7,500)
-  ([`mbon11_budget_check.py`](experiments/mbon11_budget_check.py)).
-  - Undepressed, at the model's 0.054 pC per synapse, that would carry flies' charge (238 pC; flies 245–250). The
-    synapses' depression leaves half.
+* **MBON11's input: flies' Kenyon cell activity, under half flies' charge.** With the input corrected, the Kenyon cells
+  answer 3-octanol class by class within the estimates derived for flies at Hige et al.'s stimulus. By Turner et al.'s
+  criterion that is α/β 7.2%, α′/β′ 17.8% and γ 2.5% (flies 4–8, 11–30 and 2–6%; together about 7.4%, below imaging's
+  12%) ([`gamma_gap_refit.py`](experiments/gamma_gap_refit.py)). They give the right MBON11 3,500 synapse-spikes in Hige
+  et al.'s window, against flies' budget of about 3,200 (1,300–7,500)
+  ([`mbon11_budget_check2.py`](experiments/mbon11_budget_check2.py); 4,400 with APL's drive halved, a refit since
+  withdrawn: [`mbon11_budget_check.py`](experiments/mbon11_budget_check.py)).
+  - Undepressed, at the model's 0.054 pC per synapse, that would carry three quarters of flies' charge (191 pC; flies
+    245–250). The synapses' depression leaves 0.54 of it, 114 pC.
   - The charge per synapse and the depression come from the same calibration, Yamada et al.'s flash. Read as more
     spikes per flash, the depression eases but each spike carries less, so the one-spike reading already gives the
     most.
-  - What would give flies' charge is fewer cells flashed. Their 3–7% labelling is borrowed from another cell type, and
-    at 3% rather than the model's 5%, MBON11 would get about 220 pC. Choosing that from Hige et al.'s odor current would
-    make the current a calibration target, so it waits.
+  - Fewer cells flashed would raise the charge per spike. Their 3–7% labelling is borrowed from another cell type. At
+    3% rather than the model's 5%, MBON11 would get about 190 pC, and flies' charge would need about 2.3%, below that
+    range. Choosing the share from Hige et al.'s odor current would make the current a calibration target, so it waits.
 
-  To 4-methylcyclohexanol the activity itself is a seventh of flies' (456 synapse-spikes), the larger gap.
+  To 4-methylcyclohexanol the activity itself is a seventh of flies' (434 synapse-spikes), the larger gap.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/mbon11_budget-dark.svg">
-  <img src="assets/mbon11_budget-light.svg" width="100%" alt="Two panels. Left: synapse-spikes onto the right MBON11 in 0-1.4 s, stacked by Kenyon cell class (gamma, alpha/beta, alpha'/beta'). To 3-octanol the model gives 4,401 against flies' estimated 3,206 (range 1,300-7,500); to 4-methylcyclohexanol 456, against the same estimate. Right: what that activity carries onto the right MBON11 at 0.054 pC per synapse: 238 pC undepressed and 133 after the synapses' depression for 3-octanol (flies 245-250), 25 and 18 for 4-methylcyclohexanol (flies 230-273).">
+  <img src="assets/mbon11_budget-light.svg" width="100%" alt="Two panels. Left: synapse-spikes onto the right MBON11 in 0-1.4 s, stacked by Kenyon cell class (gamma, alpha/beta, alpha'/beta'). To 3-octanol the model gives 3,536 against flies' estimated 3,206 (range 1,300-7,500); to 4-methylcyclohexanol 434, against the same estimate. Right: what that activity carries onto the right MBON11 at 0.054 pC per synapse: 191 pC undepressed and 114 after the synapses' depression for 3-octanol (flies 245-250), 23 and 17 for 4-methylcyclohexanol (flies 230-273).">
 </picture>
 
 * **The Kenyon cells' input was a third stronger than flies'.** An audit of the model as every rung 9 experiment runs
@@ -1928,6 +1930,8 @@ a sign that the approach is broken."
 | `experiments/apl_refit.py` | Exploratory, its rule stated before the run: odor_apl_conductance2_check's choice of APL's strength and drive (among conditions with a 2-3-fold silencing effect, APL's odor ratio nearest flies' 0.49) made again on the corrected input | The Kenyon cells' drive onto APL halved (mb_calibration7.py): silencing APL raises the spikes 2.37 and 2.36-fold and APL's ratio is 0.43 (at full weight 2.77, 2.57 and 0.36); APL's conductance and its Fig. 5B time course unchanged. Corrected after review: it ran on DoOR's input, not rung 9's, and its choice sat at the grid's edge; apl_refit2.py, on rung 9's input with drive 0.25 added, keeps drive 1, and mb_calibration7.py is withdrawn |
 | `experiments/learning_pilot17.py` | Exploratory, not pre-registered: rung 9's learning test on the corrected input with APL refitted around it (mb_calibration7.py) | Learning pilot 16's marks: paired 93.3%, unpaired 38.7%, backward 0-0.3% pass; the reciprocal fails (3-octanol's spikes fall 4.7%; band 15-50, flies 38%). 3-octanol's Kenyon cells and MBON11 rise by a tenth (285 cells, 30.2 spikes), 4-methylcyclohexanol's 38 cells don't; no second attempt. mb_calibration7.py since withdrawn (apl_refit2.py); mb_calibration6.py stays, with learning pilot 16 its test |
 | `experiments/mbon11_budget_check.py` | Exploratory measurement: MBON11's Kenyon cell input budget class by class in the corrected model, against mbon11_kc_activity.md's budget for flies | To 3-octanol MBON11_R gets 4,401 synapse-spikes (flies' budget 3,206; 1,300-7,500): gamma 3.5% x 1.65 spikes (flies 3.5% x 3.5), alpha/beta 9.5% x 2.9 (6% x 2.5), alpha'/beta' 19.6% x 3.25 (20% x 5). Undepressed at 0.054 pC that is 238 pC (flies 245-250); the depression rule (0.5 per spike) leaves half. Easing it by reading Yamada's flash as more spikes per flash also cuts the charge per spike, so the one-spike reading gives the most; fewer cells flashed (3% of SPARC2-S's borrowed 3-7%, not 5%) would give about 220 pC. To 4-methylcyclohexanol a seventh of flies' budget. Ran on mb_calibration7.py, since withdrawn; mbon11_budget_check2.py repeats it on mb_calibration6.py |
+| `experiments/apl_refit2.py` | Exploratory, its reading stated before the run: apl_refit.py's choice made on receptor_fills.RECOMMENDED, the input rung 9 runs on, with drive 0.25 added below the grid's edge | The rule keeps drive 1 (2.89 and 2.00-fold, APL's ratio 0.23; flies 2-3 and 0.49), only at its two decimals (1.997 unrounded), so mb_calibration7.py is withdrawn and mb_calibration6.py stays. Drive 0.5: 2.39 and 1.95-fold; drive 0.25: 2.11 and 1.92 (ratio 0.51), the fallback's choice had drive 1 missed. 4-methylcyclohexanol reaches 43-44 Kenyon cells at every drive |
+| `experiments/mbon11_budget_check2.py` | Exploratory measurement: mbon11_budget_check.py on mb_calibration6.py, the model in use | To 3-octanol 3,536 synapse-spikes onto MBON11_R (flies' budget 3,206): gamma 3.3% x 1.45 spikes, alpha/beta s, m, c 8.6% x 2.6, alpha'/beta' 18.7% x 2.8. 191 pC undepressed (flies 245-250), 114 after the depression; 3% of cells flashed in Yamada's calibration would give about 190 pC, flies' charge about 2.3%. To 4-methylcyclohexanol 434, a seventh of flies' budget |
 | `experiments/odor_pn_reset_check.py` | Exploratory check: the PNs' reset after a spike raised from rung 4's 5 mV below rest to rest and 3-6 mV above (threshold 10) | Reset at rest (Jeanne & Wilson's fitted PN) raises Rmax to 145-155 in DL5, VM7d and DM1 (flies 144-167); higher resets overshoot; sigma, the weakest input and 4-methylcyclohexanol barely move |
 | `experiments/odor_probe52.py` | Exploratory, not pre-registered: odor_probe51.py rebuilt with the PNs resetting to rest | Strong input answered as flies' (step Rmax 172-182, Olsen protocol 145-156) with the two pools' time course; Kenyon cells 2.4-13.8%, MBON11 24 spikes to 3-octanol; 4-methylcyclohexanol 0.52 at the PNs, 0.26 at the Kenyon cells. The base model from here on |
 | `experiments/odor_probe53.py` | Exploratory, not pre-registered: 4-methylcyclohexanol's untested receptors given the input Badel et al.'s PN responses imply (labelled stand-in) | Flies' breadth (15 glomeruli over 10 spikes/s, 3-octanol 17) but its PNs sum 0.58 of 3-octanol's and its Kenyon cells 0.26 (flies 0.85-0.98, 0.73-0.92) |

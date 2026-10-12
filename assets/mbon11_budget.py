@@ -2,7 +2,7 @@
 
     python assets/mbon11_budget.py      # writes assets/mbon11_budget-light.svg and assets/mbon11_budget-dark.svg
 
-Left: experiments/mbon11_budget_check.json, the synapse-spikes the Kenyon cells give MBON11_R in 0-1.4 s, by class, for
+Left: experiments/mbon11_budget_check2.json (the model in use, mb_calibration6.py), the synapse-spikes the Kenyon cells give MBON11_R in 0-1.4 s, by class, for
 3-octanol and 4-methylcyclohexanol (every above-rest spike, Hige et al.'s window), against flies' budget on the same
 synapse counts (research_notes/Rung 9 learning data/mbon11_kc_activity.md section 3.7: gamma-main and gamma-s 3.5% x 3.5
 spikes, alpha/beta s, m, c 6% x 2.5, alpha'/beta' 20% x 5; total range 1,300-7,500; estimated at Hige's stimulus, where
@@ -38,10 +38,10 @@ def text(x, y, s, cls, anchor="start"):
 def figure(theme: str, d: dict) -> str:
     c = THEMES[theme]
     oct_ = d["odors"]["3-octanol"]
-    out = [text(24, 30, "MBON11's input: flies' Kenyon cell activity, half flies' charge", "lab"),
+    out = [text(24, 30, "MBON11's input: flies' Kenyon cell activity, under half flies' charge", "lab"),
            text(24, 50, f"With the corrected input the Kenyon cells give MBON11 about flies' budget of synapse-spikes to 3-octanol "
-                f"({oct_['synapse_spikes_all']:,.0f}; flies about 3,200), worth flies' charge undepressed.", "note"),
-           text(24, 68, "The synapses' depression leaves half of it. To 4-methylcyclohexanol the activity itself is a seventh of "
+                f"({oct_['synapse_spikes_all']:,.0f}; flies about 3,200), three quarters of flies' charge undepressed.", "note"),
+           text(24, 68, "The synapses' depression leaves about half of that. To 4-methylcyclohexanol the activity itself is a seventh of "
                 "flies'.", "note")]
     # left: synapse-spikes by class
     x0, y0, pw, ph = 80, 120, 470, 260
@@ -123,14 +123,14 @@ def figure(theme: str, d: dict) -> str:
     .tick {{ font-size: 11px; fill: {c["muted"]}; }}
     .tiny {{ font-size: 10px; fill: {c["muted"]}; }}
     """
-    title = "MBON11 gets flies' budget of Kenyon cell synapse-spikes to 3-octanol but half flies' charge after the synapses' depression; to 4-methylcyclohexanol a seventh of the activity"
+    title = "MBON11 gets flies' budget of Kenyon cell synapse-spikes to 3-octanol but under half flies' charge after the synapses' depression; to 4-methylcyclohexanol a seventh of the activity"
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t">'
             f'<title id="t">{title}</title><style>{style}</style><rect width="{W}" height="{H}" fill="{c["paper"]}"/>'
             + "".join(out) + "</svg>")
 
 
 def main() -> None:
-    d = json.loads((ROOT / "experiments" / "mbon11_budget_check.json").read_text())
+    d = json.loads((ROOT / "experiments" / "mbon11_budget_check2.json").read_text())
     for theme in THEMES:
         path_ = OUT / f"mbon11_budget-{theme}.svg"
         path_.write_text(figure(theme, d))
