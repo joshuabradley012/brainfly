@@ -51,8 +51,9 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
     coinciding less than by chance ([`dlm_splay_check6.py`](experiments/dlm_splay_check6.py)).
   - Pair by pair, the strongly coupled pairs come out about as flies'. MN5's are mixed: flies' sync index, but within
     10 ms of their partners at 0.6 times chance against flies' 0.34–0.58 (they fit with MN5 running 1.26 times the
-    others' rate, flies' maximum ratio, but not at flies' median 1.10; [`dlm_splay_check7.py`](experiments/dlm_splay_check7.py)). The weakly coupled MN1–4 pairs come within 10 ms of each other 1.6–3
-    times as often as flies' (0.5 against 0.16–0.31 times chance), and 24% of 4-spike windows hold a repeat (flies
+    others' rate, flies' maximum ratio, but not at flies' median 1.10;
+    [`dlm_splay_check7.py`](experiments/dlm_splay_check7.py)). The weakly coupled MN1–4 pairs come within 10 ms of each
+    other 1.6–3 times as often as flies' (0.5 against 0.16–0.31 times chance), and 24% of 4-spike windows hold a repeat (flies
     5–20%).
   - Earlier runs had converted the coefficients as steady-state ones, passing only 0.56 of flies' coupling
     ([`dlm_splay_check2.py`](experiments/dlm_splay_check2.py) to [`dlm_splay_check4.py`](experiments/dlm_splay_check4.py)),
