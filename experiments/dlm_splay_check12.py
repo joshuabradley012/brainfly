@@ -31,6 +31,12 @@ So by the reading, the biases' 0.07-0.11 mV above threshold only offset what the
 Coupled or not, these units fire with their drive within a few hundredths of a millivolt of threshold, and junction
 currents that fluctuate by 0.06-0.10 mV decide when they cross.
 
+Correction (2026-10-12, review 14): by the reading as written, the outcome is split. Within 0.1 mV of threshold the
+coupled units sit at -0.002 to -0.001 mV, as close as uncoupled. Within 0.02 mV they sit at +0.031 (MN5) to +0.055 mV
+(MN1-4), 1.4-2.4 times the uncoupled 0.023, outside the reading's 0.02-0.03 mV. Nearest threshold the junctions offset
+58-59% of MN1-4's drive above threshold, not all of it. The substance stands: coupled or not, the units sit a few
+hundredths of a millivolt from threshold, not the 0.07-0.11 mV the biases suggest.
+
     python experiments/dlm_splay_check12.py      (writes experiments/dlm_splay_check12.json)
 """
 from __future__ import annotations

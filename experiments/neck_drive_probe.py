@@ -65,6 +65,31 @@ rates run above flies' at rest:
 So a test should rest on signs and selectivity, not rates. Next: a pre-registered version with these signs and a
 rewiring null, and a pitch probe (vertical motion, VS by receptive field, CvN4-7).
 
+Correction (2026-10-12, review 14):
+- Left and right are soma sides. CvN6's and CvN7's axons cross (BANC's nerve column), so the CvN6 that fires under the
+  counterclockwise drum, the right-soma cell at 18.75 Hz, leaves through the left cervical nerve. By nerve side it fires
+  on the stimulated side, with the yaw MNs' sign, and follows its nerve-side HSS, as Gorko et al. frame CvN6's input.
+  The docstring expected the pitch MNs CvN4-7 to move little. That failed for CvN6 (-25 by soma side, t -34) and for
+  CvN4 (+7, t 8.5), and the Ran didn't say so.
+- "It also leaves CvN7 alone, as its wiring and Gorko et al.'s tuning ... predict" doesn't follow.
+  - The probe didn't read the VS cells. MaleCNS types them as "VS", not VS1-VS8. Review 14's rerun of this probe read
+    them: 19.3 and 12.7 Hz under counterclockwise, 12.1 and 14.3 under clockwise, against 2.1-2.2 at grey.
+  - So CvN7's VS input is driven under the drum while CvN7 stays at 1.1-1.8 Hz.
+  - Gorko et al. never tested yaw: their rotations were about horizontal axes.
+  So the drum doesn't test CvN7's wiring.
+- "The static grating alone raises HS to 6-10 Hz and H2 to 55-66 Hz, the pattern's onset": the window starts 0.5 s after
+  the onset, and H2's response is sustained, 52-68 Hz through 0.5-2 s (review 14's time courses). The model's H2 cells
+  fire at 24-29 times their grey rate to a stationary grating, so their "null-direction" rates under the drum (68-73 Hz)
+  are mostly this response to the pattern.
+- The quiescent DNp15 comparison: Suver et al.'s Fig. 3G gives quiescent DNHS1 at about 0.5-1 Hz (null axis) to 14 Hz
+  (preferred), not "about 3 to 12" (the research note's misreading; dated note there). Their stimulus was a star field at
+  22.5 deg/s, not this grating. The model's 52-68 Hz is about four to five times flies' quiescent peak.
+- Smaller:
+  - CvN7's range is 0.92-2.42 Hz, and DNp15 at grey is 0.08-0.25.
+  - "GNG641 and GNG650 stay within 2.3 Hz" refers to their direction signals; their rates reach 3.75 Hz.
+  - 0.23% of the brain's own neurons exceed 100 Hz with the static grating.
+  - The t values are over 8 noise trials of one network, not across wirings.
+
     python experiments/neck_drive_probe.py      (writes experiments/neck_drive_probe.json)
 """
 from __future__ import annotations

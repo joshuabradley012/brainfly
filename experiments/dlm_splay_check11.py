@@ -91,6 +91,9 @@ Correction (2026-10-12, review 13):
 - The docstring's "8.678 Hz" is A's rounded MN1-4 rate; the code targets the four units' mean, 8.676 Hz. "Seeds 5300 +
   start" is, in the code, 5300 x 1000 + start going up and 5310 x 1000 + start going down, the same at both noises.
 
+Correction (2026-10-12, review 14): the review-13 note's "4-7 s before the switch": the window starts lead the onsets
+by 3.7-6.6 s in B and 0-6.3 s in C, where two runs fire from the start.
+
     python experiments/dlm_splay_check11.py      (writes experiments/dlm_splay_check11.json)
 """
 from __future__ import annotations

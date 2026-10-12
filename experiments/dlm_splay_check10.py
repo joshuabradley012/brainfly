@@ -51,6 +51,14 @@ Correction (2026-10-12, review 13):
   (dlm_splay_check7.py) to 0.23-0.24. So it doesn't by itself isolate MN5's regularity as the cause. Review 12's reruns,
   with MN1-4 unchanged, did, and found the same.
 
+Correction (2026-10-12, review 14): the review-13 note's "both kinds miss flies' upper edge by about the same amount
+(0.03)" is dlm_splay_check6.py's gap. In this check the strong pairs miss within 10 ms by more than MN5's pairs at every
+ratio:
+- 1.0 times: 0.040-0.074 above flies' edge, against 0.005-0.040;
+- 1.10 times: 0.103-0.136, against 0.046-0.060;
+- 1.26 times: 0.088-0.093, against 0.051-0.103.
+As a ratio to the edge, the strong pairs are at 1.20-1.68 times it and MN5's at 1.01-1.18.
+
     python experiments/dlm_splay_check10.py      (writes experiments/dlm_splay_check10.json)
 """
 from __future__ import annotations

@@ -50,6 +50,10 @@ Correction (2026-10-12, review 13):
 - "Where it waits for a kick": a unit at 7.0032 mV fires on its own at about 6.0 Hz (5.3 Hz at 7.00098). The kicks
   speed it up and spread its intervals.
 
+Correction (2026-10-12, review 14): the review-13 note above cites check 12's 0.1 mV window only. Within 0.02 mV of
+threshold the coupled units sit at +0.031 to +0.055 mV, 1.4-2.4 times the uncoupled 0.023 (dlm_splay_check12.py's
+correction). So they sit within a few hundredths of a millivolt of threshold, though not always as close as uncoupled.
+
     python experiments/dlm_splay_check9.py      (writes experiments/dlm_splay_check9.json)
 """
 from __future__ import annotations

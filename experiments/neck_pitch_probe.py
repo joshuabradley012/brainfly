@@ -54,6 +54,23 @@ electrical (Wertz et al. 2012), which the chemical connectome can't show. The ya
 motion comes through some other route, since HS is silent, and more on the left than the right. It wasn't predicted
 and isn't explained here.
 
+Correction (2026-10-12, review 14):
+- "CvN4-6 barely move" is wrong for CvN6. Against grey (about 2.2 Hz), CvN6 rises to about 6.0 Hz to downward stripes
+  and 5.5 to upward ones, more than CvN7 does, but without telling down from up. CvN5's right cell also doubles to
+  downward stripes. So CvN4-6 don't tell down from up (vertical signals +0.8 to +1.2), though CvN6 moves.
+- "As flies' VS cells and DNOVS1 prefer downward motion": nothing in the notes says flies' DNOVS1 prefers wide-field
+  downward motion. The note gives DNp20 a preference for lateral vertical motion (preferred axis -139.9 deg), and blowfly
+  DNOVS1 answers a rotation (downward laterally, upward frontally). The model's DNp20 fires to wide-field downward
+  motion, which flies' DNOVS1 hasn't been shown to do.
+- "In blowflies the VS-to-CNMN link is electrical (Wertz et al. 2012)": that rests on abstracts and later sources (dual
+  recordings, dye coupling), not the paper itself, and chemical transmission isn't excluded. Read "at least partly
+  electrical". "1.2-1.4% of its chemical input" is the pair CvN6/CvN7; CvN7 alone is 1.16-1.23%.
+- DNp15's answer to upward motion is bilateral (down - up: -4.9 Hz left, -5.25 right), not mostly on the left. The yaw
+  MNs' answer is left-sided, as stated. H2, which feeds both, wasn't read, so "since HS is silent" leaves out a route.
+- CvN7's rate doesn't track its VS drive across scenes either. With rung 6's depression, its VS input delivers about the
+  same under the yaw drum as under these downward stripes (review 14), yet CvN7 falls under the drum and rises here. So
+  other inputs set it at least as much, and "85 Hz of VS input raises it from about 2 to 3.5 Hz" isn't VS alone.
+
     python experiments/neck_pitch_probe.py      (writes experiments/neck_pitch_probe.json)
 """
 from __future__ import annotations

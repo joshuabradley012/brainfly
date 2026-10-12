@@ -3,13 +3,13 @@ experiments/neck_drive_probe.json and experiments/neck_pitch_probe.json (nothing
 
     python assets/neck_motion.py      # writes assets/neck_motion-light.svg and assets/neck_motion-dark.svg
 
-Each row is a cell type, with its left-side cells (filled) and right-side cells (open) joined by a line, under a drum
+Each row is a cell type, with its left-soma cells (filled) and right-soma cells (open) joined by a line, under a drum
 rotating counterclockwise (seen from above; front-to-back across the left eye) and clockwise (30 deg vertical grating at
-40 deg/s), and under horizontal stripes moving down and up on both eyes (30 deg, 40 deg/s). Rates are means over 8 flies,
-0.5-2 s into a 2 s scene after 1 s of grey. Grey ticks: the same cells at grey. A blank row means the probe didn't read
-that cell type. Rows: the lobula plate's HS, H2 and VS cells; DNp15 and DNp20, descending neurons that carry their
-signals; the brain's yaw neck motor neurons (GNG283, GNG276, GNG647 = VCvN1/2, GNG653 = CvN1/2, GNG314 = VCvN3); and its
-pitch ones (CvN4-7).
+40 deg/s), and under horizontal stripes moving down and up on both eyes (30 deg, 40 deg/s). Rates are means over 8
+flies, 0.5-2 s into a 2 s scene after 1 s of grey. Grey ticks: the same cells at grey. A blank row means the probe
+didn't read that cell type. Sides are soma sides: CvN6's and CvN7's axons cross, so their nerves are on the other side.
+Rows: the lobula plate's HS, H2 and VS cells; DNp15 and DNp20, descending neurons that carry their signals; the brain's
+yaw neck motor neurons (GNG283, GNG276, GNG647 = VCvN1/2, GNG653 = CvN1/2, GNG314 = VCvN3); and its pitch ones (CvN4-7).
 """
 from __future__ import annotations
 
@@ -43,7 +43,7 @@ def figure(theme: str, probes: dict) -> str:
     c = THEMES[theme]
     out = [text(24, 30, "Wide-field motion reaches the brain's neck motor neurons: yaw ones strongly, the pitch ones weakly", "lab"),
            text(24, 50, "Rung 6's whole brain with its eyes, open loop (8 flies). A drum drives the yaw neck motor neurons on the side whose HS cells it excites;", "note"),
-           text(24, 68, "stripes moving down drive the VS cells and DNp20 hard and CvN7 a little, the right way round. Filled: left cells; open: right.", "note")]
+           text(24, 68, "stripes moving down drive the VS cells and DNp20 hard and CvN7 a little. Filled: left-soma cells; open: right-soma.", "note")]
     lx, x0, cw, gap = 24, 268, 196, 16
     rowh, top = 21, 122
     nrows = sum(len(r) for _, r in ROWS) + len(ROWS)

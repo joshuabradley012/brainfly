@@ -899,6 +899,31 @@ All rigid-tether (body-fixed) flight unless stated. Values are [P] unless marked
 
 ---
 
+**Note (2026-10-12, review 14).** Corrections to this note:
+- Suver et al. 2016's DN rates were misread from Fig. 3G (summary item 7, §4.2's table). Read against the axis ticks
+  (Fig. 3F agrees):
+  - DNHS1 (DNp15): flight about 10 to 36.5 Hz, null to preferred axis; at rest about 0.5-1 to 14 Hz (Fig. 3E prints a
+    quiescent example at 0.52 Hz).
+  - DNOVS2 (DNp22): flight about 27 to 53 Hz, rest about 3 to 28 Hz.
+  - DNOVS1 (DNp20): flight -41.5 to -38.9 mV (about 2.6 mV), rest -46.7 to -43.2 mV (about 3.5 mV). The earlier "6-7 mV
+    in flight, 2-3 at rest" paired the rest null with the flight peak.
+  So flight-to-rest modulation depth is about 0.75 times for DNOVS1, 1-1.4 times for DNOVS2 and 2 times for DNHS1. What
+  flight raises is the baseline: "DNOVS1: 4.7 ± 1.6 mV; DNOVS2: 24.5 ± 13.9 Hz; and DNHS1: 13.6 ± 5.0 Hz".
+- Item 12's and §8's "DN responses are ≈2-3× larger in flight (Suver et al. 2016)" is unsupported, as above.
+- §3.2's table: GNG653 R gets 2 synapses from H2 L, not 0.
+- §3.3: DNp22's VS input is 54 (L) and 77 (R) synapses. 51 and 73 count only connections of 5 or more.
+- Item 11 and §3.2's "every pitch MN takes its VS input from the eye contralateral to its nerve" doesn't hold for CvN4.
+  CvN4 R takes 18 of its 22 VS synapses from its own side, its nerve side; CvN4 L takes 13 of 20 from the other side.
+- "VS → CvN6/7 is 1.2-1.4%" is the pair. CvN7 alone is 1.16-1.23%.
+- Item 8 and §5.1: Duistermars et al.'s "73-120 ms against 92-220 ms for the wings" is for high-contrast temporal
+  frequencies above 0.19 Hz. At 3.75 Hz across contrast they give head 80-93 ms and wings 172-316 ms.
+- Smaller:
+  - Item 7's Erginkaya discrimination-index range tops out at about -0.2 in their Fig. 1h.
+  - Item 9's haltere immobilization was unilateral.
+  - Item 10's 34 to 60 deg/s is at the 135 ms mean peak time.
+  - Item 13 drops Suver et al.'s "likely" ("what are likely a cluster of frontal neck motor neurons").
+  - Kim et al. 2017's error bars are SEM.
+
 ## Sources
 
 Neck MNs and connectomes:

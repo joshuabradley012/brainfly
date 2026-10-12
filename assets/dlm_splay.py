@@ -1,5 +1,5 @@
-"""The flight motor neurons' splay state in the model, animated: five DLM motor neurons as dots running round a clock face,
-each passing 12 o'clock as it fires, drawn from short reruns of the checks' calibrated units and from their saved
+"""The flight motor neurons' splay state in the model, animated: five DLM motor neurons as dots running round a clock
+face, each passing 12 o'clock as it fires, drawn from short reruns of the checks' calibrated units and from their saved
 results (nothing by hand).
 
     python assets/dlm_splay.py      # writes assets/dlm_splay-light.svg and assets/dlm_splay-dark.svg

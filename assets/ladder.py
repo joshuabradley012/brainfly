@@ -64,7 +64,7 @@ def rungs() -> list[dict]:
          "marks": [(bool(verdict("closed_loop", "result", "pass")), "NeuroMechFly walks, steered by DNa02"),
                    (bool(verdict("jump_calibration", "bilateral", "took_off")), "jumps from jump motor neuron spikes"),
                    (False, "motor neurons drive muscles")]},
-        {"name": "Flight, neck and song", "status": "started",     # groundwork: dlm_splay_check2-5, song_drive_probe
+        {"name": "Flight, neck and song", "status": "started",     # groundwork: dlm_splay_check2-12, song probes, neck probes
          "marks": [(False, "flight MNs splay (five units)"), (False, "song pulses ~35 ms apart (none yet)"),
                    (False, "neck yaw MNs follow a drum (exploratory)"), (False, "saccades")]},
         {"name": "State and learning", "status": "started" if verdict("rung9_learning", "verdicts") else "not started",     # attempt 1
