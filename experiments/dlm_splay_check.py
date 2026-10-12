@@ -36,6 +36,28 @@ Measured as Hürkey et al.'s code measures, from 300 s per run after 3 s, 8 runs
 - rates and ISI CV;
 - the share of each neuron's spikes within 3 ms of another's, against chance.
 
+Ran (2026-10-11, 20 s): the calibration couldn't reach flies' ISI CV. At 6.6 Hz the uncoupled units' CV fell only to
+0.34, at the search's lowest kick rate (55 Hz of 0.1 mV kicks, bias 6.84 mV). A 20 ms membrane fires that slowly only
+with its drive within about 0.01 mV of threshold, so even sparse kicks set its timing. Every condition below ran with
+about 1.6 times flies' irregularity, and at the uncoupled neurons' drive, so the coupling's load slowed them.
+- Uncoupled: independent, as the nulls give: splayness 0.592, MN4-MN5 r 0.638, dip10 0.20, coincidences 0.99 times
+  chance; 6.6 Hz.
+- Measured CCs: every measure moves flies' way, about a third of the distance. Splayness 0.641 (flies 0.76, null 0.59),
+  r 0.611 (flies 0.56), dip10 0.158 (flies 0.06). MN2 fires at 0.50 of MN1's cycle and MN4 at 0.50 of MN3's, with
+  vector strength 0.24 (flies 0.42-0.61, about 0.7). But the coupling also slowed the units to 4.95 Hz and made them
+  more irregular (CV 0.50); flies' rates don't change with shakB RNAi.
+- The model's CCs: smaller moves (splayness 0.624, dip10 0.18), at 5.8 Hz.
+- Measured x 3: splayness 0.648, r 0.608, dip10 0.134, but 3.6 Hz and CV 0.65.
+- With spikelets (0.0375 mV): spikes within 3 ms of another's at 2.4 times chance (flies' shakB knockdown 1.2-2.7), and
+  dip10 0.23.
+- The preferred orders, 1423 and 1324, take 14% of MN1-4's 4-spike windows with the measured coupling (18% uncoupled;
+  flies 48-70%). With CVs of 0.35-0.65, 46-80% of windows hold a repeat (flies 9%). Among complete windows the
+  preferred orders take 42% (34% uncoupled, about a third by chance).
+So conductance coupling at flies' strengths pushes the model's units toward flies' splay: the strong pairs fire in
+antiphase and MN5 avoids MN4, a third of the way at most. Spikelets push them together. But at flies' rates the unit
+fires too irregularly, and too sensitively to the coupling's load, for flies' measures. dlm_splay_check2.py widens the
+calibration's search and holds every condition at 6.6 Hz.
+
     python experiments/dlm_splay_check.py      (writes experiments/dlm_splay_check.json)
 """
 from __future__ import annotations
