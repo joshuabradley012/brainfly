@@ -20,6 +20,29 @@ Measured as dlm_splay_check3.py measures, with the share of 4-spike windows hold
 after 3 s each, run one at a time, each with its own shared fluctuation (seeds 4500 + 10 x share's index + condition,
 plus 100 x run).
 
+Ran (2026-10-11, 16 minutes): with most of the irregularity shared, the units' firing order comes out as flies', and
+coupling moves every measure the way flies' genotypes differ, but the splay stays weaker than flies'.
+- The calibrations hit their targets: total CV 0.22 at every share. Private noise alone gave CVs of 0.152, 0.099 and
+  0.051 (targets 0.156, 0.098 and 0.049), with shared fluctuations of 2.5-3.2 mV.
+- Share 0.5: uncoupled splayness 0.566 and r 0.654; measured + spikelet 0.592 and 0.641. dip10 0.21-0.22, and a quarter
+  of the 4-spike windows hold a repeat.
+- Share 0.8: uncoupled splayness 0.513, r 0.692, dip10 0.27, coincidences 1.38 times chance. That is near flies' shakB
+  knockdown (r 0.56-0.72, dip10 0.18-0.41, splayness 0.52-0.69, coincidences 1.2-2.7). Measured + spikelet: splayness
+  0.598, r 0.657, dip10 0.227, coincidences 1.10, 14% of windows with a repeat.
+- Share 0.95: uncoupled the units lean in phase: splayness 0.415, r 0.780, dip10 0.40, coincidences 2.05. Measured +
+  spikelet:
+  - splayness 0.604 (flies 0.73-0.79), r 0.629 (0.49-0.63), dip10 0.20 (0.02-0.10), coincidences 1.08 (flies' controls
+    below 1);
+  - 7% of windows hold a repeat (flies 9%), and the preferred orders take 54% of all windows (flies 48-70%) and 58% of
+    complete ones (51-79%);
+  - MN2 at 0.48 of MN1's cycle, vector strength 0.41 (flies 0.42-0.61, about 0.7).
+So shared irregularity gives flies' firing order where private noise didn't (24-35% of windows with a repeat), and
+from shakB-like in-phase leaning the measured coupling moves every measure toward flies' controls: splayness up 0.19,
+r down 0.15, dip10 down 0.20, coincidences to chance. But with flies' AHP and spikelets, the coupling's pull stops at
+splayness 0.60 and dip10 0.20, where flies reach 0.76 and 0.06. Without spikelets and AHP the same coupling reached
+0.71 and 0.10 (dlm_splay_check2.py). Hürkey et al.'s neuron, near a saddle-node loop with a phase-response curve that
+falls through mid-cycle, repels its partners more strongly than a leaky integrator does, which may be the rest.
+
     python experiments/dlm_splay_check4.py      (writes experiments/dlm_splay_check4.json)
 """
 from __future__ import annotations
