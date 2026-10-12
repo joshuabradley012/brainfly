@@ -651,7 +651,8 @@ def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
                           inhibitors=pick(n // 20), tau=(0.02, 0.2), k=(0.01, 0.004), depleting=pick(n // 10))
     brain.set_release(pick(n // 3), rng.normal(0.0, 10.0, n // 3))
     brain.own_depression = rng.random(len(brain.weights)) < 0.2
-    pairs = rng.integers(0, n, (2, n // 3))
+    pool = np.flatnonzero(~brain.external)                          # external neurons can't be coupled
+    pairs = rng.choice(pool, (2, n // 3))
     pairs = pairs[:, pairs[0] != pairs[1]]
     ratio = rng.uniform(0.005, 0.1, pairs.shape[1]).astype(np.float32)
     brain.set_coupling(sparse.csr_matrix((np.r_[ratio, ratio], (np.r_[pairs[0], pairs[1]], np.r_[pairs[1], pairs[0]])),
@@ -683,7 +684,8 @@ def test_the_blocked_integration_matches_the_reference_loops_to_the_bit(adapting
     rng = np.random.default_rng(4)
     slow = sparse.csr_matrix((rng.normal(-2.0, 2.0, n).astype(np.float32), tuple(rng.integers(0, n, (2, n)))), shape=(n, n))
     changes = (lambda br: br.set_bias(np.linspace(-3.0, 3.0, n)), lambda br: br.set_type("quick", tau_m=0.012, bias=-1.0),
-               lambda br: br.set_slow(slow), lambda br: br.set_release(np.flatnonzero(~ext)[:40], 5.0))
+               lambda br: br.set_slow(slow),
+               lambda br: br.set_release(np.flatnonzero(~ext & ~np.isin(np.arange(n), np.union1d(br.coupled, br._cpl_idx)))[:40], 5.0))
     for change in changes:                                         # each replaces what the blocked tables come from
         change(a)
         change(b)
@@ -926,6 +928,26 @@ def test_a_partners_reset_pulls_a_coupled_neuron_down_and_a_refractory_one_takes
     assert fired is not None and len(held) == 50
     assert all(h == -5.0 for h in held), held[:3]
     assert after < before - 0.2, (before, after)                        # toward 3 mV, over 16 ms
+
+
+def test_set_coupling_refuses_what_the_kernel_cant_take():
+    """A ratio matrix of the wrong shape, a negative conductance, self-coupling and external neurons are refused, both
+    ways round (coupling an external neuron, and making a coupled one external)."""
+    labels = {"cell_type": np.array(["c0", "c1", "c2"]), "side": np.array(["L"] * 3), "superclass": np.array(["test"] * 3)}
+    M = sparse.csr_matrix((3, 3), dtype=np.float32)
+    pair = lambda r: sparse.csr_matrix((np.array([r, r], np.float32), ([0, 1], [1, 0])), shape=(3, 3))
+    for bad in (sparse.csr_matrix((np.array([0.1], np.float32), ([4], [3])), shape=(5, 5)), pair(-0.1),
+                sparse.csr_matrix((np.array([0.1], np.float32), ([1], [1])), shape=(3, 3))):
+        with pytest.raises(ValueError):
+            HybridBrain(matrix=M, labels=labels, w_syn=1.0, coupling=bad)
+    coupled = HybridBrain(matrix=M, labels=labels, w_syn=1.0, coupling=pair(0.1))
+    with pytest.raises(ValueError):
+        coupled.set_release([1], 5.0)
+    coupled.set_release([2], 5.0)                                       # an uncoupled neuron can still be external
+    plain = HybridBrain(matrix=M, labels=labels, w_syn=1.0)
+    plain.set_release([0], 5.0)
+    with pytest.raises(ValueError):
+        plain.set_coupling(pair(0.1))
 
 
 def fast_pair(size: float, types: dict | None = None) -> HybridBrain:

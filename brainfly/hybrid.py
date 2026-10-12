@@ -663,7 +663,6 @@ class HybridBrain:
         self.full_strength = np.zeros(len(self._counts), np.bool_)    # synapses exempt from their neuron's depression
         G = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if gap is None else sparse.csc_matrix(gap, dtype=np.float32)
         self.gptr, self.gidx, self.gap_mv = G.indptr, G.indices, G.data.astype(np.float32)
-        self.set_coupling(coupling)
         F = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if fast is None else sparse.csc_matrix(fast, dtype=np.float32)
         self.fptr, self.fast_mv = F.indptr, F.data.astype(np.float32)
         self.ftargets = np.unique(F.indices).astype(np.int64)            # the fast synapses' targets, compactly
@@ -683,6 +682,7 @@ class HybridBrain:
         self._external_release = np.zeros(self.n, np.float32)
         self._external_matrix = None                     # rows: every neuron; columns: the external ones
         self.external_input = np.zeros(self.n, np.float32)
+        self.set_coupling(coupling)                      # after external, which it checks
         self.blocked = True                              # integrate block by block (False: the reference loops it matches)
         self.own_depression = np.zeros(0, np.bool_)      # fast synapses depressing as the slow ones do (empty: none)
         self.reset(seed)
@@ -898,12 +898,23 @@ class HybridBrain:
         way, so give both directions for a junction that doesn't rectify). Each step a listed neuron's membrane moves by
         (1 - exp(-dt / tau_m)) x ratio x (u_j - u_i), from the voltages the step starts with: a partner's subthreshold
         changes reach it, and so does a partner's reset after a spike. A spike's own brief depolarization isn't in the
-        model's voltage; give it as a spikelet in gap. None (or an empty matrix) removes them."""
+        model's voltage; give it as a spikelet in gap. None (or an empty matrix) removes them. Note that a coupling
+        coefficient measured as a peak ratio of brief current steps (flies' usual measure) is smaller than the
+        steady-state one this formula gives, so convert with the cells' own time course. Silencing a neuron
+        (advance's silence) cuts its spikelets and synapses but not its conductances: a junction passes current
+        whatever the cell's output. External neurons (set_release) can't be coupled: their membranes aren't integrated."""
         R = sparse.csr_matrix((self.n, self.n), dtype=np.float32) if ratio is None else sparse.csr_matrix(ratio, dtype=np.float32)
+        if R.shape != (self.n, self.n):
+            raise ValueError(f"coupling: the ratio matrix must be {self.n} x {self.n}, not {R.shape[0]} x {R.shape[1]}")
         R.eliminate_zeros()
+        if np.any(R.data < 0):
+            raise ValueError("coupling: a junction's conductance can't be negative")
         rows = np.flatnonzero(np.diff(R.indptr)).astype(np.int64)
         if len(rows) and np.any(R.diagonal() != 0):
             raise ValueError("coupling: a neuron can't be coupled to itself")
+        partners = np.union1d(rows, R.indices)
+        if len(partners) and np.any(self.external[partners]):
+            raise ValueError("coupling: external neurons (set_release) can't be coupled")
         sub = R[rows]
         self.coupled, self._cpl_ptr = rows, sub.indptr.astype(np.int64)
         self._cpl_idx, self._cpl_ratio = sub.indices.astype(np.int64), sub.data.astype(np.float32)
@@ -1074,6 +1085,9 @@ class HybridBrain:
         reaches only the other neurons, which also saves most of the work."""
         neurons = np.asarray(neurons, np.int64)
         hz = np.broadcast_to(np.asarray(hz, np.float32), neurons.shape)
+        coupled = getattr(self, "coupled", np.empty(0, np.int64))
+        if len(coupled) and np.isin(neurons, np.union1d(coupled, self._cpl_idx)).any():
+            raise ValueError("set_release: coupled neurons (set_coupling) can't be made external")
         if not self.external[neurons].all():
             self.external[neurons] = True
             self._external_matrix = None
