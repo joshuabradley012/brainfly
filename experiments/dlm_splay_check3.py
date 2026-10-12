@@ -28,6 +28,27 @@ kicks' rate, and the bias found again in every condition for 6.6 Hz. Conditions:
   measured x 3 + spikelet
 Measured as dlm_splay_check2.py measures; 300 s per run after 3 s, 8 runs (seeds 4400 + condition).
 
+Ran (2026-10-11, 62 s): with flies' AHP the spikelets no longer synchronize the units, but the splay is weaker.
+- The fitted unit gives flies' AHP in the kernel: 14.5, 10.3 and 8.8 mV below baseline at 11.5, 50 and 100 ms (flies
+  14.4, 10.4 and 8.7).
+- Its f-I is shallower than flies': 0.28 Hz per mV over 1 s steps and 0.41 over 0.4 s steps. That is 22-28 and 33-41
+  Hz/nA at 80-100 MOhm (flies 62-75 on Fig. 1e's mean; per-cell IQR 45-82, range 21-100).
+- The AHP makes the unit regular. Even the search's most kicks (20,000 Hz of 0.1 mV, with the bias at -5.1 mV) give an
+  ISI CV of only 0.16 (flies 0.22), so every condition ran at 0.16-0.17.
+- Uncoupled: independent (splayness 0.588, r 0.664, dip10 0.22, coincidences 1.02 times chance).
+- Measured: splayness 0.624, r 0.625, dip10 0.186, coincidences 0.94. MN2 fires at 0.60 of MN1's cycle, with vector
+  strength 0.14.
+- Measured + spikelet: splayness 0.609, r 0.651, dip10 0.211, coincidences 1.02. The spikelets no longer synchronize
+  the units (dlm_splay_check2.py: splayness 0.297, coincidences 5.0 times chance), but the coupling's pull apart is
+  mostly gone too.
+- The model's CCs + spikelet: splayness 0.602. Measured x 3 + spikelet: 0.642, r 0.607, dip10 0.177.
+So flies' AHP balances the spikelet, as in flies. But with the noise needed for even CV 0.16, the weak coupling barely
+acts: splayness 0.61-0.64 against flies' 0.73-0.79. In dlm_splay_check2.py the leaky integrator needed only 11 Hz of
+kicks for CV 0.22, because near its rheobase it is extremely sensitive to noise, and there the same coupling dominated.
+Both runs give each unit private noise, as Hürkey et al.'s model did. Flies' irregularity may instead be largely shared,
+all five rates rising and falling together: their 4-spike windows hold a repeat 9% of the time, against 24-35% in
+these runs. A check with shared drive fluctuations would test that.
+
     python experiments/dlm_splay_check3.py      (writes experiments/dlm_splay_check3.json)
 """
 from __future__ import annotations
