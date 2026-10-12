@@ -75,6 +75,12 @@ Correction (2026-10-11, review 9):
 - The remark on dMS2's electrical signalling leans on courtship_song.md's summary 11, which overstates its source
   (Lillvis et al. list the dMS2 neurons among those most likely to have electrical synapses).
 
+Correction (2026-10-11, review 10):
+- dMS2, vMS12 and dMS9 rise 3.0-4.2 times rest (review 9's note says 3-4.4). b3 rises 2.1-2.4 times, hg3 1.3-2.7 and
+  hg4 1.6-1.7. The other steering motor neurons don't change two- or threefold: i1 0.9-1.3 times, ps1 1.0-1.6, hg1
+  0.5-0.7, hg2 0.7-0.8, and MNwm35 falls to 0.06-0.44 times.
+- dMS2 is also hg2's largest core input (65 of 83 synapses).
+
     python experiments/song_drive_probe.py      (writes experiments/song_drive_probe.json)
 """
 from __future__ import annotations

@@ -33,6 +33,29 @@ flies 59%), and so do the IPIs' spread and the motor neurons that flies use in p
 instead of rising. Turning depression off isn't a fit to flies' synapses; it shows what the default was doing. A song
 test still needs the circuit to make pulses, which neither setting does.
 
+Correction (2026-10-11, review 10):
+- The read named two criteria, and the Ran reported one. Rates passed: dMS2 9.5 to 25.6 Hz at 100 Hz, rising with the
+  drive where with depression it was flat. Voltages didn't: by the undepressed estimate dMS2 should gain about 49 mV and
+  vMS12 about 23. dMS2's median moved -0.1 mV (95th percentile from -6.7 to -2.7 mV), and vMS12's fell 4.6 mV. By the
+  read, something besides depression also limits them: candidates are their inputs' growing inhibition and the reset of
+  the synaptic current at each spike (keep_current 0). A firing unit's median voltage doesn't measure its drive, which
+  also undercuts song_recruit_check.py's "moves 1.4 mV".
+- "The default depression held the circuit near rest" brings back an error review 9 corrected. With depression on, dMS2,
+  dMS9 and vMS12 rise 3.0-4.2 times rest. Depression held them to about a third of their undepressed rates, and hg3 and
+  hg4 to about a tenth (4.2 against 42.1 Hz, 3.4 against 33.8). TN1A and dPR1 barely changed (pIP10, pMP2 and vPR9
+  never depressed).
+- "The steering motor neurons that TN1A and dMS2 drive hardest": TN1A's (hg3, hg4). dMS2's largest targets, hg1 and
+  MNwm35, fall at 100 Hz.
+- "hg1, hg2 and i1, which flies use in pulse song, fall" is selective. Flies' pulse song uses i1 and hg1-4. hg3 and hg4
+  rise tenfold, hg1 rises 2.6 times at 25 Hz and at 100 Hz falls 17%, within run-to-run differences, and hg1 matters
+  for sine song.
+- The 30-40 ms share is at chance (independent Poisson units at these rates through the detector: 17%), but the volleys
+  aren't chance events: 32.6 a second against 17.7 for independent units, in longer trains, with the median IPI at
+  hg3's interspike interval (24 ms at 42 Hz). "The IPIs' spread" and "tonically" rest on nothing saved (no CV or
+  autocorrelation here).
+- Numbers: with depression dMS2 ran 8.4-9.6 Hz. Of the core's 77 neurons, 64 had depressed (pIP10 and pMP2 descend, and
+  vPR9 is GABAergic).
+
     python experiments/song_recruit_check2.py      (writes experiments/song_recruit_check2.json)
 """
 from __future__ import annotations

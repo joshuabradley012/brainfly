@@ -58,6 +58,11 @@ Correction (2026-10-11, review 8):
   the strong pairs, smaller on the others) synchronize this unit too (review 8's rerun: splayness 0.41, coincidences
   4.7 times chance).
 
+Correction (2026-10-11, review 10):
+- The units got one drive. In "measured" MN5 fires at 7.9 Hz (CV 0.15) against MN1-4's 6.3 Hz (CV 0.28), so "one rate
+  in every condition" holds for the mean only (flies: MN5 at 0.98-1.26 times MN1-4). dlm_splay_check6.py matches each
+  unit's rate.
+
     python experiments/dlm_splay_check2.py      (writes experiments/dlm_splay_check2.json)
 """
 from __future__ import annotations

@@ -64,6 +64,16 @@ Correction (2026-10-11, review 9):
 - The 1.8 times holds in the unit's 20 ms membrane; in flies' probable 13-15 ms membrane the same coefficients need
   1.5-1.6 times.
 
+Correction (2026-10-11, review 10):
+- The leaky-integrator conditions gave all five units one drive, so the units didn't fire at one rate. In "LIF,
+  private" MN1-4 fire at 6.10-6.12 Hz (CV 0.28) and MN5 at 8.60 Hz (CV 0.13), 1.41 times as fast, because its assumed
+  junctions load it less. In flies all five fire at one rate (MN5 at 0.98-1.26 times MN1-4) with similar CVs. So "at
+  flies' rate and irregularity" is wrong. Review 9's note that MN5's pairs "already fall in flies' ranges" reflects MN5
+  drifting past MN4 at another rate. At a common rate (review 10's rerun: MN5's drive 0.042 mV lower) MN4-MN5's dip10 is
+  0.121 and MN5's within-10 ms ratios 0.67-0.70, outside flies' ranges, while splayness is 0.733. With spikelets MN5
+  runs 1.10 times MN1-4; in the AHP conditions 1.01. dlm_splay_check6.py gives each unit its own drive and reports every
+  pair.
+
     python experiments/dlm_splay_check5.py      (writes experiments/dlm_splay_check5.json)
 """
 from __future__ import annotations

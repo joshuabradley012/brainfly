@@ -34,6 +34,8 @@ Conventions:
 al. list the dMS2 neurons "amongst the more prominent" ones whose electrical synapses connectomes miss. "Mostly" is
 unsupported, and dMS2 also makes thousands of chemical synapses onto hg1, hg3, hg4 and MNwm35.
 
+**Note (2026-10-11, review 10).** §16's blocker "dMS2 may be largely electrical" repeats summary 11's overstatement.
+
 ## 1. von Philipsborn et al. 2011, Neuron 69:509 ("Neuronal control of Drosophila courtship song") [P]
 
 Read in full: Cell Press PDF via the Wayback Machine.

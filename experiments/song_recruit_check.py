@@ -40,6 +40,10 @@ Correction (2026-10-11, review 9):
   dMS2's median moves 1.4 mV (95th percentile 4.6). So depression accounts for about two thirds of the predicted
   drive, most of the rest is unexplained, and no run here turned depression off. song_recruit_check2.py does.
 
+Correction (2026-10-11, review 10):
+"Yet it moves about 1.4 mV" isn't evidence of lost drive: in song_recruit_check2.py, tripling dMS2's rate left
+its median voltage unmoved, so a firing unit's median voltage doesn't measure its drive.
+
     python experiments/song_recruit_check.py      (writes experiments/song_recruit_check.json)
 """
 from __future__ import annotations
