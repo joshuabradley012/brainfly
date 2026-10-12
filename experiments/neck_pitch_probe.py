@@ -28,6 +28,32 @@ Expected:
 - The yaw MNs, HS and DNp15 move little.
 These are expectations to describe, not criteria.
 
+Ran (2026-10-12, 102 s): vertical motion drives the VS cells and DNp20 hard, and the pitch MN CvN7 a little, the right
+way round. CvN4-6 barely move. The yaw MNs and DNp15 answer upward motion, mostly on the left.
+- The brain's own neurons average 1.65 Hz at grey, 4.4 with the static stripes, 5.2 with the stripes moving down and 6.2
+  moving up (0.1-0.5% over 100 Hz).
+- VS cells (9 per side): 85 and 88 Hz to downward motion, 7 and 8 to upward (vertical signal +158 Hz, t 1166), and 0 to
+  the static stripes. HS cells are silent (0 Hz) in every stripe scene, against 1.9-2.1 at grey.
+- DNp20: 48 and 40 Hz down, 0.1-0.3 up (+88, t 86). DNp22: 3.0 and 6.8 down, 0 up (+9.8, t 18).
+- Pitch MNs, left and right under down, then under up (Hz):
+  - CvN7: 4.2 and 2.8, then 1.5 and 1.4 (+4.0, t 8.5);
+  - CvN4: 2.0 and 3.7, then 2.4 and 2.1 (+1.2, t 2.3);
+  - CvN5: +0.8 (t 0.9);
+  - CvN6: 6.4 and 5.5, then 3.5 and 7.5 (+0.9, t 1.3).
+- Yaw MNs: negative signals, from the left side's response to upward motion.
+  - GNG276: -9.3 (t -12.7; left 3.7 Hz down, 11.8 up);
+  - GNG647: -6.7 (t -11.0);
+  - GNG283: -5.5 (t -9.4);
+  - GNG653: -3.8 (t -12.7);
+  - GNG314: +0.2.
+  DNp15 also answers upward motion (5.8 and 7.2 Hz, against 0.9 and 1.9; -10.2, t -11.4), with HS silent.
+So the VS cells and DNp20 follow downward motion strongly, as flies' VS cells and DNOVS1 prefer downward motion. CvN7
+follows it the right way round, as Gorko et al. recorded, but weakly: 85 Hz of VS input raises it from about 2 to 3.5 Hz.
+Its VS input is 1.2-1.4% of its chemical input (the note's summary, item 3), and in blowflies the VS-to-CNMN link is
+electrical (Wertz et al. 2012), which the chemical connectome can't show. The yaw MNs' and DNp15's response to upward
+motion comes through some other route, since HS is silent, and more on the left than the right. It wasn't predicted
+and isn't explained here.
+
     python experiments/neck_pitch_probe.py      (writes experiments/neck_pitch_probe.json)
 """
 from __future__ import annotations

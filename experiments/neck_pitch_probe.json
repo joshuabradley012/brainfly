@@ -1,0 +1,426 @@
+{
+ "question": "Exploratory probe, written before it runs, not pre-registered: in rung 6's whole brain with its eyes, does vertical\nmotion reach the brain's pitch neck motor neurons, as their wiring and the one recording of them predict?\n\nneck_drive_probe.py: a yaw drum drives the brain's yaw neck MNs on the side whose HS cells it excites, and leaves CvN7, a\npitch MN, near rest. research_notes/Rung 8 flight data/neck_head_control.md:\n- The pitch MNs CvN4-7 pitch the head down. They take direct synapses from frontal VS cells, about 100 per CvN7, 105-109\n  per CvN6 and 64-69 per CvN5 (the note's summary, item 3).\n- Gorko et al. 2024 recorded CvN7. It depolarizes and spikes to downward, not upward, local motion fronto-dorsally on\n  one eye (item 5).\n- Downward motion in front comes from nose-up pitch, so a pitch-down response compensates (item 11).\n- VS cells depolarize to downward motion in their receptive fields (item 6).\nModel: rung6_relay.build(\"intact\") with its eyes (flyvis flow/0000/001 at gain 1), 8 flies, as neck_drive_probe.py.\nScenes: eyes_at_rest.Setup.run, 1 s of grey then 2 s of the scene, rates from 0.5 to 2 s; seed 7710, the same noise in\nevery scene. The scenes:\n- grey;\n- a static grating of horizontal stripes, period 30 deg (brainfly.eye2d.ElevationGrating), on both eyes;\n- the stripes moving down at 40 deg/s (1.33 Hz) on both eyes;\n- the stripes moving up at 40 deg/s.\nRead-out, per side:\n- the pitch MNs CvN4-7;\n- the yaw MNs (GNG283, GNG276, GNG647, GNG653, GNG314), as a control;\n- the VS cells (MaleCNS type \"VS\") and HS;\n- DNp20, DNp22 and DNp15.\nFor each: its rate in every scene, and its vertical signal, (down - up) summed over the two sides, with t over flies.\nExpected:\n- CvN4-7 and the VS cells fire more to downward than to upward motion: positive signals.\n- DNp20 and DNp22, which take VS input, follow them.\n- The yaw MNs, HS and DNp15 move little.\nThese are expectations to describe, not criteria.\n\n    python experiments/neck_pitch_probe.py      (writes experiments/neck_pitch_probe.json)\n",
+ "cells": {
+  "CvN4": {
+   "L": 1,
+   "R": 1
+  },
+  "CvN5": {
+   "L": 1,
+   "R": 1
+  },
+  "CvN6": {
+   "L": 1,
+   "R": 1
+  },
+  "CvN7": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG283": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG276": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG647": {
+   "L": 1,
+   "R": 2
+  },
+  "GNG653": {
+   "L": 1,
+   "R": 1
+  },
+  "GNG314": {
+   "L": 1,
+   "R": 1
+  },
+  "VS": {
+   "L": 9,
+   "R": 9
+  },
+  "HS": {
+   "L": 3,
+   "R": 3
+  },
+  "DNp20": {
+   "L": 1,
+   "R": 1
+  },
+  "DNp22": {
+   "L": 1,
+   "R": 1
+  },
+  "DNp15": {
+   "L": 1,
+   "R": 1
+  }
+ },
+ "scenes": {
+  "grey": {
+   "own_mean_hz": 1.645,
+   "own_over_100hz": 0.0,
+   "rates_hz": {
+    "CvN4": {
+     "L": 1.58,
+     "R": 2.33
+    },
+    "CvN5": {
+     "L": 1.42,
+     "R": 2.08
+    },
+    "CvN6": {
+     "L": 2.83,
+     "R": 1.5
+    },
+    "CvN7": {
+     "L": 2.75,
+     "R": 1.33
+    },
+    "GNG283": {
+     "L": 1.33,
+     "R": 2.0
+    },
+    "GNG276": {
+     "L": 1.42,
+     "R": 1.08
+    },
+    "GNG647": {
+     "L": 1.33,
+     "R": 1.96
+    },
+    "GNG653": {
+     "L": 1.17,
+     "R": 2.33
+    },
+    "GNG314": {
+     "L": 1.75,
+     "R": 1.75
+    },
+    "VS": {
+     "L": 1.92,
+     "R": 2.01
+    },
+    "HS": {
+     "L": 1.92,
+     "R": 2.08
+    },
+    "DNp20": {
+     "L": 0.33,
+     "R": 1.0
+    },
+    "DNp22": {
+     "L": 0.25,
+     "R": 0.33
+    },
+    "DNp15": {
+     "L": 0.0,
+     "R": 0.25
+    }
+   }
+  },
+  "static": {
+   "own_mean_hz": 4.355,
+   "own_over_100hz": 0.00492,
+   "rates_hz": {
+    "CvN4": {
+     "L": 1.42,
+     "R": 1.75
+    },
+    "CvN5": {
+     "L": 1.17,
+     "R": 1.83
+    },
+    "CvN6": {
+     "L": 1.75,
+     "R": 0.83
+    },
+    "CvN7": {
+     "L": 2.0,
+     "R": 1.5
+    },
+    "GNG283": {
+     "L": 1.58,
+     "R": 1.67
+    },
+    "GNG276": {
+     "L": 2.25,
+     "R": 2.5
+    },
+    "GNG647": {
+     "L": 1.42,
+     "R": 1.58
+    },
+    "GNG653": {
+     "L": 1.0,
+     "R": 1.92
+    },
+    "GNG314": {
+     "L": 1.5,
+     "R": 2.0
+    },
+    "VS": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "HS": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "DNp20": {
+     "L": 0.42,
+     "R": 0.5
+    },
+    "DNp22": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "DNp15": {
+     "L": 0.17,
+     "R": 0.33
+    }
+   }
+  },
+  "down": {
+   "own_mean_hz": 5.206,
+   "own_over_100hz": 0.00124,
+   "rates_hz": {
+    "CvN4": {
+     "L": 2.0,
+     "R": 3.67
+    },
+    "CvN5": {
+     "L": 2.0,
+     "R": 4.5
+    },
+    "CvN6": {
+     "L": 6.42,
+     "R": 5.5
+    },
+    "CvN7": {
+     "L": 4.17,
+     "R": 2.75
+    },
+    "GNG283": {
+     "L": 7.75,
+     "R": 3.83
+    },
+    "GNG276": {
+     "L": 3.67,
+     "R": 3.58
+    },
+    "GNG647": {
+     "L": 6.83,
+     "R": 1.62
+    },
+    "GNG653": {
+     "L": 2.25,
+     "R": 0.92
+    },
+    "GNG314": {
+     "L": 1.25,
+     "R": 1.75
+    },
+    "VS": {
+     "L": 84.94,
+     "R": 87.52
+    },
+    "HS": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "DNp20": {
+     "L": 48.42,
+     "R": 40.25
+    },
+    "DNp22": {
+     "L": 3.0,
+     "R": 6.75
+    },
+    "DNp15": {
+     "L": 0.92,
+     "R": 1.92
+    }
+   }
+  },
+  "up": {
+   "own_mean_hz": 6.245,
+   "own_over_100hz": 0.00337,
+   "rates_hz": {
+    "CvN4": {
+     "L": 2.42,
+     "R": 2.08
+    },
+    "CvN5": {
+     "L": 2.92,
+     "R": 2.75
+    },
+    "CvN6": {
+     "L": 3.5,
+     "R": 7.5
+    },
+    "CvN7": {
+     "L": 1.5,
+     "R": 1.42
+    },
+    "GNG283": {
+     "L": 12.33,
+     "R": 4.75
+    },
+    "GNG276": {
+     "L": 11.83,
+     "R": 4.67
+    },
+    "GNG647": {
+     "L": 12.75,
+     "R": 2.42
+    },
+    "GNG653": {
+     "L": 5.33,
+     "R": 1.67
+    },
+    "GNG314": {
+     "L": 1.42,
+     "R": 1.42
+    },
+    "VS": {
+     "L": 6.83,
+     "R": 7.53
+    },
+    "HS": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "DNp20": {
+     "L": 0.08,
+     "R": 0.33
+    },
+    "DNp22": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "DNp15": {
+     "L": 5.83,
+     "R": 7.17
+    }
+   }
+  }
+ },
+ "vertical": {
+  "CvN4": {
+   "vertical_signal_hz": 1.167,
+   "t": 2.26,
+   "down_minus_up_hz": {
+    "L": -0.417,
+    "R": 1.583
+   }
+  },
+  "CvN5": {
+   "vertical_signal_hz": 0.833,
+   "t": 0.94,
+   "down_minus_up_hz": {
+    "L": -0.917,
+    "R": 1.75
+   }
+  },
+  "CvN6": {
+   "vertical_signal_hz": 0.917,
+   "t": 1.31,
+   "down_minus_up_hz": {
+    "L": 2.917,
+    "R": -2.0
+   }
+  },
+  "CvN7": {
+   "vertical_signal_hz": 4.0,
+   "t": 8.49,
+   "down_minus_up_hz": {
+    "L": 2.667,
+    "R": 1.333
+   }
+  },
+  "GNG283": {
+   "vertical_signal_hz": -5.5,
+   "t": -9.36,
+   "down_minus_up_hz": {
+    "L": -4.583,
+    "R": -0.917
+   }
+  },
+  "GNG276": {
+   "vertical_signal_hz": -9.25,
+   "t": -12.7,
+   "down_minus_up_hz": {
+    "L": -8.167,
+    "R": -1.083
+   }
+  },
+  "GNG647": {
+   "vertical_signal_hz": -6.708,
+   "t": -11.02,
+   "down_minus_up_hz": {
+    "L": -5.917,
+    "R": -0.792
+   }
+  },
+  "GNG653": {
+   "vertical_signal_hz": -3.833,
+   "t": -12.69,
+   "down_minus_up_hz": {
+    "L": -3.083,
+    "R": -0.75
+   }
+  },
+  "GNG314": {
+   "vertical_signal_hz": 0.167,
+   "t": 0.22,
+   "down_minus_up_hz": {
+    "L": -0.167,
+    "R": 0.333
+   }
+  },
+  "VS": {
+   "vertical_signal_hz": 158.093,
+   "t": 1166.38,
+   "down_minus_up_hz": {
+    "L": 78.102,
+    "R": 79.991
+   }
+  },
+  "HS": {
+   "vertical_signal_hz": 0.0,
+   "t": 0.0,
+   "down_minus_up_hz": {
+    "L": 0.0,
+    "R": 0.0
+   }
+  },
+  "DNp20": {
+   "vertical_signal_hz": 88.25,
+   "t": 86.26,
+   "down_minus_up_hz": {
+    "L": 48.333,
+    "R": 39.917
+   }
+  },
+  "DNp22": {
+   "vertical_signal_hz": 9.75,
+   "t": 18.27,
+   "down_minus_up_hz": {
+    "L": 3.0,
+    "R": 6.75
+   }
+  },
+  "DNp15": {
+   "vertical_signal_hz": -10.167,
+   "t": -11.44,
+   "down_minus_up_hz": {
+    "L": -4.917,
+    "R": -5.25
+   }
+  }
+ },
+ "seconds": 102
+}
