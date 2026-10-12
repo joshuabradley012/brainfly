@@ -56,6 +56,25 @@ neurons brainfly's sign rule makes inhibitory (GABA or glutamate), and vMS12's 5
 input by its size, and the calibration holds each group near its resting target. Electrical synapses in flies may add
 to this, but the model lacks transmission along chemical paths that exist.
 
+Correction (2026-10-11, review 9):
+- "vMS12, dMS2 and dMS9 stay at 6-10 Hz, about their resting rates" is wrong: they rest at 2.09-2.30 Hz and fire at
+  6.2-9.6 Hz with pIP10 driven, 3-4.4 times rest. They rise at the lowest drive and then stay flat: pIP10 reaches them
+  weakly and with no gain as the drive rises.
+- The steering motor neurons rest at 1.7-2.3 Hz. With pIP10 driven, b3, hg3 and hg4 rise two- to threefold, and
+  MNwm35 falls up to sixteenfold. That isn't "barely change".
+- "dMS2 and vMS12 are the steering motor neurons' largest core inputs" holds for hg1, MNwm35, ps1 and i1 only. TN1A,
+  which pIP10 drove to 18-64 Hz, is hg3's and hg4's largest core input, and dPR1 b3's. The core gives each steering
+  motor neuron 0.8-14% of its input, so "main inputs" misdescribes it. dMS2 and vMS12 are the core's main inputs to
+  them (62% of the core's synapses onto them).
+- The Poisson null: 27-29 ms is the truncated exponential's median at the 2-neuron volley rates. With the probe's 5 ms
+  merging, chance gives 33.4-34.6 ms for 3 neurons and 30.5-33.2 for 2. Independent Poisson motor neurons at the
+  measured rates, run through this probe's own detector, give 2-neuron medians of 33.0-35.5 ms, with 17% within
+  30-40 ms (observed 31.3-36.4 ms, 8-26%). So the observed medians sit at chance. A median of 30-40 ms can't tell
+  chance from song under a 65 ms cut; only trains and the share within 30-40 ms (flies 59%) can. Stern's rule is a
+  15-65 ms window, and this probe dropped the floor.
+- The remark on dMS2's electrical signalling leans on courtship_song.md's summary 11, which overstates its source
+  (Lillvis et al. list the dMS2 neurons among those most likely to have electrical synapses).
+
     python experiments/song_drive_probe.py      (writes experiments/song_drive_probe.json)
 """
 from __future__ import annotations

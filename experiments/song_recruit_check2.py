@@ -1,0 +1,104 @@
+"""Exploratory check, written after review 9 and before it runs, not pre-registered and not a change to the model: is
+the whole-brain model's default synaptic depression what keeps pIP10 from recruiting the song circuit?
+
+song_recruit_check.py: with pIP10 at 100 Hz, the built weights would raise each dMS2's input by 38.6 mV, mostly from
+TN1A at 41 Hz. Yet dMS2's median voltage moved 1.4 mV and it fired at 9.4 Hz. TN1A, dPR1, dMS9, vMS12 and dMS2 share the
+default depression (0.9 of the strength left after each spike, recovering over 0.5 s), which at 41-47 Hz leaves about a
+third. Review 9 found that this accounts for only about two thirds of the predicted drive, and that no run had turned
+depression off.
+Model: rung6_relay.build("intact"), 8 flies, at grey, as song_drive_probe.py ran it, with one change: the song core's
+neurons (pIP10, pMP2, dPR1, TN1A, vPR9, dMS2, vMS12, dMS9) are put in a named set whose synapses don't depress
+(depression 1.0). Every other neuron's parameters are checked unchanged. Conditions: rest, and pIP10 at 25 and 100 Hz,
+with song_drive_probe.py's protocol (1 s at rest, 1 s driven, 4 s read) and seeds (7800 + condition's index there).
+Measured as song_drive_probe.py measures (rates; steering motor neurons' volleys of at least 3 within 5 ms, their
+trains and IPIs), plus dMS2's and vMS12's voltage below threshold, sampled every 10 ms.
+Read: if dMS2 and vMS12 now follow pIP10 (rates rising with the drive, voltages moving by the undepressed estimate),
+the depression was the brake. If they still don't, something else is, such as the targets' other inputs or their
+biases.
+
+    python experiments/song_recruit_check2.py      (writes experiments/song_recruit_check2.json)
+"""
+from __future__ import annotations
+
+import json
+import time
+from pathlib import Path
+
+import numpy as np
+
+import escape_relay as relay
+import rung6_relay as r6
+import song_drive_probe as sp
+from brainfly.hybrid import mcns_types
+
+OUT = Path(__file__).with_suffix(".json")
+CORE = ("pIP10", "pMP2", "dPR1", "TN1a_", "vPR9_", "dMS2", "vMS12_", "dMS9")
+CONDITIONS = [("rest", 0.0, 0), ("pIP10 25 Hz", 25.0, 1), ("pIP10 100 Hz", 100.0, 3)]     # song_drive_probe's indices
+
+
+def main() -> None:
+    t0 = time.perf_counter()
+    s = r6.build("intact")
+    b = s.brain
+    types = mcns_types().astype(str)
+    member = lambda pref: np.flatnonzero([any(x == p or (p.endswith("_") and x.startswith(p)) for p in pref) for x in types])
+    core = member(CORE)
+    before = [dict(b.params[b.cls[i]]) for i in range(b.n)]
+    b.sets = {**b.sets, "song core": core}
+    b.set_type("song core", depression=1.0)
+    after = [dict(b.params[b.cls[i]]) for i in range(b.n)]
+    others = np.setdiff1d(np.arange(b.n), core)
+    changed = [int(i) for i in others if before[i] != after[i]]
+    assert not changed, f"{len(changed)} neurons outside the core changed parameters"
+    core_changed = sorted({k for i in core for k in after[i] if before[i].get(k) != after[i].get(k)})
+    groups = {"pIP10": member(("pIP10",)), "TN1A": member(("TN1a_",)), "dPR1": member(("dPR1",)), "vPR9": member(("vPR9_",)),
+              "dMS2": member(("dMS2",)), "dMS9": member(("dMS9",)), "vMS12": member(("vMS12_",))}
+    steer = member(sp.STEERING)
+    theta = np.array([b.params[k]["threshold"] for k in range(len(b.params))])[b.cls]
+    out = {"question": __doc__, "core_cells": int(len(core)), "core_parameters_changed": core_changed,
+           "others_unchanged": True, "conditions": {}}
+    print("built", json.dumps({k: out[k] for k in ("core_cells", "core_parameters_changed")}), f"({time.perf_counter() - t0:.0f} s)",
+          flush=True)
+    record = list(steer)
+    for name, hz, k in CONDITIONS:
+        drive = [(groups["pIP10"], hz)] if hz else ()
+        relay.rest(s, sp.SEED + k)
+        b.advance(int(round(1.0 / b.dt)), drive=drive)
+        counts = np.zeros((b.trials, b.n))
+        spikes = []
+        volts = {g: [] for g in ("dMS2", "vMS12")}
+        for _ in range(400):
+            c, sp_ = b.advance(int(round(0.01 / b.dt)), drive=drive, record=record)
+            counts += c
+            spikes.append(sp_)
+            for g in volts:
+                volts[g].append((b.u[:, groups[g]] - theta[groups[g]]).ravel())
+        spikes = np.concatenate(spikes, axis=1)
+        rates = counts / sp.READ_S
+        row = {"rates_hz": {g: round(float(rates[:, v].mean()), 2) for g, v in groups.items()},
+               "steering_hz": {t: round(float(rates[:, member((t,))].mean()), 2) for t in sp.STEERING},
+               "v_below_threshold_mv": {g: {"median": round(float(np.median(np.concatenate(v))), 2),
+                                            "p95": round(float(np.percentile(np.concatenate(v), 95)), 2)} for g, v in volts.items()}}
+        per_fly, all_ipi, all_len = [], [], []
+        for f in range(b.trials):
+            times = [np.flatnonzero(spikes[f, :, q]) * b.dt for q in range(len(record))]
+            ev = sp.volleys(times, 3)
+            ip, lengths = sp.ipis(ev)
+            per_fly.append(len(ev) / sp.READ_S)
+            all_ipi += list(ip * 1000)
+            all_len += lengths
+        ip = np.array(all_ipi)
+        row["volleys_3"] = {"per_s": round(float(np.mean(per_fly)), 2),
+                            "ipi_median_ms": round(float(np.median(ip)), 1) if len(ip) else None,
+                            "ipi_share_30_40": round(float(np.mean((ip >= 30) & (ip <= 40))), 3) if len(ip) else None,
+                            "trains_median_length": float(np.median(all_len)) if all_len else None, "ipis": int(len(ip))}
+        out["conditions"][name] = row
+        print(name, json.dumps(row), f"({time.perf_counter() - t0:.0f} s)", flush=True)
+        OUT.write_text(json.dumps(out, indent=1, default=float))
+    out["seconds"] = round(time.perf_counter() - t0)
+    OUT.write_text(json.dumps(out, indent=1, default=float))
+    print(f"done ({out['seconds']} s)", flush=True)
+
+
+if __name__ == "__main__":
+    main()

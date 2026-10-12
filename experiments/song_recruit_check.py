@@ -33,6 +33,13 @@ for no synapse here) cuts the sustained drive to a third, and non-depressing inh
 motor neurons' inputs stay near rest. Whether flies' VNC song synapses depress like this is unknown. This is one
 concrete thing the nerve cord recipe would have to settle before a song test.
 
+Correction (2026-10-11, review 9):
+- The question's "about their resting rates" is wrong (dMS2 1.80 to 9.42 Hz here, vMS12 1.57 to 7.18).
+- "The synapses' depression takes most of it": applied at each group's measured rate, the stated rule leaves about
+  12 mV of the 38.6 mV rise (TN1A keeps about 1/3, dPR1 0.30, vMS12 about 0.77; vPR9 -2.9 mV). Against those 12 mV
+  dMS2's median moves 1.4 mV (95th percentile 4.6). So depression accounts for about two thirds of the predicted
+  drive, most of the rest is unexplained, and no run here turned depression off. song_recruit_check2.py does.
+
     python experiments/song_recruit_check.py      (writes experiments/song_recruit_check.json)
 """
 from __future__ import annotations

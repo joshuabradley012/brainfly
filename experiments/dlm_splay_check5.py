@@ -44,6 +44,26 @@ without spikelets, and for the AHP unit with them. What fails is MN5. Its juncti
 convention (half the others' mean) and have never been measured, and with them MN5 fires independently of MN4.
 Splayness over all five stays below flies' (0.65-0.72 against 0.73-0.79).
 
+Correction (2026-10-11, review 9):
+- The reading above blames MN5's assumed coupling for the AHP condition's shortfall. That is wrong. In that condition
+  only the strong pairs and the order look like flies'. The four weakly coupled MN1-4 pairs, at measured coupling, fire
+  about independently too: near-zero shares 0.16-0.21 and spikes within 10 ms at 0.83-1.10 times chance, against
+  flies' 0.03-0.06 and 0.16-0.31 times. Coupling MN5 like a measured weak pair (0.0199) leaves its near-zero share at
+  0.17 and splayness at 0.66 (0.14 and 0.66 at the strong-pair value; review 9's reruns). So the AHP unit organizes
+  the strong pairs (in antiphase, vector strength 0.60 against flies' 0.70-0.73) and the order, not MN1-4. "Tighter
+  than flies'" holds only for the order (78%; flies 48-70%) and the repeats (4%; flies 5-20%).
+- For the leaky integrator it goes the other way. Its MN5 pairs already fall in flies' ranges (within 10 ms at
+  0.42-0.45 times chance, flies 0.34-0.58), while its weak MN1-4 pairs are looser than flies' (0.55-0.61 times
+  chance). With MN5 coupled like a weak pair, its splayness is 0.736, inside flies' 0.73-0.79 (review 9's rerun).
+- "In flies' ranges on most measures": the leaky integrator is inside on four of the seven listed (r, dip10, orders,
+  coincidences), and outside on splayness, the repeats and the strong pairs' vector strength (0.59 against
+  0.70-0.73).
+- The weak and MN5 spikelets, scaled by CC as the code does, are 0.0169 and 0.0115 mV (the docstring's 0.0167 and
+  0.0114 are dlm_splay_check3.py's). They rest on the Fig. 2h pair being a strong one, which its AHP coupling (0.038,
+  about r/(1 + r) for a strong pair) supports.
+- The 1.8 times holds in the unit's 20 ms membrane; in flies' probable 13-15 ms membrane the same coefficients need
+  1.5-1.6 times.
+
     python experiments/dlm_splay_check5.py      (writes experiments/dlm_splay_check5.json)
 """
 from __future__ import annotations

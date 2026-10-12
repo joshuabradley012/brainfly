@@ -30,6 +30,10 @@ Conventions:
 - [M] a model value.
 - Temperatures are as reported; "TrpA1 at X °C" means thermogenetic activation at that ambient temperature.
 
+**Note (2026-10-11, after a review).** Summary 11's "dMS2 may signal mostly electrically" overstates §7: Lillvis et
+al. list the dMS2 neurons "amongst the more prominent" ones whose electrical synapses connectomes miss. "Mostly" is
+unsupported, and dMS2 also makes thousands of chemical synapses onto hg1, hg3, hg4 and MNwm35.
+
 ## 1. von Philipsborn et al. 2011, Neuron 69:509 ("Neuronal control of Drosophila courtship song") [P]
 
 Read in full: Cell Press PDF via the Wayback Machine.

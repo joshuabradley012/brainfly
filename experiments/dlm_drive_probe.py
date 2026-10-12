@@ -41,6 +41,12 @@ neurons quiet at rest, and the DLMn near their own rest. That is rung 5's open q
 and it wasn't changed here. This probe had no undriven condition, so the premotor types' resting rates aren't
 recorded.
 
+Correction (2026-10-11, review 9):
+- The biases fell 40 mV for "DLMn a, b" (20 rounds; round 19 was silent for them) and 42 mV for "DLMn c-f" (21 rounds),
+  then 4 mV more. "21 rounds" fits c-f only.
+- "About 60 mV below threshold" (58.5-60.9 mV) is escape_relay.py's measurement at rest. This probe recorded no
+  voltages, so "still leaves them far below threshold" under drive is inferred from their silence.
+
     python experiments/dlm_drive_probe.py      (writes experiments/dlm_drive_probe.json)
 """
 from __future__ import annotations
