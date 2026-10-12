@@ -1,0 +1,446 @@
+{
+ "question": "Exploratory probe, not pre-registered and not a change to the model: which descending drive, in rung 6's brain, brings\nthe quieted DLM motor neurons to flies' flight rates?\n\ndlm_splay_check2-4.py tested the flight motor neurons' splay state on five units alone, with every input imposed. A\ntest on the whole network needs a flight drive: in flight flies' five DLM motor neurons fire tonically at one rate\nper fly, 4.5-8 Hz (3-13 Hz across 100 flies; ISI CV 0.22), and at rest they're silent\n(research_notes/Rung 8 flight data/dlm_splay_state.md). rung6_relay.py's brain holds the ten DLMn (MaleCNS's \"DLMn a, b\"\nand \"DLMn c-f\") silent at rest, with their group biases lowered by escape_relay.py. In MaleCNS 88-95% of each one's\ninput comes from neurons shared by its unit. The largest are IN19B043 and IN19B067 (about 11% each), IN03B089 (7%) and\nIN06B066 (6%). Two synapses up from those premotor types, the descending neurons with the most weighted input are\nDNa08, DNg27, DNg02_a and DNp31. DNg02, a population of near-identical pairs, sets wingbeat amplitude by how many of\nits cells are active (Namiki et al. 2022). DNa08 and DNp31 also contact the DLMn directly (793 and 1,284 synapses\nonto the ten).\nModel: rung6_relay.build(\"intact\"), 8 flies, at grey. Each condition drives its descending neurons with Poisson\nspikes for 3 s after 1 s at rest (every event fires its neuron):\n  DNg02          all DNg02 subtypes, at 25, 50, 100 and 200 Hz\n  DNa08/p31/g27  DNa08, DNp31 and DNg27, at 25, 50, 100 and 200 Hz\n  both           all of them, at 50 and 100 Hz\nMeasured over the last 2 s:\n- each driven group's rate;\n- the main premotor types' rates (IN19B043, IN19B067, IN03B089, IN06B066);\n- each DLMn's rate, the five of each side's spread (SD over mean), and ISI CVs where a DLMn fires at least 5 spikes;\n- PSI's and TTMn's rates, which should stay silent.\nRead: a drive at which every DLMn fires tonically at 3-13 Hz, the five of a side within about 10% of each other, is a\ncandidate flight state for a whole-network splay test. If none does, that is the finding.\n\n    python experiments/dlm_drive_probe.py      (writes experiments/dlm_drive_probe.json)\n",
+ "groups": {
+  "DNg02": {
+   "cells": 29,
+   "types": [
+    "DNg02_a",
+    "DNg02_b",
+    "DNg02_c",
+    "DNg02_d",
+    "DNg02_e",
+    "DNg02_f",
+    "DNg02_g"
+   ]
+  },
+  "DNa08/p31/g27": {
+   "cells": 6,
+   "types": [
+    "DNa08",
+    "DNg27",
+    "DNp31"
+   ]
+  }
+ },
+ "dlmn": {
+  "L": [
+   145797,
+   145817,
+   146214,
+   146596,
+   166189
+  ],
+  "R": [
+   144854,
+   144977,
+   145286,
+   145741,
+   146566
+  ]
+ },
+ "conditions": {
+  "DNg02 25 Hz": {
+   "drive_hz": 25,
+   "driven": {
+    "DNg02": 25.0
+   },
+   "premotor_hz": {
+    "IN19B043": 16.62,
+    "IN19B067": 11.56,
+    "IN03B089": 3.02,
+    "IN06B066": 1.79
+   },
+   "psi_hz": 0.0,
+   "ttmn_hz": 0.0,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    }
+   }
+  },
+  "DNg02 50 Hz": {
+   "drive_hz": 50,
+   "driven": {
+    "DNg02": 50.0
+   },
+   "premotor_hz": {
+    "IN19B043": 29.75,
+    "IN19B067": 19.83,
+    "IN03B089": 3.01,
+    "IN06B066": 1.8
+   },
+   "psi_hz": 0.03,
+   "ttmn_hz": 0.03,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.06,
+     "by_neuron_hz": [
+      0.06,
+      0.06,
+      0.06,
+      0.06,
+      0.06
+     ],
+     "spread_within_fly": 0.0,
+     "isi_cv": null
+    }
+   }
+  },
+  "DNg02 100 Hz": {
+   "drive_hz": 100,
+   "driven": {
+    "DNg02": 99.1
+   },
+   "premotor_hz": {
+    "IN19B043": 49.45,
+    "IN19B067": 31.06,
+    "IN03B089": 2.36,
+    "IN06B066": 2.11
+   },
+   "psi_hz": 0.06,
+   "ttmn_hz": 0.06,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.12,
+     "by_neuron_hz": [
+      0.12,
+      0.12,
+      0.12,
+      0.12,
+      0.12
+     ],
+     "spread_within_fly": 0.0,
+     "isi_cv": null
+    }
+   }
+  },
+  "DNg02 200 Hz": {
+   "drive_hz": 200,
+   "driven": {
+    "DNg02": 196.4
+   },
+   "premotor_hz": {
+    "IN19B043": 74.44,
+    "IN19B067": 45.06,
+    "IN03B089": 0.91,
+    "IN06B066": 4.64
+   },
+   "psi_hz": 0.0,
+   "ttmn_hz": 0.0,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    }
+   }
+  },
+  "DNa08/p31/g27 25 Hz": {
+   "drive_hz": 25,
+   "driven": {
+    "DNa08/p31/g27": 25.6
+   },
+   "premotor_hz": {
+    "IN19B043": 11.52,
+    "IN19B067": 3.31,
+    "IN03B089": 2.46,
+    "IN06B066": 9.94
+   },
+   "psi_hz": 0.06,
+   "ttmn_hz": 0.06,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.06,
+     "by_neuron_hz": [
+      0.06,
+      0.06,
+      0.06,
+      0.06,
+      0.06
+     ],
+     "spread_within_fly": 0.0,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.06,
+     "by_neuron_hz": [
+      0.06,
+      0.06,
+      0.06,
+      0.06,
+      0.06
+     ],
+     "spread_within_fly": 0.0,
+     "isi_cv": null
+    }
+   }
+  },
+  "DNa08/p31/g27 50 Hz": {
+   "drive_hz": 50,
+   "driven": {
+    "DNa08/p31/g27": 49.7
+   },
+   "premotor_hz": {
+    "IN19B043": 20.49,
+    "IN19B067": 4.61,
+    "IN03B089": 1.43,
+    "IN06B066": 16.24
+   },
+   "psi_hz": 0.03,
+   "ttmn_hz": 0.03,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.06,
+     "by_neuron_hz": [
+      0.06,
+      0.06,
+      0.06,
+      0.06,
+      0.06
+     ],
+     "spread_within_fly": 0.0,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    }
+   }
+  },
+  "DNa08/p31/g27 100 Hz": {
+   "drive_hz": 100,
+   "driven": {
+    "DNa08/p31/g27": 99.0
+   },
+   "premotor_hz": {
+    "IN19B043": 35.0,
+    "IN19B067": 7.67,
+    "IN03B089": 0.85,
+    "IN06B066": 26.65
+   },
+   "psi_hz": 0.0,
+   "ttmn_hz": 0.0,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    }
+   }
+  },
+  "DNa08/p31/g27 200 Hz": {
+   "drive_hz": 200,
+   "driven": {
+    "DNa08/p31/g27": 194.0
+   },
+   "premotor_hz": {
+    "IN19B043": 54.31,
+    "IN19B067": 12.53,
+    "IN03B089": 0.13,
+    "IN06B066": 40.42
+   },
+   "psi_hz": 0.0,
+   "ttmn_hz": 0.0,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.11,
+     "by_neuron_hz": [
+      0.0,
+      0.44,
+      0.0,
+      0.06,
+      0.06
+     ],
+     "spread_within_fly": 2.0,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.06,
+     "by_neuron_hz": [
+      0.06,
+      0.0,
+      0.0,
+      0.0,
+      0.25
+     ],
+     "spread_within_fly": 2.0,
+     "isi_cv": null
+    }
+   }
+  },
+  "both 50 Hz": {
+   "drive_hz": 50,
+   "driven": {
+    "DNg02": 49.8,
+    "DNa08/p31/g27": 49.0
+   },
+   "premotor_hz": {
+    "IN19B043": 37.08,
+    "IN19B067": 17.61,
+    "IN03B089": 2.24,
+    "IN06B066": 17.08
+   },
+   "psi_hz": 0.06,
+   "ttmn_hz": 0.06,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.12,
+     "by_neuron_hz": [
+      0.12,
+      0.12,
+      0.12,
+      0.12,
+      0.12
+     ],
+     "spread_within_fly": 0.0,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    }
+   }
+  },
+  "both 100 Hz": {
+   "drive_hz": 100,
+   "driven": {
+    "DNg02": 98.7,
+    "DNa08/p31/g27": 99.5
+   },
+   "premotor_hz": {
+    "IN19B043": 58.94,
+    "IN19B067": 28.56,
+    "IN03B089": 1.19,
+    "IN06B066": 28.2
+   },
+   "psi_hz": 0.03,
+   "ttmn_hz": 0.03,
+   "dlmn": {
+    "L": {
+     "mean_hz": 0.0,
+     "by_neuron_hz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "spread_within_fly": null,
+     "isi_cv": null
+    },
+    "R": {
+     "mean_hz": 0.06,
+     "by_neuron_hz": [
+      0.06,
+      0.06,
+      0.06,
+      0.06,
+      0.06
+     ],
+     "spread_within_fly": 0.0,
+     "isi_cv": null
+    }
+   }
+  }
+ },
+ "seconds": 84
+}

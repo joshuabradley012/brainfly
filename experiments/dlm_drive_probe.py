@@ -24,6 +24,23 @@ Measured over the last 2 s:
 Read: a drive at which every DLMn fires tonically at 3-13 Hz, the five of a side within about 10% of each other, is a
 candidate flight state for a whole-network splay test. If none does, that is the finding.
 
+Ran (2026-10-11, 84 s): no drive brings the DLMn to flight rates.
+- Driving DNg02 at 25-200 Hz raises the main excitatory (cholinergic) premotor types: IN19B043 to 17-74 Hz and
+  IN19B067 to 12-45 Hz. DNa08, DNp31 and DNg27 at 25-200 Hz raise IN19B043 to 12-54 Hz and the GABAergic IN06B066 to
+  10-40 Hz. Both groups together at 100 Hz: 59 and 29 Hz.
+- The DLMn stay silent. Their only common spikes, 0.06-0.12 Hz, come from all five of a side at once, with PSI and
+  TTMn spiking at the same rate: the giant fiber's escape relay firing once in a fly, not flight. At DNa08/p31/g27 200 Hz
+  single DLMn fire a few spikes of their own (at most 0.44 Hz).
+Why: escape_relay.py quieted the DLMn, which the calibration had left firing about 2 Hz at rest. Silencing them took 21
+rounds of 2 mV off their group biases (to -53.4 and -54.5 mV), and 4 mV more. Their resting membranes sit at a median
+of -51.5 to -53.9 mV, about 60 mV below the 7 mV threshold. Flies' DLM motor neurons are silent at rest because their
+drive is, with a rheobase of 0.1-0.4 nA (about 8-32 mV at 80 MOhm); the model's are held down instead. So a descending
+drive that runs their excitatory premotor interneurons at 50-75 Hz still leaves them far below threshold. A
+whole-network splay test needs the nerve cord's flight circuit at a resting state like flies' first: its premotor
+neurons quiet at rest, and the DLMn near their own rest. That is rung 5's open question about Pugliese et al.'s recipe,
+and it wasn't changed here. This probe had no undriven condition, so the premotor types' resting rates aren't
+recorded.
+
     python experiments/dlm_drive_probe.py      (writes experiments/dlm_drive_probe.json)
 """
 from __future__ import annotations
