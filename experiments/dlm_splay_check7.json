@@ -1,0 +1,1068 @@
+{
+ "question": "Exploratory check, written after review 11 and before it runs, not pre-registered and not a change to the model: the\nleaky-integrator units of dlm_splay_check6.py with MN5 running at flies' median and maximum rate ratio.\n\ndlm_splay_check6.py set all five units to one rate. There MN5's pairs came within 10 ms of their partners more often than\nflies' (0.59-0.64 against 0.34-0.58 times chance), and MN4-MN5's dip10 was 0.110 (flies 0.016-0.097). In flies MN5 fires\nat 0.98-1.26 times MN1-4's rate (median 1.10; H\u00fcrkey et al.'s Fig. 1b, 8 flies), and review 11's exploratory reruns found\nMN5's pairs inside flies' ranges with MN5 at about 1.2 times.\nModel: dlm_splay_check6.py's \"LIF, MN5 assumed\" (flies' 20 ms coupling, MN5's junctions at the assumed CC 0.0075, private\nkicks calibrated for CV 0.22), each unit with its own drive, with MN1-4 targeted at 6.3 Hz and MN5 at 1.10 or 1.26 times\nthat (6.93 and 7.94 Hz; flies' per-fly means are 4.5-8 Hz). The drives are found by bisection, all five at once, in two\npasses: the second re-brackets each unit at its first-pass drive plus or minus 0.05 mV. Each unit's calibration rate\nmust end within 2% of its target, or the condition is reported as failing calibration.\nMeasured as dlm_splay_check6.py measures (8 runs of 300 s after 3 s, seeds 4800 + 10 x condition), with each unit's\nrate and CV, and the ten pairs against flies'.\n\n    python experiments/dlm_splay_check7.py      (writes experiments/dlm_splay_check7.json)\n",
+ "flies_pairs": {
+  "strong": {
+   "r": [
+    0.336,
+    0.394
+   ],
+   "dip10": [
+    0.006,
+    0.025
+   ],
+   "within_10ms_over_chance": [
+    0.05,
+    0.2
+   ]
+  },
+  "weak": {
+   "r": [
+    0.598,
+    0.666
+   ],
+   "dip10": [
+    0.03,
+    0.056
+   ],
+   "within_10ms_over_chance": [
+    0.16,
+    0.31
+   ]
+  },
+  "mn5": {
+   "r": [
+    0.57,
+    0.621
+   ],
+   "dip10": [
+    0.063,
+    0.141
+   ],
+   "within_10ms_over_chance": [
+    0.34,
+    0.58
+   ]
+  }
+ },
+ "conditions": {
+  "LIF, MN5 at 1.10 x MN1-4": {
+   "summary": {
+    "splayness": [
+     0.7349,
+     0.7332,
+     0.7367
+    ],
+    "r_mn4_mn5": [
+     0.5884,
+     0.5787,
+     0.596
+    ],
+    "dip10": [
+     0.1076,
+     0.0964,
+     0.1272
+    ],
+    "preferred_order_share": [
+     0.54,
+     0.5183,
+     0.552
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.724,
+     0.683,
+     0.794
+    ],
+    "rate_hz": 6.43,
+    "isi_cv": 0.249,
+    "mn2_in_mn1": [
+     0.5,
+     0.597
+    ],
+    "preferred_share_of_complete": [
+     0.777,
+     0.7519,
+     0.7839
+    ],
+    "repeat_share": 0.3009,
+    "mn4_in_mn3": [
+     0.502,
+     0.615
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      6.19,
+      6.32,
+      6.31,
+      6.29,
+      6.99
+     ],
+     "isi_cv": [
+      0.274,
+      0.257,
+      0.242,
+      0.252,
+      0.225
+     ],
+     "splayness": 0.7366,
+     "r_mn4_mn5": 0.5787,
+     "dip10": 0.1126,
+     "mn2_in_mn1": [
+      0.5,
+      0.606
+     ],
+     "mn4_in_mn3": [
+      0.493,
+      0.622
+     ],
+     "orders": {
+      "1234": 0.0373,
+      "1243": 0.0355,
+      "1324": 0.2616,
+      "1342": 0.0418,
+      "1423": 0.2853,
+      "1432": 0.0367,
+      "rest": 0.3019
+     },
+     "preferred_order_share": 0.5469,
+     "coincidence_vs_chance_3ms": 0.712,
+     "preferred_share_of_complete": 0.7834
+    },
+    {
+     "rate_hz": [
+      6.24,
+      6.26,
+      6.38,
+      6.23,
+      7.06
+     ],
+     "isi_cv": [
+      0.261,
+      0.256,
+      0.24,
+      0.253,
+      0.224
+     ],
+     "splayness": 0.7349,
+     "r_mn4_mn5": 0.5835,
+     "dip10": 0.1086,
+     "mn2_in_mn1": [
+      0.5,
+      0.586
+     ],
+     "mn4_in_mn3": [
+      0.502,
+      0.627
+     ],
+     "orders": {
+      "1234": 0.0406,
+      "1243": 0.0455,
+      "1324": 0.2523,
+      "1342": 0.0414,
+      "1423": 0.277,
+      "1432": 0.0429,
+      "rest": 0.3002
+     },
+     "preferred_order_share": 0.5293,
+     "coincidence_vs_chance_3ms": 0.713,
+     "preferred_share_of_complete": 0.7564
+    },
+    {
+     "rate_hz": [
+      6.21,
+      6.24,
+      6.39,
+      6.27,
+      7.01
+     ],
+     "isi_cv": [
+      0.265,
+      0.261,
+      0.258,
+      0.266,
+      0.226
+     ],
+     "splayness": 0.7332,
+     "r_mn4_mn5": 0.5881,
+     "dip10": 0.1042,
+     "mn2_in_mn1": [
+      0.501,
+      0.578
+     ],
+     "mn4_in_mn3": [
+      0.499,
+      0.606
+     ],
+     "orders": {
+      "1234": 0.0437,
+      "1243": 0.034,
+      "1324": 0.2611,
+      "1342": 0.0398,
+      "1423": 0.2722,
+      "1432": 0.036,
+      "rest": 0.3132
+     },
+     "preferred_order_share": 0.5333,
+     "coincidence_vs_chance_3ms": 0.735,
+     "preferred_share_of_complete": 0.7765
+    },
+    {
+     "rate_hz": [
+      6.3,
+      6.2,
+      6.35,
+      6.25,
+      7.1
+     ],
+     "isi_cv": [
+      0.266,
+      0.25,
+      0.247,
+      0.251,
+      0.22
+     ],
+     "splayness": 0.735,
+     "r_mn4_mn5": 0.5887,
+     "dip10": 0.1114,
+     "mn2_in_mn1": [
+      0.501,
+      0.633
+     ],
+     "mn4_in_mn3": [
+      0.501,
+      0.625
+     ],
+     "orders": {
+      "1234": 0.0383,
+      "1243": 0.0364,
+      "1324": 0.2846,
+      "1342": 0.0393,
+      "1423": 0.2674,
+      "1432": 0.0383,
+      "rest": 0.2958
+     },
+     "preferred_order_share": 0.552,
+     "coincidence_vs_chance_3ms": 0.688,
+     "preferred_share_of_complete": 0.7839
+    },
+    {
+     "rate_hz": [
+      6.32,
+      6.31,
+      6.33,
+      6.24,
+      7.0
+     ],
+     "isi_cv": [
+      0.25,
+      0.253,
+      0.26,
+      0.256,
+      0.224
+     ],
+     "splayness": 0.736,
+     "r_mn4_mn5": 0.588,
+     "dip10": 0.1067,
+     "mn2_in_mn1": [
+      0.504,
+      0.588
+     ],
+     "mn4_in_mn3": [
+      0.502,
+      0.601
+     ],
+     "orders": {
+      "1234": 0.0408,
+      "1243": 0.0441,
+      "1324": 0.2563,
+      "1342": 0.0437,
+      "1423": 0.262,
+      "1432": 0.0426,
+      "rest": 0.3107
+     },
+     "preferred_order_share": 0.5183,
+     "coincidence_vs_chance_3ms": 0.794,
+     "preferred_share_of_complete": 0.7519
+    },
+    {
+     "rate_hz": [
+      6.2,
+      6.31,
+      6.32,
+      6.32,
+      6.95
+     ],
+     "isi_cv": [
+      0.267,
+      0.252,
+      0.253,
+      0.257,
+      0.231
+     ],
+     "splayness": 0.7367,
+     "r_mn4_mn5": 0.5899,
+     "dip10": 0.0964,
+     "mn2_in_mn1": [
+      0.499,
+      0.595
+     ],
+     "mn4_in_mn3": [
+      0.513,
+      0.591
+     ],
+     "orders": {
+      "1234": 0.0406,
+      "1243": 0.0439,
+      "1324": 0.2607,
+      "1342": 0.0357,
+      "1423": 0.2751,
+      "1432": 0.0426,
+      "rest": 0.3015
+     },
+     "preferred_order_share": 0.5358,
+     "coincidence_vs_chance_3ms": 0.683,
+     "preferred_share_of_complete": 0.7671
+    },
+    {
+     "rate_hz": [
+      6.3,
+      6.23,
+      6.36,
+      6.25,
+      7.0
+     ],
+     "isi_cv": [
+      0.257,
+      0.25,
+      0.249,
+      0.25,
+      0.227
+     ],
+     "splayness": 0.7347,
+     "r_mn4_mn5": 0.596,
+     "dip10": 0.1272,
+     "mn2_in_mn1": [
+      0.496,
+      0.614
+     ],
+     "mn4_in_mn3": [
+      0.502,
+      0.607
+     ],
+     "orders": {
+      "1234": 0.0352,
+      "1243": 0.046,
+      "1324": 0.2576,
+      "1342": 0.0367,
+      "1423": 0.2865,
+      "1432": 0.0377,
+      "rest": 0.3002
+     },
+     "preferred_order_share": 0.5441,
+     "coincidence_vs_chance_3ms": 0.793,
+     "preferred_share_of_complete": 0.7775
+    },
+    {
+     "rate_hz": [
+      6.24,
+      6.33,
+      6.38,
+      6.23,
+      6.99
+     ],
+     "isi_cv": [
+      0.252,
+      0.255,
+      0.256,
+      0.249,
+      0.225
+     ],
+     "splayness": 0.7334,
+     "r_mn4_mn5": 0.5894,
+     "dip10": 0.1017,
+     "mn2_in_mn1": [
+      0.5,
+      0.599
+     ],
+     "mn4_in_mn3": [
+      0.503,
+      0.627
+     ],
+     "orders": {
+      "1234": 0.0372,
+      "1243": 0.0408,
+      "1324": 0.259,
+      "1342": 0.0409,
+      "1423": 0.2895,
+      "1432": 0.0339,
+      "rest": 0.2987
+     },
+     "preferred_order_share": 0.5485,
+     "coincidence_vs_chance_3ms": 0.781,
+     "preferred_share_of_complete": 0.7821
+    }
+   ],
+   "unit_rates_hz": [
+    6.242,
+    6.288,
+    6.353,
+    6.252,
+    7.0
+   ],
+   "unit_isi_cv": [
+    0.263,
+    0.254,
+    0.251,
+    0.252,
+    0.225
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.3453,
+     "dip10": 0.0496,
+     "within_10ms_over_chance": 0.398
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.629,
+     "dip10": 0.092,
+     "within_10ms_over_chance": 0.505
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.6338,
+     "dip10": 0.0991,
+     "within_10ms_over_chance": 0.568
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.5856,
+     "dip10": 0.101,
+     "within_10ms_over_chance": 0.605
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.632,
+     "dip10": 0.0898,
+     "within_10ms_over_chance": 0.506
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.6318,
+     "dip10": 0.0972,
+     "within_10ms_over_chance": 0.5505
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.5901,
+     "dip10": 0.1081,
+     "within_10ms_over_chance": 0.6015
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.3416,
+     "dip10": 0.0461,
+     "within_10ms_over_chance": 0.372
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.5898,
+     "dip10": 0.1098,
+     "within_10ms_over_chance": 0.637
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.5884,
+     "dip10": 0.1076,
+     "within_10ms_over_chance": 0.595
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    },
+    "MN4-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": false
+    }
+   },
+   "targets_hz": [
+    6.3,
+    6.3,
+    6.3,
+    6.3,
+    6.93
+   ],
+   "calibration_rates_hz": [
+    6.304,
+    6.308,
+    6.29,
+    6.29,
+    6.931
+   ],
+   "calibrated_within_2pct": true,
+   "unit_biases_mv": [
+    7.10071,
+    7.10096,
+    7.10271,
+    7.1012,
+    7.066
+   ]
+  },
+  "LIF, MN5 at 1.26 x MN1-4": {
+   "summary": {
+    "splayness": [
+     0.732,
+     0.7294,
+     0.7347
+    ],
+    "r_mn4_mn5": [
+     0.5936,
+     0.5839,
+     0.6072
+    ],
+    "dip10": [
+     0.0876,
+     0.0825,
+     0.111
+    ],
+    "preferred_order_share": [
+     0.5388,
+     0.5211,
+     0.5621
+    ],
+    "coincidence_vs_chance_3ms": [
+     0.6725,
+     0.623,
+     0.697
+    ],
+    "rate_hz": 6.63,
+    "isi_cv": 0.238,
+    "mn2_in_mn1": [
+     0.497,
+     0.625
+    ],
+    "preferred_share_of_complete": [
+     0.777,
+     0.7569,
+     0.7927
+    ],
+    "repeat_share": 0.3036,
+    "mn4_in_mn3": [
+     0.504,
+     0.611
+    ]
+   },
+   "runs": [
+    {
+     "rate_hz": [
+      6.3,
+      6.26,
+      6.28,
+      6.33,
+      7.97
+     ],
+     "isi_cv": [
+      0.258,
+      0.259,
+      0.268,
+      0.261,
+      0.164
+     ],
+     "splayness": 0.7315,
+     "r_mn4_mn5": 0.5938,
+     "dip10": 0.0832,
+     "mn2_in_mn1": [
+      0.497,
+      0.608
+     ],
+     "mn4_in_mn3": [
+      0.503,
+      0.603
+     ],
+     "orders": {
+      "1234": 0.0428,
+      "1243": 0.0453,
+      "1324": 0.274,
+      "1342": 0.0379,
+      "1423": 0.2559,
+      "1432": 0.0347,
+      "rest": 0.3094
+     },
+     "preferred_order_share": 0.5299,
+     "coincidence_vs_chance_3ms": 0.686,
+     "preferred_share_of_complete": 0.7673
+    },
+    {
+     "rate_hz": [
+      6.32,
+      6.29,
+      6.32,
+      6.22,
+      7.94
+     ],
+     "isi_cv": [
+      0.245,
+      0.25,
+      0.257,
+      0.26,
+      0.157
+     ],
+     "splayness": 0.7336,
+     "r_mn4_mn5": 0.5839,
+     "dip10": 0.0833,
+     "mn2_in_mn1": [
+      0.503,
+      0.63
+     ],
+     "mn4_in_mn3": [
+      0.505,
+      0.627
+     ],
+     "orders": {
+      "1234": 0.0367,
+      "1243": 0.0394,
+      "1324": 0.2819,
+      "1342": 0.0365,
+      "1423": 0.2725,
+      "1432": 0.0383,
+      "rest": 0.2947
+     },
+     "preferred_order_share": 0.5544,
+     "coincidence_vs_chance_3ms": 0.623,
+     "preferred_share_of_complete": 0.786
+    },
+    {
+     "rate_hz": [
+      6.37,
+      6.28,
+      6.29,
+      6.35,
+      7.92
+     ],
+     "isi_cv": [
+      0.27,
+      0.264,
+      0.262,
+      0.251,
+      0.158
+     ],
+     "splayness": 0.7294,
+     "r_mn4_mn5": 0.5899,
+     "dip10": 0.0867,
+     "mn2_in_mn1": [
+      0.495,
+      0.602
+     ],
+     "mn4_in_mn3": [
+      0.508,
+      0.606
+     ],
+     "orders": {
+      "1234": 0.0439,
+      "1243": 0.0452,
+      "1324": 0.2639,
+      "1342": 0.0372,
+      "1423": 0.2572,
+      "1432": 0.041,
+      "rest": 0.3115
+     },
+     "preferred_order_share": 0.5211,
+     "coincidence_vs_chance_3ms": 0.662,
+     "preferred_share_of_complete": 0.7569
+    },
+    {
+     "rate_hz": [
+      6.26,
+      6.26,
+      6.29,
+      6.3,
+      7.94
+     ],
+     "isi_cv": [
+      0.259,
+      0.256,
+      0.252,
+      0.25,
+      0.153
+     ],
+     "splayness": 0.7342,
+     "r_mn4_mn5": 0.5961,
+     "dip10": 0.0916,
+     "mn2_in_mn1": [
+      0.497,
+      0.637
+     ],
+     "mn4_in_mn3": [
+      0.504,
+      0.616
+     ],
+     "orders": {
+      "1234": 0.0385,
+      "1243": 0.043,
+      "1324": 0.2657,
+      "1342": 0.0347,
+      "1423": 0.2849,
+      "1432": 0.0389,
+      "rest": 0.2943
+     },
+     "preferred_order_share": 0.5506,
+     "coincidence_vs_chance_3ms": 0.663,
+     "preferred_share_of_complete": 0.7802
+    },
+    {
+     "rate_hz": [
+      6.34,
+      6.34,
+      6.3,
+      6.23,
+      7.96
+     ],
+     "isi_cv": [
+      0.252,
+      0.253,
+      0.264,
+      0.27,
+      0.158
+     ],
+     "splayness": 0.732,
+     "r_mn4_mn5": 0.5842,
+     "dip10": 0.0825,
+     "mn2_in_mn1": [
+      0.508,
+      0.626
+     ],
+     "mn4_in_mn3": [
+      0.505,
+      0.589
+     ],
+     "orders": {
+      "1234": 0.032,
+      "1243": 0.0369,
+      "1324": 0.2726,
+      "1342": 0.0411,
+      "1423": 0.2674,
+      "1432": 0.0451,
+      "rest": 0.3049
+     },
+     "preferred_order_share": 0.54,
+     "coincidence_vs_chance_3ms": 0.635,
+     "preferred_share_of_complete": 0.7769
+    },
+    {
+     "rate_hz": [
+      6.38,
+      6.35,
+      6.22,
+      6.2,
+      7.93
+     ],
+     "isi_cv": [
+      0.26,
+      0.255,
+      0.256,
+      0.258,
+      0.157
+     ],
+     "splayness": 0.7347,
+     "r_mn4_mn5": 0.6072,
+     "dip10": 0.0942,
+     "mn2_in_mn1": [
+      0.498,
+      0.624
+     ],
+     "mn4_in_mn3": [
+      0.499,
+      0.643
+     ],
+     "orders": {
+      "1234": 0.0382,
+      "1243": 0.0367,
+      "1324": 0.2805,
+      "1342": 0.0353,
+      "1423": 0.2816,
+      "1432": 0.0368,
+      "rest": 0.2909
+     },
+     "preferred_order_share": 0.5621,
+     "coincidence_vs_chance_3ms": 0.682,
+     "preferred_share_of_complete": 0.7927
+    },
+    {
+     "rate_hz": [
+      6.34,
+      6.3,
+      6.37,
+      6.26,
+      7.96
+     ],
+     "isi_cv": [
+      0.264,
+      0.254,
+      0.254,
+      0.26,
+      0.161
+     ],
+     "splayness": 0.732,
+     "r_mn4_mn5": 0.5934,
+     "dip10": 0.111,
+     "mn2_in_mn1": [
+      0.497,
+      0.616
+     ],
+     "mn4_in_mn3": [
+      0.506,
+      0.589
+     ],
+     "orders": {
+      "1234": 0.0414,
+      "1243": 0.0431,
+      "1324": 0.2797,
+      "1342": 0.0356,
+      "1423": 0.2577,
+      "1432": 0.04,
+      "rest": 0.3024
+     },
+     "preferred_order_share": 0.5374,
+     "coincidence_vs_chance_3ms": 0.697,
+     "preferred_share_of_complete": 0.7704
+    },
+    {
+     "rate_hz": [
+      6.33,
+      6.2,
+      6.3,
+      6.28,
+      8.0
+     ],
+     "isi_cv": [
+      0.255,
+      0.263,
+      0.261,
+      0.262,
+      0.159
+     ],
+     "splayness": 0.7317,
+     "r_mn4_mn5": 0.5975,
+     "dip10": 0.0884,
+     "mn2_in_mn1": [
+      0.506,
+      0.63
+     ],
+     "mn4_in_mn3": [
+      0.495,
+      0.616
+     ],
+     "orders": {
+      "1234": 0.0365,
+      "1243": 0.0312,
+      "1324": 0.2884,
+      "1342": 0.0425,
+      "1423": 0.2491,
+      "1432": 0.0441,
+      "rest": 0.3082
+     },
+     "preferred_order_share": 0.5375,
+     "coincidence_vs_chance_3ms": 0.686,
+     "preferred_share_of_complete": 0.777
+    }
+   ],
+   "unit_rates_hz": [
+    6.332,
+    6.285,
+    6.295,
+    6.268,
+    7.948
+   ],
+   "unit_isi_cv": [
+    0.258,
+    0.255,
+    0.259,
+    0.26,
+    0.158
+   ],
+   "pairs": {
+    "MN1-MN2": {
+     "kind": "strong",
+     "r": 0.3317,
+     "dip10": 0.044,
+     "within_10ms_over_chance": 0.3505
+    },
+    "MN1-MN3": {
+     "kind": "weak",
+     "r": 0.6318,
+     "dip10": 0.0958,
+     "within_10ms_over_chance": 0.5645
+    },
+    "MN1-MN4": {
+     "kind": "weak",
+     "r": 0.6321,
+     "dip10": 0.0919,
+     "within_10ms_over_chance": 0.5045
+    },
+    "MN1-MN5": {
+     "kind": "mn5",
+     "r": 0.5945,
+     "dip10": 0.091,
+     "within_10ms_over_chance": 0.474
+    },
+    "MN2-MN3": {
+     "kind": "weak",
+     "r": 0.6367,
+     "dip10": 0.0995,
+     "within_10ms_over_chance": 0.5915
+    },
+    "MN2-MN4": {
+     "kind": "weak",
+     "r": 0.6272,
+     "dip10": 0.0965,
+     "within_10ms_over_chance": 0.5505
+    },
+    "MN2-MN5": {
+     "kind": "mn5",
+     "r": 0.5958,
+     "dip10": 0.0927,
+     "within_10ms_over_chance": 0.4805
+    },
+    "MN3-MN4": {
+     "kind": "strong",
+     "r": 0.3367,
+     "dip10": 0.0461,
+     "within_10ms_over_chance": 0.3685
+    },
+    "MN3-MN5": {
+     "kind": "mn5",
+     "r": 0.5932,
+     "dip10": 0.091,
+     "within_10ms_over_chance": 0.4825
+    },
+    "MN4-MN5": {
+     "kind": "mn5",
+     "r": 0.5936,
+     "dip10": 0.0876,
+     "within_10ms_over_chance": 0.4435
+    }
+   },
+   "pairs_inside_flies": {
+    "MN1-MN2": {
+     "r": false,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN1-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": true
+    },
+    "MN2-MN3": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN2-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": true
+    },
+    "MN3-MN4": {
+     "r": true,
+     "dip10": false,
+     "within_10ms_over_chance": false
+    },
+    "MN3-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": true
+    },
+    "MN4-MN5": {
+     "r": true,
+     "dip10": true,
+     "within_10ms_over_chance": true
+    }
+   },
+   "targets_hz": [
+    6.3,
+    6.3,
+    6.3,
+    6.3,
+    7.938
+   ],
+   "calibration_rates_hz": [
+    6.315,
+    6.319,
+    6.319,
+    6.3,
+    7.929
+   ],
+   "calibrated_within_2pct": true,
+   "unit_biases_mv": [
+    7.10614,
+    7.10549,
+    7.10566,
+    7.10522,
+    7.08474
+   ]
+  }
+ },
+ "seconds": 42
+}

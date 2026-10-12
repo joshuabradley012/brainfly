@@ -13,6 +13,22 @@ must end within 2% of its target, or the condition is reported as failing calibr
 Measured as dlm_splay_check6.py measures (8 runs of 300 s after 3 s, seeds 4800 + 10 x condition), with each unit's
 rate and CV, and the ten pairs against flies'.
 
+Ran (2026-10-11, 42 s): MN5's pairs come inside flies' ranges at flies' maximum rate ratio, not at the median. Both
+conditions calibrated within 2% (MN1-4 at 6.29-6.32 Hz, MN5 at 6.93 and 7.93).
+- MN5 at 1.10 times (main runs 6.24-6.35 and 7.00 Hz):
+  - splayness 0.735, preferred orders 54%, 30% of windows with a repeat;
+  - MN5's pairs: r 0.59, dip10 0.10-0.11 (MN4-MN5 0.108; flies 0.016-0.097), within 10 ms 0.60-0.64 times chance
+    (flies 0.34-0.58). Still outside.
+- MN5 at 1.26 times (6.27-6.33 and 7.95 Hz):
+  - splayness 0.732, preferred orders 54%, 30% with a repeat;
+  - MN5's pairs: r 0.59-0.60, dip10 0.088-0.093 (MN4-MN5 0.088), within 10 ms 0.44-0.48 times chance. Inside flies'
+    ranges.
+- In both, the weakly coupled MN1-4 pairs are as in dlm_splay_check6.py (dip10 0.09-0.10, within 10 ms 0.50-0.59 times
+  chance; flies 0.03-0.06 and 0.16-0.31). The strong pairs keep flies' r (0.33-0.35) but come within 10 ms of each
+  other more often than in check 6 (0.35-0.40 times chance; check 6 0.23 at 6.6 Hz; flies 0.05 and 0.20).
+So with MN5 at the top of flies' rate range its pairs fit flies'. At flies' median ratio they don't, so it is a
+boundary result. The weakly coupled pairs' shortfall doesn't depend on MN5's rate.
+
     python experiments/dlm_splay_check7.py      (writes experiments/dlm_splay_check7.json)
 """
 from __future__ import annotations
