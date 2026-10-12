@@ -17,6 +17,22 @@ Measured over the last 4 s of 5:
 Read: whether the targets get the TN1A and dPR1 drive and something cancels it (inhibition rising with it), or
 whether the drive is too small to matter against their biases and thresholds.
 
+Ran (2026-10-11, 37 s): the drive arrives on paper but not in the targets' voltages, and the synapses' depression
+takes most of it.
+- With pIP10 at 100 Hz, TN1A fires at 41 Hz and dPR1 at 47 Hz. Undepressed, the built weights would hold each dMS2
+  38.8 mV above its resting input: TN1A 30.6 mV, dPR1 7.1, vMS12 4.3, against vPR9's -3.1. Yet dMS2's median voltage
+  moves only from 12.6 to 11.2 mV below threshold (95th percentile 6.9 to 2.3), and it fires at 9.4 Hz.
+- dMS9 would get 17.2 mV (dPR1 10.0) and reaches 4.4 mV below threshold, at 7.6 Hz. vMS12 gets only 3.1 mV net:
+  dMS9's 5.6 mV is offset by its other inputs (-6.0) and vPR9 (-1.8), so vMS12 sinks to 11.9 mV below.
+- TN1A, dPR1, dMS9, vMS12 and dMS2 sit in one class with the whole-brain model's default depression (0.9 of the strength
+  left after each spike, recovering over 0.5 s), read from the brain's class table after the run. At 41-47 Hz that
+  leaves about a third of each synapse's strength, so TN1A's 30.6 mV is about 10 in effect. pIP10 and vPR9 don't
+  depress, so vPR9's GABA grows in full with the drive.
+So in rung 6's brain pIP10 reaches dMS2 and vMS12 through the connectome's paths. The default depression (fitted
+for no synapse here) cuts the sustained drive to a third, and non-depressing inhibition rises with it, so the steering
+motor neurons' inputs stay near rest. Whether flies' VNC song synapses depress like this is unknown. This is one
+concrete thing the nerve cord recipe would have to settle before a song test.
+
     python experiments/song_recruit_check.py      (writes experiments/song_recruit_check.json)
 """
 from __future__ import annotations
