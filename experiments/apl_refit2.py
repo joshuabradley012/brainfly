@@ -23,6 +23,27 @@ chooses drive 1 (mb_calibration6.py's APL), mb_calibration7.py is withdrawn and 
 (learning_pilot16.py its test). If it chooses drive 0.5, mb_calibration7.py stands (learning_pilot17.py its test).
 Anything else: mb_calibration8.py takes it and learning_pilot18.py runs rung 9's test on it.
 
+Ran (2026-10-11, 29 minutes): the rule keeps drive 1, mb_calibration6.py's APL. By the reading above,
+mb_calibration7.py is withdrawn and mb_calibration6.py stays the model, with learning_pilot16.py its test. On
+receptor_fills.RECOMMENDED only strength 1 at -20 mV with drive 1 raises both odors' Kenyon cell spikes 2-3-fold:
+2.89 and 2.00-fold, with APL's ratio 0.23 (flies 2-3 and 0.49). It meets the rule only at the rule's two decimals.
+From the saved spike counts, 4-methylcyclohexanol's rise is 1.997-fold (235.4 against 117.9 spikes, each rounded to
+0.1). Had it fallen under 2, no condition would have met the rule. The rule's fallback, the summed squared logs, would
+then have chosen drive 0.25 (0.10, against 0.21 for drive 0.5).
+- Drive 0.25: 2.11 and 1.92-fold, APL's ratio 0.51; 359 and 44 Kenyon cells answer.
+- Drive 0.5 (mb_calibration7.py's): 2.39 and 1.95-fold, ratio 0.33; 331 and 44 cells. 4-methylcyclohexanol falls
+  under the rule's 2, as the review estimated (1.85).
+- Drive 1: 2.89 and 2.00-fold, ratio 0.23; 308 and 44 cells.
+- Drives 1.5 and 2.5 raise 3-octanol's spikes 3.24 and 3.65-fold.
+- At -15 mV silencing raises them 3.4-6.8-fold. Strength 2 (the pipette's chloride) raises them only 1.2-1.7-fold.
+On kc_epsp_check.py's seeds the same model gave 2.77 and 2.01-fold and a ratio of 0.31. So APL's ratio moves by a
+third between two seed sets of 16 flies, and 4-methylcyclohexanol's silencing effect sits at the rule's edge on both.
+On rung 9's input, APL's ratio is 0.22-0.25 at drives 1-2.5, the drives that hold the Kenyon cells back as flies' APL
+does, far from flies' 0.49. 4-methylcyclohexanol reaches 43-44 Kenyon cells at every drive at -20 mV, so APL's drive
+can't move rung 9's gap. Only the weakest drive answers the odors in flies' ratio (0.51), and it holds them back less
+than flies' APL does. APL's conductance is unchanged, and Inada et al.'s Fig. 5B test gives what it gave before: 8.1 mV
+at the plateau, 10, 50 and 90% of it at 0.02, 0.14 and 0.42 s, half gone 0.37 s after the drive.
+
     python experiments/apl_refit2.py      (writes experiments/apl_refit2.json)
 """
 from __future__ import annotations

@@ -63,6 +63,9 @@ imaging's 12%), not single-cell measurements. On this check's own model (mb_cali
 the classes that reach MBON11 respond more: alpha/beta s, m and c 9.5%, above the derived 4-8%, alpha'/beta' 19.6%
 and gamma-main and gamma-s 3.5%.
 
+Withdrawn model (2026-10-11): this ran on mb_calibration7.py, which apl_refit2.py's rule withdrew (it kept APL's
+drive at 1). mbon11_budget_check2.py repeats the measurement on mb_calibration6.py, the model in use.
+
     python experiments/mbon11_budget_check.py      (writes experiments/mbon11_budget_check.json)
 """
 from __future__ import annotations

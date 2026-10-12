@@ -41,6 +41,10 @@ Correction (2026-10-11, after a review):
   unlike flies', and learning pilot 15 (set C Kenyon cells) passed the reciprocal while failing the unpaired. It fails
   where it has since learning pilot 12: 3-octanol's spikes fall 4.7% (its charge 5.1%; flies' spikes 38%).
 
+Withdrawn model (2026-10-11): apl_refit2.py, made on this test's own input, kept APL's drive at 1, so
+mb_calibration7.py is withdrawn and mb_calibration6.py stays the model, with learning_pilot16.py its test. This pilot
+stays as the record of the halved drive, which moved none of the marks.
+
     python experiments/learning_pilot17.py      (writes experiments/learning_pilot17.json)
 """
 from __future__ import annotations

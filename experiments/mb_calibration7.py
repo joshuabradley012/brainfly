@@ -9,6 +9,12 @@ MaleCNS's weight: silencing APL then raises the spikes 2.37 and 2.36-fold, and A
 0.43 of its peak for 3-octanol. At mb_calibration4.py's full weight it was 2.77, 2.57 and 0.36. APL's conductance stays
 mb_calibration4.py's: reversal 20 mV below each class's rest, 1.22 times the leak at APL's ceiling, decaying over 0.3 s.
 
+Withdrawn (2026-10-11): apl_refit.py made its choice on DoOR's input, as odor_apl_conductance2_check.py did, not on
+receptor_fills.RECOMMENDED, the input rung 9 runs on. apl_refit2.py made it again there, with drive 0.25 added, and
+its rule kept drive 1 (mb_calibration6.py's APL): at drive 0.5 silencing APL raises 4-methylcyclohexanol's spikes
+only 1.95-fold. By the reading written before that run, this module is withdrawn and mb_calibration6.py stays the
+model. It is kept so that learning_pilot17.py and mbon11_budget_check.py, which ran on it, can be rerun.
+
     import mb_calibration7
     mb_calibration7.apply(o)              # in place of mb_calibration4.apply(o) (and mb_calibration6's correction);
                                           # mb_calibration5.install(o) after the MBON11 setup, as before
