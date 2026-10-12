@@ -80,8 +80,8 @@ def figure(theme: str, d2: dict, runs: dict, splay: list) -> str:
     loop = SHOW_S / SPEED
     ts = np.linspace(0.0, SHOW_S, int(loop * FPS) + 1)
     out = [text(24, 30, "The flight motor neurons' splay state, from flies' measured coupling", "lab"),
-           text(24, 50, "Flies' five DLM motor neurons fire at one rate but avoid firing together (Hürkey et al. 2023). Joined by conductances at flies'", "note"),
-           text(24, 68, "measured strengths, five of the model's units spread round the cycle the same way; the spikes' spikelets, without flies' long AHP, bunch them.", "note")]
+           text(24, 50, "Flies' five DLM motor neurons fire at one rate but avoid firing together (Hürkey et al. 2023). Joined by conductances set from flies'", "note"),
+           text(24, 68, "measured coupling (converted as steady-state: about half flies' 20 ms ratio), five of the model's units spread round the cycle; the spikes' spikelets bunch them.", "note")]
     keyframes, rules = [], []
     for col, (name, label) in enumerate(CLOCKS):
         cx, cy, r = 190 + col * 370, 222, 80

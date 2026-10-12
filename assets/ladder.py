@@ -65,7 +65,7 @@ def rungs() -> list[dict]:
                    (bool(verdict("jump_calibration", "bilateral", "took_off")), "jumps from jump motor neuron spikes"),
                    (False, "motor neurons drive muscles")]},
         {"name": "Flight, neck and song", "status": "started",     # groundwork: dlm_splay_check2-4
-         "marks": [(False, "flight motor neurons splay as flies' do (most of it, on five units)"),
+         "marks": [(False, "flight motor neurons splay as flies' do (groundwork on five units)"),
                    (False, "saccades, head pose, song pulses")]},
         {"name": "State and learning", "status": "started" if verdict("rung9_learning", "verdicts") else "not started",     # attempt 1
          "marks": [(bool(verdict("rung9_learning", "verdicts", "PAIRED", "pass")), "pairing depresses MBON11's response to the odor"),
