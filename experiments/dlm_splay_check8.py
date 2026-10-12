@@ -39,6 +39,50 @@ times chance), where the leaky integrators at the same coupling didn't, their sh
 leaky integrator's phase response), and brainfly's flight motor neurons would need units whose phase response falls, a
 question for the kernel. If neither does, the weak pairs need something neither model has.
 
+Ran (2026-10-11, 6.5 minutes): neither B nor C puts the weakly coupled pairs inside flies' ranges, and neither holds a
+fly-like rate. So by the reading, the weak pairs need something neither model has. Hürkey et al.'s model, as published,
+falls short on those pairs just as the leaky integrators do.
+- The implementation matches the paper: 6.593 Hz at 108.75 pA, swinging from -49.25 to +2.82 mV; SNIC 6.561 Hz; rest
+  -61.23 mV. 10 us and 3 us steps agree within 0.4% (8.47 against 8.50 Hz, CV 0.066 against 0.066).
+- The published conductances give 20 ms peak ratios of 0.0055, 0.0024 and 0.0017, 0.55 of their steady-state
+  coefficients. Flies' peak ratios need 0.367, 0.174 and 0.118 nS (steady-state 0.041, 0.020, 0.013), 4.2 times the
+  published ones. Flies' ISI CV of 0.22 needs noise of 2.30 pA ms^0.5, 2.4 times the published 0.949 (an uncoupled unit
+  at 108.8 pA then fires at 6.57 Hz).
+- A, as published: MN1-4 fire at 8.68 Hz and MN5 at 7.81 (same drive, weaker coupling), with ISI CV 0.064-0.071 (flies
+  0.22).
+  - Splayness 0.713 (the paper's ED Fig. 6a about 0.76). Preferred orders 0.81 (1423 0.42, 1324 0.40; the paper's Fig.
+    3j 0.42 and 0.35), with repeats 0.023 (about 0.03).
+  - Strong pairs: r 0.25, dip10 0.000, within 10 ms 0.00 times chance, locked more tightly than flies' (0.34-0.39,
+    0.006-0.025, 0.05-0.20).
+  - Weak MN1-4 pairs: r 0.65-0.66, dip10 0.10-0.11, within 10 ms 0.55-0.59 times chance (flies 0.60-0.67, 0.030-0.056,
+    0.16-0.31). These are the leaky integrators' numbers at flies' coupling (dlm_splay_check6.py: dip10 0.09-0.10,
+    0.50-0.59).
+  - MN5's pairs: dip10 0.19-0.20, within 10 ms 1.03-1.06 (flies 0.063-0.141, 0.34-0.58). Slower than the others, MN5
+    drifts through them.
+- B and C, flies' coupling: both fail calibration. The 60 s calibration runs end at 5.86 and 7.71 Hz (MN5 4.77 and
+  6.22); the 300 s runs give 8.8-14.6 and 10.1-13.9 Hz, with MN5's ISI CV 2.1-2.4.
+  - B, in those runs: a rigid four-cycle, with 1324 in 99.7% of one run's windows and splayness 0.774. The weak pairs
+    come within 10 ms at 0.073-0.079 times chance, below flies'.
+  - C: organized as A (splayness 0.713, preferred orders 0.85, repeats 0.023), with the weak pairs at 0.72-0.83 times
+    chance and dip10 0.09-0.10, above flies'.
+- D, published coupling at flies' irregularity: calibrated (6.58-6.62 Hz, CV 0.21-0.22), and barely organized.
+  Splayness 0.642 (independent phases 0.59), preferred orders 0.31, repeats 0.21. Within 10 ms: strong pairs 0.61
+  times chance, weak 0.90-0.95, MN5's 0.94-0.99.
+So a falling phase response alone doesn't give flies' weak pairs. Hürkey et al.'s model, as published, leaves them where
+the leaky integrators at flies' coupling do, while firing three times more regularly than flies'. At
+flies' irregularity, its published coupling barely organizes the five. At flies' measured coupling it doesn't fire at a
+fly-like rate (below).
+
+Checked afterwards (2026-10-11, the same code, not part of the plan above):
+- B's and C's own drives, rates in 30 s bins over 300 s, on the calibration and main seeds: the coupled units start
+  nearly silent (MN1's median 0.0-1.8 Hz over the first 30 s). Within 30-60 s they switch to a self-sustained cycle at
+  about 14-15 Hz, which lasts to the end (one of C's 16 runs fell back to 4 Hz in its last 30 s). The 60 s calibration
+  averaged the two states.
+- With all five at one drive, flies' coupling, 8 runs of 180 s (seed 77), at either noise: from 96 to 108 pA the units
+  stay silent throughout. From 108.25 pA they fire from the start, in every run: 15.3-15.6 Hz at 108.25, rising to
+  21.2-21.3 at 109.75, and 22, 27, 34, 40 and 50 Hz at 110, 112, 116, 120 and 130 pA (MN5 18-47). None of these drives
+  gives flies' 4.5-8 Hz. Between 108 and 108.25 pA, B's and C's drives switch from silence to about 14-15 Hz.
+
     python experiments/dlm_splay_check8.py      (writes experiments/dlm_splay_check8.json)
 """
 from __future__ import annotations
