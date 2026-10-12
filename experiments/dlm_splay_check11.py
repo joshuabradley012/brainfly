@@ -75,6 +75,22 @@ Ran (2026-10-12, 6 minutes):
   - MN1-4 switch on at 0, 18, 18, 24, 29, 60, 79 and 115 s in B, and at 0, 0, 4, 16, 49, 61, 68 and 77 s in C (sorted).
   - Afterwards they fire at 14.3-14.6 Hz in B (MN5 11.2-11.4) and 13.5-13.9 Hz in C (MN5 10.7-11.0).
 
+Correction (2026-10-12, review 13):
+- Part 3's "fire from 108.2 (11.8-12.7 Hz ...)": that 10 s step switches on partway. At 108.2 pA the units stay silent
+  for 1.7-2.2 s and then fire at 15.0-15.5 Hz (15.3 Hz on the way down; review 13, from these runs' spike times). From
+  rest the network starts firing at about 15 Hz at noise 0.949. At 2.30 the first full firing step gives 14.7 Hz.
+- Part 4's switch times are the starts of the first 10 s windows whose mean exceeds 5 Hz, 4-7 s before the switch. The
+  onsets of steady firing are 4-121 s in B and 0-83 s in C. After them MN1-4 fire at 14.8 Hz in every B run and 13.9 Hz
+  in C (review 13). The "rates after the switch" above count silent seconds.
+- The like-for-like irregularity is approximate, and the approximation is conservative:
+  - "As A" puts MN5's CV at 0.083, against A's 0.071.
+  - "As D" runs at CV 0.24-0.25, against D's 0.21-0.22.
+  Both make the leaky integrators more irregular, which works against them in the comparison.
+- "As the paper ran it for those figures": these runs are 8 of 300 s at 10 us, where the paper ran 10 of 60 s at 3 us.
+  MN4-MN5's 0.564 spans 0.49-0.59 across runs, against Fig. 3d's 0.54.
+- The docstring's "8.678 Hz" is A's rounded MN1-4 rate; the code targets the four units' mean, 8.676 Hz. "Seeds 5300 +
+  start" is, in the code, 5300 x 1000 + start going up and 5310 x 1000 + start going down, the same at both noises.
+
     python experiments/dlm_splay_check11.py      (writes experiments/dlm_splay_check11.json)
 """
 from __future__ import annotations

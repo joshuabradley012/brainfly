@@ -18,6 +18,19 @@ tau ln((b - reset)/(b - threshold)) + refractory.
 Read: if the coupled units' net margin near threshold is no larger than the uncoupled unit's margin (0.02-0.03 mV), they
 sit as close to threshold as the uncoupled, and the caveat should give that margin instead of the biases.
 
+Ran (2026-10-12, 72 s): coupled, the units sit as close to threshold as uncoupled.
+- A noise-free unit needs its drive 0.0069 mV above threshold to fire at 6.6 Hz.
+- Uncoupled (6.53-6.57 Hz), the bias and the kicks' mean drive (0.0216 mV) put the units 0.023 mV above threshold.
+  They spend 38% of the time within 0.1 mV below it, and 22% within 0.02 mV.
+- Coupled (6.53-6.64 Hz):
+  - Within 0.1 mV below threshold (25% of the time for MN1-4, 36% for MN5), the junction term averages -0.135 mV for
+    MN1-4 (SD 0.10) and -0.088 mV for MN5 (SD 0.06). The net margin is -0.002 to -0.001 mV.
+  - Within 0.02 mV (3% and 5% of the time), it averages -0.078 and -0.056 mV (SD 0.07 and 0.06). The net margin is
+    +0.054 to +0.055 mV for MN1-4 and +0.031 for MN5.
+So by the reading, the biases' 0.07-0.11 mV above threshold only offset what the junctions draw back near threshold.
+Coupled or not, these units fire with their drive within a few hundredths of a millivolt of threshold, and junction
+currents that fluctuate by 0.06-0.10 mV decide when they cross.
+
     python experiments/dlm_splay_check12.py      (writes experiments/dlm_splay_check12.json)
 """
 from __future__ import annotations

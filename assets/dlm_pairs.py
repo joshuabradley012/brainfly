@@ -4,15 +4,16 @@ Hürkey et al.'s own conductance model, from the saved results (nothing by hand)
     python assets/dlm_pairs.py      # writes assets/dlm_pairs-light.svg and assets/dlm_pairs-dark.svg
 
 Columns: the strongly coupled pairs (MN1-2, MN3-4), the weakly coupled MN1-4 pairs, and MN5's four pairs. Rows: each
-pair's spikes within 10 ms of the partner's, as a multiple of chance, and dip10, the share of the partner's spikes in the
-first or last tenth of the cycle (dlm_splay_check6.pairs); dashed, chance. Grey bands: flies' ranges (Hürkey et al. 2023's five-unit
-flies; dlm_splay_check6.FLIES_PAIRS). Each line spans that kind's pairs (each a median over 8 runs of 300 s) and its dot
-marks their mean. Conditions: leaky-integrator units at flies' coupling, all five at one rate (dlm_splay_check6.py),
-and with MN5 at 1.26 times the others' rate with each unit's kicks set for its own rate (dlm_splay_check10.py); Hürkey et
-al.'s conductance model as published (dlm_splay_check8.py's A), and leaky integrators at its coupling, irregularity and
-rates (dlm_splay_check11.py's "as A"); Hürkey et al.'s model with its published coupling at flies' irregularity
-(dlm_splay_check8.py's D), and leaky integrators the same (dlm_splay_check11.py's "as D"). At flies' coupling their model
-fires at no fly-like rate, so it isn't shown.
+pair's spikes within 10 ms of the partner's, as a multiple of chance, and dip10, the share of the partner's spikes in
+the first or last tenth of the cycle (dlm_splay_check6.pairs); dashed, chance. Grey bands: flies' ranges, the range of
+each kind's pair medians in Hürkey et al. 2023's five-unit flies (dlm_splay_check6.FLIES_PAIRS); MN4-MN5's own per-fly
+dip10 range is narrower (0.016-0.097). Each line spans that kind's pairs (each a median over 8 runs of 300 s) and its
+dot marks their mean. Conditions: leaky-integrator units at flies' coupling, all five at one rate (dlm_splay_check6.py),
+and with MN5 at 1.26 times the others' rate with each unit's kicks set for its own rate (dlm_splay_check10.py); Hürkey
+et al.'s conductance model as published (dlm_splay_check8.py's A), and leaky integrators at its coupling, irregularity
+and rates (dlm_splay_check11.py's "as A"); Hürkey et al.'s model with its published coupling at flies' irregularity
+(dlm_splay_check8.py's D), and leaky integrators the same (dlm_splay_check11.py's "as D"). At flies' coupling their
+model fires at no fly-like rate, so it isn't shown.
 """
 from __future__ import annotations
 

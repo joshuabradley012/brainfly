@@ -39,6 +39,18 @@ So with every unit about as irregular as flies', leaky integrators at flies' cou
 the three kinds of pair falls inside flies' ranges. The strong pairs come closest, and the weak pairs and MN5's fire
 together more often than flies'.
 
+Correction (2026-10-12, review 13):
+- "The strong pairs come closest" isn't defined.
+  - On flies' class ranges (dlm_splay_check6.FLIES_PAIRS), the strong pairs fail all three measures.
+  - MN5's pairs pass r and dip10 and fail within 10 ms. Their dip10, 0.101-0.121, lies inside the range of flies' four
+    MN5-pair medians (0.063-0.141) but outside MN4-MN5's own per-fly range (0.016-0.097).
+  - On within 10 ms, both kinds miss flies' upper edge by about the same amount (0.03).
+- At 1.0 times, MN4-MN5's within-10 ms ratio is 0.5845, flies' upper bound at two decimals, so it's a near-tie on that
+  measure. Its dip10 (0.104) is outside MN4-MN5's per-fly range.
+- This check changed MN1-4's kicks too: 10.80 to 9.17 a second, which moved their CV from 0.25-0.26
+  (dlm_splay_check7.py) to 0.23-0.24. So it doesn't by itself isolate MN5's regularity as the cause. Review 12's reruns,
+  with MN1-4 unchanged, did, and found the same.
+
     python experiments/dlm_splay_check10.py      (writes experiments/dlm_splay_check10.json)
 """
 from __future__ import annotations

@@ -41,6 +41,15 @@ describes, so the rest wasn't run.
 dlm_splay_check4.py's AHP unit doesn't have this problem: its private CVs reached 0.152, 0.099 and 0.051 with 2.5-3.2 mV
 shared fluctuations. With 95% shared at flies' coupling, it was run in dlm_splay_check5.py and dlm_splay_check6.py.
 
+Correction (2026-10-12, review 13):
+- "Coupled, the same units would sit closer to the design's regime ... still within about 0.1 mV of threshold" doesn't
+  hold. Counting the junctions' current, the coupled units sit as close to threshold as the uncoupled, because near
+  threshold the junctions draw back about as much as the biases add. dlm_splay_check12.py: within 0.1 mV of threshold
+  the junction term averages -0.135 mV for MN1-4 and -0.088 mV for MN5, leaving a net margin of -0.002 to -0.001 mV.
+  Uncoupled, the margin is 0.023 mV.
+- "Where it waits for a kick": a unit at 7.0032 mV fires on its own at about 6.0 Hz (5.3 Hz at 7.00098). The kicks
+  speed it up and spread its intervals.
+
     python experiments/dlm_splay_check9.py      (writes experiments/dlm_splay_check9.json)
 """
 from __future__ import annotations

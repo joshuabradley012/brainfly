@@ -1,19 +1,19 @@
-"""The flight motor neurons' splay state in the model, animated: five DLM motor neurons as dots running round a clock
-face, each passing 12 o'clock as it fires, drawn from short reruns of the checks' calibrated units and from their
-saved results (nothing by hand).
+"""The flight motor neurons' splay state in the model, animated: five DLM motor neurons as dots running round a clock face,
+each passing 12 o'clock as it fires, drawn from short reruns of the checks' calibrated units and from their saved
+results (nothing by hand).
 
     python assets/dlm_splay.py      # writes assets/dlm_splay-light.svg and assets/dlm_splay-dark.svg
 
-Top: three clocks, 2 s of each condition played at a quarter speed. Each dot's angle is its phase, (t - t_n) /
-(t_n+1 - t_n), as Hürkey et al. 2023 compute it, so a splay state spreads the dots round the face and synchrony bunches
-them. The conditions are leaky-integrator units at flies' irregularity (CV 0.22) and 6.6 Hz: uncoupled
-(dlm_splay_check2.py); joined by conductances fitted to flies' coupling coefficients as flies measured them, 20 ms
-peak ratios, with each unit's drive set so all five fire at one rate (dlm_splay_check6.py); and with the spikes' own
-spikelets as well (dlm_splay_check6.py). Each is rerun here for 3 s (1 s discarded) with its check's own drives, kicks
-and junctions (seed 7). Under each clock, its 2 s as a raster. Bottom: the splayness of selected conditions (300 s x 8
-runs, medians), against flies' 0.73-0.79 and the 0.59 that independent phases give: the clocks' conditions, the AHP unit with spikelets and 95% of its irregularity
-shared at flies' coupling with MN5 coupled like a weak pair (dlm_splay_check6.py) and uncoupled (dlm_splay_check4.py),
-and the first runs' coupling at about half flies' (dlm_splay_check2.py).
+Top: three clocks, 2 s of each condition played at a quarter speed. Each dot's angle is its phase, (t - t_n) / (t_n+1 -
+t_n), as Hürkey et al. 2023 compute it, so a splay state spreads the dots round the face and synchrony bunches them. The
+conditions are leaky-integrator units at flies' irregularity (CV 0.22) and 6.6 Hz: uncoupled (dlm_splay_check2.py);
+joined by conductances fitted to flies' coupling coefficients as flies measured them, 20 ms peak ratios, with each
+unit's drive set so all five fire at one rate (dlm_splay_check6.py); and with the spikes' own spikelets as well
+(dlm_splay_check6.py). Each is rerun here for 3 s (1 s discarded) with its check's own drives, kicks and junctions (seed
+7). Under each clock, its 2 s as a raster. Bottom: the splayness of selected conditions (300 s x 8 runs, medians),
+against flies' 0.73-0.79 and the 0.59 that independent phases give: the clocks' conditions, the AHP unit with spikelets
+and 95% of its irregularity shared at flies' coupling with MN5 coupled like a weak pair (dlm_splay_check6.py) and
+uncoupled (dlm_splay_check4.py), and the first runs' coupling at about half flies' (dlm_splay_check2.py).
 """
 from __future__ import annotations
 

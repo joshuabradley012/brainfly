@@ -1,0 +1,161 @@
+{
+ "question": "Exploratory check, written after review 13 and before it runs, not pre-registered and not a change to the model: how\nclose to threshold the leaky-integrator units of the splay checks sit, once the junctions' current is counted.\n\nThe README's caveat on the leaky integrators said that, with a 20 ms membrane, one fires regularly at 6.6 Hz only with\nits drive within about 0.1 mV of threshold. As evidence it set the coupled units' biases (7.07-7.11 mV against a 7 mV\nthreshold; dlm_splay_check6.py) beside the uncoupled unit's (a few microvolts above it; dlm_splay_check2.py). Review 13\nfound that the biases leave out the junctions' current, which near threshold draws back about as much as the biases\nadd. So the coupled units may sit as close to threshold as the uncoupled ones. Its numbers came from a review-only run.\nModel: dlm_splay_check6.py's \"LIF, MN5 assumed\" (its biases, dlm_splay_check2.py's kicks, flies' coupling as 20 ms\npeak ratios), and the same units uncoupled at dlm_splay_check2.py's bias. 8 runs of 60 s after 3 s (seeds 5400 and 5401),\nstepped 0.1 ms at a time. Each step, from that step's starting voltages, each unit's junction term is\nJ_i = sum_j r_ij (u_j - u_i), in mV of drive as HybridBrain applies it.\nMeasured, for each unit while its voltage is within 0.1 mV, and within 0.02 mV, below threshold:\n- J's mean and SD;\n- the net margin, bias + the kicks' mean drive (rate x 0.1 mV x 20 ms) + J's mean - 7 mV.\nAlso each unit's rate, and the margin a noise-free unit needs for 6.6 Hz, from its interspike interval\ntau ln((b - reset)/(b - threshold)) + refractory.\nRead: if the coupled units' net margin near threshold is no larger than the uncoupled unit's margin (0.02-0.03 mV), they\nsit as close to threshold as the uncoupled, and the caveat should give that margin instead of the biases.\n\n    python experiments/dlm_splay_check12.py      (writes experiments/dlm_splay_check12.json)\n",
+ "noise_free_margin_mv_at_6.6hz": 0.00687,
+ "conditions": {
+  "coupled (check 6's LIF, MN5 assumed)": {
+   "rate_hz": [
+    6.635,
+    6.554,
+    6.625,
+    6.527,
+    6.642
+   ],
+   "mean_kick_mv": 0.0216,
+   "biases_mv": [
+    7.1121,
+    7.11118,
+    7.11228,
+    7.11136,
+    7.06523
+   ],
+   "within 0.1 mV below threshold": {
+    "share_of_time": [
+     0.2515,
+     0.2542,
+     0.2521,
+     0.254,
+     0.3598
+    ],
+    "junction_mean_mv": [
+     -0.1355,
+     -0.135,
+     -0.1348,
+     -0.1348,
+     -0.0879
+    ],
+    "junction_sd_mv": [
+     0.1041,
+     0.1029,
+     0.1031,
+     0.1039,
+     0.0572
+    ],
+    "net_margin_mv": [
+     -0.0018,
+     -0.0022,
+     -0.0009,
+     -0.0019,
+     -0.0011
+    ]
+   },
+   "within 0.02 mV below threshold": {
+    "share_of_time": [
+     0.033,
+     0.0328,
+     0.0337,
+     0.0331,
+     0.0537
+    ],
+    "junction_mean_mv": [
+     -0.0784,
+     -0.0778,
+     -0.0785,
+     -0.079,
+     -0.0561
+    ],
+    "junction_sd_mv": [
+     0.0716,
+     0.0722,
+     0.0704,
+     0.0717,
+     0.0572
+    ],
+    "net_margin_mv": [
+     0.0553,
+     0.055,
+     0.0554,
+     0.054,
+     0.0307
+    ]
+   }
+  },
+  "uncoupled (check 2's bias)": {
+   "rate_hz": [
+    6.569,
+    6.529,
+    6.55,
+    6.537,
+    6.552
+   ],
+   "mean_kick_mv": 0.0216,
+   "biases_mv": [
+    7.00098,
+    7.00098,
+    7.00098,
+    7.00098,
+    7.00098
+   ],
+   "within 0.1 mV below threshold": {
+    "share_of_time": [
+     0.3795,
+     0.3836,
+     0.3803,
+     0.3814,
+     0.3809
+    ],
+    "junction_mean_mv": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "junction_sd_mv": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "net_margin_mv": [
+     0.0226,
+     0.0226,
+     0.0226,
+     0.0226,
+     0.0226
+    ]
+   },
+   "within 0.02 mV below threshold": {
+    "share_of_time": [
+     0.2167,
+     0.2212,
+     0.2189,
+     0.2183,
+     0.2177
+    ],
+    "junction_mean_mv": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "junction_sd_mv": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "net_margin_mv": [
+     0.0226,
+     0.0226,
+     0.0226,
+     0.0226,
+     0.0226
+    ]
+   }
+  }
+ },
+ "seconds": 72
+}

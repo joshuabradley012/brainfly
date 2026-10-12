@@ -121,6 +121,19 @@ Correction (2026-10-12, review 12):
     at 6.6 Hz.
   - "The paper's own numbers" (6.59 Hz, -61.5 mV) are the notes' derivations from the authors' code and saved run.
 
+Correction (2026-10-12, review 13):
+- The background above says "the strongly coupled pairs (and MN5's, with MN5 at 1.26 times the others' rate) come out
+  about as flies'". Neither holds:
+  - dlm_splay_check7.py's MN5 fit came with MN5 far more regular than the others (dlm_splay_check10.py).
+  - The strong pairs fall outside flies' ranges on all three measures: r 0.31 against 0.336-0.394, dip10 0.029-0.031
+    against 0.006-0.025, within 10 ms 0.23 against 0.05-0.20.
+- The review-12 correction gives B's and C's switch at 0-115 and 0-77 s, and their rates after it as 14.3-14.6 and
+  13.5-13.9 Hz. Those come from dlm_splay_check11.py's part 4, which reports window starts. The onsets are 4-121 s in B
+  and 0-83 s in C, then 14.8 and 13.9 Hz (review 13; review 12 had 4-121 and 0-83 s).
+- "Silent, or 14 Hz and faster", quoted in that correction, was the README's phrase, not this check's.
+- "The published coupling raises the units from 6.56 to 8.4-8.7 Hz" is MN1-4 (8.42-8.43 Hz homogeneous, 8.68
+  heterogeneous). MN5 fires at 7.81 Hz under the heterogeneous coupling.
+
     python experiments/dlm_splay_check8.py      (writes experiments/dlm_splay_check8.json)
 """
 from __future__ import annotations
