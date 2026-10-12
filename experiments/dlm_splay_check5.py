@@ -19,6 +19,31 @@ Conditions, each with its bias found again for 6.6 Hz, and the noise as its chec
 Measured as dlm_splay_check4.py measures; 8 runs of 300 s after 3 s (seeds 4600 + 10 x condition, plus 100 x run in the
 shared conditions). The uncoupled references are the earlier checks' own runs.
 
+Ran (2026-10-11, 114 s): at flies' coupling no configuration meets every measure. The leaky integrator without
+spikelets comes nearest, and the AHP unit with spikelets organizes MN1-4 but not MN5.
+- Coupling: the fitted conductances are 0.0423, 0.0199 and 0.0135, 1.79-1.80 times the steady-state conversion, which
+  gave 20 ms peak ratios of only 0.56 of flies' (0.0130, 0.0062, 0.0042).
+- LIF, private (flies: splayness 0.73-0.79, r 0.49-0.63, dip10 0.02-0.10, preferred orders 48-70% of windows,
+  coincidences below chance, strong pairs' vector strength about 0.7, 9% of windows with a repeat):
+  - splayness 0.719, r 0.602, dip10 0.086;
+  - preferred orders 51% of windows (76% of complete ones), coincidences 0.67 times chance;
+  - MN2 at 0.50 of MN1's cycle with vector strength 0.59;
+  - but 34% of windows with a repeat.
+- LIF, private + spikelets: synchrony again. The strong pairs fire together (MN2 at 0.00 of MN1's cycle), with
+  coincidences 4.5 times chance and splayness 0.544.
+- AHP, 95% shared + spikelets:
+  - MN1-4 organized more tightly than flies': preferred orders 78% of windows (81% of complete ones), 4% of windows
+    with a repeat, the strong pairs in antiphase with vector strength 0.60, and coincidences 0.87 times chance;
+  - but MN5 doesn't avoid MN4 (dip10 0.22, the null's 0.20; r 0.647), and splayness over the five is 0.647.
+- AHP, 95% shared, no spikelets: nearly the same (splayness 0.650, dip10 0.20, preferred 76%), so with flies' AHP the
+  spikelets barely act.
+- AHP, 80% shared + spikelets: weaker order (44% of windows, 13% with a repeat), splayness 0.624, coincidences 1.05.
+So at flies' strength the coupling does what flies' does to MN1-4 with either unit: the strong pairs fire in
+antiphase, the preferred orders dominate, and spikes avoid each other. That holds for the leaky integrator only
+without spikelets, and for the AHP unit with them. What fails is MN5. Its junctions are Hürkey et al.'s model's
+convention (half the others' mean) and have never been measured, and with them MN5 fires independently of MN4.
+Splayness over all five stays below flies' (0.65-0.72 against 0.73-0.79).
+
     python experiments/dlm_splay_check5.py      (writes experiments/dlm_splay_check5.json)
 """
 from __future__ import annotations
