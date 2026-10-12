@@ -206,7 +206,8 @@ def calibrate() -> dict:
     def stats(bias, hz):
         t = spike_times(brain(bias, hz), 60.0, SEED - 1)
         rates = np.mean([[len(x) / 60.0 for x in run] for run in t])
-        cv = np.mean([[np.diff(x).std() / np.diff(x).mean() for x in run if len(x) > 2] for run in t])
+        cvs = [np.diff(x).std() / np.diff(x).mean() for run in t for x in run if len(x) > 2]
+        cv = np.mean(cvs) if cvs else 0.0
         return float(rates), float(cv)
 
     def bias_for(hz):
