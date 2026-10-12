@@ -63,8 +63,11 @@ the [research report](reports/Embodied%20fly%20connectome%20simulation.md).
 
   These are checks on five units alone, with every coupling imposed: no connectome shows gap junctions or tells MN1–4
   apart. Hürkey et al.'s neuron, near a saddle-node loop, repels its partners more strongly than a leaky integrator
-  does, which may account for the rest. A test on the whole network needs a flight drive for its quieted DLM neurons
-  first.
+  does, which may account for the rest. A test on the whole network needs a flight drive first, and in rung 6's brain
+  none reaches them. Driving DNg02 at up to 200 Hz runs the DLM neurons' cholinergic premotor interneurons at up to 74
+  Hz, but the quieting that silenced the DLM neurons at rest holds them about 60 mV below threshold
+  ([`dlm_drive_probe.py`](experiments/dlm_drive_probe.py)). The nerve cord's flight circuit needs a fly-like resting
+  state first, rung 5's open question.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/dlm_splay-dark.svg">
@@ -1976,6 +1979,7 @@ a sign that the approach is broken."
 | `experiments/dlm_splay_check2.py` | Exploratory check: the same at flies' CV 0.22 and one rate (6.6 Hz) in every condition | Most of the splay state: splayness 0.71 (flies 0.73-0.79), MN4-MN5 r 0.595 and dip10 0.10 (0.49-0.63, 0.02-0.10), coincidences 0.69 times chance, strong pairs in antiphase (vector strength 0.40; flies about 0.7), preferred orders 59% of complete windows. Spikelets at flies' measured share synchronize them (splayness 0.30, coincidences 5 times chance) |
 | `experiments/dlm_splay_check3.py` | Exploratory check: the unit given flies' AHP (reset at the fast trough, adaptation fitted to Hürkey's trace), with spikelets | The AHP fits (14.5/10.3/8.8 mV against 14.4/10.4/8.7) and spikelets no longer synchronize (coincidences 1.02 times chance), but at the CV the private noise can reach (0.16) the coupling barely acts: splayness 0.61-0.64. f-I 22-41 Hz/nA (flies 62-75) |
 | `experiments/dlm_splay_check4.py` | Exploratory check: the AHP unit with spikelets and its irregularity mostly shared (CV 0.22; shares 0.5, 0.8, 0.95) | At 0.95, flies' firing order (7% of 4-spike windows with a repeat, flies 9%; preferred orders 54%, flies 48-70%); uncoupled, a shakB-like in-phase lean (coincidences 2.05 times chance); coupling moves every measure toward flies' controls, but splayness stops at 0.60 and dip10 at 0.20 (flies 0.76, 0.06) |
+| `experiments/dlm_drive_probe.py` | Exploratory probe: which descending drive in rung 6's brain (DNg02, or DNa08/DNp31/DNg27) brings the quieted DLM motor neurons to flight rates? | None: DNg02 at 25-200 Hz runs IN19B043/067 at up to 74/45 Hz, but the DLMn, quieted about 60 mV below threshold, fire only with the escape relay (0.06-0.12 Hz) or, at DNa08/p31/g27 200 Hz, a few spikes of their own (at most 0.44 Hz) |
 | `experiments/odor_pn_reset_check.py` | Exploratory check: the PNs' reset after a spike raised from rung 4's 5 mV below rest to rest and 3-6 mV above (threshold 10) | Reset at rest (Jeanne & Wilson's fitted PN) raises Rmax to 145-155 in DL5, VM7d and DM1 (flies 144-167); higher resets overshoot; sigma, the weakest input and 4-methylcyclohexanol barely move |
 | `experiments/odor_probe52.py` | Exploratory, not pre-registered: odor_probe51.py rebuilt with the PNs resetting to rest | Strong input answered as flies' (step Rmax 172-182, Olsen protocol 145-156) with the two pools' time course; Kenyon cells 2.4-13.8%, MBON11 24 spikes to 3-octanol; 4-methylcyclohexanol 0.52 at the PNs, 0.26 at the Kenyon cells. The base model from here on |
 | `experiments/odor_probe53.py` | Exploratory, not pre-registered: 4-methylcyclohexanol's untested receptors given the input Badel et al.'s PN responses imply (labelled stand-in) | Flies' breadth (15 glomeruli over 10 spikes/s, 3-octanol 17) but its PNs sum 0.58 of 3-octanol's and its Kenyon cells 0.26 (flies 0.85-0.98, 0.73-0.92) |
