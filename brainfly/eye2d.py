@@ -73,6 +73,16 @@ class Grating:
     contrast: float = 1.0
 
 
+@dataclass
+class ElevationGrating:
+    """A sine grating of horizontal stripes on a distant sphere around the fly: contrast varies as `contrast` x
+    sin(2 pi (elevation - phase) / period) (degrees) at every azimuth. Raising `phase` moves the stripes up. Added to the
+    other objects' contrast."""
+    period: float
+    phase: float
+    contrast: float = 1.0
+
+
 def direction(azimuth: float, elevation: float) -> np.ndarray:
     """Unit vector for an azimuth (degrees from straight ahead, positive to the fly's left) and an
     elevation (degrees above the horizon)."""
@@ -202,7 +212,7 @@ class CompoundEye:
 def render(directions: np.ndarray, placed: np.ndarray, objects: list, sigma: float) -> np.ndarray:
     """Contrast seen along each of `directions` (unit vectors; only rows where `placed` is true are
     drawn, the rest stay 0) through a Gaussian blur of width sigma (radians), for dark Disks (the
-    darkest one wins where they overlap) and Edges and Gratings (added), clipped to [-1, 1]."""
+    darkest one wins where they overlap) and Edges, Gratings and ElevationGratings (added), clipped to [-1, 1]."""
     from scipy.special import chdtr, chndtr, ndtr      # what scipy.stats' ncx2 and chi2 cdfs call, without their per-call checks
 
     cover = np.zeros(len(directions))
@@ -215,6 +225,12 @@ def render(directions: np.ndarray, placed: np.ndarray, objects: list, sigma: flo
             az = np.degrees(np.arctan2(d[:, 1], d[:, 0]))
             lam = np.radians(obj.period) * np.sqrt(np.maximum(1 - d[:, 2] ** 2, 1e-6))
             edges[placed] += obj.contrast * np.sin(2 * np.pi * (az - obj.phase) / obj.period) * np.exp(-2 * np.pi ** 2 * sigma ** 2 / lam ** 2)
+            continue
+        if isinstance(obj, ElevationGrating):
+            # along a meridian the stripes' period spans `period` degrees of visual angle at every elevation
+            el = np.degrees(np.arcsin(np.clip(d[:, 2], -1.0, 1.0)))
+            lam = np.radians(obj.period)
+            edges[placed] += obj.contrast * np.sin(2 * np.pi * (el - obj.phase) / obj.period) * np.exp(-2 * np.pi ** 2 * sigma ** 2 / lam ** 2)
             continue
         if isinstance(obj, Edge):
             if obj.axis == "azimuth":
