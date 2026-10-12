@@ -27,6 +27,20 @@ Read: if at some share the coupled units put the weakly coupled pairs inside fli
 weak coupling hold those pairs apart; the whole-network test would get it from the connectome's shared input. If
 sharing bunches the units (splayness below 0.73) or leaves the weak pairs short, it isn't.
 
+Stopped (2026-10-11, after share 0.5's uncoupled condition, 4 minutes): the calibration can't give the shares the design
+describes, so the rest wasn't run.
+- Uncoupled, a leaky integrator with a 20 ms membrane fires regularly at 6.6 Hz only with its drive a few microvolts above
+  threshold (here 7.0032 mV against 7.0; dlm_splay_check2.py's own 7.00098), where it waits for a kick.
+- So 6.8 kicks a second of 0.1 mV gave the private CV of 0.156. The shared fluctuation's bisection then reached its
+  resolution floor, 0.0024 mV, with the total CV already 0.26 (target 0.22). Microvolt fluctuations decide the CV there,
+  and the variance doesn't split into shares.
+- Run as calibrated, share 0.5's uncoupled units fired at 6.48-6.50 Hz with CV 0.25. Splayness was 0.581 (independent
+  phases 0.59), preferred orders 0.24, and 25% of windows held a repeat.
+- Coupled, the same units would sit closer to the design's regime: dlm_splay_check6.py's biases are 7.07-7.11 mV, their
+  junctions loading them, still within about 0.1 mV of threshold.
+dlm_splay_check4.py's AHP unit doesn't have this problem: its private CVs reached 0.152, 0.099 and 0.051 with 2.5-3.2 mV
+shared fluctuations. With 95% shared at flies' coupling, it was run in dlm_splay_check5.py and dlm_splay_check6.py.
+
     python experiments/dlm_splay_check9.py      (writes experiments/dlm_splay_check9.json)
 """
 from __future__ import annotations
