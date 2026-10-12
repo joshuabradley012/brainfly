@@ -16,6 +16,23 @@ Read: if dMS2 and vMS12 now follow pIP10 (rates rising with the drive, voltages 
 the depression was the brake. If they still don't, something else is, such as the targets' other inputs or their
 biases.
 
+Ran (2026-10-11, 47 s): the depression was a main brake. Without it pIP10 recruits the song circuit and drives two
+steering motor neurons hard, but tonically, not in pulses.
+- Only depression changed, on the core's 77 neurons; every other neuron's parameters were unchanged.
+- At rest, much as before: dMS2 2.7 Hz, the steering motor neurons 1.6-2.2 Hz.
+- pIP10 at 25 Hz: dMS2 16.2 Hz, dMS9 15.8 and vMS12 13.4 (with depression 8.4-9.4, 7.3-8.6 and 6.2-7.6). hg3 fires at
+  17.5 Hz, hg4 13.6, ps1 6.1, b3 5.7 and hg1 5.6. Volleys come at 14.8 a second in trains of median length 2, with a
+  median IPI of 45 ms and 14% of IPIs within 30-40 ms.
+- pIP10 at 100 Hz: dMS2 25.6 Hz, dMS9 28.0 and vMS12 19.8, with vPR9 at 71.7. hg3 fires at 42.1 Hz, hg4 33.8, ps1 9.3
+  and b3 8.3. hg1 (1.8), hg2 (1.0), i1 (0.2) and MNwm35 (0.2) fall. Volleys come at 32.6 a second in long trains (median
+  13.5), with a median IPI of 24.5 ms and 17% within 30-40 ms.
+So the default depression held the circuit near rest. Without it, the recruitment follows the connectome's paths,
+and the steering motor neurons that TN1A and dMS2 drive hardest fire tonically at 34-42 Hz. Their volleys then follow
+those rates (every 25 ms or so), not a pulse rhythm. The share within 30-40 ms stays at the chance level (about 17%;
+flies 59%), and so do the IPIs' spread and the motor neurons that flies use in pulse song: hg1, hg2 and i1 fall
+instead of rising. Turning depression off isn't a fit to flies' synapses; it shows what the default was doing. A song
+test still needs the circuit to make pulses, which neither setting does.
+
     python experiments/song_recruit_check2.py      (writes experiments/song_recruit_check2.json)
 """
 from __future__ import annotations

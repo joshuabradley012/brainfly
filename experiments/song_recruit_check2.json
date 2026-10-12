@@ -1,0 +1,125 @@
+{
+ "question": "Exploratory check, written after review 9 and before it runs, not pre-registered and not a change to the model: is\nthe whole-brain model's default synaptic depression what keeps pIP10 from recruiting the song circuit?\n\nsong_recruit_check.py: with pIP10 at 100 Hz, the built weights would raise each dMS2's input by 38.6 mV, mostly from\nTN1A at 41 Hz. Yet dMS2's median voltage moved 1.4 mV and it fired at 9.4 Hz. TN1A, dPR1, dMS9, vMS12 and dMS2 share the\ndefault depression (0.9 of the strength left after each spike, recovering over 0.5 s), which at 41-47 Hz leaves about a\nthird. Review 9 found that this accounts for only about two thirds of the predicted drive, and that no run had turned\ndepression off.\nModel: rung6_relay.build(\"intact\"), 8 flies, at grey, as song_drive_probe.py ran it, with one change: the song core's\nneurons (pIP10, pMP2, dPR1, TN1A, vPR9, dMS2, vMS12, dMS9) are put in a named set whose synapses don't depress\n(depression 1.0). Every other neuron's parameters are checked unchanged. Conditions: rest, and pIP10 at 25 and 100 Hz,\nwith song_drive_probe.py's protocol (1 s at rest, 1 s driven, 4 s read) and seeds (7800 + condition's index there).\nMeasured as song_drive_probe.py measures (rates; steering motor neurons' volleys of at least 3 within 5 ms, their\ntrains and IPIs), plus dMS2's and vMS12's voltage below threshold, sampled every 10 ms.\nRead: if dMS2 and vMS12 now follow pIP10 (rates rising with the drive, voltages moving by the undepressed estimate),\nthe depression was the brake. If they still don't, something else is, such as the targets' other inputs or their\nbiases.\n\n    python experiments/song_recruit_check2.py      (writes experiments/song_recruit_check2.json)\n",
+ "core_cells": 77,
+ "core_parameters_changed": [
+  "depression"
+ ],
+ "others_unchanged": true,
+ "conditions": {
+  "rest": {
+   "rates_hz": {
+    "pIP10": 0.16,
+    "TN1A": 2.43,
+    "dPR1": 2.3,
+    "vPR9": 2.84,
+    "dMS2": 2.65,
+    "dMS9": 2.33,
+    "vMS12": 2.32
+   },
+   "steering_hz": {
+    "i1 MN": 1.84,
+    "b3 MN": 2.23,
+    "hg1 MN": 2.12,
+    "hg2 MN": 1.56,
+    "hg3 MN": 2.09,
+    "hg4 MN": 1.92,
+    "ps1 MN": 2.17,
+    "MNwm35": 1.92
+   },
+   "v_below_threshold_mv": {
+    "dMS2": {
+     "median": -12.51,
+     "p95": -6.65
+    },
+    "vMS12": {
+     "median": -9.31,
+     "p95": -3.79
+    }
+   },
+   "volleys_3": {
+    "per_s": 2.62,
+    "ipi_median_ms": 14.1,
+    "ipi_share_30_40": 0.0,
+    "trains_median_length": 1.0,
+    "ipis": 9
+   }
+  },
+  "pIP10 25 Hz": {
+   "rates_hz": {
+    "pIP10": 25.77,
+    "TN1A": 19.38,
+    "dPR1": 19.31,
+    "vPR9": 29.9,
+    "dMS2": 16.2,
+    "dMS9": 15.78,
+    "vMS12": 13.38
+   },
+   "steering_hz": {
+    "i1 MN": 1.05,
+    "b3 MN": 5.66,
+    "hg1 MN": 5.59,
+    "hg2 MN": 1.33,
+    "hg3 MN": 17.48,
+    "hg4 MN": 13.56,
+    "ps1 MN": 6.12,
+    "MNwm35": 1.19
+   },
+   "v_below_threshold_mv": {
+    "dMS2": {
+     "median": -12.81,
+     "p95": -3.69
+    },
+    "vMS12": {
+     "median": -13.74,
+     "p95": -4.57
+    }
+   },
+   "volleys_3": {
+    "per_s": 14.75,
+    "ipi_median_ms": 45.3,
+    "ipi_share_30_40": 0.143,
+    "trains_median_length": 2.0,
+    "ipis": 265
+   }
+  },
+  "pIP10 100 Hz": {
+   "rates_hz": {
+    "pIP10": 100.86,
+    "TN1A": 46.58,
+    "dPR1": 42.77,
+    "vPR9": 71.7,
+    "dMS2": 25.56,
+    "dMS9": 28.02,
+    "vMS12": 19.78
+   },
+   "steering_hz": {
+    "i1 MN": 0.17,
+    "b3 MN": 8.3,
+    "hg1 MN": 1.77,
+    "hg2 MN": 1.0,
+    "hg3 MN": 42.14,
+    "hg4 MN": 33.84,
+    "ps1 MN": 9.27,
+    "MNwm35": 0.16
+   },
+   "v_below_threshold_mv": {
+    "dMS2": {
+     "median": -12.61,
+     "p95": -2.66
+    },
+    "vMS12": {
+     "median": -13.89,
+     "p95": -3.59
+    }
+   },
+   "volleys_3": {
+    "per_s": 32.59,
+    "ipi_median_ms": 24.5,
+    "ipi_share_30_40": 0.17,
+    "trains_median_length": 13.5,
+    "ipis": 979
+   }
+  }
+ },
+ "seconds": 47
+}
