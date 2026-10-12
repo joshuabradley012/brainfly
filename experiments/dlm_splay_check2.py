@@ -15,6 +15,35 @@ Model and measures: dlm_splay_check.py's, with two changes:
 The order of MN1-4 is also reported among complete 4-spike windows (all four neurons once), besides over all windows.
 Runs, seeds (4400 + condition) and durations are dlm_splay_check.py's.
 
+Ran (2026-10-11, 35 s): at flies' irregularity and one rate, the measured coupling gives most of flies' splay state.
+- The calibration found 10.8 Hz of kicks (bias 7.001 mV). Uncoupled, the units fire at 6.58 Hz with CV 0.22.
+- Uncoupled: independent, as the nulls give. Splayness 0.592, MN4-MN5 r 0.643, dip10 0.20, coincidences 1.01 times
+  chance. MN1-4's preferred orders take 22% of windows (34% of complete ones, about a third by chance).
+- Measured CCs (bias 7.055 for 6.6 Hz; CV 0.26):
+  - splayness 0.713 (flies 0.73-0.79; null 0.59);
+  - r 0.595 and dip10 0.101 (flies 0.49-0.63 and 0.02-0.10);
+  - spikes within 3 ms of another's at 0.69 times chance (flies' controls fall below chance);
+  - MN2 at 0.51 of MN1's cycle and MN4 at 0.50 of MN3's, vector strength 0.40 (flies 0.42-0.61, about 0.7);
+  - the preferred orders, 1324 and 1423, at 19-20% of windows each, the other four at 6.5-7%. That is 39% of all
+    windows (flies 48-70%) and 59% of complete ones (flies' complete cycles 51-79%). 35% of the windows hold a repeat,
+    as uncoupled (flies 9%).
+- The model's CCs: a little weaker. Splayness 0.704, r 0.589, dip10 0.109; preferred orders 31% of windows, 47% of
+  complete ones.
+- Measured x 3: splayness 0.712, r 0.612, dip10 0.075. The strong pairs lock tighter (vector strength 0.68), and the
+  preferred orders take 56% of windows (86% of complete ones).
+- With spikelets: synchrony. Splayness 0.297, r 0.80, dip10 0.66, coincidences 5.0 times chance, and MN4 in phase with
+  MN3 (0.00).
+So brainfly's leaky integrators, joined by conductances at flies' measured strengths, give the splay state's main
+signatures:
+- splayness just under flies' range, and r and dip10 inside theirs;
+- coincidences below chance;
+- the strong pairs in antiphase, with the orders that put them opposite preferred.
+The pairs' tightness and the orders' share fall short. 35% of 4-spike windows hold a repeat, where flies' hold 9%,
+which suggests flies' irregularity is shared (all five rates rising and falling together) more than private. And the
+spikes' own depolarization, passed at flies' measured share, synchronizes the units outright. In flies the long AHP
+(more than 100 ms, passed at CC 0.04) outweighs it. The model's unit has no such AHP, only a reset that recovers over
+its 20 ms membrane.
+
     python experiments/dlm_splay_check2.py      (writes experiments/dlm_splay_check2.json)
 """
 from __future__ import annotations
