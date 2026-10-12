@@ -48,6 +48,11 @@ Correction (2026-10-11, review 7):
   Kenyon cells giving MBON11_R 1.1 times flies' budget of synapse-spikes to 3-octanol. So the Ran's "too little Kenyon
   cell drive overall" is a shortfall in the charge each spike carries, not in the cells' activity.
 
+Correction (2026-10-11, review 8):
+"A shortfall in the charge each spike carries, not in the cells' activity" is a little strong: the pilot's own
+charge, 63 pC, is 0.66-0.73 of the budget measure's equivalent (87-96 pC), and the gamma cells, 59% of MBON11_R's
+Kenyon cell synapses, give 0.79 of flies' gamma budget. It is mostly a shortfall in charge per spike.
+
     python experiments/learning_pilot16.py      (writes experiments/learning_pilot16.json)
 """
 from __future__ import annotations

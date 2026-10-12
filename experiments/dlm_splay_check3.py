@@ -49,6 +49,22 @@ Both runs give each unit private noise, as Hürkey et al.'s model did. Flies' ir
 all five rates rising and falling together: their 4-spike windows hold a repeat 9% of the time, against 24-35% in
 these runs. A check with shared drive fluctuations would test that.
 
+Correction (2026-10-11, review 8):
+- ahp() fired the unit with drive=, which leaves a driven neuron without a refractory period. With the 2.2 ms hold the
+  units ran with, the same parameters give 15.0, 10.3 and 8.8 mV below baseline (flies 14.4, 10.4, 8.7). A fit including
+  the hold gives 9.8 mV and 0.72 s.
+- Three points out to 100 ms pin the adaptation's time constant only between about 0.46 and 0.72 s. It is
+  extrapolated, and it sets the f-I's slope (about 1 / (A x tau)). Flies' 62-75 Hz/nA would need A x tau of about
+  1.1-1.6 mV s, against 4.9 here. So a spike-triggered adaptation of this kind can't meet both flies' AHP trace and
+  their f-I.
+- "Half as steep": the 1 s steps, flies' stated protocol, give 0.30-0.45 of flies' slope, the 0.4 s steps 0.44-0.66.
+- The measured CCs ran at about half flies' effective coupling (dlm_splay_check.py's correction). The AHP passes to a
+  partner at 0.017, against flies' 0.038.
+- The spikelets assume the Fig. 2h pair was a strongly coupled one; the notes don't say.
+- Review 8's reruns support the reading. This unit at low private noise (CV 0.05) with spikelets splays: splayness
+  0.70, coincidences 0.64 times chance, preferred orders 72%. So it was the private noise, not the AHP, that left the
+  coupling little pull.
+
     python experiments/dlm_splay_check3.py      (writes experiments/dlm_splay_check3.json)
 """
 from __future__ import annotations

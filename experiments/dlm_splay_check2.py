@@ -44,6 +44,20 @@ spikes' own depolarization, passed at flies' measured share, synchronizes the un
 (more than 100 ms, passed at CC 0.04) outweighs it. The model's unit has no such AHP, only a reset that recovers over
 its 20 ms membrane.
 
+Correction (2026-10-11, review 8):
+- As in dlm_splay_check.py's correction, "the measured CCs" ran at about half flies' effective coupling (the
+  steady-state conversion of 20 ms peak ratios). "Measured x 3" is nearer flies' strength (1.8 times) than "measured".
+- dip10's median, 0.101 (runs 0.087-0.105), is just above flies' maximum, 0.097, so "inside theirs" is borderline.
+- "Most of the splay state" overstates. From uncoupled to flies' controls, splayness and dip10 go about 70% of the way,
+  r and the strong pairs' locking about half, the preferred orders 45%, and the windows with a repeat none of it.
+- The preferred orders' 59% of complete windows compares with flies' sliding windows, 52-77% (preferred over
+  complete), not with flies' complete MN1 cycles (51-79%).
+- MN5's coupling (0.0075) is Hürkey et al.'s model's convention, not a measurement. dip10, an MN4-MN5 measure, depends
+  on it.
+- The spikelets were dlm_splay_check.py's unsourced 0.0375 mV on every pair. dlm_splay_check3.py's sizes (0.035 mV on
+  the strong pairs, smaller on the others) synchronize this unit too (review 8's rerun: splayness 0.41, coincidences
+  4.7 times chance).
+
     python experiments/dlm_splay_check2.py      (writes experiments/dlm_splay_check2.json)
 """
 from __future__ import annotations

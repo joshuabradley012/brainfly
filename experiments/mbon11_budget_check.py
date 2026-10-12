@@ -87,6 +87,10 @@ Correction (2026-10-11, review 7):
 - The JSON's mb_calibration record gives "kc_apl_scale": 10.0, from mb_calibration.apply; the drive in force was
   mb_calibration7.py's 0.5 ("kc_apl_drive").
 
+Correction (2026-10-11, review 8):
+"Checked afterwards" derived its figures from the timed run's 133 pC. On this measure's 119 pC they
+become about 91 and 72 pC at two and three spikes per flash, and about 198 pC with 3% of cells flashed (237 at 2.5%).
+
     python experiments/mbon11_budget_check.py      (writes experiments/mbon11_budget_check.json)
 """
 from __future__ import annotations

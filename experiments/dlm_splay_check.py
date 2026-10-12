@@ -58,6 +58,19 @@ antiphase and MN5 avoids MN4, a third of the way at most. Spikelets push them to
 fires too irregularly, and too sensitively to the coupling's load, for flies' measures. dlm_splay_check2.py widens the
 calibration's search and holds every condition at 6.6 Hz.
 
+Correction (2026-10-11, review 8):
+- Flies' coupling coefficients are peak ratios of 20 ms current steps (dlm_splay_state.md, summary 3), but ratios()
+  converts them as steady-state coefficients, CC / (1 - CC). In the unit's 20 ms membrane that gives 20 ms peak ratios
+  of only 0.56 of flies', and passes 0.44 of their AHP coupling. So "the measured CCs" ran at about half flies'
+  effective coupling. dlm_splay_check5.py reruns the key conditions at flies' 20 ms ratio.
+- "Every measure moves flies' way" holds for splayness, r and dip10 (about a third of the way). The preferred orders'
+  share fell (18% to 14%; flies 48-70%), coincidences rose (0.99 to 1.08 times chance; flies below 1), and rate and CV
+  moved away (4.95 Hz, 0.50).
+- The search's lowest kick rate was 50.1 Hz; 54.9 Hz was the point chosen (CV 0.342-0.343 from 55 Hz down to 50).
+- calibrate()'s docstring says "the first 4 runs' seeds"; the code runs 8 trials from seed 4399.
+- The spikelet's "about 0.75 mV for about 1 ms" has no source. The notes' one measured spikelet is 0.38 mV, for a
+  36.4 mV spike (section 2.9), and here every pair got the same 0.0375 mV.
+
     python experiments/dlm_splay_check.py      (writes experiments/dlm_splay_check.json)
 """
 from __future__ import annotations

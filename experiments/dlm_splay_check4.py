@@ -43,6 +43,23 @@ splayness 0.60 and dip10 0.20, where flies reach 0.76 and 0.06. Without spikelet
 0.71 and 0.10 (dlm_splay_check2.py). Hürkey et al.'s neuron, near a saddle-node loop with a phase-response curve that
 falls through mid-cycle, repels its partners more strongly than a leaky integrator does, which may be the rest.
 
+Correction (2026-10-11, review 8):
+- At share 0.95 the coupled units end at the independent-phase values on four measures: splayness 0.604 (null 0.592),
+  r 0.629 (0.637), dip10 0.20 (0.20), coincidences 1.08 (1.0). The coupling cancels the shared drive's in-phase lean;
+  only the order measures and the strong pairs' antiphase go past independence. "The splay stops at 0.60" is
+  independence, not partial splay.
+- "shakB-like": uncoupled at 0.95, splayness 0.415 and r 0.780 lie outside shakB flies' ranges (0.52-0.69, 0.56-0.72);
+  the units are more synchronous than the knockdown. Share 0.8's uncoupled state matches the knockdown, but coupled it
+  gives 33% preferred orders and 14% of windows with a repeat, not flies' order. No share gives both genotypes.
+- The measured CCs ran at about half flies' effective coupling (dlm_splay_check.py's correction). Review 8's rerun at
+  flies' 20 ms ratio (1.8 times) gave splayness 0.65, coincidences 0.87 times chance, preferred orders 73%, vector
+  strength 0.61 and dip10 0.195.
+- dip10 rests on MN5's assumed 0.0075.
+- "Hürkey et al.'s neuron repels its partners more strongly than a leaky integrator does" is a hypothesis these checks
+  don't test.
+- The calibration set the shared share of the ISI variance to about 0.96, 0.84 and 0.57 for the nominal 0.95, 0.8 and
+  0.5 (review 8's check).
+
     python experiments/dlm_splay_check4.py      (writes experiments/dlm_splay_check4.json)
 """
 from __future__ import annotations

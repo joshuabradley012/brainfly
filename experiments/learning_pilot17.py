@@ -49,6 +49,10 @@ Correction (2026-10-11, review 7):
 The correction above contradicts itself: learning pilots 13 and 15 came after pilot 12 and passed the reciprocal, both
 on set C's Kenyon cells. The reciprocal has failed on every model except set C's since learning pilot 11.
 
+Correction (2026-10-11, review 8):
+The reciprocal has failed on every model except set C's since learning pilot 11 on rung 9's input
+(receptor_fills.RECOMMENDED). With DoOR's input, learning pilot 11 passed it (3-octanol cut 20.9%).
+
     python experiments/learning_pilot17.py      (writes experiments/learning_pilot17.json)
 """
 from __future__ import annotations

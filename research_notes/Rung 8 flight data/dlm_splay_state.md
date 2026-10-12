@@ -690,6 +690,12 @@ Columns [D]:
 
 ---
 
+
+**Note (2026-10-11, after a review).** `HybridBrain.set_coupling` was committed in 7fc9c42; the "uncommitted" remarks in
+summary 15, §7 and §8 predate it. §8.1's "ratio 0.0235 / 0.0111" is the steady-state conversion that §8's first point
+warns against. Flies' CCs are 20 ms peak ratios; in a 20 ms membrane the conductance that reproduces them is about 1.8
+times larger (0.0423 / 0.0199), and 1.5-1.6 times in a 13-15 ms one.
+
 ## Sources
 
 - Hürkey S, Niemeyer N, Schleimer J-H, Ryglewski S, Schreiber S, Duch C (2023) Nature 618:118–125.

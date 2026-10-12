@@ -42,6 +42,9 @@ Correction (2026-10-11, review 7):
 - It imports mb_calibration6 and mb_calibration7 before the cache loads, and replaces mb_calibration7.apply for the
   whole process; brain_cache checks only the files it recorded when saving, so the run was unaffected (cache restored).
 
+Correction (2026-10-11, review 8):
+With about 103 pC after the depression, the share of flies' charge then is 0.42-0.46, not 0.46.
+
     python experiments/mbon11_budget_check2.py      (writes experiments/mbon11_budget_check2.json)
 """
 from __future__ import annotations

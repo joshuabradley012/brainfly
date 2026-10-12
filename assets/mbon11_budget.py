@@ -39,7 +39,7 @@ def text(x, y, s, cls, anchor="start"):
 def figure(theme: str, d: dict) -> str:
     c = THEMES[theme]
     oct_ = d["odors"]["3-octanol"]
-    out = [text(24, 30, "MBON11's input: flies' Kenyon cell activity, under half flies' charge", "lab"),
+    out = [text(24, 30, "MBON11's input: flies' budget of Kenyon cell activity, under half flies' charge", "lab"),
            text(24, 50, f"With the corrected input the Kenyon cells give MBON11 about flies' budget of synapse-spikes to 3-octanol "
                 f"({oct_['synapse_spikes_all']:,.0f}; flies about 3,200), three quarters of flies' charge undepressed.", "note"),
            text(24, 68, "The synapses' depression leaves about half of that. To 4-methylcyclohexanol the activity itself is a seventh of "
