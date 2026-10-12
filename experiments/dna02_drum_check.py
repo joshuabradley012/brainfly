@@ -43,6 +43,25 @@ flight motor neurons were held down the same way (dlm_drive_probe.py). The signa
 mostly as inhibition of one side. In flies, DNa02's firing during walking predicts turning (Rayshubskiy et al. 2020). In
 rung 6's brain at rest it is silent, so the body can't be steered through it until its resting state is fly-like.
 
+Correction (2026-10-12, review 15):
+- DNa02 isn't held down like the flight motor neurons. It sits at rest_calibration's 0.1 Hz target for every descending
+  neuron ("DNa02 near 0 standing"), with a group bias of -12.4 mV, and fires 0-0.08 Hz at grey: on target.
+  - That puts it 13.5 mV below threshold, not the reading's "tens of mV".
+  - The flight MNs were lowered a further 40-46 mV after calibration, to about 60 mV below threshold.
+  - The project's later rate notes put flies' resting DNa02 at about 3-9 spikes/s immobile (Rayshubskiy et al. 2025, the
+    eLife version of the work cited above as 2020; descending_neuron_rates.md).
+  So the model's DNa02 is quiet because of the 0.1 Hz rule for descending neurons. Raising its target, or modelling a
+  walking state, would change that. It isn't the nerve cord's resting-state question.
+- The ranking by weight misses inputs that carry about as much of the drum's effect as the 25 strongest types (review
+  15's accounting over all 1,112 and 1,172 inputs): LPT22 (GABA; 2 Hz rising to 90-92 under the drum, -0.67 to -0.80
+  mV), SAD013 (GABA, -0.54 to -0.61) and PLP012 (ACh, +0.7 to +1.6 undepressed). Under clockwise, the left DNa02's
+  inhibition comes more from LPT22 (-0.67) than from PS049 (-0.38).
+- The drive estimate assumes full weight. In rung 6's brain cholinergic synapses depress (0.78 per spike, 0.89 s
+  recovery), which cuts an input at 50-100 Hz to about a tenth, while GABAergic inhibition doesn't depress. That probably
+  explains why the drum reaches DNa02 mostly as inhibition (review 15's reading, not a measured split).
+- "12 of those also synapse onto DNa02": 12 of the 50 targets do, and 11 of them change by more than 5 Hz (PS220 by
+  0.25 Hz). "24-57 spikes/s" is 23.4-57, and "2.8-3.4 mV" is 2.74-3.43.
+
     python experiments/dna02_drum_check.py      (writes experiments/dna02_drum_check.json)
 """
 from __future__ import annotations

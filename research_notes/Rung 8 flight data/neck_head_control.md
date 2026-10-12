@@ -924,6 +924,13 @@ All rigid-tether (body-fixed) flight unless stated. Values are [P] unless marked
   - Item 13 drops Suver et al.'s "likely" ("what are likely a cluster of frontal neck motor neurons").
   - Kim et al. 2017's error bars are SEM.
 
+**Note (2026-10-12, review 15).**
+- §1.3 should add the RF map's horizontal component: in the authors' RF-map file the largest horizontal response is 0.8
+  mV (0.008 V at x10 gain), at azimuth -90 deg and elevation 0, against the 2.8 mV downward peak. Review 14 read it from
+  the file, and review 15 confirmed it. Summed linearly over the authors' grid, the map predicts a yaw-to-vertical
+  ratio of 0.12-0.16 for wide-field stimuli.
+- In review 14's note above, the Erginkaya range (-0.9 to -0.35) is §4.2's. Item 7 gives only about -0.65.
+
 ## Sources
 
 Neck MNs and connectomes:

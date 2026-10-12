@@ -59,6 +59,38 @@ flies' receptive-field map predicts, and the effect depends on the wiring. As st
 rates (the model's run above flies' at rest), the head's movement, or which way a fly turns its head. Two pitch MNs, not
 scored here, also follow the drum by nerve side: CvN6 through its HSS input, and CvN4 more weakly.
 
+Correction (2026-10-12, review 15): all three criteria passed as written, and that stands. Their readings go further
+than the criteria can carry.
+- SELECTIVITY compares CvN7 with VCvN1-3, a different cell.
+  - Gorko et al.'s map compares CvN7's own responses: at most 0.8 mV to horizontal local motion, against 2.8 mV to
+    downward. The 0.8 mV comes from review 14's reading of the authors' RF-map file, not the note's §1.3.
+  - On seed 8800, CvN7's yaw signal by nerve side (-1.17 Hz) is 0.28 of its own vertical signal (+4.17 Hz, t 3.5; review
+    15's run of the stripes on this seed). The map, summed linearly over the authors' grid, predicts 0.12-0.16. The
+    probes' seeds gave 0.10.
+  - So the pass shows that CvN7 answers the drum weakly. It doesn't show selectivity as the map predicts: CvN7 barely
+    answers its preferred downward motion either. Review 14's finding 3 applies: "the drum doesn't test CvN7's wiring".
+- NULL: the rewirings scramble the whole chemical network, including HS's own inputs, so HS loses its direction signal
+  (-1.1 and +3.3 against +134.5). optomotor_null.py found the same in FlyBrain, and brainfly/nulls.py warns: "a result
+  this null abolishes may only have lost its input".
+  - So NULL shows that the signal needs the brain's wiring from HS's input onward. It doesn't isolate the HS- and
+    H2-to-yaw-MN synapses; deleting those synapses would.
+  - "The yaw neurons keep 2% and 18%" is VCvN1-3's figure. CvN1/2's signal reverses in both rewirings: -2.5 (t -4.6)
+    and -6.3 (t -11.9).
+- All three outcomes were all but fixed by the drum probe, which ran the same network, stimulus, window and 8 flies.
+  - The probe, pooled as here, gave VCvN1-3 about +22, CvN1/2 +16.3, DNp15 +117.7 and CvN7 0.42.
+  - YAW's t >= 4 sat 5-40 times below the probe's t values, and SELECTIVITY's 0.25 about 13 times above its ratio.
+  - "Fresh seeds" means new trial noise on the same network, and the t values measure that noise.
+  So this is a confirmation of the probes' result, not an independent test. Later rung 8 tests should use criteria a
+  probe of the same network hasn't settled: a selectivity ratio within one cell, a targeted deletion of synapses, or a
+  class- or strength-preserving null.
+- "With flies' sign" holds for VCvN1-3 (blowfly VCNM, another species) and DNp15 (Suver et al.). CvN1/2 has no
+  recording; its expected sign comes from its connectome HS input.
+- "Every group within twice its target": 99.97% and 99.99% of the groups (about 3-4 and 1 of 11,721 out). The quieting
+  never reached a silent round in either rewiring, as in rung 6's own nulls. It doesn't touch the neck MNs.
+- "CvN4 more weakly": CvN4's +6.9 is within what the rewired brains give it (-6.3 and +9.75), so it isn't evidence of
+  following through the wiring. CvN6's +24, against +2.6 and +1.1 rewired, stands.
+- "66.9 Hz on the excited side" is the counterclockwise value; clockwise gives 67.6.
+
     python experiments/rung8_neck_yaw.py      (writes experiments/rung8_neck_yaw.json)
 """
 from __future__ import annotations
