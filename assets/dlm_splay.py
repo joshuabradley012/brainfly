@@ -124,7 +124,7 @@ def figure(theme: str, d2: dict, runs: dict, splay: list) -> str:
     bx, by, bw, bh = 280, 478, 740, 130
     vmin, vmax = 0.2, 0.85
     tx = lambda v: bx + bw * (v - vmin) / (vmax - vmin)
-    out.append(text(24, by - 14, "Splayness, every condition run (300 s × 8 runs, medians)", "val"))
+    out.append(text(24, by - 14, "Splayness, selected conditions (300 s × 8 runs, medians)", "val"))
     out.append(f'<rect x="{tx(0.73):.1f}" y="{by}" width="{tx(0.79) - tx(0.73):.1f}" height="{bh}" fill="{c["ink"]}" fill-opacity="0.10"/>')
     out.append(text(tx(0.76), by + bh + 14, "flies 0.73–0.79", "tiny", "middle"))
     out.append(f'<line x1="{tx(0.59):.1f}" y1="{by}" x2="{tx(0.59):.1f}" y2="{by + bh}" stroke="{c["muted"]}" stroke-dasharray="4 3"/>')
