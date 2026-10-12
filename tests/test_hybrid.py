@@ -625,8 +625,8 @@ def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
     """A random network of n neurons with every feature that reaches the membrane integration: graded and external
     neurons, a per-neuron bias, types of their own (with biases of their own), slow synapses (some onto external neurons,
     some acting as conductances, some rising and kept through spikes), adaptation (if
-    adapting), depression with a second pool, keep_current, electrical and fast synapses, presynaptic inhibition and
-    background kicks."""
+    adapting), depression with a second pool, keep_current, electrical synapses (spikelets and conductances) and fast
+    synapses, presynaptic inhibition and background kicks."""
     rng = np.random.default_rng(seed)
     pick = lambda k: np.sort(rng.choice(n, k, replace=False))
     sparse_mv = lambda k, mu, sd: sparse.csr_matrix((rng.normal(mu, sd, k).astype(np.float32), tuple(rng.integers(0, n, (2, k)))),
@@ -651,6 +651,11 @@ def featured(seed: int, n: int, blocked: bool, adapting: bool) -> HybridBrain:
                           inhibitors=pick(n // 20), tau=(0.02, 0.2), k=(0.01, 0.004), depleting=pick(n // 10))
     brain.set_release(pick(n // 3), rng.normal(0.0, 10.0, n // 3))
     brain.own_depression = rng.random(len(brain.weights)) < 0.2
+    pairs = rng.integers(0, n, (2, n // 3))
+    pairs = pairs[:, pairs[0] != pairs[1]]
+    ratio = rng.uniform(0.005, 0.1, pairs.shape[1]).astype(np.float32)
+    brain.set_coupling(sparse.csr_matrix((np.r_[ratio, ratio], (np.r_[pairs[0], pairs[1]], np.r_[pairs[1], pairs[0]])),
+                                         shape=(n, n)))
     return brain
 
 
@@ -864,6 +869,63 @@ def test_a_subthreshold_spikelet_only_adds_to_other_input():
     assert before is not None and abs(before - 3.0) < 1e-5
     assert float(brain.u[0, 1]) < before and fired == 0
 
+
+
+def coupled_pair(cc: float, **kw) -> HybridBrain:
+    """Two cells joined by a conductance with coupling coefficient cc (both ways), thresholds out of reach."""
+    labels = {"cell_type": np.array(["c0", "c1"]), "side": np.array(["L", "L"]), "superclass": np.array(["test", "test"])}
+    r = cc / (1 - cc)
+    ratio = sparse.csr_matrix((np.array([r, r], np.float32), ([1, 0], [0, 1])), shape=(2, 2))
+    return HybridBrain(matrix=sparse.csr_matrix((2, 2), dtype=np.float32), labels=labels, w_syn=1.0, coupling=ratio, **kw)
+
+
+def test_a_conductance_gives_two_like_cells_their_coupling_coefficient():
+    """A steady 10 mV bias in one cell of a coupled pair moves the other by the coupling coefficient's share of its own
+    move, whichever cell holds it, and the same in pieces as at once; no coupling, no move."""
+    for cc in (0.023, 0.2):
+        for held in (0, 1):
+            bias = np.zeros(2, np.float32)
+            bias[held] = 10.0
+            brain = coupled_pair(cc, types={"all": {"threshold": 1e6}}, bias=bias)
+            brain.advance(20000)                                       # 2 s, 100 membrane time constants
+            u = brain.u[0]
+            assert abs(u[1 - held] / u[held] - cc) < 1e-4, (cc, held, u)
+    whole = coupled_pair(0.2, types={"all": {"threshold": 1e6}}, bias=np.array([10.0, 0.0], np.float32))
+    pieces = coupled_pair(0.2, types={"all": {"threshold": 1e6}}, bias=np.array([10.0, 0.0], np.float32))
+    whole.advance(3000)
+    for k in (1, 13, 986, 2000):
+        pieces.advance(k)
+    np.testing.assert_array_equal(whole.u, pieces.u)
+    alone = coupled_pair(0.2, types={"all": {"threshold": 1e6}}, bias=np.array([10.0, 0.0], np.float32))
+    alone.set_coupling(None)
+    alone.advance(20000)
+    assert abs(float(alone.u[0, 1])) < 1e-6 and abs(float(alone.u[0, 0]) - 10.0) < 1e-3
+
+
+def test_a_partners_reset_pulls_a_coupled_neuron_down_and_a_refractory_one_takes_nothing():
+    """c1 rests 5 mV up. When c0 fires (from a strong synapse; a driven neuron has no refractory period) and is held at
+    its reset, 5 mV below rest, through its refractory period, the conductance pulls c1 down, and c0's held voltage
+    doesn't move however c1 sits."""
+    labels = {"cell_type": np.array(["c0", "c1", "c2"]), "side": np.array(["L"] * 3), "superclass": np.array(["test"] * 3)}
+    r = 0.2 / 0.8
+    ratio = sparse.csr_matrix((np.array([r, r], np.float32), ([1, 0], [0, 1])), shape=(3, 3))
+    matrix = sparse.csr_matrix((np.array([400.0], np.float32), ([0], [2])), shape=(3, 3))     # c2 -> c0
+    brain = HybridBrain(matrix=matrix, labels=labels, w_syn=1.0, w_poi=20.0, coupling=ratio,
+                        types={"all": {"refractory": 0.01, "reset": -5.0}}, bias=np.array([0.0, 5.0, 0.0], np.float32))
+    brain.advance(5000)
+    before = float(brain.u[0, 1])
+    fired, held = None, []
+    for t in range(200):
+        c = brain.advance(1, drive=[([2], 1 / DT)] if t == 0 else ())[0]
+        if fired is None and c[0]:
+            fired = t
+        elif fired is not None and t - fired <= 50:                     # 5 ms of c0's 10 ms refractory period
+            held.append(float(brain.u[0, 0]))
+            if t - fired == 50:
+                after = float(brain.u[0, 1])
+    assert fired is not None and len(held) == 50
+    assert all(h == -5.0 for h in held), held[:3]
+    assert after < before - 0.2, (before, after)                        # toward 3 mV, over 16 ms
 
 
 def fast_pair(size: float, types: dict | None = None) -> HybridBrain:

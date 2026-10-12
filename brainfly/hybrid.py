@@ -282,7 +282,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
              pfast, pslow, pinh, pdep, pdecay, pinc, pk, ppow, poff, psrc, preA,
              drive_idx, drive_p, w_poi, driven, external, internal, E, noise_lambda, noise_kick, members, member_start,
              silenced, counts, timeline, bin_start, bin_steps, rec_pos, rec_out,
-             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, slow_ri, a_rr, skeep, sr, own):
+             blocked, ka, kb, kc, kt, kd, kva, kaa, kth, slow_list, slow_vs, slow_ss, slow_ri, a_rr, skeep, sr, own,
+             c_list, c_ptr, c_idx, c_k):
     """Advance every trial `steps` steps from global step t0, in Brian2's order as brainfly.shiu does:
     integrate the neurons that aren't refractory, find the spiking ones over threshold, update graded
     release, deliver the input due now (spikes from `delay` steps ago, graded release, Poisson drive)
@@ -322,7 +323,10 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
     with a rising stage (a_rr, its per-step decay, not 0; sr holds it, when any class has one) takes its slow input there
     and passes 1 - a_rr of it into the slow current each step; a class that keeps its slow current (skeep) isn't held
     while refractory. A fast synapse flagged in own (when given) carries the strength its neuron's slow synapses do, by
-    the class's own depression and recovery for them (depress_s, recover_s), instead of the fast one's."""
+    the class's own depression and recovery for them (depress_s, recover_s), instead of the fast one's. Electrical
+    synapses as conductances: each listed neuron c_list[q] moves by c_k[e] x (u[c_idx[e]] - u[c_list[q]]) for each of
+    its partners e in c_ptr[q]:c_ptr[q + 1], from the voltages the step starts with, delivered with the step's other input
+    (so a refractory neuron, held at its reset, pulls its partners toward it and takes nothing from them)."""
     trials, n = u.shape
     slow = len(sw) > 0
     rise_on = sr.shape[1] > 0
@@ -334,8 +338,10 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
     fdelay, nf = fpend.shape[1], fpend.shape[2]
     recording = len(rec_pos) > 0
     npre = len(pk) > 0
+    nc = len(c_list)
     for b in numba.prange(trials):
         fired = np.empty(n, np.int64)
+        cd = np.empty(nc, np.float32)          # each coupled neuron's move through its conductances this step
         # this trial's state in arrays of its own while it runs, which the compiler optimises better
         ub, xb, sb, untilb, Rb = u[b].copy(), x[b].copy(), s[b].copy(), until[b].copy(), R[b].copy()
         RSb = RS[b].copy()
@@ -370,6 +376,12 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                             rsr[kept] = rsr[q]
                     kept += 1
             rn = kept
+            for q in range(nc):                # electrical conductances, from the voltages the step starts with
+                i = c_list[q]
+                tot = np.float32(0.0)
+                for e in range(c_ptr[q], c_ptr[q + 1]):
+                    tot += c_k[e] * (ub[c_idx[e]] - ub[i])
+                cd[q] = tot
             m = 0
             if uniform:
                 m = _integrate_uniform(n, ub, xb, adb, tonic, A, B, C, TH, VA, AA, a_xx, external, tonic_on, adapt_on, fired)
@@ -437,6 +449,8 @@ def _advance(t0, steps, delay, dt, ptr, idx, w, full, sptr, sidx, sw, sfull, sta
                 if frow[q] != 0.0:
                     ub[ftargets[q]] += frow[q]
                     frow[q] = 0.0
+            for q in range(nc):                # and the conductances' moves
+                ub[c_list[q]] += cd[q]
             for q in range(len(drive_idx)):
                 if _uniform(rng, b) < drive_p[q]:
                     ub[drive_idx[q]] += w_poi
@@ -609,7 +623,7 @@ class HybridBrain:
     also in matrix), with tau_slow its time constant, s. gap: electrical synapses, in mV, rows
     postsynaptic: each spike of a presynaptic neuron raises the postsynaptic one's membrane by that
     much at once, with no synaptic delay and no depression (give one direction only for a rectifying
-    junction). fast: synapses fast and strong enough to act as jumps of the membrane, in mV, rows
+    junction); coupling (see set_coupling) gives them as conductances instead or as well. fast: synapses fast and strong enough to act as jumps of the membrane, in mV, rows
     postsynaptic (a fly's PSI onto its flight motor neurons, say): each spike raises the target by that much
     times the spike's strength under its neuron's depression, fast_delay s later, and the target can fire on
     the step after. w_poi: mV per Poisson event (default
@@ -625,7 +639,8 @@ class HybridBrain:
                  slow: sparse.spmatrix | None = None, tau_slow: float = 0.1, w_poi: float | None = None,
                  gap: sparse.spmatrix | None = None, fast: sparse.spmatrix | None = None, fast_delay: float = 3e-4,
                  scale: np.ndarray | None = None, bias: np.ndarray | None = None, seed: int = 0,
-                 labels: dict[str, np.ndarray] | None = None, sets: dict[str, np.ndarray] | None = None):
+                 labels: dict[str, np.ndarray] | None = None, sets: dict[str, np.ndarray] | None = None,
+                 coupling: sparse.spmatrix | None = None):
         if labels is None:
             data = ensure_data(data)
             meta = np.load(data / "brain.npz")
@@ -648,6 +663,7 @@ class HybridBrain:
         self.full_strength = np.zeros(len(self._counts), np.bool_)    # synapses exempt from their neuron's depression
         G = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if gap is None else sparse.csc_matrix(gap, dtype=np.float32)
         self.gptr, self.gidx, self.gap_mv = G.indptr, G.indices, G.data.astype(np.float32)
+        self.set_coupling(coupling)
         F = sparse.csc_matrix((self.n, self.n), dtype=np.float32) if fast is None else sparse.csc_matrix(fast, dtype=np.float32)
         self.fptr, self.fast_mv = F.indptr, F.data.astype(np.float32)
         self.ftargets = np.unique(F.indices).astype(np.int64)            # the fast synapses' targets, compactly
@@ -876,6 +892,30 @@ class HybridBrain:
                                   else np.tile(self._presynaptic["start"], (self.trials, 1)))
         self.t = 0
 
+    def set_coupling(self, ratio: sparse.spmatrix | None) -> None:
+        """Electrical synapses as conductances. ratio[i, j] is the junction's conductance from neuron j onto neuron i as
+        a share of i's leak conductance (g_c / g_L; two like cells with coupling coefficient CC have CC / (1 - CC) each
+        way, so give both directions for a junction that doesn't rectify). Each step a listed neuron's membrane moves by
+        (1 - exp(-dt / tau_m)) x ratio x (u_j - u_i), from the voltages the step starts with: a partner's subthreshold
+        changes reach it, and so does a partner's reset after a spike. A spike's own brief depolarization isn't in the
+        model's voltage; give it as a spikelet in gap. None (or an empty matrix) removes them."""
+        R = sparse.csr_matrix((self.n, self.n), dtype=np.float32) if ratio is None else sparse.csr_matrix(ratio, dtype=np.float32)
+        R.eliminate_zeros()
+        rows = np.flatnonzero(np.diff(R.indptr)).astype(np.int64)
+        if len(rows) and np.any(R.diagonal() != 0):
+            raise ValueError("coupling: a neuron can't be coupled to itself")
+        sub = R[rows]
+        self.coupled, self._cpl_ptr = rows, sub.indptr.astype(np.int64)
+        self._cpl_idx, self._cpl_ratio = sub.indices.astype(np.int64), sub.data.astype(np.float32)
+
+    def _coupling_args(self, k: dict) -> tuple:
+        """The kernel's c_list, c_ptr, c_idx and c_k: each conductance's share of the step by its target's tau_m."""
+        if not len(self.coupled):
+            return np.zeros(0, np.int64), np.zeros(1, np.int64), np.zeros(0, np.int64), np.zeros(0, np.float32)
+        target = np.repeat(self.coupled, np.diff(self._cpl_ptr))
+        share = (1.0 - k["a_vv"][self.cls[target]].astype(np.float64)) * self._cpl_ratio
+        return self.coupled, self._cpl_ptr, self._cpl_idx, share.astype(np.float32)
+
     def _own_flags(self) -> np.ndarray:
         """brain.own_depression for the kernel: one flag per fast synapse, or empty when none is flagged."""
         own = getattr(self, "own_depression", None)
@@ -953,7 +993,7 @@ class HybridBrain:
                  np.zeros((self.trials, 0), np.int64) if timeline is None else timeline, int(bin_start), int(bin_steps),
                  rec_pos, np.zeros((self.trials, 0, 0), np.int8) if spikes is None else spikes,
                  bool(getattr(self, "blocked", True)), *self._blocked_tables(), k["a_rr"], k["skeep"], self._rise_state(k),
-                 self._own_flags())
+                 self._own_flags(), *self._coupling_args(k))
         self.t += int(steps)
         return counts
 
