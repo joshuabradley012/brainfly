@@ -21,6 +21,31 @@ against flies' (dlm_splay_state.md sections 2.3-2.4): the strong pairs r 0.336 a
 r 0.570-0.621, dip10 0.063-0.141, 0.34-0.58 times. 8 runs of 300 s after 3 s (seeds 4700 + 10 x condition, plus 100 x run
 in the shared condition).
 
+Ran (2026-10-11, 76 s): with every unit at one rate, the leaky integrator's splayness falls inside flies' range, and
+the pairs show where it falls short. The weakly coupled MN1-4 pairs avoid each other only about half as much as flies'.
+- Rates matched: 6.46-6.70 Hz across the five units in every condition.
+- LIF, MN5 assumed (ISI CV 0.22 for MN1-4, 0.26 for MN5):
+  - splayness 0.746 (flies 0.73-0.79), preferred orders 61% of windows (48-70%), coincidences 0.68 times chance, and
+    24% of windows with a repeat (flies 5-20%);
+  - strong pairs: r 0.31, dip10 0.03, within 10 ms at 0.23 times chance, the partner at 0.50 of the cycle with vector
+    strength 0.67. Flies' two strong pairs: medians r 0.336 and 0.394 (per fly 0.27-0.51), dip10 0.006 and 0.025
+    (per fly 0-0.13), within 10 ms 0.05 and 0.20, vector strength 0.73 and 0.70;
+  - weak pairs: r 0.64 (flies 0.60-0.67), but dip10 0.09 (0.03-0.06) and within 10 ms 0.50-0.52 times chance
+    (0.16-0.31);
+  - MN5's pairs: r 0.59 and dip10 0.11, inside flies' (0.57-0.62 and 0.06-0.14); within 10 ms 0.59-0.64 (0.34-0.58).
+- LIF, MN5 as weak pairs: nearly the same (splayness 0.747; MN5's pairs r 0.57-0.58, dip10 0.10, within 10 ms
+  0.56-0.60).
+- LIF + spikelets: the strong pairs fire together (dip10 0.56, within 10 ms 4.5 times chance), splayness 0.53.
+- AHP, 95% shared + spikelets, MN5 as weak pairs: splayness 0.661. The strong pairs come out as flies' (r 0.43-0.46,
+  dip10 0.03-0.04, within 10 ms 0.11-0.18 times chance), but the weak pairs and MN5's fire about independently (within
+  10 ms 0.80-1.04 times chance, dip10 0.15-0.19).
+So comparing pair by pair, as flies' data allow, locates the shortfall. With the leaky integrator at one rate, the
+strongly coupled pairs and MN5's come out about as flies', and splayness falls inside flies' range. But the weakly
+coupled MN1-4 pairs avoid each other only about half as much as flies' pairs do. With flies' AHP, which the spikelets
+need, the weak pairs don't avoid each other at all. The JSON's pairs_inside_flies flags compare with the range between
+flies' pair medians, not with flies' per-fly ranges, so they are strict: no pair passes all three, though many lie
+within flies' per-fly ranges.
+
     python experiments/dlm_splay_check6.py      (writes experiments/dlm_splay_check6.json)
 """
 from __future__ import annotations
