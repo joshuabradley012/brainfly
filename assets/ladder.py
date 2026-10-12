@@ -66,7 +66,7 @@ def rungs() -> list[dict]:
                    (False, "motor neurons drive muscles")]},
         {"name": "Flight, neck and song", "status": "started",     # groundwork: dlm_splay_check2-12, song probes, neck probes
          "marks": [(False, "flight MNs splay (five units)"), (False, "song pulses ~35 ms apart (none yet)"),
-                   (False, "neck yaw MNs follow a drum (exploratory)"), (False, "saccades")]},
+                   (True, "neck yaw MNs follow a drum (test passed)"), (False, "saccades")]},
         {"name": "State and learning", "status": "started" if verdict("rung9_learning", "verdicts") else "not started",     # attempt 1
          "marks": [(bool(verdict("rung9_learning", "verdicts", "PAIRED", "pass")), "pairing depresses MBON11's odor response"),
                    (bool(verdict("rung9_learning", "verdicts", "UNPAIRED", "pass")), "sparing the unpaired odor"),

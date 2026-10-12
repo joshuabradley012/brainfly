@@ -1,0 +1,714 @@
+{
+ "question": "Rung 8 groundwork test, pre-registered (written and committed before it runs): does a rotating drum reach the brain's\nyaw neck motor neurons with flies' sign, spare the pitch motor neuron CvN7 as flies' receptive-field map predicts, and\ndepend on the wiring?\n\nBackground:\n- research_notes/Rung 8 flight data/neck_head_control.md: about half of the fly's 49 neck motor neurons (MNs) sit in the\n  brain. The yaw MNs among them (VCvN1-3 = MaleCNS GNG647 and GNG314; CvN1/2 = GNG653) take synapses straight from the\n  HS cells on their side and H2 from the other. Their nerves leave on their soma side.\n- The exploratory probes neck_drive_probe.py and neck_pitch_probe.py found the yaw MNs following a yaw drum on the side\n  whose HS cells it excites, and CvN7 near rest. Review 14 corrected their readings.\n- This test runs the yaw result on fresh seeds, with criteria from fly data and scrambled wiring as the null.\nModel: rung6_relay.build(\"intact\") with its eyes (flyvis flow/0000/001 at gain 1), 8 flies, seed 8800, never used\nbefore. Scenes: eyes_at_rest.Setup.run, 1 s of grey then 2 s of a vertical sine grating (period 30 deg) on a drum\nrotating counterclockwise (seen from above; front-to-back across the left eye) or clockwise at 40 deg/s; rates from 0.5\nto 2 s. The same seed in both scenes.\nDirection signal of a cell type: (left - right under counterclockwise) - (left - right under clockwise), per fly, with t\nover the 8 flies (mean over sd/sqrt(8)). Sides are nerve sides: soma sides for VCvN, CvN1/2 and DNp15, the opposite side\nfor CvN7, whose axon crosses (BANC). A positive signal means the side whose HS cells the drum excites fires more.\nCriteria, all of which must hold:\n- YAW: VCvN1-3 (GNG647 and GNG314 together), CvN1/2 (GNG653) and DNp15 each have a positive direction signal with t >= 4.\n  Flies:\n  - HS cells depolarize to front-to-back motion on their own eye (Schnell et al. 2010).\n  - Blowfly VCNM, the VCvN counterpart, depolarizes to front-to-back motion on its own side (Haag et al. 2010; another\n    species).\n  - DNHS1 (DNp15) takes HS input and answers yaw best (Suver et al. 2016).\n  - Drosophila's HS-to-VCNM contact is anatomical (Pokusaeva et al. 2024).\n- SELECTIVITY: CvN7's direction signal is at most a quarter of VCvN1-3's in size. Flies: CvN7's receptive field\n  has a horizontal component of at most 0.8 mV, against 2.8 mV for downward motion (Gorko et al. 2024; the note's\n  \u00a71.3). Gorko et al. didn't rotate about the vertical axis.\n- NULL: in each of 2 degree-preserving rewirings (rung6_relay.relay_null(1) and (2), recalibrated and quieted as rung 6's\n  nulls were), VCvN1-3's direction signal is below half of the intact brain's, or its t is below 4. Same seed and scenes.\nReported, not scored: HS, H2, VS, DNa02, GNG283, GNG276, CvN4-6 (CvN6 by nerve side) and the brain's own mean rate, in\nevery network.\nA pass shows that the drum's yaw signal reaches the brain's yaw neck MNs with flies' sign, spares CvN7 as flies' map\npredicts, and depends on the wiring. It doesn't test rates (the model's run above flies' at rest), the head's movement,\nor which way a fly turns its head (the note's \u00a71.6).\n\n    python experiments/rung8_neck_yaw.py      (writes experiments/rung8_neck_yaw.json)\n",
+ "criteria": {
+  "YAW": {
+   "pass": true,
+   "by_group": {
+    "VCvN1-3": true,
+    "CvN1/2": true,
+    "DNp15": true
+   }
+  },
+  "SELECTIVITY": {
+   "pass": true,
+   "cvn7_over_vcvn": 0.0505
+  },
+  "NULL": {
+   "pass": true,
+   "by_rewiring": [
+    true,
+    true
+   ]
+  }
+ },
+ "intact": {
+  "cells": {
+   "VCvN1-3": {
+    "L": 2,
+    "R": 3
+   },
+   "CvN1/2": {
+    "L": 1,
+    "R": 1
+   },
+   "DNp15": {
+    "L": 1,
+    "R": 1
+   },
+   "CvN7": {
+    "L": 1,
+    "R": 1
+   },
+   "HS": {
+    "L": 3,
+    "R": 3
+   },
+   "H2": {
+    "L": 1,
+    "R": 1
+   },
+   "VS": {
+    "L": 9,
+    "R": 9
+   },
+   "DNa02": {
+    "L": 1,
+    "R": 1
+   },
+   "GNG283": {
+    "L": 1,
+    "R": 1
+   },
+   "GNG276": {
+    "L": 1,
+    "R": 1
+   },
+   "CvN4": {
+    "L": 1,
+    "R": 1
+   },
+   "CvN5": {
+    "L": 1,
+    "R": 1
+   },
+   "CvN6": {
+    "L": 1,
+    "R": 1
+   }
+  },
+  "own_mean_hz": {
+   "ccw": 5.01,
+   "cw": 4.984
+  },
+  "rates_hz": {
+   "ccw": {
+    "VCvN1-3": {
+     "L": 13.58,
+     "R": 1.83
+    },
+    "CvN1/2": {
+     "L": 10.25,
+     "R": 0.67
+    },
+    "DNp15": {
+     "L": 50.83,
+     "R": 1.42
+    },
+    "CvN7": {
+     "L": 2.5,
+     "R": 1.08
+    },
+    "HS": {
+     "L": 66.94,
+     "R": 0.0
+    },
+    "H2": {
+     "L": 73.17,
+     "R": 148.0
+    },
+    "VS": {
+     "L": 19.36,
+     "R": 12.75
+    },
+    "DNa02": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "GNG283": {
+     "L": 36.25,
+     "R": 2.83
+    },
+    "GNG276": {
+     "L": 23.92,
+     "R": 3.17
+    },
+    "CvN4": {
+     "L": 7.17,
+     "R": 3.67
+    },
+    "CvN5": {
+     "L": 4.17,
+     "R": 4.33
+    },
+    "CvN6": {
+     "L": 5.5,
+     "R": 18.5
+    }
+   },
+   "cw": {
+    "VCvN1-3": {
+     "L": 1.29,
+     "R": 12.67
+    },
+    "CvN1/2": {
+     "L": 0.5,
+     "R": 6.67
+    },
+    "DNp15": {
+     "L": 0.17,
+     "R": 68.25
+    },
+    "CvN7": {
+     "L": 1.42,
+     "R": 1.17
+    },
+    "HS": {
+     "L": 0.0,
+     "R": 67.56
+    },
+    "H2": {
+     "L": 150.08,
+     "R": 68.5
+    },
+    "VS": {
+     "L": 12.05,
+     "R": 14.08
+    },
+    "DNa02": {
+     "L": 0.0,
+     "R": 0.0
+    },
+    "GNG283": {
+     "L": 1.33,
+     "R": 41.25
+    },
+    "GNG276": {
+     "L": 1.5,
+     "R": 24.25
+    },
+    "CvN4": {
+     "L": 2.42,
+     "R": 5.83
+    },
+    "CvN5": {
+     "L": 2.08,
+     "R": 7.58
+    },
+    "CvN6": {
+     "L": 13.83,
+     "R": 2.83
+    }
+   }
+  },
+  "signals": {
+   "VCvN1-3": {
+    "direction_signal_hz": 23.125,
+    "t": 36.8
+   },
+   "CvN1/2": {
+    "direction_signal_hz": 15.75,
+    "t": 30.38
+   },
+   "DNp15": {
+    "direction_signal_hz": 117.5,
+    "t": 221.37
+   },
+   "CvN7": {
+    "direction_signal_hz": -1.167,
+    "t": -3.86
+   },
+   "HS": {
+    "direction_signal_hz": 134.5,
+    "t": 302.96
+   },
+   "H2": {
+    "direction_signal_hz": -156.417,
+    "t": -253.75
+   },
+   "VS": {
+    "direction_signal_hz": 8.648,
+    "t": 53.22
+   },
+   "DNa02": {
+    "direction_signal_hz": 0.0,
+    "t": 0.0
+   },
+   "GNG283": {
+    "direction_signal_hz": 73.333,
+    "t": 95.69
+   },
+   "GNG276": {
+    "direction_signal_hz": 43.5,
+    "t": 24.19
+   },
+   "CvN4": {
+    "direction_signal_hz": 6.917,
+    "t": 7.41
+   },
+   "CvN5": {
+    "direction_signal_hz": 5.333,
+    "t": 8.0
+   },
+   "CvN6": {
+    "direction_signal_hz": 24.0,
+    "t": 24.59
+   }
+  }
+ },
+ "nulls": [
+  {
+   "cells": {
+    "VCvN1-3": {
+     "L": 2,
+     "R": 3
+    },
+    "CvN1/2": {
+     "L": 1,
+     "R": 1
+    },
+    "DNp15": {
+     "L": 1,
+     "R": 1
+    },
+    "CvN7": {
+     "L": 1,
+     "R": 1
+    },
+    "HS": {
+     "L": 3,
+     "R": 3
+    },
+    "H2": {
+     "L": 1,
+     "R": 1
+    },
+    "VS": {
+     "L": 9,
+     "R": 9
+    },
+    "DNa02": {
+     "L": 1,
+     "R": 1
+    },
+    "GNG283": {
+     "L": 1,
+     "R": 1
+    },
+    "GNG276": {
+     "L": 1,
+     "R": 1
+    },
+    "CvN4": {
+     "L": 1,
+     "R": 1
+    },
+    "CvN5": {
+     "L": 1,
+     "R": 1
+    },
+    "CvN6": {
+     "L": 1,
+     "R": 1
+    }
+   },
+   "own_mean_hz": {
+    "ccw": 10.221,
+    "cw": 10.158
+   },
+   "rates_hz": {
+    "ccw": {
+     "VCvN1-3": {
+      "L": 6.33,
+      "R": 8.5
+     },
+     "CvN1/2": {
+      "L": 2.08,
+      "R": 8.58
+     },
+     "DNp15": {
+      "L": 0.33,
+      "R": 9.25
+     },
+     "CvN7": {
+      "L": 1.67,
+      "R": 5.17
+     },
+     "HS": {
+      "L": 3.56,
+      "R": 8.17
+     },
+     "H2": {
+      "L": 3.42,
+      "R": 3.17
+     },
+     "VS": {
+      "L": 9.41,
+      "R": 8.81
+     },
+     "DNa02": {
+      "L": 0.42,
+      "R": 0.0
+     },
+     "GNG283": {
+      "L": 3.33,
+      "R": 15.17
+     },
+     "GNG276": {
+      "L": 4.08,
+      "R": 4.92
+     },
+     "CvN4": {
+      "L": 2.17,
+      "R": 9.08
+     },
+     "CvN5": {
+      "L": 5.25,
+      "R": 12.33
+     },
+     "CvN6": {
+      "L": 2.75,
+      "R": 8.42
+     }
+    },
+    "cw": {
+     "VCvN1-3": {
+      "L": 7.38,
+      "R": 10.06
+     },
+     "CvN1/2": {
+      "L": 2.42,
+      "R": 6.42
+     },
+     "DNp15": {
+      "L": 0.0,
+      "R": 7.92
+     },
+     "CvN7": {
+      "L": 3.92,
+      "R": 5.42
+     },
+     "HS": {
+      "L": 2.75,
+      "R": 6.28
+     },
+     "H2": {
+      "L": 4.92,
+      "R": 5.25
+     },
+     "VS": {
+      "L": 9.7,
+      "R": 8.4
+     },
+     "DNa02": {
+      "L": 1.33,
+      "R": 0.17
+     },
+     "GNG283": {
+      "L": 3.67,
+      "R": 16.25
+     },
+     "GNG276": {
+      "L": 3.25,
+      "R": 6.5
+     },
+     "CvN4": {
+      "L": 2.92,
+      "R": 3.5
+     },
+     "CvN5": {
+      "L": 6.0,
+      "R": 11.42
+     },
+     "CvN6": {
+      "L": 3.08,
+      "R": 6.17
+     }
+    }
+   },
+   "signals": {
+    "VCvN1-3": {
+     "direction_signal_hz": 0.514,
+     "t": 2.26
+    },
+    "CvN1/2": {
+     "direction_signal_hz": -2.5,
+     "t": -4.58
+    },
+    "DNp15": {
+     "direction_signal_hz": -1.0,
+     "t": -1.82
+    },
+    "CvN7": {
+     "direction_signal_hz": 2.0,
+     "t": 2.72
+    },
+    "HS": {
+     "direction_signal_hz": -1.083,
+     "t": -3.03
+    },
+    "H2": {
+     "direction_signal_hz": 0.583,
+     "t": 2.2
+    },
+    "VS": {
+     "direction_signal_hz": -0.713,
+     "t": -4.84
+    },
+    "DNa02": {
+     "direction_signal_hz": -0.75,
+     "t": -2.55
+    },
+    "GNG283": {
+     "direction_signal_hz": 0.75,
+     "t": 1.05
+    },
+    "GNG276": {
+     "direction_signal_hz": 2.417,
+     "t": 4.01
+    },
+    "CvN4": {
+     "direction_signal_hz": -6.333,
+     "t": -13.44
+    },
+    "CvN5": {
+     "direction_signal_hz": -1.667,
+     "t": -1.75
+    },
+    "CvN6": {
+     "direction_signal_hz": 2.583,
+     "t": 3.66
+    }
+   },
+   "rewiring": 1,
+   "calibration_last": {
+    "round": 20,
+    "mean_hz_own": 1.659,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9997
+   }
+  },
+  {
+   "cells": {
+    "VCvN1-3": {
+     "L": 2,
+     "R": 3
+    },
+    "CvN1/2": {
+     "L": 1,
+     "R": 1
+    },
+    "DNp15": {
+     "L": 1,
+     "R": 1
+    },
+    "CvN7": {
+     "L": 1,
+     "R": 1
+    },
+    "HS": {
+     "L": 3,
+     "R": 3
+    },
+    "H2": {
+     "L": 1,
+     "R": 1
+    },
+    "VS": {
+     "L": 9,
+     "R": 9
+    },
+    "DNa02": {
+     "L": 1,
+     "R": 1
+    },
+    "GNG283": {
+     "L": 1,
+     "R": 1
+    },
+    "GNG276": {
+     "L": 1,
+     "R": 1
+    },
+    "CvN4": {
+     "L": 1,
+     "R": 1
+    },
+    "CvN5": {
+     "L": 1,
+     "R": 1
+    },
+    "CvN6": {
+     "L": 1,
+     "R": 1
+    }
+   },
+   "own_mean_hz": {
+    "ccw": 10.203,
+    "cw": 10.161
+   },
+   "rates_hz": {
+    "ccw": {
+     "VCvN1-3": {
+      "L": 10.04,
+      "R": 8.36
+     },
+     "CvN1/2": {
+      "L": 7.08,
+      "R": 7.42
+     },
+     "DNp15": {
+      "L": 0.0,
+      "R": 1.08
+     },
+     "CvN7": {
+      "L": 2.58,
+      "R": 2.5
+     },
+     "HS": {
+      "L": 7.78,
+      "R": 3.28
+     },
+     "H2": {
+      "L": 8.67,
+      "R": 2.17
+     },
+     "VS": {
+      "L": 9.67,
+      "R": 4.58
+     },
+     "DNa02": {
+      "L": 0.67,
+      "R": 0.58
+     },
+     "GNG283": {
+      "L": 1.75,
+      "R": 2.33
+     },
+     "GNG276": {
+      "L": 3.33,
+      "R": 4.58
+     },
+     "CvN4": {
+      "L": 9.17,
+      "R": 3.83
+     },
+     "CvN5": {
+      "L": 5.17,
+      "R": 4.75
+     },
+     "CvN6": {
+      "L": 7.58,
+      "R": 2.58
+     }
+    },
+    "cw": {
+     "VCvN1-3": {
+      "L": 5.92,
+      "R": 8.5
+     },
+     "CvN1/2": {
+      "L": 7.83,
+      "R": 1.83
+     },
+     "DNp15": {
+      "L": 0.58,
+      "R": 0.17
+     },
+     "CvN7": {
+      "L": 5.42,
+      "R": 2.42
+     },
+     "HS": {
+      "L": 6.5,
+      "R": 5.33
+     },
+     "H2": {
+      "L": 8.08,
+      "R": 1.5
+     },
+     "VS": {
+      "L": 8.27,
+      "R": 5.31
+     },
+     "DNa02": {
+      "L": 0.92,
+      "R": 0.92
+     },
+     "GNG283": {
+      "L": 3.08,
+      "R": 1.75
+     },
+     "GNG276": {
+      "L": 3.75,
+      "R": 2.92
+     },
+     "CvN4": {
+      "L": 4.42,
+      "R": 8.83
+     },
+     "CvN5": {
+      "L": 7.17,
+      "R": 4.58
+     },
+     "CvN6": {
+      "L": 8.67,
+      "R": 2.58
+     }
+    }
+   },
+   "signals": {
+    "VCvN1-3": {
+     "direction_signal_hz": 4.264,
+     "t": 12.59
+    },
+    "CvN1/2": {
+     "direction_signal_hz": -6.333,
+     "t": -11.85
+    },
+    "DNp15": {
+     "direction_signal_hz": -1.5,
+     "t": -4.97
+    },
+    "CvN7": {
+     "direction_signal_hz": 2.917,
+     "t": 7.0
+    },
+    "HS": {
+     "direction_signal_hz": 3.333,
+     "t": 16.55
+    },
+    "H2": {
+     "direction_signal_hz": -0.083,
+     "t": -0.22
+    },
+    "VS": {
+     "direction_signal_hz": 2.12,
+     "t": 10.12
+    },
+    "DNa02": {
+     "direction_signal_hz": 0.083,
+     "t": 0.13
+    },
+    "GNG283": {
+     "direction_signal_hz": -1.917,
+     "t": -3.08
+    },
+    "GNG276": {
+     "direction_signal_hz": -2.083,
+     "t": -4.21
+    },
+    "CvN4": {
+     "direction_signal_hz": 9.75,
+     "t": 11.95
+    },
+    "CvN5": {
+     "direction_signal_hz": -2.167,
+     "t": -4.48
+    },
+    "CvN6": {
+     "direction_signal_hz": 1.083,
+     "t": 1.8
+    }
+   },
+   "rewiring": 2,
+   "calibration_last": {
+    "round": 20,
+    "mean_hz_own": 1.65,
+    "over_100hz": 0,
+    "groups_within_2x": 0.9999
+   }
+  }
+ ],
+ "pass": true,
+ "seconds": 2494
+}

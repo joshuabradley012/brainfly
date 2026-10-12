@@ -35,6 +35,30 @@ A pass shows that the drum's yaw signal reaches the brain's yaw neck MNs with fl
 predicts, and depends on the wiring. It doesn't test rates (the model's run above flies' at rest), the head's movement,
 or which way a fly turns its head (the note's §1.6).
 
+Ran (2026-10-12, 42 minutes): passes on all three criteria.
+- YAW: pass.
+  - VCvN1-3: +23.1 Hz (t 36.8). Under counterclockwise, 13.6 Hz on the left and 1.8 on the right; under clockwise, 1.3
+    and 12.7.
+  - CvN1/2: +15.8 (t 30.4).
+  - DNp15: +117.5 (t 221).
+- SELECTIVITY: pass. CvN7's direction signal by nerve side is -1.17 Hz (t -3.9), 0.05 of VCvN1-3's (limit 0.25).
+- NULL: pass. VCvN1-3's signal is +0.51 Hz (t 2.3) in rewiring 1 and +4.26 (t 12.6) in rewiring 2, both below half of
+  the intact brain's 23.1 (11.6).
+  - In both rewirings HS loses its direction signal (-1.1 and +3.3, against +134.5), and the yaw MNs lose theirs with it.
+  - Rewiring 2 keeps a fifth of VCvN's signal. Some other cells pick up drum-locked differences through the scrambled
+    wiring there: CvN4 +9.8, CvN1/2 -6.3, CvN7 +2.9.
+- Both rewired brains were recalibrated as rung 6's nulls were: at rest their own neurons average 1.65-1.66 Hz, with
+  every group within twice its target. Under the drum they average 10.2 Hz, against the intact brain's 5.0.
+- Reported, intact:
+  - HS +134.5 (66.9 Hz on the excited side, 0 on the other); H2 -156; VS +8.6 (12-19 Hz under the drums);
+  - GNG283 +73; GNG276 +43.5;
+  - CvN6 +24 by nerve side; CvN4 +6.9; CvN5 +5.3;
+  - DNa02 silent (0 Hz).
+So the drum's yaw signal reaches the brain's yaw neck MNs with flies' sign. CvN7's direction signal stays small, as
+flies' receptive-field map predicts, and the effect depends on the wiring. As stated before the run, this doesn't test
+rates (the model's run above flies' at rest), the head's movement, or which way a fly turns its head. Two pitch MNs, not
+scored here, also follow the drum by nerve side: CvN6 through its HSS input, and CvN4 more weakly.
+
     python experiments/rung8_neck_yaw.py      (writes experiments/rung8_neck_yaw.json)
 """
 from __future__ import annotations
