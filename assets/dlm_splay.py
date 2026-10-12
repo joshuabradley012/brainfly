@@ -6,12 +6,14 @@ saved results (nothing by hand).
 
 Top: three clocks, 2 s of each condition played at a quarter speed. Each dot's angle is its phase, (t - t_n) /
 (t_n+1 - t_n), as Hürkey et al. 2023 compute it, so a splay state spreads the dots round the face and synchrony bunches
-them. The conditions are dlm_splay_check2.py's leaky-integrator units at flies' irregularity (CV 0.22) and 6.6 Hz:
-uncoupled; joined by conductances at flies' measured coupling coefficients; and with the spikes' own spikelets as
-well. Each is rerun here for 3 s (1 s discarded) with the check's own bias and kicks (seed 7). Under each clock, its 2
-s as a raster. Bottom: the splayness every check measured (300 s x 8 runs, medians), against flies' 0.73-0.79 and the
-0.59 that independent phases give: dlm_splay_check2.py's three conditions, dlm_splay_check3.py's unit with flies' AHP
-and spikelets, and dlm_splay_check4.py's with 95% of the irregularity shared, uncoupled and coupled.
+them. The conditions are leaky-integrator units at flies' irregularity (CV 0.22) and 6.6 Hz: uncoupled
+(dlm_splay_check2.py); joined by conductances fitted to flies' coupling coefficients as flies measured them, 20 ms
+peak ratios (dlm_splay_check5.py); and with the spikes' own spikelets as well (dlm_splay_check5.py). Each is rerun here
+for 3 s (1 s discarded) with its check's own bias, kicks and junctions (seed 7). Under each clock, its 2 s as a
+raster. Bottom: the splayness every check measured (300 s x 8 runs, medians), against flies' 0.73-0.79 and the
+0.59 that independent phases give: the clocks' conditions, the AHP unit with spikelets and 95% of its irregularity
+shared at flies' coupling (dlm_splay_check5.py) and uncoupled (dlm_splay_check4.py), and the first runs' coupling at
+about half flies' (dlm_splay_check2.py).
 """
 from __future__ import annotations
 
@@ -25,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "experiments"))
 import dlm_splay_check as c1                               # noqa: E402
+import dlm_splay_check5 as c5                              # noqa: E402
 
 OUT = Path(__file__).parent
 FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif"
@@ -34,8 +37,8 @@ THEMES = {  # as in assets/looming.py
 }
 W, H = 1120, 660
 SHOW_S, SPEED, FPS = 2.0, 0.25, 20                         # model seconds shown, playback speed, keyframes per second
-CLOCKS = [("uncoupled", "Uncoupled (as shakB knockdown)"), ("measured", "Flies' measured coupling"),
-          ("+ spikelet", "…and the spikes' spikelets")]
+CLOCKS = [("uncoupled", "Uncoupled (as shakB knockdown)"), ("LIF, private", "At flies' measured coupling"),
+          ("LIF, private + spikelets", "…and the spikes' spikelets")]
 DOTS = ["ink", "red", "faint", "muted", "ink"]              # MN1-5; MN5 drawn hollow
 
 
@@ -44,13 +47,15 @@ def text(x, y, s, cls, anchor="start"):
     return f'<text x="{x:.1f}" y="{y:.1f}" class="{cls}" text-anchor="{anchor}">{s}</text>'
 
 
-def rerun(d2: dict, name: str) -> list[np.ndarray]:
-    """3 s of a dlm_splay_check2.py condition, its own bias and kicks, one run (seed 7); the last 2 s of spikes."""
+def rerun(d2: dict, d5: dict, name: str) -> list[np.ndarray]:
+    """3 s of a condition (dlm_splay_check2.py's uncoupled, dlm_splay_check5.py's others), its own bias, kicks and
+    junctions, one run (seed 7); the last 2 s of spikes."""
     hz = d2["calibration"]["chosen"]["kick_hz"]
-    bias = d2["conditions"][name]["bias_mv"]
-    coupling = None if name == "uncoupled" else c1.ratios(0.023, 0.011, 0.0075)
-    spikelet = c1.SPIKELET_MV if name == "+ spikelet" else 0.0
-    b = c1.brain(bias, hz, coupling, spikelet)
+    if name == "uncoupled":
+        b = c1.brain(d2["conditions"]["uncoupled"]["bias_mv"], hz)
+    else:
+        coupling, gap = c5.matrices(d5["ratio_fitted_20ms"], spikelets=name.endswith("spikelets"))
+        b = c5.unit("LIF", d5["conditions"][name]["bias_mv"], hz, c1.KICK_MV, coupling, gap, c1.RUNS)
     b.reset(7)
     b.advance(10000)
     _, sp = b.advance(int(round(SHOW_S / c1.DT)), record=np.arange(c1.N))
@@ -79,9 +84,9 @@ def figure(theme: str, d2: dict, runs: dict, splay: list) -> str:
     c = THEMES[theme]
     loop = SHOW_S / SPEED
     ts = np.linspace(0.0, SHOW_S, int(loop * FPS) + 1)
-    out = [text(24, 30, "The flight motor neurons' splay state, from flies' measured coupling", "lab"),
-           text(24, 50, "Flies' five DLM motor neurons fire at one rate but avoid firing together (Hürkey et al. 2023). Joined by conductances set from flies'", "note"),
-           text(24, 68, "measured coupling (converted as steady-state: about half flies' 20 ms ratio), five of the model's units spread round the cycle; the spikes' spikelets bunch them.", "note")]
+    out = [text(24, 30, "The flight motor neurons' splay state at flies' measured coupling", "lab"),
+           text(24, 50, "Flies' five DLM motor neurons fire at one rate but avoid firing together (Hürkey et al. 2023). Joined by conductances fitted to flies'", "note"),
+           text(24, 68, "coupling, five of the model's units spread round the cycle; the spikes' spikelets bunch them, unless the units carry flies' long AHP.", "note")]
     keyframes, rules = [], []
     for col, (name, label) in enumerate(CLOCKS):
         cx, cy, r = 190 + col * 370, 222, 80
@@ -153,16 +158,16 @@ def figure(theme: str, d2: dict, runs: dict, splay: list) -> str:
 
 def main() -> None:
     d2 = json.loads((ROOT / "experiments" / "dlm_splay_check2.json").read_text())
-    d3 = json.loads((ROOT / "experiments" / "dlm_splay_check3.json").read_text())
     d4 = json.loads((ROOT / "experiments" / "dlm_splay_check4.json").read_text())
-    runs = {name: rerun(d2, name) for name, _ in CLOCKS}
-    s2, s3 = d2["conditions"], d3["conditions"]
+    d5 = json.loads((ROOT / "experiments" / "dlm_splay_check5.json").read_text())
+    runs = {name: rerun(d2, d5, name) for name, _ in CLOCKS}
+    s2, s5 = d2["conditions"], d5["conditions"]
     splay = [("uncoupled", s2["uncoupled"]["summary"]["splayness"][0], False),
-             ("measured coupling", s2["measured"]["summary"]["splayness"][0], True),
-             ("measured + spikelets", s2["+ spikelet"]["summary"]["splayness"][0], False),
-             ("flies' AHP, measured + spikelets", s3["measured + spikelet"]["summary"]["splayness"][0], False),
-             ("…irregularity 95% shared, uncoupled", d4["shares"]["0.95"]["conditions"]["uncoupled"]["summary"]["splayness"][0], False),
-             ("…irregularity 95% shared, coupled", d4["shares"]["0.95"]["conditions"]["measured + spikelet"]["summary"]["splayness"][0], True)]
+             ("flies' coupling", s5["LIF, private"]["summary"]["splayness"][0], True),
+             ("flies' coupling + spikelets", s5["LIF, private + spikelets"]["summary"]["splayness"][0], False),
+             ("flies' AHP, 95% shared, uncoupled", d4["shares"]["0.95"]["conditions"]["uncoupled"]["summary"]["splayness"][0], False),
+             ("flies' AHP, 95% shared, coupled + spikelets", s5["AHP, 95% shared + spikelets"]["summary"]["splayness"][0], True),
+             ("first runs: half flies' coupling", s2["measured"]["summary"]["splayness"][0], False)]
     for theme in THEMES:
         path_ = OUT / f"dlm_splay-{theme}.svg"
         path_.write_text(figure(theme, d2, runs, splay))

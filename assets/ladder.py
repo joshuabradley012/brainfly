@@ -64,14 +64,14 @@ def rungs() -> list[dict]:
          "marks": [(bool(verdict("closed_loop", "result", "pass")), "NeuroMechFly walks, steered by DNa02"),
                    (bool(verdict("jump_calibration", "bilateral", "took_off")), "jumps from jump motor neuron spikes"),
                    (False, "motor neurons drive muscles")]},
-        {"name": "Flight, neck and song", "status": "started",     # groundwork: dlm_splay_check2-4
-         "marks": [(False, "flight motor neurons splay as flies' do (groundwork on five units)"),
-                   (False, "saccades, head pose, song pulses")]},
+        {"name": "Flight, neck and song", "status": "started",     # groundwork: dlm_splay_check2-5, song_drive_probe
+         "marks": [(False, "flight motor neurons splay (groundwork, five units)"),
+                   (False, "song pulses ~35 ms apart (none yet)"), (False, "saccades, head pose")]},
         {"name": "State and learning", "status": "started" if verdict("rung9_learning", "verdicts") else "not started",     # attempt 1
-         "marks": [(bool(verdict("rung9_learning", "verdicts", "PAIRED", "pass")), "pairing depresses MBON11's response to the odor"),
-                   (bool(verdict("rung9_learning", "verdicts", "UNPAIRED", "pass")), "sparing the unpaired odor as flies' does"),
+         "marks": [(bool(verdict("rung9_learning", "verdicts", "PAIRED", "pass")), "pairing depresses MBON11's odor response"),
+                   (bool(verdict("rung9_learning", "verdicts", "UNPAIRED", "pass")), "sparing the unpaired odor"),
                    (bool(verdict("rung9_learning", "verdicts", "RECIPROCAL", "pass")), "both ways round (attempt 1: one way)"),
-                   (False, "final hurdle: resting FC, once arousal sets the brain-wide state")]},
+                   (False, "resting FC with arousal (final)")]},
     ]
 
 
