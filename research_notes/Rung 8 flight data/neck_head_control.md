@@ -931,6 +931,30 @@ All rigid-tether (body-fixed) flight unless stated. Values are [P] unless marked
   ratio of 0.12-0.16 for wide-field stimuli.
 - In review 14's note above, the Erginkaya range (-0.9 to -0.35) is §4.2's. Item 7 gives only about -0.65.
 
+**Note (2026-10-17, model checks).** Three exploratory checks in rung 6's brain with its eyes tested §3.4's two-hop
+estimates and §7.2's null (experiments/neck_lesion_check.py, neck_route_check.py and neck_ocg_check.py; one seed, 8
+flies). They are model results, not fly data.
+- Deleting only VS's synapses onto CvN4-7 doesn't cut CvN7's modulation by the direct share. It reverses it: +3.9 Hz
+  down minus up becomes -2.1. Other inputs drive the pitch MNs toward upward motion, and VS outweighs them only in
+  CvN7.
+- §3.4's VS-to-OCG01f-to-CvN route is real in the model and stronger than W2 suggests.
+  - OCG01f fires 37-46 Hz to downward stripes and 1-7 to upward ones, and VS drives all of that response (109% of its
+    vertical drive change; OCG01b -9%).
+  - Its opposing drive is 0.8 of VS's direct drive onto CvN7 and 1.4 onto CvN6, against W2/W1 of about 0.4.
+  - Cutting OCG01f's 7 connections onto CvN4-7 takes CvN7 from +3.9 to +31.8 Hz (down minus up) and CvN6 from -0.9 to
+    +32.1. CvN7's yaw-to-vertical ratio falls from 0.34 to 0.02, against the RF map's 0.12-0.16 (§1.3 and review
+    15's note).
+- The rank-1 VS cells (§3.2) take 53-60% of their excitatory input from T4b/T5b in the model. They fire 109-114 Hz to
+  back-to-front motion on their own eye and 50 Hz to front-to-back. Through them VS gives 54% of CvN6's drum drive,
+  HSS 29% and H2 20%.
+- HS and H2 give the yaw MNs 49-68% of their direction-selective drive (CvN1/2 19%; §3.4's "direct dominates" for
+  GNG283 holds). Cutting them removes 70-88% of the spike signal (CvN1/2 39%), because H2's response to the pattern
+  also supplies most of the cells' drive under the drum.
+- Which balance is fly-like isn't settled.
+  - At rest, flies' CvN7 answers wide-field rotation subthreshold (§1.3). That is nearer the intact model.
+  - CNMN6/7's pitch tuning and their electrical VS input (§6) point the other way, as does OCG01f's missing ocellar
+    input (§3.4).
+
 ## Sources
 
 Neck MNs and connectomes:
