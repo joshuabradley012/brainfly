@@ -1,0 +1,310 @@
+{
+ "question": "Exploratory check, written before it runs, not pre-registered and not a change to the model: does OCG01f's inhibition\nkeep CvN7's downward response weak in rung 6's brain, and what drives OCG01f?\n\nneck_route_check.py:\n- VS gives CvN7 +15.7 mV more drive under downward stripes than upward ones. OCG01f, glutamatergic and so inhibitory in\n  the model, takes 12.8 of it back, which leaves CvN7 firing only about 4 Hz more to downward motion. Onto CvN6 OCG01f's\n  opposing drive (-16.8 mV) exceeds VS's (+11.7).\n- OCG01f is a cell of the ocellar ganglion, which MaleCNS lacks. So in the model it keeps only its brain inputs: 54%\n  from OCG01b and 18% from VS (research note \u00a73.4). The note predicted from the wiring that this route would oppose the\n  direct one at about 0.4 of its size; in the model it is 0.8 of it onto CvN7.\n- CvN7's yaw signal is 0.34 of its vertical one on this seed (0.28 on seed 8800). Gorko et al.'s map, summed linearly,\n  predicts 0.12-0.16.\nModel and scenes are neck_route_check.py's: the intact brain, seed 7720, 8 flies; grey, the drum each way, stripes down\nand up; rates from 0.5 to 2 s; its loop, with each spike weighted by its strength under its neuron's depression. Two\nconditions: intact, and every synapse from OCG01f onto CvN4-7 set to zero.\nMeasured:\n- CvN4-7's vertical signals (down - up, both cells) and drum signals by nerve side, and CvN7's yaw-to-vertical ratio,\n  in each condition;\n- OCG01f's and OCG01b's rates in each scene, by side;\n- OCG01f's inputs, as neck_route_check.py computes drives: their vertical drive change (down - up, in mV per OCG01f\n  cell), VS's and OCG01b's shares of it, and the 8 input types with the largest change;\n- the T4/T5 subtypes' shares of the excitatory input of each VS cell presynaptic to CvN6 or CvN7, from the connectome.\nRead:\n- If the cut raises CvN7's vertical signal by half or more, OCG01f's inhibition is what keeps it weak.\n- CvN7's yaw-to-vertical ratio with the cut, against the map's 0.12-0.16. If it falls there, the map's selectivity\n  appears once OCG01f's inhibition is gone. Either way the model's CvN7 tuning then rests on a cell whose ocellar input\n  is missing.\n- If VS carries most of OCG01f's vertical drive change, OCG01f is feedforward inhibition from VS. If OCG01b does,\n  whatever drives OCG01b sets it.\n\n    python experiments/neck_ocg_check.py      (writes experiments/neck_ocg_check.json)\n",
+ "cut": {
+  "edges": 7,
+  "summed_weight_mv": -180.7
+ },
+ "conditions": {
+  "intact": {
+   "pitch": {
+    "CvN4": {
+     "yaw_hz": 5.917,
+     "yaw_t": 8.66,
+     "vertical_hz": 1.083,
+     "vertical_t": 1.19
+    },
+    "CvN5": {
+     "yaw_hz": 5.0,
+     "yaw_t": 8.87,
+     "vertical_hz": 0.833,
+     "vertical_t": 1.05
+    },
+    "CvN6": {
+     "yaw_hz": 24.833,
+     "yaw_t": 34.44,
+     "vertical_hz": -0.917,
+     "vertical_t": -0.86
+    },
+    "CvN7": {
+     "yaw_hz": -1.333,
+     "yaw_t": -2.83,
+     "vertical_hz": 3.917,
+     "vertical_t": 9.19
+    }
+   },
+   "rates_hz": {
+    "OCG01f": {
+     "grey": {
+      "L": 2.42,
+      "R": 2.0
+     },
+     "ccw": {
+      "L": 3.17,
+      "R": 16.58
+     },
+     "cw": {
+      "L": 12.42,
+      "R": 5.08
+     },
+     "down": {
+      "L": 37.42,
+      "R": 45.92
+     },
+     "up": {
+      "L": 1.42,
+      "R": 7.0
+     }
+    },
+    "OCG01b": {
+     "grey": {
+      "L": 2.0,
+      "R": 2.42
+     },
+     "ccw": {
+      "L": 2.42,
+      "R": 2.5
+     },
+     "cw": {
+      "L": 3.75,
+      "R": 1.67
+     },
+     "down": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "up": {
+      "L": 4.17,
+      "R": 0.25
+     }
+    }
+   },
+   "cvn7_yaw_over_vertical": 0.34,
+   "ocg01f_inputs": {
+    "vertical_change_mv": {
+     "mv": 12.189,
+     "t": 132.58
+    },
+    "vs_share": 1.09,
+    "ocg01b_share": -0.094,
+    "top": [
+     {
+      "type": "VS1,VS2,VS3,VS4,VS5,VS6,VS7,VS8",
+      "cells": 5,
+      "weight_mv": 63.74,
+      "vertical_change_mv": 13.29
+     },
+     {
+      "type": "OCG01b",
+      "cells": 2,
+      "weight_mv": 193.08,
+      "vertical_change_mv": -1.15
+     },
+     {
+      "type": "AOTU052a",
+      "cells": 1,
+      "weight_mv": -1.44,
+      "vertical_change_mv": 0.341
+     },
+     {
+      "type": "MeLp2",
+      "cells": 2,
+      "weight_mv": -22.42,
+      "vertical_change_mv": -0.223
+     },
+     {
+      "type": "PS126",
+      "cells": 2,
+      "weight_mv": 39.05,
+      "vertical_change_mv": -0.089
+     },
+     {
+      "type": "cML02",
+      "cells": 1,
+      "weight_mv": 0.48,
+      "vertical_change_mv": -0.011
+     },
+     {
+      "type": "CB4068",
+      "cells": 2,
+      "weight_mv": -3.43,
+      "vertical_change_mv": 0.01
+     },
+     {
+      "type": "DNp22",
+      "cells": 1,
+      "weight_mv": 0.54,
+      "vertical_change_mv": 0.01
+     }
+    ]
+   }
+  },
+  "OCG01f cut": {
+   "pitch": {
+    "CvN4": {
+     "yaw_hz": 5.917,
+     "yaw_t": 8.66,
+     "vertical_hz": 1.25,
+     "vertical_t": 1.3
+    },
+    "CvN5": {
+     "yaw_hz": 7.417,
+     "yaw_t": 10.67,
+     "vertical_hz": 5.833,
+     "vertical_t": 10.69
+    },
+    "CvN6": {
+     "yaw_hz": 33.0,
+     "yaw_t": 38.62,
+     "vertical_hz": 32.083,
+     "vertical_t": 29.32
+    },
+    "CvN7": {
+     "yaw_hz": 0.583,
+     "yaw_t": 1.37,
+     "vertical_hz": 31.75,
+     "vertical_t": 25.46
+    }
+   },
+   "rates_hz": {
+    "OCG01f": {
+     "grey": {
+      "L": 2.42,
+      "R": 2.0
+     },
+     "ccw": {
+      "L": 3.17,
+      "R": 16.58
+     },
+     "cw": {
+      "L": 12.42,
+      "R": 5.08
+     },
+     "down": {
+      "L": 37.42,
+      "R": 45.92
+     },
+     "up": {
+      "L": 1.42,
+      "R": 7.0
+     }
+    },
+    "OCG01b": {
+     "grey": {
+      "L": 2.0,
+      "R": 2.42
+     },
+     "ccw": {
+      "L": 2.42,
+      "R": 2.5
+     },
+     "cw": {
+      "L": 3.75,
+      "R": 1.67
+     },
+     "down": {
+      "L": 0.0,
+      "R": 0.0
+     },
+     "up": {
+      "L": 4.17,
+      "R": 0.25
+     }
+    }
+   },
+   "cvn7_yaw_over_vertical": 0.018
+  }
+ },
+ "vs_cells": [
+  {
+   "cell": 4,
+   "side": "L",
+   "t4t5_share": {
+    "T4a": 0.0,
+    "T4b": 0.266,
+    "T4c": 0.001,
+    "T4d": 0.252,
+    "T5a": 0.0,
+    "T5b": 0.268,
+    "T5c": 0.0,
+    "T5d": 0.208
+   }
+  },
+  {
+   "cell": 8,
+   "side": "R",
+   "t4t5_share": {
+    "T4a": 0.0,
+    "T4b": 0.298,
+    "T4c": 0.0,
+    "T4d": 0.216,
+    "T5a": 0.0,
+    "T5b": 0.301,
+    "T5c": 0.0,
+    "T5d": 0.178
+   }
+  },
+  {
+   "cell": 28,
+   "side": "R",
+   "t4t5_share": {
+    "T4a": 0.0,
+    "T4b": 0.071,
+    "T4c": 0.0,
+    "T4d": 0.429,
+    "T5a": 0.0,
+    "T5b": 0.092,
+    "T5c": 0.0,
+    "T5d": 0.405
+   }
+  },
+  {
+   "cell": 60,
+   "side": "L",
+   "t4t5_share": {
+    "T4a": 0.0,
+    "T4b": 0.057,
+    "T4c": 0.002,
+    "T4d": 0.443,
+    "T5a": 0.0,
+    "T5b": 0.073,
+    "T5c": 0.003,
+    "T5d": 0.419
+   }
+  },
+  {
+   "cell": 98,
+   "side": "R",
+   "t4t5_share": {
+    "T4a": 0.015,
+    "T4b": 0.005,
+    "T4c": 0.0,
+    "T4d": 0.493,
+    "T5a": 0.011,
+    "T5b": 0.003,
+    "T5c": 0.0,
+    "T5d": 0.471
+   }
+  },
+  {
+   "cell": 129326,
+   "side": "L",
+   "t4t5_share": {
+    "T4a": 0.04,
+    "T4b": 0.001,
+    "T4c": 0.0,
+    "T4d": 0.443,
+    "T5a": 0.039,
+    "T5b": 0.001,
+    "T5c": 0.0,
+    "T5d": 0.472
+   }
+  }
+ ],
+ "vertical_gain_with_cut": {
+  "CvN4": 1.154,
+  "CvN5": 7.002,
+  "CvN6": -34.987,
+  "CvN7": 8.106
+ },
+ "seconds": 221
+}

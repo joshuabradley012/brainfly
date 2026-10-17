@@ -28,6 +28,51 @@ Read:
 - If VS carries most of OCG01f's vertical drive change, OCG01f is feedforward inhibition from VS. If OCG01b does,
   whatever drives OCG01b sets it.
 
+Ran (2026-10-17, 221 s): OCG01f's inhibition is what keeps CvN7's downward response weak, and CvN6's absent. Cutting its
+synapses onto CvN4-7 makes CvN7 eight times as downward-selective and blind to yaw: its ratio falls from 0.34 to 0.02,
+past the map's 0.12-0.16. VS drives all of OCG01f's vertical response, so in the model it is feedforward inhibition from
+VS.
+- The cut: 7 connections, -180.7 mV summed.
+- Intact, it reproduces neck_route_check.py: CvN7's vertical signal is +3.92 Hz (t 9.2), its yaw signal -1.33 (t -2.8).
+- With the cut, vertical signals (down - up) and drum signals by nerve side, intact to cut:
+  - CvN7: vertical +3.9 to +31.8 Hz (t 25); yaw -1.33 to +0.58 (t 1.4). Its yaw-to-vertical ratio falls from 0.34 to
+    0.018; the yaw signal's standard error alone is 0.013 of the vertical signal.
+  - CvN6: vertical -0.9 to +32.1 (t 29); yaw +24.8 to +33.0 (t 39).
+  - CvN5: vertical +0.8 to +5.8 (t 11); yaw +5.0 to +7.4 (t 11).
+  - CvN4 is unchanged (vertical +1.1 to +1.25).
+- OCG01f's rates, left and right:
+  - grey 2.4 and 2.0 Hz;
+  - downward stripes 37.4 and 45.9, upward 1.4 and 7.0;
+  - drum 12.4 (left) under clockwise and 16.6 (right) under counterclockwise, which is back-to-front across each cell's
+    own eye; 3.2 and 5.1 under the other.
+  - OCG01b stays at 0-4.2 Hz in every scene.
+- OCG01f's vertical drive change is +12.2 mV per cell (t 133). VS's five cells onto it give 109% of that (63.7 mV of
+  weight), and OCG01b gives -9%.
+- The VS cells onto CvN6 and CvN7, by their T4/T5 inputs:
+  - cells 4 (left) and 8 (right), the two that answer the drum, take 53% and 60% of their excitatory input from T4b/T5b
+    (back-to-front) and nearly all the rest from T4d/T5d (downward);
+  - the other four take 83-96% from T4d/T5d.
+So:
+- By the readings:
+  - the cut raises CvN7's vertical signal eightfold, so OCG01f's inhibition is what keeps it weak;
+  - CvN7's ratio with the cut, 0.018, falls below the map's 0.12-0.16 rather than into it. The map sits between the
+    intact model (0.34) and the cut (0.02);
+  - VS carries all of OCG01f's vertical drive, so in the model OCG01f is feedforward inhibition from VS. Its yaw
+    responses follow the frontal VS cells' back-to-front input, which is why cutting it also raises CvN6's drum signal.
+- How this sits against flies:
+  - Flies' CvN7 at rest answers wide-field rotation with graded, on average subthreshold, potentials: about 3.2 mV peak
+    to peak (Gorko et al. 2024; note §1.3). The intact model's few extra spikes are closer to that than the cut's
+    +31.8 Hz.
+  - Blowfly CNMN6/7, the counterparts of CvN6/7, are tuned to downward pitch (Wertz, Haag & Borst 2012; note §6). The
+    intact model's CvN6 doesn't answer vertical motion at all (-0.9 Hz) and does once OCG01f's synapses are cut.
+  - In blowflies VS reaches CNMN6/7 through dye-coupled, electrical, synapses, which the connectome can't show and the
+    model doesn't have. That would strengthen the direct route against OCG01f's chemical one.
+  - Glutamate is taken as inhibitory, and in flies OCG01f also takes ocellar input that MaleCNS lacks.
+- So the pitch MNs' tuning in rung 6's brain hangs on one unconstrained relay: VS's direct excitation against
+  VS-to-OCG01f-to-MN inhibition. As the model stands it leaves CvN6 without the downward tuning its blowfly counterpart
+  has. Fixing that needs a model choice (electrical VS-to-CvN6/7 coupling, or OCG01f's sign or drive), and nothing in
+  the notes measures either in Drosophila. These are exploratory checks, not a change to the model.
+
     python experiments/neck_ocg_check.py      (writes experiments/neck_ocg_check.json)
 """
 from __future__ import annotations
