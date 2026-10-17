@@ -37,6 +37,71 @@ Read:
 - For CvN6: if VS's yaw change outweighs HSS's, VS carries the drum's signal to CvN6. If HSS's outweighs VS's while VS
   gives tonic drive, the VS cut's loss is mainly gain, and neck_drive_probe.py's HSS reading stands.
 
+Ran (2026-10-17, 124 s): each cut took 20-30 points more of the drum's signal than the cut group's linear share of it
+(GNG314 excepted). The cut groups also supply most of their targets' tonic drive under the drum. VS carries more of
+CvN6's drum signal than HSS does. CvN7's downward drive from VS is mostly cancelled by inhibition from OCG01f.
+- The loop reproduces neck_lesion_check.py's intact rates exactly: GNG283's direction signal is +72.583 Hz (t 68) and
+  CvN7's vertical one +3.917 (t 9.2).
+- Yaw MNs. Drives are in mV per target cell; the yaw change is summed over both sides. All inputs' yaw change, then HS
+  and H2's, their share of it, and neck_lesion_check.py's loss:
+
+  | Type | All inputs | HS | H2 | HS+H2 share | Lesion's loss |
+  | --- | --- | --- | --- | --- | --- |
+  | GNG283 | 35.5 | 13.5 | 9.7 | 65% | 88% |
+  | GNG276 | 20.6 | 3.0 | 7.8 | 52% | 82% |
+  | GNG647 | 21.2 | 7.3 | 3.1 | 49% | 71% |
+  | GNG653 | 13.4 | 1.7 | 0.8 | 19% | 39% |
+  | GNG314 | 4.7 | 2.9 | 0.3 | 68% | 70% |
+
+  - HS and H2's mean drum drive, against all inputs': GNG283 10.2 mV (8.9), GNG276 6.2 (3.6), GNG647 4.0 (5.3), GNG653
+    1.0 (2.9), GNG314 0.9 (1.6). H2 supplies most of it except in GNG314 (6.8, 5.5, 2.2, 0.6 and 0.2 mV), since it
+    fires to the moving pattern in either direction.
+  - The other inputs with the largest yaw changes: DNb03 (+7.5 onto GNG283, +2.3 onto GNG647, +1.9 onto GNG653),
+    DNge006 (+7.5 onto GNG276, +2.5, +1.9 and +2.4 onto GNG283, GNG653 and GNG314) and CB3714 (+1.9 to +3.3 onto four
+    types), all excitatory, and inhibitory AN_GNG_175, released (+3.4 onto GNG276, +1.6 onto GNG653). Opposing them:
+    inhibitory CB0034 (-1.6 to -3.8 onto four types) and CB1042 (-3.6 onto GNG283).
+- CvN6's yaw change is 11.15 mV (t 29).
+  - VS gives 6.06 (54%), HSS 3.20 (29%), H2 2.26 (20%) and CB3714 3.21. OCG01f takes away 4.65.
+  - VS's mean drum drive is 4.19 of CvN6's 5.60 mV.
+- The VS cells onto CvN6 and CvN7:
+  - Two answer the drum. Cell 4 (left) fires 108.8 Hz under the clockwise drum (back-to-front across its own eye) and
+    50.1 under counterclockwise; cell 8 (right) is the mirror (114.3 and 50.3).
+  - Both also fire to stripes moving either way (99-107 Hz down, 62-68 up). Their weights onto CvN6 are 8.4 and 11.8 mV.
+  - By their weights onto CvN6 and CvN7 they match the note's rank-1 VS cells: the most frontal, with T4b/T5b input,
+    as the note says Drosophila VS1 has (§3.2).
+  - The other four VS cells fire at 0-2.7 Hz under the drum, and at 121.5-128.4 Hz to downward stripes and 0 to upward
+    ones.
+- Vertical changes (down - up, mV), VS's against all inputs':
+  - CvN7 +15.7 against +3.4; CvN6 +11.7 against -1.1; CvN5 +5.5 against +1.7; CvN4 +1.4 against -0.7.
+  - The largest opposing input is OCG01f, which is glutamatergic and so inhibitory in the model: -12.8 mV onto CvN7,
+    -16.8 onto CvN6 and -4.2 onto CvN5.
+  - DNg46 takes away 6.2 from CvN5, and CB0213 2.8 from CvN4 and 2.5 from CvN7. PS237 adds 2.4-5.2 to CvN4, CvN6 and
+    CvN7.
+So:
+- By the reading, the yaw MNs' losses exceed HS and H2's linear share by 20-30 points (GNG283 88% against 65%, GNG276
+  82 against 52, GNG647 71 against 49, GNG653 39 against 19). The excess is lost gain. GNG314's loss (70% against 68%)
+  is its group's signal.
+  - HS and H2 carry half to two-thirds of the yaw MNs' direction-selective drive directly (a fifth of CvN1/2's).
+  - Mostly through H2, they also hold the cells nearer threshold under the drum, so that the rest of the signal turns
+    into spikes.
+  - The rest comes through descending and local cells that the drum also drives: DNb03, DNge006, CB3714 and
+    AN_GNG_175, opposed by CB0034 and CB1042. Several of them (CB3714, DNge006, DNb03, CB0034) also carry the yaw MNs'
+    upward response (neck_upward_check.py).
+- CvN6: VS's yaw change outweighs HSS's (6.06 against 3.20 mV). So by the reading VS carries most of the drum's signal
+  to CvN6, through the two frontal VS cells with back-to-front input. HSS carries about half as much.
+  neck_drive_probe.py's reading of CvN6's input as HSS's was incomplete. The VS cut's 77% loss against VS's 54% linear
+  share is lost gain: VS gives 4.2 of CvN6's 5.6 mV of drive under the drum.
+- CvN7: its vertical drive from VS (+15.7 mV) is mostly cancelled by inhibition from OCG01f (-12.8). OCG01f is a cell
+  of the ocellar ganglion, which MaleCNS lacks, so in the model OCG01f keeps only its brain inputs: 54% from OCG01b and
+  18% from VS (the note's §3.4). The sign of its drive change says it fires more to downward stripes than upward ones.
+  - The note predicted from the wiring that the VS-to-OCG01f route would oppose the direct one at about 0.4 of its
+    size (W2 about -0.005 against W1 0.012-0.013).
+  - In the model OCG01f's opposing drive is 0.8 of VS's direct drive onto CvN7 and 1.4 onto CvN6.
+  - So CvN7's weak downward response here is VS's excitation minus OCG01f's inhibition. It rests on a cell that in
+    flies also takes ocellar input, which the model doesn't have.
+- Next, neck_ocg_check.py: cut OCG01f's synapses onto CvN4-7 and read CvN7's selectivity, OCG01f's and OCG01b's rates,
+  and the VS cells' T4/T5 inputs.
+
     python experiments/neck_route_check.py      (writes experiments/neck_route_check.json)
 """
 from __future__ import annotations
