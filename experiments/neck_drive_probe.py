@@ -90,6 +90,15 @@ Correction (2026-10-12, review 14):
   - 0.23% of the brain's own neurons exceed 100 Hz with the static grating.
   - The t values are over 8 noise trials of one network, not across wirings.
 
+Correction (2026-10-17, neck_lesion_check.py, neck_route_check.py and neck_ocg_check.py): CvN6's drum response comes
+mostly through VS, not through its HSS input as the Ran and review 14's note read it.
+- Cutting only VS's synapses onto CvN4-7 removes 77% of CvN6's drum signal by nerve side (+24.8 to +5.75 Hz).
+- Of its drive's direction change, VS gives 54%, HSS 29% and H2 20%.
+- The VS part comes from two frontal VS cells that take 53-60% of their input from T4b/T5b. They fire 109-114 Hz under
+  the drum that sweeps back-to-front across their own eye, and 50 under the other.
+- That drum is also the one that excites the HSS on CvN6's nerve side, so the sides alone couldn't tell the routes
+  apart.
+
     python experiments/neck_drive_probe.py      (writes experiments/neck_drive_probe.json)
 """
 from __future__ import annotations

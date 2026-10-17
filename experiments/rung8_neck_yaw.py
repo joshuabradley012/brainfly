@@ -91,6 +91,10 @@ than the criteria can carry.
   following through the wiring. CvN6's +24, against +2.6 and +1.1 rewired, stands.
 - "66.9 Hz on the excited side" is the counterclockwise value; clockwise gives 67.6.
 
+Correction (2026-10-17, neck_route_check.py): "CvN6 through its HSS input" was neck_drive_probe.py's reading from the
+sides. CvN6 follows the drum mostly through two frontal VS cells with back-to-front input, which give 54% of its drive's
+direction change; HSS gives 29% (neck_drive_probe.py's note of the same date).
+
     python experiments/rung8_neck_yaw.py      (writes experiments/rung8_neck_yaw.json)
 """
 from __future__ import annotations
