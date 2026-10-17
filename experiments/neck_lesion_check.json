@@ -1,0 +1,606 @@
+{
+ "question": "Exploratory check, written after review 15 and before it runs, not pre-registered and not a change to the model: do the\nneck motor neurons' visual responses in rung 6's brain come through their direct synapses from the lobula plate's cells?\n\nrung8_neck_yaw.py passed as written, but review 15 found two gaps:\n- Its null scrambled the whole network, including the HS cells' own inputs, so it couldn't test the HS- and\n  H2-to-yaw-MN synapses. Deleting those synapses alone would.\n- Its selectivity criterion compared CvN7 with VCvN1-3. Gorko et al.'s map compares CvN7's own horizontal and vertical\n  responses; summed linearly over the authors' grid, it predicts a yaw-to-vertical ratio of 0.12-0.16. On one seed,\n  review 15 found 0.28.\nModel: rung6_relay.build(\"intact\") with its eyes (flyvis flow/0000/001 at gain 1), 8 flies, seed 7720 (new). Three\nconditions:\n- intact;\n- HS/H2 cut: every synapse from HSN, HSE, HSS and H2 onto the yaw neck MNs (GNG647, GNG314, GNG653, GNG283, GNG276)\n  set to zero, both sides;\n- VS cut: every synapse from VS onto the pitch neck MNs CvN4-7 set to zero.\nScenes (eyes_at_rest.Setup.run: 1 s of grey, then 2 s; rates from 0.5 to 2 s; the same seed in every scene):\n- grey;\n- the drum counterclockwise and clockwise (30 deg vertical grating, 40 deg/s);\n- horizontal stripes (30 deg) moving down and up at 40 deg/s.\nMeasured: the synapses each cut removes (count and summed weight, and per target type against all its excitatory\ninput), then in each condition:\n- the yaw MNs' and DNp15's direction signals ((left - right under counterclockwise) - (left - right under clockwise),\n  by soma side, which is their nerve side);\n- CvN4-7's vertical signals (down - up, both cells);\n- CvN7's yaw signal by nerve side;\n- each group's rate at grey.\nIn the intact brain, CvN7's yaw-to-vertical ratio (|yaw| / vertical) is reported against the map's 0.12-0.16.\nRead:\n- If cutting the HS/H2 synapses cuts the yaw MNs' direction signals by 80% or more while DNp15 (not cut) keeps its,\n  the direct synapses carry the signal. If much of it survives, longer routes carry it too.\n- If cutting VS cuts CvN7's vertical signal by half or more, its weak downward response comes through its direct VS\n  synapses.\n\n    python experiments/neck_lesion_check.py      (writes experiments/neck_lesion_check.json)\n",
+ "synapses_cut": {
+  "intact": {
+   "edges": 0,
+   "summed_weight_mv": 0.0
+  },
+  "HS/H2 cut": {
+   "edges": 37,
+   "summed_weight_mv": 146.7
+  },
+  "VS cut": {
+   "edges": 26,
+   "summed_weight_mv": 84.9
+  }
+ },
+ "cut_share": {
+  "HS/H2 cut": {
+   "GNG647": {
+    "cut_mv": 39.7,
+    "excitatory_input_mv": 2196.3
+   },
+   "GNG314": {
+    "cut_mv": 9.2,
+    "excitatory_input_mv": 1669.2
+   },
+   "GNG653": {
+    "cut_mv": 6.6,
+    "excitatory_input_mv": 1600.2
+   },
+   "GNG283": {
+    "cut_mv": 62.6,
+    "excitatory_input_mv": 1422.3
+   },
+   "GNG276": {
+    "cut_mv": 28.7,
+    "excitatory_input_mv": 1196.7
+   }
+  },
+  "VS cut": {
+   "CvN4": {
+    "cut_mv": 7.9,
+    "excitatory_input_mv": 1247.5
+   },
+   "CvN5": {
+    "cut_mv": 13.4,
+    "excitatory_input_mv": 1630.4
+   },
+   "CvN6": {
+    "cut_mv": 33.2,
+    "excitatory_input_mv": 1494.6
+   },
+   "CvN7": {
+    "cut_mv": 30.5,
+    "excitatory_input_mv": 1301.1
+   }
+  }
+ },
+ "conditions": {
+  "intact": {
+   "grey_hz": {
+    "GNG647": {
+     "L": 1.17,
+     "R": 1.92
+    },
+    "GNG314": {
+     "L": 1.58,
+     "R": 2.33
+    },
+    "GNG653": {
+     "L": 1.5,
+     "R": 2.08
+    },
+    "GNG283": {
+     "L": 1.08,
+     "R": 2.08
+    },
+    "GNG276": {
+     "L": 2.0,
+     "R": 2.08
+    },
+    "CvN4": {
+     "L": 2.17,
+     "R": 3.0
+    },
+    "CvN5": {
+     "L": 1.08,
+     "R": 3.08
+    },
+    "CvN6": {
+     "L": 2.83,
+     "R": 1.25
+    },
+    "CvN7": {
+     "L": 2.75,
+     "R": 2.17
+    },
+    "VCvN1-3": {
+     "L": 1.38,
+     "R": 2.06
+    },
+    "DNp15": {
+     "L": 0.0,
+     "R": 0.17
+    },
+    "HS": {
+     "L": 1.97,
+     "R": 2.22
+    },
+    "H2": {
+     "L": 1.5,
+     "R": 1.92
+    },
+    "VS": {
+     "L": 1.95,
+     "R": 2.04
+    }
+   },
+   "yaw": {
+    "GNG647": {
+     "signal_hz": 36.708,
+     "t": 50.26
+    },
+    "GNG314": {
+     "signal_hz": 2.75,
+     "t": 3.57
+    },
+    "GNG653": {
+     "signal_hz": 16.333,
+     "t": 15.72
+    },
+    "GNG283": {
+     "signal_hz": 72.583,
+     "t": 67.69
+    },
+    "GNG276": {
+     "signal_hz": 42.667,
+     "t": 31.72
+    },
+    "CvN4": {
+     "signal_hz": 5.917,
+     "t": 8.66
+    },
+    "CvN5": {
+     "signal_hz": 5.0,
+     "t": 8.87
+    },
+    "CvN6": {
+     "signal_hz": 24.833,
+     "t": 34.44
+    },
+    "CvN7": {
+     "signal_hz": -1.333,
+     "t": -2.83
+    },
+    "VCvN1-3": {
+     "signal_hz": 22.0,
+     "t": 32.46
+    },
+    "DNp15": {
+     "signal_hz": 118.917,
+     "t": 206.28
+    },
+    "HS": {
+     "signal_hz": 134.556,
+     "t": 202.23
+    },
+    "H2": {
+     "signal_hz": -156.083,
+     "t": -169.47
+    },
+    "VS": {
+     "signal_hz": 9.074,
+     "t": 48.59
+    }
+   },
+   "vertical": {
+    "GNG647": {
+     "signal_hz": -5.833,
+     "t": -8.42
+    },
+    "GNG314": {
+     "signal_hz": 0.5,
+     "t": 0.97
+    },
+    "GNG653": {
+     "signal_hz": -4.417,
+     "t": -5.48
+    },
+    "GNG283": {
+     "signal_hz": -5.583,
+     "t": -5.38
+    },
+    "GNG276": {
+     "signal_hz": -6.25,
+     "t": -4.39
+    },
+    "CvN4": {
+     "signal_hz": 1.083,
+     "t": 1.19
+    },
+    "CvN5": {
+     "signal_hz": 0.833,
+     "t": 1.05
+    },
+    "CvN6": {
+     "signal_hz": -0.917,
+     "t": -0.86
+    },
+    "CvN7": {
+     "signal_hz": 3.917,
+     "t": 9.19
+    },
+    "VCvN1-3": {
+     "signal_hz": -2.903,
+     "t": -7.7
+    },
+    "DNp15": {
+     "signal_hz": -10.0,
+     "t": -13.23
+    },
+    "HS": {
+     "signal_hz": 0.0,
+     "t": 0.0
+    },
+    "H2": {
+     "signal_hz": -9.5,
+     "t": -34.6
+    },
+    "VS": {
+     "signal_hz": 158.213,
+     "t": 993.4
+    }
+   }
+  },
+  "HS/H2 cut": {
+   "grey_hz": {
+    "GNG647": {
+     "L": 1.17,
+     "R": 1.88
+    },
+    "GNG314": {
+     "L": 1.58,
+     "R": 2.33
+    },
+    "GNG653": {
+     "L": 1.42,
+     "R": 2.08
+    },
+    "GNG283": {
+     "L": 0.92,
+     "R": 2.08
+    },
+    "GNG276": {
+     "L": 1.75,
+     "R": 2.0
+    },
+    "CvN4": {
+     "L": 2.17,
+     "R": 3.0
+    },
+    "CvN5": {
+     "L": 1.08,
+     "R": 3.08
+    },
+    "CvN6": {
+     "L": 2.83,
+     "R": 1.25
+    },
+    "CvN7": {
+     "L": 2.75,
+     "R": 2.17
+    },
+    "VCvN1-3": {
+     "L": 1.38,
+     "R": 2.03
+    },
+    "DNp15": {
+     "L": 0.0,
+     "R": 0.17
+    },
+    "HS": {
+     "L": 1.97,
+     "R": 2.22
+    },
+    "H2": {
+     "L": 1.5,
+     "R": 1.92
+    },
+    "VS": {
+     "L": 1.95,
+     "R": 2.04
+    }
+   },
+   "yaw": {
+    "GNG647": {
+     "signal_hz": 10.708,
+     "t": 16.4
+    },
+    "GNG314": {
+     "signal_hz": 0.833,
+     "t": 2.38
+    },
+    "GNG653": {
+     "signal_hz": 10.0,
+     "t": 13.42
+    },
+    "GNG283": {
+     "signal_hz": 9.0,
+     "t": 7.84
+    },
+    "GNG276": {
+     "signal_hz": 7.5,
+     "t": 8.9
+    },
+    "CvN4": {
+     "signal_hz": 5.917,
+     "t": 8.66
+    },
+    "CvN5": {
+     "signal_hz": 5.0,
+     "t": 8.87
+    },
+    "CvN6": {
+     "signal_hz": 24.833,
+     "t": 34.44
+    },
+    "CvN7": {
+     "signal_hz": -1.333,
+     "t": -2.83
+    },
+    "VCvN1-3": {
+     "signal_hz": 6.444,
+     "t": 14.13
+    },
+    "DNp15": {
+     "signal_hz": 118.917,
+     "t": 206.28
+    },
+    "HS": {
+     "signal_hz": 134.556,
+     "t": 202.23
+    },
+    "H2": {
+     "signal_hz": -156.083,
+     "t": -169.47
+    },
+    "VS": {
+     "signal_hz": 9.074,
+     "t": 48.59
+    }
+   },
+   "vertical": {
+    "GNG647": {
+     "signal_hz": -5.625,
+     "t": -12.7
+    },
+    "GNG314": {
+     "signal_hz": 0.5,
+     "t": 1.0
+    },
+    "GNG653": {
+     "signal_hz": -3.417,
+     "t": -6.15
+    },
+    "GNG283": {
+     "signal_hz": -2.667,
+     "t": -3.12
+    },
+    "GNG276": {
+     "signal_hz": -2.667,
+     "t": -4.86
+    },
+    "CvN4": {
+     "signal_hz": 1.083,
+     "t": 1.19
+    },
+    "CvN5": {
+     "signal_hz": 0.833,
+     "t": 1.05
+    },
+    "CvN6": {
+     "signal_hz": -0.917,
+     "t": -0.86
+    },
+    "CvN7": {
+     "signal_hz": 3.917,
+     "t": 9.19
+    },
+    "VCvN1-3": {
+     "signal_hz": -2.764,
+     "t": -9.07
+    },
+    "DNp15": {
+     "signal_hz": -10.0,
+     "t": -13.23
+    },
+    "HS": {
+     "signal_hz": 0.0,
+     "t": 0.0
+    },
+    "H2": {
+     "signal_hz": -9.5,
+     "t": -34.6
+    },
+    "VS": {
+     "signal_hz": 158.213,
+     "t": 993.4
+    }
+   }
+  },
+  "VS cut": {
+   "grey_hz": {
+    "GNG647": {
+     "L": 1.17,
+     "R": 1.92
+    },
+    "GNG314": {
+     "L": 1.58,
+     "R": 2.33
+    },
+    "GNG653": {
+     "L": 1.5,
+     "R": 2.08
+    },
+    "GNG283": {
+     "L": 1.08,
+     "R": 2.08
+    },
+    "GNG276": {
+     "L": 2.0,
+     "R": 2.08
+    },
+    "CvN4": {
+     "L": 2.17,
+     "R": 2.92
+    },
+    "CvN5": {
+     "L": 1.08,
+     "R": 3.08
+    },
+    "CvN6": {
+     "L": 2.75,
+     "R": 1.17
+    },
+    "CvN7": {
+     "L": 2.58,
+     "R": 2.08
+    },
+    "VCvN1-3": {
+     "L": 1.38,
+     "R": 2.06
+    },
+    "DNp15": {
+     "L": 0.0,
+     "R": 0.17
+    },
+    "HS": {
+     "L": 1.97,
+     "R": 2.22
+    },
+    "H2": {
+     "L": 1.5,
+     "R": 1.92
+    },
+    "VS": {
+     "L": 1.95,
+     "R": 2.04
+    }
+   },
+   "yaw": {
+    "GNG647": {
+     "signal_hz": 36.708,
+     "t": 50.26
+    },
+    "GNG314": {
+     "signal_hz": 2.75,
+     "t": 3.57
+    },
+    "GNG653": {
+     "signal_hz": 16.333,
+     "t": 15.72
+    },
+    "GNG283": {
+     "signal_hz": 72.583,
+     "t": 67.69
+    },
+    "GNG276": {
+     "signal_hz": 42.667,
+     "t": 31.72
+    },
+    "CvN4": {
+     "signal_hz": 3.833,
+     "t": 5.4
+    },
+    "CvN5": {
+     "signal_hz": 1.417,
+     "t": 2.77
+    },
+    "CvN6": {
+     "signal_hz": 5.75,
+     "t": 9.97
+    },
+    "CvN7": {
+     "signal_hz": -1.25,
+     "t": -3.23
+    },
+    "VCvN1-3": {
+     "signal_hz": 22.0,
+     "t": 32.46
+    },
+    "DNp15": {
+     "signal_hz": 118.917,
+     "t": 206.28
+    },
+    "HS": {
+     "signal_hz": 134.556,
+     "t": 202.23
+    },
+    "H2": {
+     "signal_hz": -156.083,
+     "t": -169.47
+    },
+    "VS": {
+     "signal_hz": 9.074,
+     "t": 48.59
+    }
+   },
+   "vertical": {
+    "GNG647": {
+     "signal_hz": -5.833,
+     "t": -8.42
+    },
+    "GNG314": {
+     "signal_hz": 0.5,
+     "t": 0.97
+    },
+    "GNG653": {
+     "signal_hz": -4.417,
+     "t": -5.48
+    },
+    "GNG283": {
+     "signal_hz": -5.583,
+     "t": -5.38
+    },
+    "GNG276": {
+     "signal_hz": -6.25,
+     "t": -4.39
+    },
+    "CvN4": {
+     "signal_hz": 0.25,
+     "t": 0.29
+    },
+    "CvN5": {
+     "signal_hz": -2.667,
+     "t": -5.47
+    },
+    "CvN6": {
+     "signal_hz": -4.167,
+     "t": -6.93
+    },
+    "CvN7": {
+     "signal_hz": -2.083,
+     "t": -4.35
+    },
+    "VCvN1-3": {
+     "signal_hz": -2.903,
+     "t": -7.7
+    },
+    "DNp15": {
+     "signal_hz": -10.0,
+     "t": -13.23
+    },
+    "HS": {
+     "signal_hz": 0.0,
+     "t": 0.0
+    },
+    "H2": {
+     "signal_hz": -9.5,
+     "t": -34.6
+    },
+    "VS": {
+     "signal_hz": 158.213,
+     "t": 993.4
+    }
+   }
+  }
+ },
+ "cvn7_yaw_over_vertical_intact": 0.34,
+ "yaw_signal_kept_after_hs_h2_cut": {
+  "GNG647": 0.292,
+  "GNG314": 0.303,
+  "GNG653": 0.612,
+  "GNG283": 0.124,
+  "GNG276": 0.176,
+  "VCvN1-3": 0.293,
+  "DNp15": 1.0
+ },
+ "vertical_signal_kept_after_vs_cut": {
+  "CvN4": 0.231,
+  "CvN5": -3.202,
+  "CvN6": 4.544,
+  "CvN7": -0.532
+ },
+ "seconds": 313
+}
